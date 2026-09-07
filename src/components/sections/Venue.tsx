@@ -35,15 +35,15 @@ export function Venue() {
             HCM-UTE Grand Convention Center & Campus
           </h3>
           <p className="mt-2 text-base sm:text-lg font-semibold text-[#115eff]">
-            01 Vo Van Ngan Street, Linh Chieu Ward, Thu Duc City, Ho Chi Minh City, Vietnam
+            01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam
           </p>
           <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            Ho Chi Minh City University of Technology and Education (HCM-UTE) offers a premier university setting equipped with modern plenary auditoriums, high-definition audio-visual systems, parallel track breakout rooms, and dedicated poster exhibition galleries. Located at the heart of Thu Duc Innovation City, the campus is directly connected via Metro Line 1 to downtown Ho Chi Minh City.
+            Ho Chi Minh City University of Technology and Education (HCM-UTE) offers a premier university setting equipped with modern plenary auditoriums, high-definition audio-visual systems, parallel track breakout rooms, and dedicated poster exhibition galleries. Located along Metro Line 1 in Thu Duc Ward, the campus is directly connected to downtown Ho Chi Minh City.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <a
-              href="https://maps.google.com/?q=01+Vo+Van+Ngan+Linh+Chieu+Thu+Duc+Ho+Chi+Minh"
+              href="https://maps.google.com/?q=01+Vo+Van+Ngan+Thu+Duc+Ward+Ho+Chi+Minh"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-blue-700 text-white text-base font-bold rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
@@ -141,7 +141,7 @@ export function Venue() {
               Hotels & Accommodation
             </h4>
             <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-              Special conference rates negotiated with partner hotels in Thu Duc City and central District 1/Binh Thanh (e.g., Vinpearl Landmark 81, Mia Saigon Luxury Boutique, and business hotels near campus).
+              Special conference rates negotiated with partner hotels in Thu Duc Ward and central District 1/Binh Thanh (e.g., Vinpearl Landmark 81, Mia Saigon Luxury Boutique, and business hotels near campus).
             </p>
           </div>
           <div className="mt-6 pt-3.5 border-t border-slate-100 text-sm font-semibold text-[#115eff]">

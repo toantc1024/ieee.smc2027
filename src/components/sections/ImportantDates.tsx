@@ -17,7 +17,7 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 SUMMARY:IEEE SMC 2027 Conference at HCM-UTE
 DESCRIPTION:2027 IEEE International Conference on Systems, Man, and Cybernetics hosted by HCM-UTE.
-LOCATION:HCM-UTE Grand Convention Center, 01 Vo Van Ngan Street, Thu Duc City, Ho Chi Minh City, Vietnam
+LOCATION:HCM-UTE Grand Convention Center, 01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam
 DTSTART:20271010T080000Z
 DTEND:20271013T180000Z
 STATUS:CONFIRMED

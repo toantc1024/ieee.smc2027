@@ -55,7 +55,7 @@ export function About() {
               <div>
                 <h4 className="text-sm font-bold text-slate-900">HCM-UTE Host Campus</h4>
                 <p className="text-sm text-slate-600 mt-1">
-                  State-of-the-art Grand Hall and modern auditoriums located conveniently along Metro Line 1 in Thu Duc City.
+                  State-of-the-art Grand Hall and modern auditoriums located conveniently along Metro Line 1 in Ho Chi Minh City.
                 </p>
               </div>
             </div>

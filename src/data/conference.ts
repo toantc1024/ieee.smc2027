@@ -63,8 +63,8 @@ export const CONFERENCE_INFO = {
   theme: "Harmonizing Systems, Humans, and Cybernetic Intelligence for a Sustainable Future",
   dates: "October 10–13, 2027",
   location: "Ho Chi Minh City, Vietnam",
-  venue: "HCM-UTE Grand Convention Center, 01 Vo Van Ngan Street, Thu Duc City, Ho Chi Minh City",
-  address: "01 Vo Van Ngan Street, Linh Chieu Ward, Thu Duc City, Ho Chi Minh City, Vietnam",
+  venue: "HCM-UTE Grand Convention Center, 01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City",
+  address: "01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam",
   submissionPortal: "https://easychair.org/conferences/?conf=ieeesmc2027",
   submissionDeadlineIso: "2027-05-15T23:59:59+07:00",
   contactEmail: "secretariat@ieeesmc2027.org",
@@ -472,7 +472,7 @@ export const FAQS: FaqItem[] = [
     category: "Venue",
     question: "How do I reach HCM-UTE from Tan Son Nhat International Airport (SGN)?",
     answer:
-      "HCM-UTE is located at 01 Vo Van Ngan Street, Thu Duc City, Ho Chi Minh City, approximately 14 km from Tan Son Nhat International Airport (SGN). You can easily reach the venue by official airport taxi or Grab (approx. 35–45 minutes) or via the newly inaugurated Ho Chi Minh City Metro Line 1 connecting central districts to Thu Duc station directly adjacent to the campus.",
+      "HCM-UTE is located at 01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, approximately 14 km from Tan Son Nhat International Airport (SGN). You can easily reach the venue by official airport taxi or Grab (approx. 35–45 minutes) or via the newly inaugurated Ho Chi Minh City Metro Line 1 connecting central districts to Thu Duc station directly adjacent to the campus.",
   },
 ];
 

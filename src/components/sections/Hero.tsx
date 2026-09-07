@@ -79,7 +79,7 @@ const HERO_SLIDES: HeroSlide[] = [
     tabLabel: "Host & Venue",
     badge: "Host Campus in Ho Chi Minh City",
     title: "HCM-UTE Convention Center",
-    subtitle: "Ho Chi Minh City University of Technology and Education • Thu Duc City, Vietnam",
+    subtitle: "Ho Chi Minh City University of Technology and Education • Ho Chi Minh City, Vietnam",
     highlight: "Pioneering engineering, robotics & AI with a modern 1,200-seat plenary facility.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {

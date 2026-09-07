@@ -290,7 +290,7 @@ export function Footer() {
               © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Education (HCM-UTE). All rights reserved.
             </p>
             <p className="text-blue-200/80">
-              01 Vo Van Ngan Street, Linh Chieu Ward, Thu Duc City, Ho Chi Minh City, Vietnam
+              01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam
             </p>
           </div>
         </div>
