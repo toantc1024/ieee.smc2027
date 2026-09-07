@@ -2,25 +2,241 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #082445;
+  --primary: #115eff; /* Exact HCMUTE Royal Blue from beta.hcmute.edu.vn */
+  --primary-hover: #0a4de6;
+  --primary-foreground: #f4f9ff;
+  --secondary: #e1edf8;
+  --secondary-foreground: #142f4b;
+  --muted: #dde6ee;
+  --muted-foreground: #20446c;
+  --accent: #eff6ff;
+  --accent-foreground: #115eff;
+  --border: #ccd7e2;
+  --card: #ffffff;
+  --site-width: 86rem; /* 1376px */
+  --radius: 0.35rem; /* Exact HCMUTE base radius: ~5.6px */
+  --radius-btn: 0.26rem; /* 25% reduced radius specifically for all buttons: ~4.1px */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #115eff;
+  --color-primary-hover: #0a4de6;
+  --color-primary-foreground: #f4f9ff;
+  --color-secondary: #e1edf8;
+  --color-muted: #dde6ee;
+  --color-border: #ccd7e2;
+  --color-card: var(--card);
+  --color-hcmute-blue: #115eff;
+  --color-hcmute-dark: #0a4de6;
+  --color-hcmute-light: #eff6ff;
+  
+  /* Global radius tokens */
+  --radius-xs: calc(var(--radius) - 3px);
+  --radius-sm: var(--radius-btn);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 3px);
+  --radius-2xl: calc(var(--radius) + 4px);
+  
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* High-Tech Dot & Grid Patterns */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(204, 215, 226, 0.45) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(204, 215, 226, 0.45) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.bg-grid-pattern-fine {
+  background-image: 
+    linear-gradient(to right, rgba(17, 94, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 94, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(17, 94, 255, 0.14) 1.25px, transparent 1.25px);
+  background-size: 24px 24px;
+}
+
+.bg-dot-pattern-light {
+  background-image: radial-gradient(rgba(17, 94, 255, 0.12) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+.bg-dot-pattern-dense {
+  background-image: radial-gradient(rgba(17, 94, 255, 0.12) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.bg-grid-dark {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.bg-dot-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/* Corner High-Tech Accent Classes (Strictly Top-Right or Bottom-Left/Top-Bottom Corners) */
+.corner-grid-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14rem;
+  height: 100%;
+  max-height: 16rem;
+  background-image: 
+    linear-gradient(to right, rgba(17, 94, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 94, 255, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-dot-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14rem;
+  height: 100%;
+  max-height: 16rem;
+  background-image: radial-gradient(rgba(17, 94, 255, 0.18) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-grid-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 14rem;
+  height: 10rem;
+  background-image: 
+    linear-gradient(to right, rgba(17, 94, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 94, 255, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-dot-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 14rem;
+  height: 10rem;
+  background-image: radial-gradient(rgba(17, 94, 255, 0.18) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+/* Corner Accents for Dark / Blue Backgrounds */
+.corner-grid-dark-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18rem;
+  height: 18rem;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-dot-dark-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 18rem;
+  height: 18rem;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at bottom left, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-dot-dark-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18rem;
+  height: 18rem;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at top right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+/* Continuous full-width borders with no gaps */
+.divider-full {
+  width: 100%;
+  border-top: 1px solid #ccd7e2;
+}
+
+/* Reduced button radius: exactly 25% smaller (0.26rem / ~4px) */
+button:not([class*="rounded-full"]),
+a.inline-flex:not([class*="rounded-full"])[class*="px-"][class*="py-"],
+input,
+select,
+textarea {
+  border-radius: var(--radius-btn) !important;
+}
+
+/* Customized prominent button heights (avoiding cramped default shadcn heights) */
+a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]),
+button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]) {
+  min-height: 2.75rem; /* at least 44px height */
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccd7e2;
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
