@@ -15,13 +15,13 @@ export function CfpSubscribe() {
   };
 
   return (
-    <section className="w-full bg-gradient-to-r from-blue-700 via-[#115eff] to-blue-900 text-white border-y border-blue-600 relative overflow-hidden">
+    <section className="w-full bg-gradient-to-r from-blue-700 via-[#115eff] to-blue-900 text-white relative overflow-hidden">
       {/* High-Tech Corner Grid (Top-Right) & Dot (Bottom-Left) Accents */}
       <div className="corner-grid-dark-tr opacity-30" />
       <div className="corner-dot-dark-bl opacity-35" />
 
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-        <div className="border-x border-white/20 px-4 sm:px-6 py-8 sm:py-10">
+        <div className="border-x border-b border-white/20 px-4 sm:px-6 py-8 sm:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7">

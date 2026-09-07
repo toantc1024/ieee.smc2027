@@ -9,7 +9,7 @@ import { EasyChairIcon } from "@/components/common/ProviderIcons";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#115eff] text-white relative overflow-hidden border-t-2 border-[#115eff]">
+    <footer className="w-full bg-[#115eff] text-white relative overflow-hidden">
       
       {/* High-Tech Dot Pattern Accents in Footer Corners */}
       <div className="corner-dot-dark-tr opacity-35" />
@@ -283,9 +283,9 @@ export function Footer() {
       </div>
 
       {/* Bottom Sub-Bar matching HCMUTE copyright */}
-      <div className="border-t border-white/20 bg-blue-950/40">
+      <div className="bg-blue-950/40">
         <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="border-x border-white/20 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
+          <div className="border-x border-t border-white/20 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
             <p className="text-center sm:text-left">
               © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Education (HCM-UTE). All rights reserved.
             </p>
