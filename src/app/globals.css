@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #082445;
+  --foreground: #081d38; /* Xanh đen đậm */
   --primary: #115eff; /* Exact HCMUTE Royal Blue from beta.hcmute.edu.vn */
   --primary-hover: #0a4de6;
   --primary-foreground: #f4f9ff;
@@ -17,6 +17,11 @@
   --site-width: 86rem; /* 1376px */
   --radius: 0.35rem; /* Exact HCMUTE base radius: ~5.6px */
   --radius-btn: 0.26rem; /* 25% reduced radius specifically for all buttons: ~4.1px */
+  
+  /* Xanh đen đậm tokens */
+  --xanh-den-dam: #081d38;
+  --xanh-den-dark: #051326;
+  --xanh-den-medium: #0a2548;
 }
 
 @theme inline {
@@ -32,6 +37,11 @@
   --color-hcmute-blue: #115eff;
   --color-hcmute-dark: #0a4de6;
   --color-hcmute-light: #eff6ff;
+  
+  /* Global Xanh Đen Đậm (deep blue-black) text overrides */
+  --color-slate-900: #081d38;
+  --color-slate-950: #051326;
+  --color-slate-800: #0a2548;
   
   /* Global radius tokens */
   --radius-xs: calc(var(--radius) - 3px);
@@ -57,6 +67,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
+
+/* Global Xanh Đen Đậm (#081d38) Override:
+   Transforms all black/slate-900/slate-800 text into rich deep blue-black across the entire website */
+.text-slate-900 {
+  color: #081d38 !important;
+}
+
+.text-slate-950 {
+  color: #051326 !important;
+}
+
+.text-slate-800 {
+  color: #0a2548 !important;
+}
+
+h1:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]),
+h2:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]),
+h3:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]),
+h4:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]),
+h5:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]),
+h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]) {
+  color: #081d38;
+}
+
 
 /* High-Tech Dot & Grid Patterns */
 .bg-grid-pattern {
