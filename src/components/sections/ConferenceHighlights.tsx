@@ -61,7 +61,7 @@ export function ConferenceHighlights() {
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the <strong>IEEE Xplore® Digital Library</strong>, once it meets the requirements of an IEEE quality review.
+              Accepted and presented papers will be published in conference proceedings, eligible for inclusion in <strong>IEEE Xplore®</strong> upon IEEE quality review, and indexed in <strong>Scopus</strong>, <strong>EI Compendex</strong>, and <strong>Web of Science</strong>.
             </p>
           </div>
 

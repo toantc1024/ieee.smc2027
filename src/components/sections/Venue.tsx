@@ -45,7 +45,7 @@ export function Venue() {
             {CONFERENCE_INFO.address}
           </p>
           <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027) will take place at the iconic <strong>Sheraton Saigon Grand Opera Hotel</strong>, situated on historic Dong Khoi Street in the vibrant heart of Ho Chi Minh City. Hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam</strong>, the venue provides world-class grand ballrooms, modern breakout suites for technical paper tracks, and exceptional catering.
+            IEEE SMC 2027 will take place at the 5-star <strong>Sheraton Saigon Grand Opera Hotel</strong> on historic Dong Khoi Street in central Ho Chi Minh City. Hosted by <strong>HCMUTE</strong>, the venue features world-class ballrooms, breakout suites for technical tracks, and premier event facilities.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -117,8 +117,8 @@ export function Venue() {
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Vietnam Visa Applications
             </h4>
-            <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-              Citizens of all countries and territories are eligible to apply for a 90-day multiple or single-entry electronic visa (e-Visa) directly via the official Vietnam government immigration portal.
+            <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+              Citizens of all countries are eligible for a 90-day single or multiple-entry electronic visa (e-Visa) via the official government portal.
             </p>
           </div>
           <div className="mt-6 pt-3.5 border-t border-slate-100">
@@ -143,8 +143,8 @@ export function Venue() {
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Tan Son Nhat Airport (SGN)
             </h4>
-            <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-              Tan Son Nhat International Airport (SGN) is Vietnam&apos;s busiest aviation hub, located only 7 km from Sheraton Saigon Hotel. Airport taxis, hotel transfers, and ride-hailing services are readily available.
+            <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+              Tan Son Nhat International Airport (SGN) is located 7 km (~20–30 mins) from the venue. Airport taxis, hotel transfers, and Grab ride-hailing are readily available.
             </p>
           </div>
           <div className="mt-6 pt-3.5 border-t border-slate-100 text-sm font-semibold text-[#115eff]">
@@ -161,8 +161,8 @@ export function Venue() {
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Dong Khoi District & Metro Line 1
             </h4>
-            <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-              Located adjacent to the Saigon Opera House, walking street, and Metro Line 1 Opera House Station. Delegates enjoy convenient access to international dining, cultural landmarks, and shopping.
+            <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+              Steps away from Saigon Opera House, Nguyen Hue Walking Street, and Metro Line 1 Station, with easy access to dining, landmarks, and hotels.
             </p>
           </div>
           <div className="mt-6 pt-3.5 border-t border-slate-100 text-sm font-semibold text-[#115eff]">

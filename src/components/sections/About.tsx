@@ -28,15 +28,12 @@ export function About() {
       <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* Left Column: Narrative with 25% larger text */}
-        <div className="lg:col-span-7 space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
+        <div className="lg:col-span-7 space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
           <p>
-            The <strong>2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027)</strong>, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam</strong>, will bring together leading researchers, academics, industry professionals, and innovators from around the world to exchange knowledge and explore emerging advances in systems science and engineering, human–machine systems, and cybernetics.
+            <strong>IEEE SMC 2027</strong> is the flagship global conference on systems science and engineering, human–machine systems, and cybernetics, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam (HCMUTE)</strong> on <strong>October 6–10, 2027</strong>.
           </p>
           <p>
-            Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>, the conference will highlight cutting-edge developments in artificial intelligence, human–AI collaboration, intelligent and autonomous systems, robotics, digital twins, cyber-physical systems, trustworthy AI, and sustainable technologies.
-          </p>
-          <p>
-            IEEE SMC 2027 will provide an international forum for sharing innovative research, fostering interdisciplinary collaboration, and developing intelligent solutions to complex technological and societal challenges.
+            Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>, the conference convenes international researchers and innovators across AI, human–AI collaboration, autonomous systems, robotics, digital twins, cyber-physical systems, and trustworthy AI.
           </p>
 
           <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">

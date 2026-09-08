@@ -35,9 +35,9 @@ export function Header() {
     <>
       {/* Top Utility Bar (Exact HCM-UTE Blue #115eff with Two Side Borders) */}
       <div className="hidden lg:block bg-[#115eff] text-white relative z-50 text-xs border-b border-white/20">
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           {/* Two Side Vertical Borders aligned with site width - Full height touching top & bottom */}
-          <div className="border-x border-white/20 px-4 sm:px-6 py-2 flex items-center justify-between">
+          <div className="w-full border-x border-white/20 px-4 sm:px-6 py-2 flex items-center justify-between">
             
             {/* Left: Contact info + University & Society portal links */}
             <div className="flex items-center gap-4">
@@ -115,9 +115,9 @@ export function Header() {
 
       {/* Main Sticky Navbar with Two Side Vertical Borders - Flat border without shadow */}
       <header className="sticky top-0 z-40 w-full transition-all duration-200 bg-white border-b border-[#ccd7e2]">
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           {/* Two Side Vertical Borders Aligned with topbar & main container */}
-          <div className="border-x border-[#ccd7e2] px-4 sm:px-6">
+          <div className="w-full border-x border-[#ccd7e2] px-4 sm:px-6">
             <div className="flex items-center justify-between h-16 sm:h-20">
               
               {/* Left: HCM-UTE official horizontal tagline logo */}

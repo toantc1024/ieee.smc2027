@@ -63,7 +63,7 @@ const HERO_SLIDES: HeroSlide[] = [
     badge: "Official Conference Theme",
     title: "Human-AI Symbiosis",
     subtitle: "“Engineering Intelligent, Autonomous, and Sustainable Futures”",
-    highlight: "Highlighting cutting-edge advances in AI, robotics, digital twins, cyber-physical systems, and trustworthy AI.",
+    highlight: "Cutting-edge advances in AI, robotics, digital twins, cyber-physical systems, and trustworthy AI.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Explore 3 Pillars (68+ Topics)",
@@ -82,7 +82,7 @@ const HERO_SLIDES: HeroSlide[] = [
     badge: "Official Conference Venue",
     title: "Sheraton Saigon Grand Opera Hotel",
     subtitle: "No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam",
-    highlight: "World-class 5-star conference venue in central Ho Chi Minh City, hosted by HCMUTE.",
+    highlight: "Premier 5-star venue on historic Dong Khoi Street in central Ho Chi Minh City, hosted by HCMUTE.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Venue & Travel Guide",
@@ -101,8 +101,8 @@ const HERO_SLIDES: HeroSlide[] = [
     tabLabel: "IEEE Xplore® Indexing",
     badge: "Publication & Review Standards",
     title: "Published in IEEE Xplore®",
-    subtitle: "Eligible for inclusion in IEEE Xplore® Digital Library upon IEEE quality review.",
-    highlight: "Indexed in Scopus, EI Compendex, and Web of Science following conference presentation.",
+    subtitle: "Proceedings eligible for IEEE Xplore® Digital Library inclusion upon quality review.",
+    highlight: "Indexed in Scopus, EI Compendex, and Web of Science following presentation.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Author Guidelines",

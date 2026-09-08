@@ -51,15 +51,12 @@ export function CallForPapers() {
       <div className="px-4 sm:px-6 py-8 sm:py-10">
         
         {/* Exact Introductory Text from CFP PDF */}
-        <div className="p-6 sm:p-8 bg-blue-50/50 border border-blue-200/80 rounded-md">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#115eff] text-white text-xs font-bold rounded-md uppercase tracking-wider mb-3">
-            Official Conference Announcement
+        <div className="p-5 sm:p-6 bg-blue-50/50 border border-blue-200/80 rounded-md">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#115eff] text-white text-xs font-bold rounded-md uppercase tracking-wider mb-2.5">
+            Official Call for Papers
           </div>
           <p className="text-base sm:text-lg text-slate-800 leading-relaxed font-normal">
-            The <strong>2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027)</strong>, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam</strong>, will bring together leading researchers, academics, industry professionals, and innovators from around the world to exchange knowledge and explore emerging advances in systems science and engineering, human–machine systems, and cybernetics.
-          </p>
-          <p className="mt-3 text-base sm:text-lg text-slate-800 leading-relaxed font-normal">
-            Under the theme <strong>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</strong>, the conference will highlight cutting-edge developments in artificial intelligence, human–AI collaboration, intelligent and autonomous systems, robotics, digital twins, cyber-physical systems, trustworthy AI, and sustainable technologies. IEEE SMC 2027 will provide an international forum for sharing innovative research, fostering interdisciplinary collaboration, and developing intelligent solutions to complex technological and societal challenges.
+            Authors are invited to submit original research papers to <strong>IEEE SMC 2027</strong> in Ho Chi Minh City, Vietnam. Submissions cover three technical pillars—<strong>Systems Science & Engineering (SSE)</strong>, <strong>Human–Machine Systems (HMS)</strong>, and <strong>Cybernetics (CYB)</strong>—under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>.
           </p>
         </div>
 
@@ -123,8 +120,8 @@ export function CallForPapers() {
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                 Regular Research Papers
               </h3>
-              <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                Complete, original research papers reporting novel theoretical derivations, experimental validations, or major system architectures in Systems, Cybernetics, or HMS.
+              <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                Original research contributions presenting novel theory, experimental validations, or major system architectures in SSE, CYB, or HMS.
               </p>
             </div>
             
@@ -158,8 +155,8 @@ export function CallForPapers() {
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                 Special Session Papers
               </h3>
-              <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                Focused research contributions submitted to accepted special sessions exploring targeted or emerging multidisciplinary problems.
+              <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                Targeted research papers submitted to approved special sessions exploring focused multidisciplinary problems.
               </p>
             </div>
 
@@ -170,11 +167,11 @@ export function CallForPapers() {
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
-                <span>Organized by leading domain experts</span>
+                <span>Organized by domain experts</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
-                <span>Identical rigorous IEEE peer-review</span>
+                <span>Rigorous IEEE peer review</span>
               </div>
             </div>
           </div>
@@ -193,8 +190,8 @@ export function CallForPapers() {
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                 Workshops & Tutorials
               </h3>
-              <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                Proposals for hands-on technical workshops, in-depth tutorials, and accepted workshop technical papers.
+              <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                Proposals for hands-on workshops, technical tutorials, and accepted workshop technical papers.
               </p>
             </div>
 
@@ -225,7 +222,7 @@ export function CallForPapers() {
                 Official Call for Papers (CFP) PDF Document
               </h4>
               <p className="text-sm text-slate-600 mt-0.5">
-                View or download the 2-page conference flyer with complete topics, dates, and committee directory.
+                Official 2-page CFP brochure with complete track topics, submission dates, and committee directory.
               </p>
             </div>
           </div>

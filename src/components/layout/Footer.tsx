@@ -27,8 +27,8 @@ export function Footer() {
       </div>
 
       {/* Main Footer Container with Two Continuous Side Vertical Borders */}
-      <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
-        <div className="border-x border-white/20">
+      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+        <div className="w-full border-x border-white/20 flex flex-col">
           
           {/* Top Banner: Host University & CFP Action Bar */}
           <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-white/20 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -40,7 +40,7 @@ export function Footer() {
                 IEEE SMC 2027 • {CONFERENCE_INFO.dates} • Ho Chi Minh City, Vietnam
               </h3>
               <p className="mt-2 text-sm text-blue-100 max-w-2xl font-normal leading-relaxed">
-                The flagship global conference on systems science and engineering, human–machine systems, and cybernetics, hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam.
+                Flagship global conference on systems science, human–machine systems, and cybernetics, hosted by HCMUTE in Ho Chi Minh City.
               </p>
             </div>
 
@@ -97,7 +97,7 @@ export function Footer() {
               </div>
 
               <p className="text-blue-100 text-sm leading-relaxed max-w-md">
-                Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam. Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>.
+                Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>.
               </p>
 
               <div className="space-y-2.5 text-sm text-blue-100 pt-2">
@@ -282,13 +282,8 @@ export function Footer() {
 
           </div>
 
-        </div>
-      </div>
-
-      {/* Bottom Sub-Bar matching HCMUTE copyright */}
-      <div className="bg-blue-950/40">
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="border-x border-t border-white/20 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
+          {/* Bottom Sub-Bar matching HCMUTE copyright */}
+          <div className="border-t border-white/20 bg-blue-950/30 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
             <p className="text-center sm:text-left">
               © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Engineering-Vietnam. All rights reserved.
             </p>
@@ -296,6 +291,7 @@ export function Footer() {
               Sheraton Saigon Grand Opera Hotel • {CONFERENCE_INFO.address}
             </p>
           </div>
+
         </div>
       </div>
 

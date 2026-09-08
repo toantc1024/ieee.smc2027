@@ -21,7 +21,7 @@ export function CfpSubscribe() {
       <div className="corner-dot-dark-bl opacity-35" />
 
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-        <div className="border-x border-b border-white/20 px-4 sm:px-6 py-8 sm:py-10">
+        <div className="w-full border-x border-b border-white/20 px-4 sm:px-6 py-8 sm:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7">
@@ -32,8 +32,8 @@ export function CfpSubscribe() {
               <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
                 Receive CFP Updates & Deadline Alerts
               </h3>
-            <p className="mt-3 text-sm sm:text-base text-blue-100 font-normal max-w-xl leading-relaxed">
-              Subscribe to receive official notifications regarding paper submission milestones, keynote speaker announcements, tutorial registrations, and camera-ready deadlines.
+            <p className="mt-2 text-sm sm:text-base text-blue-100 font-normal max-w-xl leading-relaxed">
+              Subscribe for official alerts on submission deadlines, keynote announcements, and registration milestones.
             </p>
           </div>
 

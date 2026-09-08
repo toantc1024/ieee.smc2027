@@ -12,7 +12,6 @@ import {
   ExternalLink,
   ArrowRight,
   ArrowLeft,
-  Sparkles,
   List,
   GitCommit,
   Bell,
@@ -180,7 +179,7 @@ END:VCALENDAR`;
               }`}
               title="Interactive Horizontal Stepper"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Calendar className="w-3.5 h-3.5" />
               <span>Roadmap</span>
             </button>
 
@@ -259,19 +258,21 @@ END:VCALENDAR`;
               </span>
             </div>
 
-            {/* Left / Right Ribbon Scroll Buttons */}
+            {/* Left / Right Active Milestone Navigation Buttons */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => scrollRibbon("left")}
-                aria-label="Scroll timeline left"
+                onClick={handlePrevMilestone}
+                aria-label="Previous timeline milestone"
                 className="w-9 h-9 bg-white hover:bg-slate-100 border border-[#ccd7e2] rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
+                title="Previous milestone"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
-                onClick={() => scrollRibbon("right")}
-                aria-label="Scroll timeline right"
+                onClick={handleNextMilestone}
+                aria-label="Next timeline milestone"
                 className="w-9 h-9 bg-white hover:bg-slate-100 border border-[#ccd7e2] rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
+                title="Next milestone"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -298,10 +299,10 @@ END:VCALENDAR`;
                     key={item.id}
                     data-timeline-node
                     onClick={() => handleSelectMilestone(item.id, idx)}
-                    className={`shrink-0 w-44 sm:w-52 p-4 rounded-md border text-left transition-all relative snap-start cursor-pointer group ${
+                    className={`shrink-0 w-44 sm:w-52 p-4 rounded-md border-2 text-left transition-colors relative snap-start cursor-pointer group ${
                       isSelected
-                        ? "bg-white border-[#115eff] ring-2 ring-[#115eff]/30 shadow-md scale-[1.02]"
-                        : "bg-white border-slate-200 hover:border-[#115eff] hover:shadow-sm"
+                        ? "bg-white border-[#115eff] shadow-sm"
+                        : "bg-white border-slate-200 hover:border-[#115eff]/60 hover:shadow-2xs"
                     }`}
                   >
                     {/* Top Step Number Badge & Status Dot */}
@@ -327,7 +328,7 @@ END:VCALENDAR`;
                       <span
                         className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                           isSelected
-                            ? "bg-blue-50 text-[#115eff]"
+                            ? "bg-blue-50 text-[#115eff] font-bold"
                             : "bg-slate-100 text-slate-600"
                         }`}
                       >
@@ -336,7 +337,11 @@ END:VCALENDAR`;
                     </div>
 
                     {/* Date */}
-                    <div className="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">
+                    <div
+                      className={`text-sm sm:text-base font-extrabold leading-tight ${
+                        isSelected ? "text-[#115eff]" : "text-slate-900"
+                      }`}
+                    >
                       {item.date}
                     </div>
 
@@ -344,11 +349,6 @@ END:VCALENDAR`;
                     <p className="mt-1.5 text-xs text-slate-600 line-clamp-2 leading-snug font-normal">
                       {item.title}
                     </p>
-
-                    {/* Active State Bottom Accent Line */}
-                    {isSelected && (
-                      <div className="absolute bottom-0 left-3 right-3 h-1 bg-[#115eff] rounded-t-full" />
-                    )}
                   </button>
                 );
               })}
