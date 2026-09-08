@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Layers, Cpu, Users, ArrowDown, Play, LayoutGrid } from "lucide-react";
+import { Search, Layers, Cpu, Users, ArrowDown } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export function TracksExplorer() {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"marquee" | "grid">("marquee");
 
   const activePillar = TECHNICAL_TRACKS.find((p) => p.id === activePillarId) || TECHNICAL_TRACKS[0];
 
@@ -22,9 +21,6 @@ export function TracksExplorer() {
     );
   });
 
-  // Automatically switch to grid when user is actively searching
-  const effectiveMode = searchQuery.trim() ? "grid" : viewMode;
-
   const getPillarIcon = (id: string) => {
     switch (id) {
       case "systems":
@@ -37,11 +33,6 @@ export function TracksExplorer() {
         return null;
     }
   };
-
-  // Split topics into 3 columns for Marquee view
-  const col1 = filteredTopics.filter((_, i) => i % 3 === 0);
-  const col2 = filteredTopics.filter((_, i) => i % 3 === 1);
-  const col3 = filteredTopics.filter((_, i) => i % 3 === 2);
 
   const renderTopicCard = (topic: typeof filteredTopics[0], uniqueKey: string) => (
     <div
@@ -72,7 +63,7 @@ export function TracksExplorer() {
 
   return (
     <SectionContainer id="tracks" fullWidthBg="bg-[#115eff] text-white" borderColor="border-white/20">
-      {/* Static Dot Pattern Background (No Running Wave) */}
+      {/* Static Dot Pattern Background (No Running Animation) */}
       <div className="absolute inset-0 bg-dot-dark opacity-35 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 via-transparent to-blue-950/30 pointer-events-none" />
 
@@ -165,40 +156,14 @@ export function TracksExplorer() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs font-bold px-3 py-1.5 bg-white/15 border border-white/25 rounded-md text-white">
               {filteredTopics.length} Topics in {activePillar.code}
             </span>
-
-            {/* View Mode Toggle: Marquee vs Grid */}
-            <div className="flex items-center bg-white/15 p-0.5 rounded-md border border-white/25">
-              <button
-                type="button"
-                onClick={() => setViewMode("marquee")}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded transition-all cursor-pointer ${
-                  effectiveMode === "marquee"
-                    ? "bg-white text-[#115eff] shadow-xs"
-                    : "text-blue-100 hover:text-white"
-                }`}
-                title="Continuous auto-scrolling marquee with pause on hover"
-              >
-                <Play className="w-3 h-3 fill-current" />
-                <span>Marquee</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("grid")}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded transition-all cursor-pointer ${
-                  effectiveMode === "grid"
-                    ? "bg-white text-[#115eff] shadow-xs"
-                    : "text-blue-100 hover:text-white"
-                }`}
-                title="Interactive scrollable directory grid"
-              >
-                <LayoutGrid className="w-3 h-3" />
-                <span>Browse Grid</span>
-              </button>
-            </div>
+            <span className="text-xs font-semibold px-2.5 py-1.5 bg-white/10 border border-white/20 rounded-md text-blue-200 flex items-center gap-1.5">
+              <ArrowDown className="w-3 h-3 text-blue-300 animate-bounce" />
+              <span>Scroll to Explore</span>
+            </span>
           </div>
         </div>
 
@@ -207,64 +172,27 @@ export function TracksExplorer() {
             No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
           </div>
         ) : (
-          /* Marquee Overflow Container with Signature Top & Bottom Fade Blur */
+          /* Marquee Fade Blur Overflow Container */
           <div className="relative z-10 overflow-hidden rounded-md">
             
             {/* Top Marquee Fade Blur Overlay */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
 
             {/* Bottom Marquee Fade Blur Overlay */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-24 bg-gradient-to-t from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
 
-            {effectiveMode === "marquee" ? (
-              /* Continuous Auto-Scrolling Vertical Marquee Columns (Pauses on Hover) */
-              <div
-                className="h-[520px] sm:h-[580px] overflow-hidden py-3"
-                style={{
-                  maskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
-                }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 h-full">
-                  {/* Column 1 */}
-                  <div
-                    className="flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
-                    style={{ animationDuration: "36s" }}
-                  >
-                    {col1.concat(col1).map((topic, i) => renderTopicCard(topic, `col1-${topic.code}-${i}`))}
-                  </div>
-
-                  {/* Column 2 */}
-                  <div
-                    className="flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
-                    style={{ animationDuration: "42s" }}
-                  >
-                    {col2.concat(col2).map((topic, i) => renderTopicCard(topic, `col2-${topic.code}-${i}`))}
-                  </div>
-
-                  {/* Column 3 */}
-                  <div
-                    className="hidden lg:flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
-                    style={{ animationDuration: "38s" }}
-                  >
-                    {col3.concat(col3).map((topic, i) => renderTopicCard(topic, `col3-${topic.code}-${i}`))}
-                  </div>
-                </div>
+            {/* Pure Scrollable Topic Directory for User to Scroll (No Auto-Play) */}
+            <div
+              className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3"
+              style={{
+                maskImage: "linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)",
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-2">
+                {filteredTopics.map((topic) => renderTopicCard(topic, `topic-${topic.code}`))}
               </div>
-            ) : (
-              /* Interactive Vertically Scrollable Directory Container */
-              <div
-                className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3"
-                style={{
-                  maskImage: "linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)",
-                }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-2">
-                  {filteredTopics.map((topic) => renderTopicCard(topic, `grid-${topic.code}`))}
-                </div>
-              </div>
-            )}
+            </div>
 
           </div>
         )}
