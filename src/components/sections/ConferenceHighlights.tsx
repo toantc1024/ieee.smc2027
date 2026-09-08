@@ -61,7 +61,7 @@ export function ConferenceHighlights() {
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              All accepted and presented papers will be submitted for inclusion into <strong>IEEE Xplore</strong> and indexed by <strong>Scopus</strong>, <strong>EI Compendex</strong>, and <strong>Web of Science</strong>. Outstanding papers will be invited for expanded versions in IEEE SMC Transactions.
+              Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the <strong>IEEE Xplore® Digital Library</strong>, once it meets the requirements of an IEEE quality review.
             </p>
           </div>
 

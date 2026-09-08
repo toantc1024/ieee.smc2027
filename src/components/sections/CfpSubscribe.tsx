@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Bell, CheckCircle2, ArrowRight, Mail } from "lucide-react";
+import { Bell, CheckCircle2, ArrowRight } from "lucide-react";
 
 export function CfpSubscribe() {
   const [email, setEmail] = useState("");
@@ -27,7 +27,7 @@ export function CfpSubscribe() {
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/20 text-sm font-semibold text-blue-200 rounded-full mb-3">
                 <Bell className="w-4 h-4 text-blue-200" />
-                <span>Stay Informed • HCM-UTE Conference Alerts</span>
+                <span>Stay Informed • IEEE SMC 2027 Alerts</span>
               </div>
               <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
                 Receive CFP Updates & Deadline Alerts

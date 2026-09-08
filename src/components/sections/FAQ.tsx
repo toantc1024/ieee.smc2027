@@ -9,7 +9,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  const categories = ["All", "Submission", "Registration", "Students", "Venue"];
+  const categories = ["All", "Submission", "Registration", "Venue", "Visa"];
 
   const filteredFaqs = FAQS.filter((item) => {
     if (activeCategory === "All") return true;

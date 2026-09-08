@@ -130,7 +130,7 @@ export function HcmuteLogo({
           </span>
         </div>
         <p className="text-[11px] text-slate-500 font-medium tracking-normal hidden sm:block">
-          Ho Chi Minh City University of Technology and Education • Oct 10–13, 2027
+          Ho Chi Minh City University of Technology and Engineering • Oct 6–10, 2027
         </p>
       </div>
     </div>

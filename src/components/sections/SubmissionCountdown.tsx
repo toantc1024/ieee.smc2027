@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Clock,
-  Calendar,
   Copy,
   Check,
-  ExternalLink,
   ArrowUpRight,
+  FileDown,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { EasyChairIcon, GoogleCalendarIcon } from "@/components/common/ProviderIcons";
+import { GoogleCalendarIcon } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export function SubmissionCountdown() {
@@ -23,7 +21,7 @@ export function SubmissionCountdown() {
 
   const [copiedDeadline, setCopiedDeadline] = useState(false);
 
-  // Live countdown to May 15, 2027 23:59:59 GMT+7
+  // Live countdown to April 08, 2027 23:59:59 GMT+7
   useEffect(() => {
     const targetDate = new Date(CONFERENCE_INFO.submissionDeadlineIso).getTime();
 
@@ -50,7 +48,7 @@ export function SubmissionCountdown() {
 
   const handleCopyDeadline = () => {
     navigator.clipboard.writeText(
-      "IEEE SMC 2027 Paper Submission Deadline: May 15, 2027 (23:59 GMT+7) - https://easychair.org/conferences/?conf=ieeesmc2027"
+      "IEEE SMC 2027 Paper Submission Deadline: April 08, 2027 - Workshops, Regular and Special Sessions (Ho Chi Minh City, Vietnam)"
     );
     setCopiedDeadline(true);
     setTimeout(() => setCopiedDeadline(false), 2500);
@@ -58,10 +56,10 @@ export function SubmissionCountdown() {
 
   const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
     "IEEE SMC 2027 Paper Submission Deadline"
-  )}&dates=20270515T165959Z/20270515T165959Z&details=${encodeURIComponent(
-    "Full paper submission deadline for IEEE SMC 2027 at HCM-UTE, Ho Chi Minh City, Vietnam. Submit via EasyChair: https://easychair.org/conferences/?conf=ieeesmc2027"
+  )}&dates=20270408T165959Z/20270408T165959Z&details=${encodeURIComponent(
+    "Paper submission for Workshops, Regular and Special Sessions for IEEE SMC 2027 in Ho Chi Minh City, Vietnam. Official website: https://ieeesmc2027.hcmute.edu.vn"
   )}&location=${encodeURIComponent(
-    "HCM-UTE Grand Convention Center, Ho Chi Minh City, Vietnam"
+    "Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam"
   )}`;
 
   return (
@@ -75,15 +73,15 @@ export function SubmissionCountdown() {
           <div className="space-y-2 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#115eff]/10 border border-[#115eff]/20 rounded-full text-xs font-bold text-[#115eff]">
               <span className="w-2 h-2 bg-[#115eff] rounded-full" />
-              <span>Submissions Open • Round 1</span>
+              <span>Paper Submission Milestone • Workshops, Regular & Special Sessions</span>
             </div>
             
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Paper Submission Deadline: May 15, 2027
+              Paper Submission Deadline: April 08, 2027
             </h2>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 text-xs sm:text-sm text-slate-600">
-              <span className="font-semibold text-slate-700">23:59 GMT+7 (AoE)</span>
+              <span className="font-semibold text-slate-700">Workshops, Regular & Special Sessions</span>
               <span className="text-slate-300">•</span>
               <a
                 href={googleCalendarUrl}
@@ -146,14 +144,24 @@ export function SubmissionCountdown() {
             </div>
           </div>
 
-          {/* Right: Action Button (Guides to CFP instead of duplicating submit paper button) */}
-          <div className="shrink-0 w-full sm:w-auto">
+          {/* Right: Action Buttons */}
+          <div className="shrink-0 flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full sm:w-auto">
             <a
               href="#cfp"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[50px] px-6 sm:px-7 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md group"
             >
-              <span>View Author Guidelines</span>
+              <span>Author Guidelines</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
+
+            <a
+              href={CONFERENCE_INFO.cfpPdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[50px] px-5 py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-[#ccd7e2] font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs"
+            >
+              <FileDown className="w-4 h-4" />
+              <span>CFP (PDF)</span>
             </a>
           </div>
 

@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import { ArrowUpRight, Award, Globe, Building2 } from "lucide-react";
+import { ArrowUpRight, Award, Building2 } from "lucide-react";
 import { IeeeIcon } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { CONFERENCE_INFO } from "@/data/conference";
 
 interface SponsorItem {
   name: string;
@@ -21,9 +21,9 @@ const SPONSORS: SponsorItem[] = [
     logoType: "ieee-smc",
   },
   {
-    name: "Ho Chi Minh City University of Technology and Education",
-    shortName: "HCM-UTE",
-    type: "Host University & Co-Organizer",
+    name: "Ho Chi Minh City University of Technology and Engineering-Vietnam",
+    shortName: "HCMUTE",
+    type: "Host Institution & Co-Organizer",
     logoType: "hcmute",
   },
   {
@@ -106,7 +106,7 @@ export function Sponsors() {
         
         {/* Customized Taller Button with 25% Larger Text */}
         <a
-          href="mailto:secretariat@ieeesmc2027.org"
+          href={`mailto:${CONFERENCE_INFO.contactEmail}`}
           className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
         >
           <span>Download Sponsorship Prospectus</span>

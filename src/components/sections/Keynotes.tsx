@@ -1,25 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import { MapPin, ChevronDown, ChevronUp, UserCheck, Sparkles } from "lucide-react";
-import { KEYNOTE_SPEAKERS } from "@/data/conference";
+import React from "react";
+import { Sparkles, Bell, ArrowRight } from "lucide-react";
+import { CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export function Keynotes() {
-  const [expandedSpeaker, setExpandedSpeaker] = useState<string | null>(null);
-
-  const toggleExpand = (id: string) => {
-    setExpandedSpeaker(expandedSpeaker === id ? null : id);
-  };
-
   return (
     <SectionContainer id="keynotes" fullWidthBg="bg-white">
       {/* Section Header Strip with Top-Right Corner Dot Accent */}
       <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
         <div className="corner-dot-tr opacity-60" />
         <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1">
-            Plenary Keynotes & Thought Leaders
+          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
+            Thought Leadership
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Keynote Speakers & Plenary Sessions
@@ -31,92 +25,34 @@ export function Keynotes() {
         </div>
       </div>
 
-      {/* Speakers Grid with 25% Larger Text */}
+      {/* Forthcoming Keynote Announcement */}
       <div className="px-4 sm:px-6 py-8 sm:py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {KEYNOTE_SPEAKERS.map((speaker) => {
-            const isExpanded = expandedSpeaker === speaker.id;
-            return (
-              <div
-                key={speaker.id}
-                className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all"
-              >
-                <div>
-                  {/* Category tag & location */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold px-3 py-1 bg-blue-50 border border-blue-200/80 text-[#115eff] rounded-md">
-                      {speaker.category}
-                    </span>
-                    <div className="flex items-center gap-1.5 text-sm text-slate-600 font-medium">
-                      <MapPin className="w-4 h-4 text-[#115eff]" />
-                      <span>{speaker.location}</span>
-                    </div>
-                  </div>
+        <div className="p-8 sm:p-10 bg-slate-50 border border-slate-200 rounded-md text-center max-w-3xl mx-auto flex flex-col items-center">
+          <div className="w-14 h-14 bg-blue-100 text-[#115eff] rounded-full flex items-center justify-center mb-4">
+            <Sparkles className="w-7 h-7" />
+          </div>
 
-                  {/* Speaker Identity */}
-                  <div className="flex items-start gap-4">
-                    {/* Monogram Avatar with Royal Blue Gradient */}
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-[#115eff] text-white flex items-center justify-center font-bold text-xl shrink-0 rounded-md shadow-xs">
-                      {speaker.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .slice(0, 2)
-                        .join("")}
-                    </div>
+          <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Plenary Keynote Speakers Announcement Forthcoming
+          </h3>
 
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                        {speaker.name}
-                      </h3>
-                      <p className="text-sm font-semibold text-[#115eff] mt-1">
-                        {speaker.title}
-                      </p>
-                      <p className="text-sm text-slate-500 mt-0.5">
-                        {speaker.affiliation}
-                      </p>
-                    </div>
-                  </div>
+          <p className="mt-3 text-base text-slate-600 leading-relaxed max-w-xl">
+            World-renowned thought leaders in systems science, human–machine symbiosis, and cybernetics will be announced as plenary speakers for IEEE SMC 2027.
+          </p>
 
-                  {/* Talk Title */}
-                  <div className="mt-5 p-4 bg-slate-50 border border-slate-200/80 rounded-md">
-                    <span className="text-xs font-bold text-slate-500 block mb-1">
-                      Plenary Keynote Title
-                    </span>
-                    <p className="text-base sm:text-lg font-semibold text-slate-900 leading-snug">
-                      &ldquo;{speaker.talkTitle}&rdquo;
-                    </p>
-                  </div>
+          <div className="mt-6 p-4 bg-white border border-slate-200 rounded-md text-sm text-slate-700 max-w-lg w-full">
+            <span className="font-bold text-[#115eff] block mb-1">Conference Theme</span>
+            &ldquo;{CONFERENCE_INFO.theme}&rdquo;
+          </div>
 
-                  {/* Expandable Abstract */}
-                  {isExpanded && (
-                    <div className="mt-4 p-4 bg-blue-50/50 border border-blue-100 rounded-md text-sm text-slate-700 leading-relaxed animate-in fade-in duration-200">
-                      <strong className="block mb-1 text-[#115eff]">Abstract Overview:</strong>
-                      {speaker.abstract}
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom Toggle */}
-                <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-                  <button
-                    onClick={() => toggleExpand(speaker.id)}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#115eff] hover:text-blue-800 transition-colors"
-                  >
-                    <span>{isExpanded ? "Hide Abstract" : "Read Full Abstract"}</span>
-                    {isExpanded ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  <span className="text-xs text-slate-500 font-medium">
-                    Plenary Auditorium • HCM-UTE
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+          <a
+            href="#subscribe"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm rounded-[0.26rem] transition-all shadow-xs"
+          >
+            <Bell className="w-4 h-4" />
+            <span>Notify Me When Keynotes Are Announced</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </SectionContainer>

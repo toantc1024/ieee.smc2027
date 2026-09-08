@@ -10,26 +10,28 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "IEEE SMC 2027 | Hosted by HCM-UTE • Ho Chi Minh City, Vietnam",
+  title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
   description:
-    "Official website for the 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), October 10–13, 2027, hosted by Ho Chi Minh City University of Technology and Education (HCM-UTE), Vietnam.",
+    "Official website for The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), October 6–10, 2027, hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.",
   keywords: [
     "IEEE SMC 2027",
-    "HCM-UTE",
-    "Ho Chi Minh City University of Technology and Education",
+    "HCMUTE",
+    "Ho Chi Minh City University of Technology and Engineering",
     "Systems Man and Cybernetics",
     "Systems Science and Engineering",
     "Human-Machine Systems",
     "Cybernetics",
     "Artificial Intelligence",
+    "Human-AI Symbiosis",
+    "Sheraton Saigon Grand Opera Hotel",
     "Vietnam Conference",
     "IEEE Xplore",
   ],
-  authors: [{ name: "IEEE SMC Society & HCM-UTE" }],
+  authors: [{ name: "IEEE SMC Society & HCMUTE" }],
   openGraph: {
-    title: "IEEE SMC 2027 | Hosted by HCM-UTE • Ho Chi Minh City, Vietnam",
+    title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:
-      "Join global leaders in Systems Science, Human-Machine Systems, and Cybernetics at HCM-UTE, Ho Chi Minh City, Vietnam, October 10–13, 2027.",
+      "The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam, October 6–10, 2027.",
     type: "website",
     locale: "en_US",
   },
@@ -55,4 +57,3 @@ export default function RootLayout({
     </html>
   );
 }
-

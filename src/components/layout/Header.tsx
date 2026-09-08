@@ -2,17 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Phone, Mail, Search, Menu, X, ArrowUpRight } from "lucide-react";
+import { Phone, Mail, Search, Menu, X, ArrowUpRight, FileDown } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { EasyChairIcon } from "@/components/common/ProviderIcons";
+import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 const NAV_LINKS = [
   { name: "About", href: "#about" },
   { name: "Tracks", href: "#tracks" },
   { name: "Call for Papers", href: "#cfp" },
   { name: "Dates", href: "#dates" },
-  { name: "Keynotes", href: "#keynotes" },
   { name: "Committee", href: "#committee" },
   { name: "Venue", href: "#venue" },
   { name: "FAQ", href: "#faq" },
@@ -44,9 +42,9 @@ export function Header() {
             {/* Left: Contact info + University & Society portal links */}
             <div className="flex items-center gap-4">
               <a
-                href={`tel:${CONFERENCE_INFO.hotline}`}
+                href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
                 className="flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors"
-                title="Hotline HCM-UTE"
+                title="Conference Hotline"
               >
                 <Phone className="w-3.5 h-3.5 text-blue-200" />
                 <span>{CONFERENCE_INFO.hotline}</span>
@@ -72,29 +70,30 @@ export function Header() {
                 </a>
                 <span className="text-white/30">•</span>
                 <a
-                  href="https://hcmute.edu.vn"
+                  href={CONFERENCE_INFO.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors font-medium text-blue-100"
                 >
-                  HCM-UTE Portal
+                  HCMUTE SMC 2027
                 </a>
                 <span className="text-white/30">•</span>
                 <a
-                  href={CONFERENCE_INFO.submissionPortal}
+                  href={CONFERENCE_INFO.cfpPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors"
+                  className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1 font-semibold"
                 >
-                  EasyChair
+                  <FileDown className="w-3 h-3 text-blue-200" />
+                  <span>CFP PDF</span>
                 </a>
               </div>
             </div>
 
-            {/* Right: Search & Location info (Removed duplicate Submit Paper button) */}
+            {/* Right: Search & Location info */}
             <div className="flex items-center gap-3">
               <span className="text-xs text-blue-100 hidden xl:inline font-medium">
-                Oct 10–13, 2027 • Ho Chi Minh City, Vietnam
+                {CONFERENCE_INFO.datesShort} • Ho Chi Minh City, Vietnam
               </span>
               <span className="text-white/30 hidden xl:inline">•</span>
               
@@ -158,13 +157,11 @@ export function Header() {
 
                 {/* Customized Taller CTA Button with 25% Larger Text */}
                 <a
-                  href={CONFERENCE_INFO.submissionPortal}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#cfp"
                   className="ml-2 inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-2.5 text-sm sm:text-base font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-[0.26rem] shadow-sm hover:shadow-md transition-all duration-150"
                 >
-                  <EasyChairIcon className="w-4 h-4 text-white" />
-                  <span>Submit Paper</span>
+                  <PaperCeptIcon className="w-4 h-4 text-white" />
+                  <span>Call for Papers</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
@@ -213,16 +210,15 @@ export function Header() {
 
               <div className="pt-4 border-t border-slate-200 flex flex-col gap-2.5">
                 <a
-                  href={CONFERENCE_INFO.submissionPortal}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#cfp"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="w-full inline-flex items-center justify-center gap-2 min-h-[48px] py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold rounded-[0.26rem] shadow-sm"
                 >
-                  <EasyChairIcon className="w-4 h-4 text-white" />
-                  <span>Open EasyChair Submission Portal</span>
+                  <PaperCeptIcon className="w-4 h-4 text-white" />
+                  <span>Call for Papers (PaperCept)</span>
                 </a>
                 <div className="text-center text-xs text-slate-500">
-                  {CONFERENCE_INFO.venue}
+                  {CONFERENCE_INFO.venue} • {CONFERENCE_INFO.location}
                 </div>
               </div>
 
@@ -270,15 +266,15 @@ export function Header() {
             <div className="mt-4 text-xs text-slate-500">
               Popular searches:{" "}
               <a href="#tracks" onClick={() => setSearchOpen(false)} className="text-[#115eff] hover:underline font-medium">
-                Brain-Computer Interfaces
+                Robotics & Intelligent Sensing
               </a>
               ,{" "}
               <a href="#dates" onClick={() => setSearchOpen(false)} className="text-[#115eff] hover:underline font-medium">
-                Submission Deadlines
+                April 08 Deadline
               </a>
               ,{" "}
               <a href="#venue" onClick={() => setSearchOpen(false)} className="text-[#115eff] hover:underline font-medium">
-                HCM-UTE Convention Center
+                Sheraton Saigon Hotel
               </a>
             </div>
           </div>

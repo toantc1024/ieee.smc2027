@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowUpRight, Award, BookOpen, Building2, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, MapPin } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
 
@@ -12,15 +12,15 @@ export function About() {
       <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
         <div className="corner-grid-tr opacity-50" />
         <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1">
+          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
             About the Conference & Host Institution
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            About IEEE SMC 2027 & HCM-UTE
+            About IEEE SMC 2027 & HCMUTE
           </h2>
         </div>
         <div className="relative z-10 flex items-center gap-2 text-sm font-semibold text-[#115eff] bg-white border border-[#ccd7e2] px-4 py-2 rounded-full shadow-2xs">
-          <span>Global Impact • Over 50 Years of IEEE SMC Excellence</span>
+          <span>Oct 6–10, 2027 • Ho Chi Minh City, Vietnam</span>
         </div>
       </div>
 
@@ -30,32 +30,32 @@ export function About() {
         {/* Left Column: Narrative with 25% larger text */}
         <div className="lg:col-span-7 space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
           <p>
-            The <strong>IEEE Systems, Man, and Cybernetics (SMC) Society</strong> is the world&apos;s leading international academic community committed to advancing the theory, practice, and real-world deployment of systems science and engineering, human-machine systems, and cybernetic intelligence.
+            The <strong>2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027)</strong>, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam</strong>, will bring together leading researchers, academics, industry professionals, and innovators from around the world to exchange knowledge and explore emerging advances in systems science and engineering, human–machine systems, and cybernetics.
           </p>
           <p>
-            For its 2027 edition, the conference is proudly hosted in <strong>Ho Chi Minh City, Vietnam</strong> by the <strong>Ho Chi Minh City University of Technology and Education (HCM-UTE)</strong> — a premier national institution established in 1962 renowned for pioneering engineering education, robotics, mechatronics, and artificial intelligence.
+            Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>, the conference will highlight cutting-edge developments in artificial intelligence, human–AI collaboration, intelligent and autonomous systems, robotics, digital twins, cyber-physical systems, trustworthy AI, and sustainable technologies.
           </p>
           <p>
-            Under the guiding theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>, IEEE SMC 2027 will convene over 1,200 international scholars, engineers, and industry leaders to discuss cutting-edge advances in brain-computer interfaces, autonomous swarm systems, resilient cyber-physical infrastructure, and human-AI teaming.
+            IEEE SMC 2027 will provide an international forum for sharing innovative research, fostering interdisciplinary collaboration, and developing intelligent solutions to complex technological and societal challenges.
           </p>
 
           <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-5 bg-slate-50 border border-slate-200/80 rounded-md flex items-start gap-3.5">
               <ShieldCheck className="w-6 h-6 text-[#115eff] shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-slate-900">IEEE Xplore Inclusion</h4>
+                <h4 className="text-sm font-bold text-slate-900">IEEE Xplore® Quality Review</h4>
                 <p className="text-sm text-slate-600 mt-1">
-                  All accepted & presented papers will be submitted to IEEE Xplore, indexed in Scopus, EI Compendex & Web of Science.
+                  Accepted and presented papers will be eligible for inclusion in IEEE Xplore® and indexed in Scopus, EI Compendex & Web of Science.
                 </p>
               </div>
             </div>
 
             <div className="p-5 bg-slate-50 border border-slate-200/80 rounded-md flex items-start gap-3.5">
-              <Building2 className="w-6 h-6 text-[#115eff] shrink-0 mt-0.5" />
+              <MapPin className="w-6 h-6 text-[#115eff] shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-slate-900">HCM-UTE Host Campus</h4>
+                <h4 className="text-sm font-bold text-slate-900">Sheraton Saigon Venue</h4>
                 <p className="text-sm text-slate-600 mt-1">
-                  State-of-the-art Grand Hall and modern auditoriums located conveniently along Metro Line 1 in Ho Chi Minh City.
+                  Held at the prestigious Sheraton Saigon Grand Opera Hotel in the historic Dong Khoi district of Ho Chi Minh City.
                 </p>
               </div>
             </div>
@@ -66,14 +66,14 @@ export function About() {
         <div className="lg:col-span-5 p-6 sm:p-7 bg-slate-50/70 border border-slate-200/80 rounded-md flex flex-col justify-between">
           <div>
             <div className="text-sm font-bold text-slate-900 mb-3.5 pb-2.5 border-b border-slate-200 flex items-center justify-between">
-              <span>Affiliated IEEE SMC Transactions</span>
+              <span>Affiliated IEEE SMC Publications</span>
               <span className="text-xs font-bold text-[#115eff] bg-blue-100/70 px-2.5 py-1 rounded">
-                Flagship Journals
+                Flagship Society
               </span>
             </div>
 
             <p className="text-sm text-slate-600 mb-4">
-              Selected outstanding papers will be invited for expanded versions in high-impact IEEE Transactions:
+              The conference covers the full spectrum of IEEE Systems, Man, and Cybernetics Society fields:
             </p>
 
             <ul className="space-y-3 text-sm text-slate-800">
@@ -105,7 +105,7 @@ export function About() {
           </div>
 
           <div className="mt-6 pt-3.5 border-t border-slate-200 flex items-center justify-between text-sm text-slate-600">
-            <span>Indexed in IEEE Xplore & Scopus</span>
+            <span>Indexed in IEEE Xplore® & Scopus</span>
             <span className="font-bold text-[#115eff]">Peer-Reviewed</span>
           </div>
         </div>

@@ -7,12 +7,12 @@ import {
   Clock,
   Layers,
   MapPin,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
+  FileDown,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { EasyChairIcon } from "@/components/common/ProviderIcons";
+import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 interface HeroSlide {
   id: string;
@@ -26,11 +26,12 @@ interface HeroSlide {
   primaryCta: {
     label: string;
     href: string;
-    icon?: "easychair" | "map" | "tracks";
+    icon?: "papercept" | "map" | "tracks" | "download";
   };
   secondaryCta: {
     label: string;
     href: string;
+    isExternal?: boolean;
   };
 }
 
@@ -38,49 +39,50 @@ const HERO_SLIDES: HeroSlide[] = [
   {
     id: "submissions",
     tabNumber: "01",
-    tabLabel: "Submissions Open",
-    badge: "Call for Papers Active • Submissions Open",
+    tabLabel: "Call for Papers",
+    badge: "Official CFP • Submissions via PaperCept",
     title: "IEEE SMC 2027",
-    subtitle: "2027 IEEE International Conference on Systems, Man, and Cybernetics",
-    highlight: "October 10–13, 2027 • Hosted by HCM-UTE, Ho Chi Minh City, Vietnam",
+    subtitle: "The 2027 IEEE International Conference on Systems, Man, and Cybernetics",
+    highlight: "October 6–10, 2027 • Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
-      label: "Submit Paper (EasyChair)",
-      href: CONFERENCE_INFO.submissionPortal,
-      icon: "easychair",
+      label: "Call for Papers (PaperCept)",
+      href: "#cfp",
+      icon: "papercept",
     },
     secondaryCta: {
-      label: "Explore 3 Pillars",
-      href: "#tracks",
+      label: "Download CFP (PDF)",
+      href: CONFERENCE_INFO.cfpPdfUrl,
+      isExternal: true,
     },
   },
   {
     id: "theme",
     tabNumber: "02",
     tabLabel: "Conference Theme",
-    badge: "Guiding Scientific Vision",
-    title: "Harmonizing Systems, Humans & AI",
-    subtitle: "“Harmonizing Systems, Humans, and Cybernetic Intelligence”",
-    highlight: "Advancing Systems Science, Human-Machine Symbiosis, and Cybernetic Intelligence.",
+    badge: "Official Conference Theme",
+    title: "Human-AI Symbiosis",
+    subtitle: "“Engineering Intelligent, Autonomous, and Sustainable Futures”",
+    highlight: "Highlighting cutting-edge advances in AI, robotics, digital twins, cyber-physical systems, and trustworthy AI.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
-      label: "Explore 3 Pillars",
+      label: "Explore 3 Pillars (68+ Topics)",
       href: "#tracks",
       icon: "tracks",
     },
     secondaryCta: {
-      label: "Call for Papers",
-      href: "#cfp",
+      label: "Important Dates",
+      href: "#dates",
     },
   },
   {
     id: "venue",
     tabNumber: "03",
-    tabLabel: "Host & Venue",
-    badge: "Host Campus in Ho Chi Minh City",
-    title: "HCM-UTE Convention Center",
-    subtitle: "Ho Chi Minh City University of Technology and Education • Ho Chi Minh City, Vietnam",
-    highlight: "Pioneering engineering, robotics & AI with a modern 1,200-seat plenary facility.",
+    tabLabel: "Venue & Destination",
+    badge: "Official Conference Venue",
+    title: "Sheraton Saigon Grand Opera Hotel",
+    subtitle: "No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam",
+    highlight: "World-class 5-star conference venue in central Ho Chi Minh City, hosted by HCMUTE.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Venue & Travel Guide",
@@ -88,26 +90,27 @@ const HERO_SLIDES: HeroSlide[] = [
       icon: "map",
     },
     secondaryCta: {
-      label: "Host University",
-      href: "https://hcmute.edu.vn",
+      label: "Vietnam e-Visa Portal",
+      href: CONFERENCE_INFO.visaUrl,
+      isExternal: true,
     },
   },
   {
     id: "indexing",
     tabNumber: "04",
-    tabLabel: "IEEE Xplore Indexing",
-    badge: "Publication & Global Indexing",
-    title: "Published in IEEE Xplore",
-    subtitle: "All accepted & presented papers indexed in Scopus, EI Compendex & Web of Science.",
-    highlight: "Selected outstanding papers invited for high-impact IEEE SMC Transactions.",
+    tabLabel: "IEEE Xplore® Indexing",
+    badge: "Publication & Review Standards",
+    title: "Published in IEEE Xplore®",
+    subtitle: "Eligible for inclusion in IEEE Xplore® Digital Library upon IEEE quality review.",
+    highlight: "Indexed in Scopus, EI Compendex, and Web of Science following conference presentation.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Author Guidelines",
       href: "#cfp",
-      icon: "easychair",
+      icon: "papercept",
     },
     secondaryCta: {
-      label: "Important Dates",
+      label: "April 08 Deadline",
       href: "#dates",
     },
   },
@@ -200,7 +203,7 @@ export function Hero() {
               </span>
               <span className="text-white/40">•</span>
               <span className="text-white font-semibold">
-                HCM-UTE • Ho Chi Minh City, Vietnam
+                Hosted by HCMUTE • Ho Chi Minh City, Vietnam
               </span>
             </div>
 
@@ -225,7 +228,7 @@ export function Hero() {
           {/* Main Hero Banner: Balanced, Left-Aligned Top Content */}
           <div className="grow px-4 sm:px-6 py-6 sm:py-8 lg:py-10 flex flex-col justify-center">
             
-            {/* Left Top Content Block with locked min-height so image/hero height never shifts */}
+            {/* Left Top Content Block with locked min-height */}
             <div className="max-w-2xl lg:max-w-3xl flex flex-col items-start justify-center text-left space-y-3.5 sm:space-y-4 min-h-[220px] sm:min-h-[240px] lg:min-h-[260px]">
               
               {/* Category / Status Badge */}
@@ -245,7 +248,7 @@ export function Hero() {
                 </p>
               </div>
 
-              {/* Concise Highlight Line - Just one crisp sentence */}
+              {/* Concise Highlight Line */}
               <p className="text-sm sm:text-base lg:text-lg text-white/90 leading-normal max-w-2xl drop-shadow-sm font-normal">
                 {currentSlide.highlight}
               </p>
@@ -258,8 +261,8 @@ export function Hero() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] px-6 sm:px-8 py-3 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-md hover:shadow-lg group"
                 >
-                  {currentSlide.primaryCta.icon === "easychair" && (
-                    <EasyChairIcon className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
+                  {currentSlide.primaryCta.icon === "papercept" && (
+                    <PaperCeptIcon className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                   )}
                   {currentSlide.primaryCta.icon === "tracks" && (
                     <Layers className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
@@ -267,15 +270,21 @@ export function Hero() {
                   {currentSlide.primaryCta.icon === "map" && (
                     <MapPin className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                   )}
+                  {currentSlide.primaryCta.icon === "download" && (
+                    <FileDown className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
+                  )}
                   <span>{currentSlide.primaryCta.label}</span>
                   <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </a>
 
                 <a
                   href={currentSlide.secondaryCta.href}
-                  className="inline-flex items-center justify-center min-h-[48px] sm:min-h-[52px] px-6 py-3 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-semibold text-sm sm:text-base rounded-[0.26rem] transition-colors shadow-xs"
+                  target={currentSlide.secondaryCta.isExternal ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center min-h-[48px] sm:min-h-[52px] px-6 py-3 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-semibold text-sm sm:text-base rounded-[0.26rem] transition-colors shadow-xs gap-1.5"
                 >
                   <span>{currentSlide.secondaryCta.label}</span>
+                  {currentSlide.secondaryCta.isExternal && <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />}
                 </a>
               </div>
 
@@ -335,7 +344,3 @@ export function Hero() {
     </section>
   );
 }
-
-
-
-

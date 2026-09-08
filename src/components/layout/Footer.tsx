@@ -2,10 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Mail, Phone, MapPin, ArrowUpRight, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, ArrowUpRight, Globe, FileDown } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { EasyChairIcon } from "@/components/common/ProviderIcons";
+import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 export function Footer() {
   return (
@@ -15,7 +14,7 @@ export function Footer() {
       <div className="corner-dot-dark-tr opacity-35" />
       <div className="corner-dot-dark-bl opacity-30" />
 
-      {/* Decorative HCM-UTE Flower Motif Background: Fully Visible (Show All) */}
+      {/* Decorative HCM-UTE Flower Motif Background */}
       <div 
         className="absolute right-4 sm:right-10 md:right-16 bottom-16 sm:bottom-20 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 opacity-15 pointer-events-none select-none z-0"
         aria-hidden="true"
@@ -31,44 +30,44 @@ export function Footer() {
       <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
         <div className="border-x border-white/20">
           
-          {/* Top Banner: Host University & EasyChair Submission Bar */}
+          {/* Top Banner: Host University & CFP Action Bar */}
           <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-white/20 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             <div className="lg:col-span-8">
               <div className="text-xs font-bold text-white uppercase tracking-wider bg-white/15 px-3 py-1 rounded-[0.26rem] inline-block mb-3 border border-white/25">
-                Official Host University • IEEE SMC 2027
+                Official Host Institution • IEEE SMC 2027
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                IEEE SMC 2027 • Ho Chi Minh City, Vietnam
+                IEEE SMC 2027 • {CONFERENCE_INFO.dates} • Ho Chi Minh City, Vietnam
               </h3>
               <p className="mt-2 text-sm text-blue-100 max-w-2xl font-normal leading-relaxed">
-                The flagship global conference for researchers, educators, and industry leaders in systems science, human-machine systems, and cybernetics, proudly hosted at HCM-UTE.
+                The flagship global conference on systems science and engineering, human–machine systems, and cybernetics, hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam.
               </p>
             </div>
 
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
               <a
-                href={CONFERENCE_INFO.submissionPortal}
+                href={CONFERENCE_INFO.cfpPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 min-h-[50px] px-6 py-3.5 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-sm rounded-[0.26rem] transition-all shadow-md hover:shadow-lg"
               >
-                <EasyChairIcon className="w-4 h-4 text-[#115eff]" />
-                <span>Submit Paper via EasyChair</span>
+                <FileDown className="w-4 h-4 text-[#115eff]" />
+                <span>Download Official CFP (PDF)</span>
                 <ArrowUpRight className="w-4 h-4" />
               </a>
               <a
-                href="https://hcmute.edu.vn"
+                href={CONFERENCE_INFO.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs rounded-[0.26rem] transition-colors"
               >
                 <Globe className="w-3.5 h-3.5" />
-                <span>Visit HCM-UTE Official Portal</span>
+                <span>Visit Conference Portal</span>
               </a>
             </div>
           </div>
 
-          {/* Main Footer Content Grid aligned with Header padding (px-4 sm:px-6) */}
+          {/* Main Footer Content Grid */}
           <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
             
             {/* Column 1: HCMUTE Official Square Logo & Identity + Contact Details */}
@@ -84,7 +83,7 @@ export function Footer() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-extrabold text-base sm:text-lg leading-tight">
-                      HCM-UTE
+                      HCMUTE
                     </span>
                     <span className="text-blue-200/60">•</span>
                     <span className="text-white font-bold text-sm sm:text-base leading-tight">
@@ -92,30 +91,32 @@ export function Footer() {
                     </span>
                   </div>
                   <span className="text-blue-100 text-xs font-medium leading-tight mt-0.5">
-                    Ho Chi Minh City University of Technology and Education
+                    Ho Chi Minh City University of Technology and Engineering
                   </span>
                 </div>
               </div>
 
               <p className="text-blue-100 text-sm leading-relaxed max-w-md">
-                Ho Chi Minh City University of Technology and Education (HCM-UTE) — A leading national public technical university, honored to host the IEEE SMC 2027 Flagship International Conference in Vietnam.
+                Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam. Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>.
               </p>
 
               <div className="space-y-2.5 text-sm text-blue-100 pt-2">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-blue-200 mt-1 shrink-0" />
-                  <span>{CONFERENCE_INFO.address}</span>
+                  <span>
+                    <strong>Venue:</strong> {CONFERENCE_INFO.venue}, {CONFERENCE_INFO.address}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-blue-200 shrink-0" />
-                  <a href={`tel:${CONFERENCE_INFO.hotline}`} className="hover:text-white transition-colors">
-                    {CONFERENCE_INFO.hotline}
+                  <a href={`tel:${CONFERENCE_INFO.hotlineRaw}`} className="hover:text-white transition-colors">
+                    Hotline: {CONFERENCE_INFO.hotline}
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-blue-200 shrink-0" />
-                  <a href={`mailto:${CONFERENCE_INFO.universityEmail}`} className="hover:text-white transition-colors">
-                    {CONFERENCE_INFO.universityEmail}
+                  <a href={`mailto:${CONFERENCE_INFO.contactEmail}`} className="hover:text-white transition-colors">
+                    Email: {CONFERENCE_INFO.contactEmail}
                   </a>
                 </div>
               </div>
@@ -147,11 +148,11 @@ export function Footer() {
                   </svg>
                 </a>
                 <a
-                  href="https://hcmute.edu.vn"
+                  href={CONFERENCE_INFO.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-colors"
-                  title="HCMUTE Official Website"
+                  title="Conference Website"
                   aria-label="Website"
                 >
                   <Globe className="w-4 h-4" />
@@ -159,7 +160,7 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Column 2, 3, 4: Categorized Navigation Links */}
+            {/* Categorized Navigation Links */}
             <div className="lg:col-span-7">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
                 
@@ -176,23 +177,24 @@ export function Footer() {
                     </li>
                     <li>
                       <Link href="#about" className="hover:text-white transition-colors">
-                        Host University: HCM-UTE
+                        Host: HCMUTE Vietnam
                       </Link>
                     </li>
                     <li>
                       <Link href="#dates" className="hover:text-white transition-colors">
-                        Important Dates
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="#keynotes" className="hover:text-white transition-colors">
-                        Plenary Keynote Speakers
+                        Important Dates & Milestones
                       </Link>
                     </li>
                     <li>
                       <Link href="#committee" className="hover:text-white transition-colors">
                         Organizing Committee
                       </Link>
+                    </li>
+                    <li>
+                      <a href={CONFERENCE_INFO.cfpPdfUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors font-medium text-white flex items-center gap-1">
+                        <span>CFP PDF Document</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -210,29 +212,24 @@ export function Footer() {
                     </li>
                     <li>
                       <Link href="#tracks" className="hover:text-white transition-colors">
-                        Systems Science Track
+                        Systems Science & Eng. (SSE)
                       </Link>
                     </li>
                     <li>
                       <Link href="#tracks" className="hover:text-white transition-colors">
-                        Human-Machine Systems Track
+                        Cybernetics Track (CYB)
                       </Link>
                     </li>
                     <li>
                       <Link href="#tracks" className="hover:text-white transition-colors">
-                        Cybernetics Track
+                        Human-Machine Systems (HMS)
                       </Link>
                     </li>
                     <li>
-                      <a
-                        href={CONFERENCE_INFO.submissionPortal}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-white transition-colors flex items-center gap-1"
-                      >
-                        <span>EasyChair Portal</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
+                      <Link href="#cfp" className="hover:text-white transition-colors flex items-center gap-1">
+                        <PaperCeptIcon className="w-3.5 h-3.5" />
+                        <span>PaperCept Submission</span>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -245,17 +242,23 @@ export function Footer() {
                   <ul className="space-y-2.5 text-sm text-blue-100">
                     <li>
                       <Link href="#venue" className="hover:text-white transition-colors">
-                        HCM-UTE Campus & Hall
+                        Sheraton Saigon Hotel
                       </Link>
                     </li>
                     <li>
-                      <Link href="#venue" className="hover:text-white transition-colors">
-                        Metro Line 1 (Thu Duc)
-                      </Link>
+                      <a
+                        href={CONFERENCE_INFO.visaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-white transition-colors flex items-center gap-1 text-white font-medium"
+                      >
+                        <span>Vietnam e-Visa Portal</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
                     </li>
                     <li>
                       <Link href="#venue" className="hover:text-white transition-colors">
-                        Airport & Hotel Information
+                        Accommodation & Travel
                       </Link>
                     </li>
                     <li>
@@ -287,10 +290,10 @@ export function Footer() {
         <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           <div className="border-x border-t border-white/20 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
             <p className="text-center sm:text-left">
-              © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Education (HCM-UTE). All rights reserved.
+              © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Engineering-Vietnam. All rights reserved.
             </p>
             <p className="text-blue-200/80">
-              01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam
+              Sheraton Saigon Grand Opera Hotel • {CONFERENCE_INFO.address}
             </p>
           </div>
         </div>

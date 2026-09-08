@@ -1,17 +1,29 @@
 import React from "react";
 
-export function EasyChairIcon({ className = "w-5 h-5" }: { className?: string }) {
+export function PaperCeptIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
-      aria-label="EasyChair Submission System"
+      aria-label="PaperCept Submission System"
     >
-      {/* Real EasyChair Armchair Silhouette */}
-      <path d="M5 4C4.44772 4 4 4.44772 4 5V13C4 13.5523 4.44772 14 5 14H6V17C6 17.5523 6.44772 18 7 18H8C8.55228 18 9 17.5523 9 17V15H15V17C15 17.5523 15.4477 18 16 18H17C17.5523 18 18 17.5523 18 17V14H19C19.5523 14 20 13.5523 20 13V5C20 4.44772 19.5523 4 19 4H18C17.4477 4 17 4.44772 17 5V11H7V5C7 4.44772 6.55228 4 6 4H5ZM2 9C2 8.44772 2.44772 8 3 8H4V13H3C2.44772 13 2 12.5523 2 12V9ZM20 8H21C21.5523 8 22 8.44772 22 9V12C22 12.5523 21.5523 13 21 13H20V8Z" />
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
     </svg>
   );
+}
+
+// Backward compatibility alias
+export function EasyChairIcon(props: { className?: string }) {
+  return <PaperCeptIcon {...props} />;
 }
 
 export function IeeeIcon({ className = "w-5 h-5" }: { className?: string }) {
@@ -133,7 +145,7 @@ export function GoogleCalendarIcon({ className = "w-4 h-4" }: { className?: stri
         textAnchor="middle"
         fontFamily="sans-serif"
       >
-        15
+        08
       </text>
     </svg>
   );

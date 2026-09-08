@@ -11,12 +11,11 @@ export interface ImportantDate {
 export interface TrackTopic {
   code: string;
   name: string;
-  description: string;
-  keywords: string[];
+  category: string;
 }
 
 export interface TrackPillar {
-  id: "systems" | "humans" | "cybernetics";
+  id: "systems" | "cybernetics" | "humans";
   title: string;
   subtitle: string;
   code: string;
@@ -24,23 +23,11 @@ export interface TrackPillar {
   topics: TrackTopic[];
 }
 
-export interface KeynoteSpeaker {
-  id: string;
-  name: string;
-  title: string;
-  affiliation: string;
-  location: string;
-  talkTitle: string;
-  abstract: string;
-  category: "Systems" | "Human-Machine Systems" | "Cybernetics" | "Industry";
-  imageUrl?: string;
-}
-
 export interface CommitteeMember {
   name: string;
   role: string;
-  affiliation: string;
   country: string;
+  affiliation?: string;
 }
 
 export interface CommitteeGroup {
@@ -51,88 +38,115 @@ export interface CommitteeGroup {
 export interface FaqItem {
   question: string;
   answer: string;
-  category: "Submission" | "Registration" | "Venue" | "Students";
+  category: "Submission" | "Registration" | "Venue" | "Visa";
 }
 
 export const CONFERENCE_INFO = {
   name: "IEEE SMC 2027",
-  fullName: "2027 IEEE International Conference on Systems, Man, and Cybernetics",
+  fullName: "The 2027 IEEE International Conference on Systems, Man, and Cybernetics",
   society: "IEEE Systems, Man, and Cybernetics Society",
-  host: "Ho Chi Minh City University of Technology and Education (HCM-UTE)",
-  hostShort: "HCM-UTE",
-  theme: "Harmonizing Systems, Humans, and Cybernetic Intelligence for a Sustainable Future",
-  dates: "October 10–13, 2027",
+  host: "Ho Chi Minh City University of Technology and Engineering-Vietnam",
+  hostShort: "HCMUTE",
+  theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
+  dates: "October 6–10, 2027",
+  datesShort: "Oct 6–10, 2027",
   location: "Ho Chi Minh City, Vietnam",
-  venue: "HCM-UTE Grand Convention Center, 01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City",
-  address: "01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, Vietnam",
-  submissionPortal: "https://easychair.org/conferences/?conf=ieeesmc2027",
-  submissionDeadlineIso: "2027-05-15T23:59:59+07:00",
-  contactEmail: "secretariat@ieeesmc2027.org",
-  universityEmail: "ptchc@hcmute.edu.vn",
-  hotline: "(+84) 28 3896 8641",
+  venue: "Sheraton Saigon Grand Opera Hotel",
+  address: "No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam",
+  visaUrl: "https://evisa.gov.vn",
+  website: "https://ieeesmc2027.hcmute.edu.vn",
+  contactEmail: "ieeesmc2027@hcmute.edu.vn",
+  hotline: "+84 981 479 507 (Vu Van Phong)",
+  hotlineRaw: "+84981479507",
+  submissionSystem: "PaperCept",
+  submissionStatus: "PaperCept submission link will be coming shortly",
+  submissionPortal: "#cfp",
+  cfpPdfUrl: "/cfp-ieee-smc-2027.pdf",
+  submissionDeadlineIso: "2027-04-08T23:59:59+07:00",
+  submissionNotice:
+    "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
   ieeeXploreNotice:
-    "All accepted and presented papers will be submitted for inclusion into IEEE Xplore subject to meeting IEEE Xplore's scope and quality requirements.",
+    "Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the IEEE Xplore® Digital Library, once it meets the requirements of an IEEE quality review.",
+  description:
+    "The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam, will bring together leading researchers, academics, industry professionals, and innovators from around the world to exchange knowledge and explore emerging advances in systems science and engineering, human–machine systems, and cybernetics. Under the theme “Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures,” the conference will highlight cutting-edge developments in artificial intelligence, human–AI collaboration, intelligent and autonomous systems, robotics, digital twins, cyber-physical systems, trustworthy AI, and sustainable technologies. IEEE SMC 2027 will provide an international forum for sharing innovative research, fostering interdisciplinary collaboration, and developing intelligent solutions to complex technological and societal challenges.",
 };
 
 export const IMPORTANT_DATES: ImportantDate[] = [
   {
     id: "ss-proposals",
-    title: "Special Session & Workshop Proposals",
-    date: "March 15, 2027",
-    dateIso: "2027-03-15T23:59:59Z",
-    description: "Proposals for organized special sessions and technical workshops.",
+    title: "Submission of Proposals for Special Sessions, Tutorials and Workshops",
+    date: "February 15, 2027",
+    dateIso: "2027-02-15T23:59:59Z",
+    description: "Proposals deadline for organized Special Sessions, technical Tutorials, and Workshops.",
     category: "submission",
   },
   {
-    id: "regular-paper",
-    title: "Regular & Special Session Paper Submission",
-    date: "May 15, 2027",
-    dateIso: "2027-05-15T23:59:59Z",
-    description: "Full draft papers (6 pages standard, up to 8 pages with extra page fees).",
+    id: "ss-notification",
+    title: "Special Sessions, Tutorials and Workshops Acceptance Notification",
+    date: "March 04, 2027",
+    dateIso: "2027-03-04T23:59:59Z",
+    description: "Formal notification of accepted Special Sessions, Tutorials, and Workshops proposals.",
+    category: "notification",
+  },
+  {
+    id: "paper-submission",
+    title: "Paper Submission for Workshops, Regular and Special Sessions",
+    date: "April 08, 2027",
+    dateIso: "2027-04-08T23:59:59Z",
+    description: "Full manuscript submission deadline for Workshops, Regular, and Special Sessions via PaperCept.",
     category: "submission",
     highlight: true,
   },
   {
-    id: "notification",
-    title: "Notification of Acceptance",
-    date: "July 15, 2027",
-    dateIso: "2027-07-15T23:59:59Z",
-    description: "Formal review results and reviewer feedback sent to corresponding authors.",
+    id: "paper-acceptance",
+    title: "Notification of Papers Acceptance for Workshops, Regular and Special Sessions",
+    date: "May 30, 2027",
+    dateIso: "2027-05-30T23:59:59Z",
+    description: "Acceptance notifications and peer-review feedback sent to authors.",
     category: "notification",
-  },
-  {
-    id: "camera-ready",
-    title: "Final Camera-Ready Paper & Author Registration",
-    date: "August 15, 2027",
-    dateIso: "2027-08-15T23:59:59Z",
-    description: "IEEE PDF eXpress certified final files and author registration.",
-    category: "registration",
     highlight: true,
   },
   {
     id: "early-bird",
-    title: "Early Bird Registration Deadline",
-    date: "August 30, 2027",
-    dateIso: "2027-08-30T23:59:59Z",
-    description: "Discounted conference registration rates for IEEE members and students.",
+    title: "Deadline for Early Bird Registrations",
+    date: "July 05, 2027",
+    dateIso: "2027-07-05T23:59:59Z",
+    description: "Discounted early bird registration rates deadline for attendees and authors.",
     category: "registration",
   },
   {
-    id: "conference-start",
-    title: "Conference Opening & Workshops",
-    date: "October 10, 2027",
-    dateIso: "2027-10-10T08:30:00+07:00",
-    description: "Workshops, Tutorials, and Welcome Reception at HCM-UTE Grand Hall.",
-    category: "event",
+    id: "camera-ready",
+    title: "Final Paper Camera-Ready Submission of Regular, Special Sessions and Workshops",
+    date: "July 15, 2027",
+    dateIso: "2027-07-15T23:59:59Z",
+    description: "Final camera-ready manuscript submission deadline for proceedings inclusion.",
+    category: "submission",
     highlight: true,
   },
   {
-    id: "conference-end",
-    title: "Technical Sessions & Gala Banquet",
-    date: "October 11–13, 2027",
-    dateIso: "2027-10-13T18:00:00+07:00",
-    description: "Oral presentations, poster tracks, plenary keynotes, and gala dinner.",
+    id: "late-reg-author",
+    title: "Deadline for Late Registration (Author)",
+    date: "August 05, 2027",
+    dateIso: "2027-08-05T23:59:59Z",
+    description: "Strict author registration deadline to ensure paper publication in IEEE SMC 2027 proceedings.",
+    category: "registration",
+  },
+  {
+    id: "late-reg-non-author",
+    title: "Deadline for Late Registration (Non-Author)",
+    date: "October 04, 2027",
+    dateIso: "2027-10-04T23:59:59Z",
+    description: "Registration deadline for non-author participants and attendees.",
+    category: "registration",
+  },
+  {
+    id: "conference-opening",
+    title: "IEEE SMC 2027 Conference in Ho Chi Minh City",
+    date: "October 6–10, 2027",
+    dateIso: "2027-10-06T08:30:00+07:00",
+    description: "Conference sessions, plenary talks, workshops, industrial exhibits, and gala banquet at Sheraton Saigon.",
     category: "event",
+    highlight: true,
   },
 ];
 
@@ -140,299 +154,193 @@ export const TECHNICAL_TRACKS: TrackPillar[] = [
   {
     id: "systems",
     title: "Systems Science & Engineering",
-    subtitle: "Large-scale systems, resilience, smart infrastructure & complexity",
+    subtitle: "Robotics, complex networks, distributed systems, resilient CPS & smart infrastructure",
     code: "SSE",
     description:
-      "Focuses on the formulation, analysis, modeling, simulation, and optimization of complex socio-technical systems, system of systems, cyber-physical infrastructure, and decision automation.",
+      "Focuses on the formulation, analysis, modeling, simulation, and optimization of complex socio-technical systems, cyber-physical infrastructure, autonomous bionic robotics, and decision systems.",
     topics: [
-      {
-        code: "SYS-01",
-        name: "Cyber-Physical Systems & Smart Grids",
-        description: "Decentralized energy management, grid resilience, and real-time physical control.",
-        keywords: ["Smart Microgrids", "Resilience", "CPS Control", "Fault Tolerance"],
-      },
-      {
-        code: "SYS-02",
-        name: "System of Systems (SoS) Engineering",
-        description: "Heterogeneous system orchestration, interoperability architectures, and large-scale synthesis.",
-        keywords: ["SoS Architecture", "Multi-Domain Integration", "Socio-Technical", "Modularity"],
-      },
-      {
-        code: "SYS-03",
-        name: "Intelligent Transportation & Autonomous Logistics",
-        description: "Connected autonomous vehicles, urban traffic flow modeling, and multi-modal fleet coordination.",
-        keywords: ["V2X Networks", "Traffic Automation", "Fleet Optimization", "Urban Mobility"],
-      },
-      {
-        code: "SYS-04",
-        name: "Supply Chain Resilience & Industrial Automation",
-        description: "Dynamic rerouting, inventory cybernetics, and Industry 5.0 cognitive manufacturing.",
-        keywords: ["Supply Chain AI", "Digital Twins", "Predictive Maintenance", "Smart Factories"],
-      },
-      {
-        code: "SYS-05",
-        name: "Complex Networks & Socio-Economic Modeling",
-        description: "Epidemic propagation, contagion dynamics, and systemic financial risk architectures.",
-        keywords: ["Graph Topology", "Cascading Failures", "Network Science", "Socio-Cybernetics"],
-      },
-      {
-        code: "SYS-06",
-        name: "Mission-Critical Defense & Space Systems",
-        description: "Autonomous satellite swarms, fault-tolerant telemetry, and resilient space systems.",
-        keywords: ["CubeSat Clusters", "Fault Isolation", "Orbital Telemetry", "Aerospace Cybernetics"],
-      },
+      { code: "SSE-01", name: "Autonomous Bionic Robotic Aircraft", category: "Robotics & Aerospace" },
+      { code: "SSE-02", name: "Bio-mechatronics and Bio-robotics Systems", category: "Robotics & Biomimicry" },
+      { code: "SSE-03", name: "Blockchain", category: "Distributed Systems" },
+      { code: "SSE-04", name: "Conflict Resolution", category: "Decision & Systems Theory" },
+      { code: "SSE-05", name: "Cyber-Physical Cloud Systems", category: "Cloud & CPS" },
+      { code: "SSE-06", name: "Cyber Humanities", category: "Socio-Technical" },
+      { code: "SSE-07", name: "Cyber Systems and Engineering", category: "Systems Engineering" },
+      { code: "SSE-08", name: "Discrete Event Systems", category: "Control & Automation" },
+      { code: "SSE-09", name: "Distributed Intelligent Systems", category: "Distributed Intelligence" },
+      { code: "SSE-10", name: "Embodied AI Systems", category: "AI & Physical Systems" },
+      { code: "SSE-11", name: "Enterprise Architecture and Engineering", category: "Enterprise Systems" },
+      { code: "SSE-12", name: "Enterprise Information Systems", category: "Enterprise Systems" },
+      { code: "SSE-13", name: "Flexible Electronic Systems", category: "Hardware & Electronics" },
+      { code: "SSE-14", name: "Grey Systems", category: "Uncertainty & Modeling" },
+      { code: "SSE-15", name: "Homeland Security", category: "Security & Safety" },
+      { code: "SSE-16", name: "Intelligent Learning in Control Systems", category: "Learning Control" },
+      { code: "SSE-17", name: "Intelligent Power and Energy Systems", category: "Smart Energy" },
+      { code: "SSE-18", name: "Security Systems", category: "Security & Safety" },
+      { code: "SSE-19", name: "Intelligent Systems to Human-Aware Sustainability", category: "Sustainability" },
+      { code: "SSE-20", name: "Intelligent Transportation Systems", category: "Mobility & Transport" },
+      { code: "SSE-21", name: "Logistics Informatics and Industrial", category: "Industrial Systems" },
+      { code: "SSE-22", name: "Medical Mechatronics", category: "Biomedical Systems" },
+      { code: "SSE-23", name: "Model-Based Systems Engineering", category: "Systems Engineering" },
+      { code: "SSE-24", name: "Robotics and Intelligent Sensing", category: "Robotics & Sensors" },
+      { code: "SSE-25", name: "Service Systems and Organization", category: "Service Science" },
+      { code: "SSE-26", name: "Systems Biology", category: "Biological Systems" },
+      { code: "SSE-27", name: "System of Systems", category: "Complex Systems" },
+    ],
+  },
+  {
+    id: "cybernetics",
+    title: "Cybernetics",
+    subtitle: "Cognitive systems, machine learning, collective intelligence & evolutionary computation",
+    code: "CYB",
+    description:
+      "Drives forward foundational and applied cybernetic methods in cognitive architectures, deep learning, fuzzy sets, granular computing, quantum cybernetics, and social intelligence.",
+    topics: [
+      { code: "CYB-01", name: "Awareness Computing", category: "Cognitive Cybernetics" },
+      { code: "CYB-02", name: "Big Data Computing", category: "Data Science" },
+      { code: "CYB-03", name: "Brain-Inspired Cognitive Systems", category: "Neuro-Cybernetics" },
+      { code: "CYB-04", name: "Cognitive Situation Management", category: "Cognitive Systems" },
+      { code: "CYB-05", name: "Computational Collective Intelligence", category: "Collective Intelligence" },
+      { code: "CYB-06", name: "Computational Cybernetics", category: "Cybernetics Theory" },
+      { code: "CYB-07", name: "AI-Based Smart Manufacturing Systems", category: "Smart Manufacturing" },
+      { code: "CYB-08", name: "Computational Intelligence", category: "CI & Neural Systems" },
+      { code: "CYB-09", name: "Computational Life Science", category: "Life Sciences" },
+      { code: "CYB-10", name: "Computational Psychophysiology", category: "Psychophysiology" },
+      { code: "CYB-11", name: "Cyber-enabled World", category: "Pervasive Cybernetics" },
+      { code: "CYB-12", name: "Cyber-Medical Systems", category: "Medical Cybernetics" },
+      { code: "CYB-13", name: "Cybernetics for Cyber-Physical Systems", category: "CPS Cybernetics" },
+      { code: "CYB-14", name: "Cyber Humanities", category: "Humanities & Cybernetics" },
+      { code: "CYB-15", name: "Cyber Systems and Engineering", category: "Systems Cybernetics" },
+      { code: "CYB-16", name: "Evolving Intelligent Systems", category: "Adaptive Systems" },
+      { code: "CYB-17", name: "Granular Computing", category: "Granular & Fuzzy Sets" },
+      { code: "CYB-18", name: "Information Assurance & Intelligent Multimedia-Mobile Communications", category: "Communications & Security" },
+      { code: "CYB-19", name: "Intelligent Industrial Systems", category: "Industrial Cybernetics" },
+      { code: "CYB-20", name: "Intelligent Internet Systems", category: "Network Cybernetics" },
+      { code: "CYB-21", name: "Intelligent Vehicular Systems & Control", category: "Vehicular Cybernetics" },
+      { code: "CYB-22", name: "Knowledge Acquisition in Intelligent Systems", category: "Knowledge Engineering" },
+      { code: "CYB-23", name: "Machine Learning", category: "Machine Learning" },
+      { code: "CYB-24", name: "Medical Informatics", category: "Health Informatics" },
+      { code: "CYB-25", name: "Social and Economic Security", category: "Socio-Economic Systems" },
+      { code: "CYB-26", name: "Social Computing and Social Intelligence", category: "Social Intelligence" },
+      { code: "CYB-27", name: "Soft Computing", category: "Soft Computing" },
+      { code: "CYB-28", name: "Quantum Cybernetics", category: "Quantum Computing" },
     ],
   },
   {
     id: "humans",
     title: "Human-Machine Systems",
-    subtitle: "Symbiotic interaction, brain-computer interfaces & augmented cognition",
+    subtitle: "Brain-machine interfaces, cooperative design, augmented cognition & interactive systems",
     code: "HMS",
     description:
-      "Investigates the cognitive, physiological, and computational paradigms enabling seamless collaboration, communication, and mutual adaptation between humans and intelligent technological agents.",
-  topics: [
-      {
-        code: "HUM-01",
-        name: "Brain-Computer Interfaces (BCI)",
-        description: "Non-invasive EEG decoding, invasive neural implants, neuroprosthetics, and motor rehabilitation.",
-        keywords: ["EEG Decoding", "Neuroprosthetics", "Neural Decoding", "Adaptive BCI"],
-      },
-      {
-        code: "HUM-02",
-        name: "Cognitive Ergonomics & Mental Workload",
-        description: "Eye-tracking telemetry, biometric stress evaluation, and adaptive situational awareness interfaces.",
-        keywords: ["Eye-Tracking", "Stress Telemetry", "Workload Sensing", "Human Factors"],
-      },
-      {
-        code: "HUM-03",
-        name: "Collaborative Robotics (Cobots)",
-        description: "Impedance control, intention inference, kinesthetic teaching, and industrial safety bounds.",
-        keywords: ["Cobot Safety", "Intention Recognition", "Shared Autonomy", "Physical HRI"],
-      },
-      {
-        code: "HUM-04",
-        name: "Human-in-the-Loop AI & Teaming",
-        description: "Active learning with human supervision, shared autonomy, and bidirectional trust calibration.",
-        keywords: ["Active Learning", "Trust Calibration", "Human-AI Teaming", "Interactive ML"],
-      },
-      {
-        code: "HUM-05",
-        name: "Extended Reality (XR) & Telepresence",
-        description: "Spatial audio, haptic gloves, neural avatars, and low-latency immersive teleoperation.",
-        keywords: ["Haptics", "Spatial Computing", "Telepresence", "Immersive Interfaces"],
-      },
-      {
-        code: "HUM-06",
-        name: "Biomedical Assistive & Rehabilitation Systems",
-        description: "Powered exoskeletons, orthotic biomechanics, gait kinematics, and adaptive therapy robots.",
-        keywords: ["Exoskeletons", "Gait Kinematics", "Rehab Robotics", "Wearable Sensors"],
-      },
-    ],
-  },
-  {
-    id: "cybernetics",
-    title: "Cybernetics & Computational Intelligence",
-    subtitle: "Foundation learning, neural dynamics & trustworthy autonomous agents",
-    code: "CYB",
-    description:
-      "Drives forward fundamental methodologies in adaptive control, deep neural computation, fuzzy cognitive maps, evolutionary multi-objective optimization, and certifiably trustworthy artificial intelligence.",
+      "Investigates the cognitive, physiological, ergonomic, and interactive paradigms enabling mutual adaptation and symbiosis between human operators and machine intelligence.",
     topics: [
-      {
-        code: "CYB-01",
-        name: "Deep Reinforcement Learning & Optimal Control",
-        description: "Safe policy gradients, model-based RL, actor-critic architectures, and non-linear stability guarantees.",
-        keywords: ["Model-Based RL", "Safe RL", "Lyapunov Stability", "Actor-Critic"],
-      },
-      {
-        code: "CYB-02",
-        name: "Multi-Agent Systems & Swarm Cybernetics",
-        description: "Consensus algorithms, decentralized game theory, decentralized auctions, and flocking dynamics.",
-        keywords: ["Consensus Protocols", "Flocking", "Game Theory", "Distributed Control"],
-      },
-      {
-        code: "CYB-03",
-        name: "Fuzzy Logic & Cognitive Knowledge Graphs",
-        description: "Type-2 fuzzy control, neural-symbolic deduction, uncertainty quantification, and knowledge distillation.",
-        keywords: ["Type-2 Fuzzy", "Neuro-Symbolic", "Uncertainty Bounds", "Knowledge Graphs"],
-      },
-      {
-        code: "CYB-04",
-        name: "Evolutionary Computation & Swarm Intelligence",
-        description: "Multi-objective optimization, genetic algorithms, ant colony, and particle swarm systems.",
-        keywords: ["Genetic Algorithms", "Swarm Robotics", "Pareto Frontier", "Metaheuristics"],
-      },
-      {
-        code: "CYB-05",
-        name: "Explainable, Fair & Trustworthy AI (XAI)",
-        description: "Interpretability methods, causal inference, algorithmic bias mitigation, and safety bounds.",
-        keywords: ["XAI", "Causal AI", "Fairness", "Safety Verification"],
-      },
-      {
-        code: "CYB-06",
-        name: "Autonomous Robotics & Bio-Inspired Systems",
-        description: "Locomotion, SLAM, collaborative manipulation, and biomimetic cybernetics.",
-        keywords: ["SLAM", "Bio-Robotics", "Field Robotics", "Autonomous Navigation"],
-      },
+      { code: "HMS-01", name: "Biometrics and Applications", category: "Biometrics" },
+      { code: "HMS-02", name: "Brain-Machine Interface Systems", category: "Neural Interfaces" },
+      { code: "HMS-03", name: "Cognitive Computing", category: "Cognitive Ergonomics" },
+      { code: "HMS-04", name: "Companion Technology", category: "Companion Systems" },
+      { code: "HMS-05", name: "Computer Supported Cooperative Work in Design", category: "CSCW" },
+      { code: "HMS-06", name: "Cyber Humanities", category: "Human Factors" },
+      { code: "HMS-07", name: "Cyber Systems and Engineering", category: "Human-System Engineering" },
+      { code: "HMS-08", name: "Environmental Sensing, Networking and Decision Making", category: "Decision Support" },
+      { code: "HMS-09", name: "Human Centered Transportation Systems", category: "Transportation HMI" },
+      { code: "HMS-10", name: "Humanized Crowd Computing", category: "Crowd Computing" },
+      { code: "HMS-11", name: "Human-Machine Interaction for Connected and Automated Vehicles", category: "Automated Driving HMI" },
+      { code: "HMS-12", name: "Information Systems for Design and Marketing", category: "Design Systems" },
+      { code: "HMS-13", name: "Interactive and Wearable Computing and Devices Shared Control", category: "Wearables & Shared Control" },
+      { code: "HMS-14", name: "Visual Analytics and Communications", category: "Visual Analytics" },
     ],
-  },
-];
-
-export const KEYNOTE_SPEAKERS: KeynoteSpeaker[] = [
-  {
-    id: "speaker-1",
-    name: "Prof. Elena Rostova",
-    title: "Chair of Autonomous Cybernetics",
-    affiliation: "ETH Zürich, Switzerland",
-    location: "Zürich, Switzerland",
-    category: "Cybernetics",
-    talkTitle: "Provable Guarantees for Autonomous Cybernetic Agents in Non-Stationary Environments",
-    abstract:
-      "As autonomous cybernetic systems transition from closed lab benchmarks to unstructured physical domains, standard stationarity assumptions fail. This plenary explores Lyapunov-stable adaptive control paired with uncertainty-aware deep reinforcement learning.",
-  },
-  {
-    id: "speaker-2",
-    name: "Prof. Hiroshi Tanaka",
-    title: "Director of Neural Engineering & BCI Lab",
-    affiliation: "National University of Singapore (NUS)",
-    location: "Singapore",
-    category: "Human-Machine Systems",
-    talkTitle: "Bidirectional Neural Interfaces: Closing the Human-Machine Sensorimotor Loop",
-    abstract:
-      "Recent breakthroughs in ultra-high-density neural probes and low-latency microcontrollers enable real-time bidirectional communication between the human central nervous system and prosthetic mechatronics.",
-  },
-  {
-    id: "speaker-3",
-    name: "Prof. Marcus Vance",
-    title: "Distinguished Fellow in Systems Architecture",
-    affiliation: "Massachusetts Institute of Technology (MIT)",
-    location: "Cambridge, USA",
-    category: "Systems",
-    talkTitle: "Architecting Ultra-Resilient Systems of Systems for Planetary Infrastructure",
-    abstract:
-      "Modern urban energy, logistics, and telecommunication grids operate as tightly coupled multi-layer networks. This talk outlines a novel topological resilience framework for self-healing infrastructure.",
-  },
-  {
-    id: "speaker-4",
-    name: "Dr. Amara Chen",
-    title: "Chief AI Systems Architect",
-    affiliation: "DeepMind / Systems Intelligence Group",
-    location: "London, UK",
-    category: "Industry",
-    talkTitle: "From Large Language Models to Embodied Cybernetic Reasoners",
-    abstract:
-      "We examine how foundational multimodal representations can be grounded into real-time physical control loops, enabling robots and industrial systems to perform zero-shot planning with high physical fidelity.",
   },
 ];
 
 export const COMMITTEE_GROUPS: CommitteeGroup[] = [
   {
-    groupName: "Honorary & General Chairs",
+    groupName: "Honorary Chairs",
     members: [
-      {
-        name: "Assoc. Prof. Dr. Le Hieu Giang",
-        role: "Honorary General Chair",
-        affiliation: "President, HCM-UTE",
-        country: "Vietnam",
-      },
-      {
-        name: "Prof. Rodney Thorne",
-        role: "Honorary General Chair",
-        affiliation: "IEEE SMC Society President",
-        country: "USA",
-      },
-      {
-        name: "Assoc. Prof. Dr. Truong Nguyen Luan Vu",
-        role: "General Co-Chair",
-        affiliation: "Dean, FEEE, HCM-UTE",
-        country: "Vietnam",
-      },
-      {
-        name: "Prof. Wei-Min Liu",
-        role: "General Co-Chair",
-        affiliation: "Nanyang Technological University",
-        country: "Singapore",
-      },
-      {
-        name: "Prof. Claire Montgomery",
-        role: "General Co-Chair",
-        affiliation: "Imperial College London",
-        country: "United Kingdom",
-      },
+      { name: "Hieu-Giang Le", role: "Honorary Chair", country: "Vietnam" },
+      { name: "Saeid Nahavandi", role: "Honorary Chair", country: "Australia" },
     ],
   },
   {
-    groupName: "Technical Program Chairs (TPC)",
+    groupName: "Steering Committee",
     members: [
-      {
-        name: "Prof. Kenji Takahashi",
-        role: "TPC Chair (Cybernetics)",
-        affiliation: "Kyoto University",
-        country: "Japan",
-      },
-      {
-        name: "Prof. Sarah O'Connor",
-        role: "TPC Chair (Human-Machine Systems)",
-        affiliation: "University of Toronto",
-        country: "Canada",
-      },
-      {
-        name: "Prof. Arvind Ramanathan",
-        role: "TPC Chair (Systems Science)",
-        affiliation: "Indian Institute of Science",
-        country: "India",
-      },
-      {
-        name: "Dr. Nguyen Thanh Nam",
-        role: "Local TPC Co-Chair",
-        affiliation: "HCM-UTE",
-        country: "Vietnam",
-      },
+      { name: "Sam Kwong", role: "Steering Committee", country: "China" },
+      { name: "Imre Rudas", role: "Steering Committee", country: "Hungary" },
+      { name: "Adrian Stoica", role: "Steering Committee", country: "USA" },
+      { name: "Ljiljana Trajkovic", role: "Steering Committee", country: "Canada" },
+      { name: "Eddie Tunstel", role: "Steering Committee", country: "USA" },
     ],
   },
   {
-    groupName: "Special Sessions & Workshops",
+    groupName: "General Chairs & Co-Chairs",
     members: [
-      {
-        name: "Dr. Matteo Bianchi",
-        role: "Special Sessions Chair",
-        affiliation: "Politecnico di Milano",
-        country: "Italy",
-      },
-      {
-        name: "Prof. Ling-Fei Zhang",
-        role: "Workshops Chair",
-        affiliation: "Tsinghua University",
-        country: "China",
-      },
-      {
-        name: "Dr. Brenda Morales",
-        role: "Tutorials Chair",
-        affiliation: "Tecnológico de Monterrey",
-        country: "Mexico",
-      },
+      { name: "Dinh-Thanh Chau", role: "General Chair", country: "Vietnam" },
+      { name: "Yo-Ping Huang", role: "General Chair", country: "Taiwan" },
+      { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
+      { name: "Philip Chen", role: "General Co-Chair", country: "China" },
+      { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
     ],
   },
   {
-    groupName: "Publications & Local Organization",
+    groupName: "Program Chairs & Co-Chairs",
     members: [
-      {
-        name: "Prof. David K. Miller",
-        role: "Publication Chair",
-        affiliation: "Georgia Institute of Technology",
-        country: "USA",
-      },
-      {
-        name: "Dr. Tran Vu Hoang",
-        role: "Local Organizing Chair",
-        affiliation: "HCM-UTE",
-        country: "Vietnam",
-      },
-      {
-        name: "Prof. Stefan Lindqvist",
-        role: "Industry Liaison Chair",
-        affiliation: "KTH Royal Institute of Technology",
-        country: "Sweden",
-      },
+      { name: "Van-Phong Vu", role: "Program Chair", country: "Vietnam" },
+      { name: "Shun-Feng Su", role: "Program Chair", country: "Taiwan" },
+      { name: "Li-Wei Ko", role: "Program Co-Chair", country: "Taiwan" },
+      { name: "Van-Chung Nguyen", role: "Program Co-Chair", country: "Vietnam" },
+      { name: "An-Quoc Hoang", role: "Program Co-Chair", country: "Vietnam" },
+    ],
+  },
+  {
+    groupName: "Special Sessions, Tutorials & Workshops",
+    members: [
+      { name: "Naoyuki Kubota", role: "Special Session Chair", country: "Japan" },
+      { name: "Chunsing Lai", role: "Special Session Chair", country: "China" },
+      { name: "My-Ha Le", role: "Special Session Chair", country: "Vietnam" },
+      { name: "Xiaojie Su", role: "Special Session Chair", country: "China" },
+      { name: "Yan Wan", role: "Special Session Chair", country: "USA" },
+      { name: "Mariagrazia Dotoli", role: "Tutorial Chair", country: "Italy" },
+      { name: "Ming Ho", role: "Tutorial Chair", country: "Canada" },
+      { name: "Peng Shi", role: "Tutorial Chair", country: "Australia" },
+      { name: "Huei-Yung Lin", role: "Workshop Chair", country: "Taiwan" },
+      { name: "Chao Shen", role: "Workshop Chair", country: "China" },
+      { name: "Haibin Zhu", role: "Workshop Chair", country: "Canada" },
+    ],
+  },
+  {
+    groupName: "Awards, Publications & Organization",
+    members: [
+      { name: "Van-Phong Vu", role: "Publications Chair", country: "Vietnam" },
+      { name: "Philip Chen", role: "Best Paper Award Chair", country: "China" },
+      { name: "Tom Gedeon", role: "Best Paper Award Chair", country: "Australia" },
+      { name: "Robert Kozma", role: "Best Paper Award Chair", country: "USA" },
+      { name: "Ngoc-Thin Chau", role: "Web Chair", country: "Vietnam" },
+      { name: "Thi-Hien Truong", role: "Financial Chair", country: "Vietnam" },
+      { name: "Jay Wang", role: "Financial Chair", country: "USA" },
+      { name: "Meng-Yun Chung", role: "Publicity Chair", country: "Taiwan" },
+      { name: "Do Thanh Trung", role: "Publicity Chair", country: "Vietnam" },
+      { name: "Dinh-Nhon Truong", role: "Publicity Chair", country: "Vietnam" },
+    ],
+  },
+  {
+    groupName: "Industrial Chairs",
+    members: [
+      { name: "Ngoc-Son Pham", role: "Industrial Exhibition Chair", country: "Vietnam" },
+      { name: "Vi-Do Tran", role: "Industrial Exhibition Chair", country: "Vietnam" },
+      { name: "Duc-Thien Tran", role: "Industrial Exhibition Chair", country: "Vietnam" },
+      { name: "Foun-Yuan Liu", role: "Industrial Coordinator Chair", country: "Taiwan" },
+      { name: "Chien-Hsun Chen", role: "Industrial Coordinator Chair", country: "Taiwan" },
+    ],
+  },
+  {
+    groupName: "Local Organizing Committee",
+    members: [
+      { name: "Ngoc-Thin Chau", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Dang-Nam Nguyen", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Bao-Huy Dinh", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Van-Nguyen Nguyen", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Phuong-Thu-Thuy Phung", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Thi-Thanh-Truc Tran", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Pham-Viet-Anh-Thu Le", role: "Local Organizing Committee", country: "Vietnam" },
     ],
   },
 ];
@@ -440,45 +348,45 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
 export const FAQS: FaqItem[] = [
   {
     category: "Submission",
-    question: "What is the page limit and format for regular paper submissions?",
+    question: "What is the official submission system and format?",
     answer:
-      "Regular papers must be formatted according to the standard IEEE 2-column conference format. The length is strictly up to 6 pages. Up to 2 additional pages (maximum 8 pages total) are allowed subject to an extra page charge upon acceptance.",
+      "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
   },
   {
     category: "Submission",
-    question: "Are submissions double-blind or single-blind?",
+    question: "What are the important deadlines for paper submission?",
     answer:
-      "IEEE SMC 2027 operates a single-blind review process. Author names, affiliations, and acknowledgments should be included in the submitted PDF. Every submission is rigorously evaluated by at least three independent peer reviewers.",
+      "Paper submission for Workshops, Regular, and Special Sessions is April 08, 2027. Notification of paper acceptance is scheduled for May 30, 2027, and camera-ready papers are due July 15, 2027.",
   },
   {
     category: "Submission",
-    question: "Will accepted papers be indexed in IEEE Xplore?",
+    question: "Will accepted papers be published in IEEE Xplore?",
     answer:
-      "Yes. All accepted and presented papers will be submitted to the IEEE Xplore Digital Library and indexed in major databases including Scopus, EI Compendex, and Web of Science.",
-  },
-  {
-    category: "Registration",
-    question: "Does one registration cover multiple accepted papers?",
-    answer:
-      "Each accepted paper must be accompanied by at least one full (non-student) author registration by the camera-ready deadline. One full registration may cover up to two papers authored by the registrant with an additional handling surcharge.",
-  },
-  {
-    category: "Students",
-    question: "Are there travel grants available for student authors?",
-    answer:
-      "Yes. The IEEE SMC Society and HCM-UTE offer competitive Student Travel Grants to support IEEE Student Members presenting their papers in person in Ho Chi Minh City. Application guidelines will open following paper acceptance notifications.",
+      "Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the IEEE Xplore® Digital Library, once it meets the requirements of an IEEE quality review.",
   },
   {
     category: "Venue",
-    question: "How do I reach HCM-UTE from Tan Son Nhat International Airport (SGN)?",
+    question: "Where is the conference held?",
     answer:
-      "HCM-UTE is located at 01 Vo Van Ngan Street, Thu Duc Ward, Ho Chi Minh City, approximately 14 km from Tan Son Nhat International Airport (SGN). You can easily reach the venue by official airport taxi or Grab (approx. 35–45 minutes) or via the newly inaugurated Ho Chi Minh City Metro Line 1 connecting central districts to Thu Duc station directly adjacent to the campus.",
+      "IEEE SMC 2027 will take place at the Sheraton Saigon Grand Opera Hotel, located at No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam. The conference is proudly hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam.",
+  },
+  {
+    category: "Visa",
+    question: "How do international delegates apply for a Vietnam visa?",
+    answer:
+      "International delegates can apply for Vietnam electronic visas (e-Visa) directly through the official Vietnam government visa portal: https://evisa.gov.vn.",
+  },
+  {
+    category: "Registration",
+    question: "What are the registration deadlines?",
+    answer:
+      "Early bird registration closes on July 05, 2027. The author registration deadline is August 05, 2027, and late registration for non-author attendees closes on October 04, 2027.",
   },
 ];
 
 export const CONFERENCE_STATS = [
-  { label: "Technical Pillars", value: "3", sub: "Systems, HMS, Cybernetics" },
-  { label: "Expected Delegates", value: "1,200+", sub: "From 60+ countries" },
-  { label: "Technical Tracks", value: "18+", sub: "Peer-reviewed sessions" },
-  { label: "Host University", value: "HCM-UTE", sub: "Ho Chi Minh City, Vietnam" },
+  { label: "Technical Pillars", value: "3", sub: "SSE • CYB • HMS" },
+  { label: "Topics & Sub-tracks", value: "68+", sub: "Peer-reviewed domains" },
+  { label: "Conference Dates", value: "Oct 6–10", sub: "2027 in Ho Chi Minh City" },
+  { label: "Host Institution", value: "HCMUTE", sub: "HCMC Univ. of Tech. & Engineering" },
 ];
