@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Search, Layers, Cpu, Users, ArrowDown } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { ProgressiveBlur } from "@/components/common/ProgressiveBlur";
 
 export function TracksExplorer() {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
@@ -172,21 +173,15 @@ export function TracksExplorer() {
             No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
           </div>
         ) : (
-          /* Marquee Fade Overflow Container with Completely Smooth, Borderless Top & Bottom Transitions */
-          <div
-            className="relative z-10 overflow-hidden rounded-md"
-            style={{
-              maskImage:
-                "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
-            }}
-          >
-            {/* Top Smooth Fade Overlay (Zero hard border lines) */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 sm:h-28 bg-gradient-to-b from-[#115eff] via-[#115eff]/70 to-transparent z-20" />
+          /* Marquee Fade Blur Overflow Container Powered by MagicUI Progressive Blur */
+          <div className="relative z-10 overflow-hidden rounded-md">
+            {/* MagicUI Progressive Blur (Multi-layer zero-border optical blur gradient) */}
+            <ProgressiveBlur position="top" height="90px" />
+            <ProgressiveBlur position="bottom" height="110px" />
 
-            {/* Bottom Smooth Fade Overlay (Zero hard border lines) */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 sm:h-28 bg-gradient-to-t from-[#115eff] via-[#115eff]/70 to-transparent z-20" />
+            {/* MagicUI Gradient Color Fade Overlays */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 sm:h-28 bg-gradient-to-b from-[#115eff] via-[#115eff]/65 to-transparent z-30" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 sm:h-28 bg-gradient-to-t from-[#115eff] via-[#115eff]/65 to-transparent z-30" />
 
             {/* Pure Scrollable Topic Directory for User to Scroll (No Auto-Play) */}
             <div className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3">
@@ -194,7 +189,6 @@ export function TracksExplorer() {
                 {filteredTopics.map((topic) => renderTopicCard(topic, `topic-${topic.code}`))}
               </div>
             </div>
-
           </div>
         )}
       </div>
