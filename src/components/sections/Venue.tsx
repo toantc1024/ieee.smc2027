@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   MapPin,
-  Plane,
-  Hotel,
-  FileCheck,
   ArrowUpRight,
   ExternalLink,
 } from "lucide-react";
@@ -23,59 +21,79 @@ export function Venue() {
             Destination & Accommodation
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Venue, Travel & Visa Information
+            Conference Venue & City Guide
           </h2>
         </div>
-        <div className="relative z-10 flex items-center gap-2 text-sm font-semibold text-[#115eff] bg-white border border-[#ccd7e2] px-4 py-2 rounded-full shadow-2xs">
-          <MapPin className="w-4 h-4 text-[#115eff]" />
-          <span>Sheraton Saigon • Ho Chi Minh City, Vietnam</span>
+
+        <div className="relative z-10 flex items-center gap-3">
+          <a
+            href={CONFERENCE_INFO.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-[#ccd7e2] font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+          >
+            <MapPin className="w-4 h-4 text-[#115eff]" />
+            <span>Open in Google Maps</span>
+            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+          </a>
         </div>
       </div>
 
-      {/* Main Venue Feature Block */}
-      <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-b border-[#ccd7e2]">
-        <div className="lg:col-span-7">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-50 border border-blue-200/80 text-sm text-[#115eff] font-bold rounded-md mb-3">
-            Official Conference Venue & Accommodation
+      {/* Main Venue Overview: Two Columns with Vertical Thin Divider */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 border-b border-[#ccd7e2]">
+        
+        {/* Left Column: Sheraton Saigon Grand Opera Hotel Narrative */}
+        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 space-y-4">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-[0.26rem]">
+            <span>Official Conference Hotel & Headquarters</span>
           </div>
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            {CONFERENCE_INFO.venue}
+
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Sheraton Saigon Grand Opera Hotel
           </h3>
-          <p className="mt-2 text-base sm:text-lg font-semibold text-[#115eff]">
-            {CONFERENCE_INFO.address}
-          </p>
-          <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            IEEE SMC 2027 will take place at the 5-star <strong>Sheraton Saigon Grand Opera Hotel</strong> on historic Dong Khoi Street in central Ho Chi Minh City. Hosted by <strong>HCMUTE</strong>, the venue features world-class ballrooms, breakout suites for technical tracks, and premier event facilities.
+
+          <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
+            IEEE SMC 2027 will take place at the iconic <strong>Sheraton Saigon Grand Opera Hotel</strong>, located at 88 Dong Khoi Street, District 1, Ho Chi Minh City, Vietnam.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4">
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+            Positioned in the heart of Saigon&apos;s vibrant commercial and cultural epicenter, the venue is steps away from historical landmarks including the Saigon Opera House, Notre Dame Cathedral, and the Central Post Office.
+          </p>
+
+          <div className="pt-2 flex flex-wrap items-center gap-3">
             <a
-              href="https://maps.google.com/?q=Sheraton+Saigon+Grand+Opera+Hotel+88+Dong+Khoi+Ho+Chi+Minh"
+              href="https://www.marriott.com/en-us/hotels/sgnsi-sheraton-saigon-grand-opera-hotel/overview/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-blue-700 text-white text-base font-bold rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-[0.26rem] shadow-xs transition-all"
             >
-              <span>Open in Google Maps</span>
+              <span>Explore Venue Details</span>
               <ArrowUpRight className="w-4 h-4" />
             </a>
+
             <a
               href={CONFERENCE_INFO.visaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-6 py-3.5 bg-white hover:bg-blue-50 border border-[#ccd7e2] text-[#115eff] text-base font-semibold rounded-[0.26rem] transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm rounded-[0.26rem] transition-all"
             >
-              <span>Apply for Vietnam e-Visa</span>
-              <ExternalLink className="w-4 h-4" />
+              <span>Vietnam e-Visa Portal</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
             </a>
           </div>
         </div>
 
-        {/* Venue Quick Highlights Card */}
-        <div className="lg:col-span-5 bg-slate-50 border border-slate-200/80 p-6 sm:p-7 rounded-md">
-          <h4 className="text-base font-bold text-slate-900 mb-3.5 pb-2.5 border-b border-slate-200 flex items-center justify-between">
-            <span>Venue & Host Information</span>
-            <span className="text-xs text-[#115eff] font-bold">Ho Chi Minh City</span>
-          </h4>
+        {/* Right Column: Key Logistics & Host Details */}
+        <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 bg-slate-50/70 border-t lg:border-t-0 lg:border-l border-[#ccd7e2] flex flex-col justify-between">
+          <div>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
+              Key Destination Facts
+            </span>
+            <h4 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-200">
+              Sheraton Saigon Grand Opera Hotel
+            </h4>
+          </div>
+
           <ul className="space-y-3.5 text-sm text-slate-700">
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-[#115eff] mt-1.5 shrink-0" />
@@ -86,7 +104,7 @@ export function Venue() {
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-[#115eff] mt-1.5 shrink-0" />
               <span>
-                <strong>Host Institution:</strong> Ho Chi Minh City University of Technology and Engineering-Vietnam (HCMUTE).
+                <strong>Host Institution:</strong> Ho Chi Minh City University of Technology and Engineering-Vietnam (HCM-UTE).
               </span>
             </li>
             <li className="flex items-start gap-3">
@@ -109,10 +127,16 @@ export function Venue() {
       <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1: Official Vietnam Visa Portal */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
-            <div className="w-12 h-12 bg-blue-50 text-[#115eff] rounded-md flex items-center justify-center mb-4">
-              <FileCheck className="w-6 h-6" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
+              <Image
+                src="/assets/3d/visa-travel-3d.png"
+                alt="Vietnam Visa Applications"
+                width={96}
+                height={96}
+                className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Vietnam Visa Applications
@@ -135,10 +159,16 @@ export function Venue() {
         </div>
 
         {/* Card 2: International Flight Arrival */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
-            <div className="w-12 h-12 bg-blue-50 text-[#115eff] rounded-md flex items-center justify-center mb-4">
-              <Plane className="w-6 h-6" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
+              <Image
+                src="/assets/3d/airport-plane-3d.png"
+                alt="Tan Son Nhat Airport"
+                width={96}
+                height={96}
+                className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Tan Son Nhat Airport (SGN)
@@ -153,10 +183,16 @@ export function Venue() {
         </div>
 
         {/* Card 3: Downtown Location & Transit */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
-            <div className="w-12 h-12 bg-blue-50 text-[#115eff] rounded-md flex items-center justify-center mb-4">
-              <Hotel className="w-6 h-6" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
+              <Image
+                src="/assets/3d/hotel-venue-3d.png"
+                alt="Sheraton Saigon Grand Opera Hotel"
+                width={96}
+                height={96}
+                className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
             <h4 className="text-lg font-bold text-slate-900 tracking-tight">
               Dong Khoi District & Metro Line 1

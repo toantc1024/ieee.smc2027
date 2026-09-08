@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Layers, Cpu, Users } from "lucide-react";
+import { Search, Layers, Cpu, Users, ArrowDown, Play, LayoutGrid } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export function TracksExplorer() {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"marquee" | "grid">("marquee");
 
   const activePillar = TECHNICAL_TRACKS.find((p) => p.id === activePillarId) || TECHNICAL_TRACKS[0];
 
@@ -20,6 +21,9 @@ export function TracksExplorer() {
       topic.category.toLowerCase().includes(query)
     );
   });
+
+  // Automatically switch to grid when user is actively searching
+  const effectiveMode = searchQuery.trim() ? "grid" : viewMode;
 
   const getPillarIcon = (id: string) => {
     switch (id) {
@@ -34,9 +38,44 @@ export function TracksExplorer() {
     }
   };
 
+  // Split topics into 3 columns for Marquee view
+  const col1 = filteredTopics.filter((_, i) => i % 3 === 0);
+  const col2 = filteredTopics.filter((_, i) => i % 3 === 1);
+  const col3 = filteredTopics.filter((_, i) => i % 3 === 2);
+
+  const renderTopicCard = (topic: typeof filteredTopics[0], uniqueKey: string) => (
+    <div
+      key={uniqueKey}
+      className="p-5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-md transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
+    >
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-md">
+            {topic.code}
+          </span>
+          <span className="text-xs px-2 py-0.5 bg-white/15 text-blue-100 rounded font-medium">
+            {topic.category}
+          </span>
+        </div>
+
+        <h4 className="text-base font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
+          {topic.name}
+        </h4>
+      </div>
+
+      <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-blue-200">
+        <span>IEEE SMC 2027 Scope</span>
+        <span className="font-semibold text-white/90">PaperCept</span>
+      </div>
+    </div>
+  );
+
   return (
     <SectionContainer id="tracks" fullWidthBg="bg-[#115eff] text-white" borderColor="border-white/20">
-      
+      {/* Static Dot Pattern Background (No Running Wave) */}
+      <div className="absolute inset-0 bg-dot-dark opacity-35 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 via-transparent to-blue-950/30 pointer-events-none" />
+
       {/* Section Header Strip */}
       <div className="relative overflow-hidden border-b border-white/20 px-4 sm:px-6 py-5 sm:py-6 bg-blue-700/40 flex flex-wrap items-center justify-between gap-4">
         <div className="corner-grid-dark-tr opacity-40" />
@@ -64,14 +103,14 @@ export function TracksExplorer() {
       </div>
 
       {/* 3 Pillars Tabs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-blue-800/40">
+      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-blue-800/40 relative z-10">
         {TECHNICAL_TRACKS.map((pillar) => {
           const isActive = pillar.id === activePillarId;
           return (
             <button
               key={pillar.id}
               onClick={() => setActivePillarId(pillar.id)}
-              className={`px-4 sm:px-6 py-6 sm:py-7 text-left transition-all relative ${
+              className={`px-4 sm:px-6 py-6 sm:py-7 text-left transition-all relative cursor-pointer ${
                 isActive
                   ? "bg-white/20 text-white shadow-inner"
                   : "hover:bg-white/10 text-blue-100"
@@ -112,11 +151,11 @@ export function TracksExplorer() {
         })}
       </div>
 
-      {/* Active Pillar Topic Grid */}
-      <div className="relative overflow-hidden px-4 sm:px-6 py-8 sm:py-10">
+      {/* Active Pillar Topic Directory */}
+      <div className="relative overflow-hidden px-4 sm:px-6 py-8 sm:py-10 z-10">
         <div className="corner-dot-dark-bl opacity-30" />
 
-        <div className="relative z-10 mb-8 p-5 bg-white/10 border border-white/20 rounded-md backdrop-blur-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="relative z-10 mb-6 p-4 sm:p-5 bg-white/10 border border-white/20 rounded-md backdrop-blur-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-blue-200 mb-1">
               Official CFP Scope
@@ -125,9 +164,42 @@ export function TracksExplorer() {
               We particularly encourage submissions that focus on the following topics (but are not limited to):
             </p>
           </div>
-          <span className="text-xs font-bold px-3 py-1.5 bg-white/15 border border-white/25 rounded-md text-white shrink-0">
-            {activePillar.topics.length} Topics in {activePillar.code}
-          </span>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <span className="text-xs font-bold px-3 py-1.5 bg-white/15 border border-white/25 rounded-md text-white">
+              {filteredTopics.length} Topics in {activePillar.code}
+            </span>
+
+            {/* View Mode Toggle: Marquee vs Grid */}
+            <div className="flex items-center bg-white/15 p-0.5 rounded-md border border-white/25">
+              <button
+                type="button"
+                onClick={() => setViewMode("marquee")}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded transition-all cursor-pointer ${
+                  effectiveMode === "marquee"
+                    ? "bg-white text-[#115eff] shadow-xs"
+                    : "text-blue-100 hover:text-white"
+                }`}
+                title="Continuous auto-scrolling marquee with pause on hover"
+              >
+                <Play className="w-3 h-3 fill-current" />
+                <span>Marquee</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded transition-all cursor-pointer ${
+                  effectiveMode === "grid"
+                    ? "bg-white text-[#115eff] shadow-xs"
+                    : "text-blue-100 hover:text-white"
+                }`}
+                title="Interactive scrollable directory grid"
+              >
+                <LayoutGrid className="w-3 h-3" />
+                <span>Browse Grid</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {filteredTopics.length === 0 ? (
@@ -135,33 +207,65 @@ export function TracksExplorer() {
             No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
           </div>
         ) : (
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {filteredTopics.map((topic) => (
+          /* Marquee Overflow Container with Signature Top & Bottom Fade Blur */
+          <div className="relative z-10 overflow-hidden rounded-md">
+            
+            {/* Top Marquee Fade Blur Overlay */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
+
+            {/* Bottom Marquee Fade Blur Overlay */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-24 bg-gradient-to-t from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
+
+            {effectiveMode === "marquee" ? (
+              /* Continuous Auto-Scrolling Vertical Marquee Columns (Pauses on Hover) */
               <div
-                key={topic.code}
-                className="p-5 bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-md transition-all flex flex-col justify-between group shadow-xs hover:shadow-md"
+                className="h-[520px] sm:h-[580px] overflow-hidden py-3"
+                style={{
+                  maskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+                }}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-md">
-                      {topic.code}
-                    </span>
-                    <span className="text-xs px-2 py-0.5 bg-white/15 text-blue-100 rounded font-medium">
-                      {topic.category}
-                    </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 h-full">
+                  {/* Column 1 */}
+                  <div
+                    className="flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
+                    style={{ animationDuration: "36s" }}
+                  >
+                    {col1.concat(col1).map((topic, i) => renderTopicCard(topic, `col1-${topic.code}-${i}`))}
                   </div>
 
-                  <h4 className="text-base font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
-                    {topic.name}
-                  </h4>
-                </div>
+                  {/* Column 2 */}
+                  <div
+                    className="flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
+                    style={{ animationDuration: "42s" }}
+                  >
+                    {col2.concat(col2).map((topic, i) => renderTopicCard(topic, `col2-${topic.code}-${i}`))}
+                  </div>
 
-                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-blue-200">
-                  <span>IEEE SMC 2027 Topic</span>
-                  <span className="font-semibold text-white/90">PaperCept</span>
+                  {/* Column 3 */}
+                  <div
+                    className="hidden lg:flex flex-col gap-4 animate-marquee-vertical hover:[animation-play-state:paused]"
+                    style={{ animationDuration: "38s" }}
+                  >
+                    {col3.concat(col3).map((topic, i) => renderTopicCard(topic, `col3-${topic.code}-${i}`))}
+                  </div>
                 </div>
               </div>
-            ))}
+            ) : (
+              /* Interactive Vertically Scrollable Directory Container */
+              <div
+                className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3"
+                style={{
+                  maskImage: "linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)",
+                }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-2">
+                  {filteredTopics.map((topic) => renderTopicCard(topic, `grid-${topic.code}`))}
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </div>

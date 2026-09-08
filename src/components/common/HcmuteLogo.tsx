@@ -28,7 +28,7 @@ export function HcmuteLogo({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="shrink-0 transition-transform duration-300 group-hover:scale-105"
-      aria-label="HCMUTE & IEEE SMC 2027 Logo Emblem"
+      aria-label="HCM-UTE & IEEE SMC 2027 Logo Emblem"
     >
       <defs>
         <linearGradient id="gearGrad" x1="0%" y1="0%" x2="100%" y2="100%">

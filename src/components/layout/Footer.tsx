@@ -8,39 +8,38 @@ import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#115eff] text-white relative overflow-hidden">
+    <footer className="w-full bg-[#115eff] text-white relative">
       
-      {/* High-Tech Dot Pattern Accents in Footer Corners */}
-      <div className="corner-dot-dark-tr opacity-35" />
-      <div className="corner-dot-dark-bl opacity-30" />
-
-      {/* Decorative HCM-UTE Flower Motif Background */}
-      <div 
-        className="absolute right-4 sm:right-10 md:right-16 bottom-16 sm:bottom-20 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 opacity-15 pointer-events-none select-none z-0"
-        aria-hidden="true"
-      >
-        <img
-          src="/assets/flower-ute-white.png"
-          alt="HCM-UTE Lotus Flower Motif"
-          className="w-full h-full object-contain"
-        />
-      </div>
-
       {/* Main Footer Container with Two Continuous Side Vertical Borders */}
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-        <div className="w-full border-x border-white/20 flex flex-col">
+        <div className="w-full border-x border-white/20 flex flex-col relative overflow-hidden">
           
+          {/* High-Tech Dot Pattern inside the Center Box */}
+          <div className="absolute inset-0 bg-dot-dark opacity-35 pointer-events-none z-0" aria-hidden="true" />
+          <div className="corner-dot-dark-tr opacity-50 z-0 pointer-events-none" aria-hidden="true" />
+          <div className="corner-dot-dark-bl opacity-40 z-0 pointer-events-none" aria-hidden="true" />
+
+          {/* Decorative HCM-UTE Flower Motif in Bottom-Right Corner (Shifted 50% to bottom, subtle watermark opacity) */}
+          <div 
+            className="absolute right-0 bottom-0 translate-y-1/2 w-[450px] h-[450px] sm:w-[620px] sm:h-[620px] md:w-[740px] md:h-[740px] lg:w-[860px] lg:h-[860px] opacity-[0.07] pointer-events-none select-none z-0 flex items-end justify-end"
+            aria-hidden="true"
+          >
+            <img
+              src="/assets/flower-ute-white-tight.png"
+              alt="HCM-UTE Lotus Flower Motif"
+              className="w-full h-full object-contain"
+              style={{ objectPosition: "right bottom" }}
+            />
+          </div>
+
           {/* Top Banner: Host University & CFP Action Bar */}
-          <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-white/20 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 border-b border-white/20 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             <div className="lg:col-span-8">
-              <div className="text-xs font-bold text-white uppercase tracking-wider bg-white/15 px-3 py-1 rounded-[0.26rem] inline-block mb-3 border border-white/25">
-                Official Host Institution • IEEE SMC 2027
-              </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 IEEE SMC 2027 • {CONFERENCE_INFO.dates} • Ho Chi Minh City, Vietnam
               </h3>
               <p className="mt-2 text-sm text-blue-100 max-w-2xl font-normal leading-relaxed">
-                Flagship global conference on systems science, human–machine systems, and cybernetics, hosted by HCMUTE in Ho Chi Minh City.
+                Flagship global conference on systems science, human–machine systems, and cybernetics, hosted by HCM-UTE in Ho Chi Minh City.
               </p>
             </div>
 
@@ -68,7 +67,7 @@ export function Footer() {
           </div>
 
           {/* Main Footer Content Grid */}
-          <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
+          <div className="relative z-10 px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
             
             {/* Column 1: HCMUTE Official Square Logo & Identity + Contact Details */}
             <div className="lg:col-span-5 space-y-4">
@@ -76,14 +75,14 @@ export function Footer() {
                 <div className="bg-white p-2.5 rounded-md inline-block shadow-sm">
                   <img
                     src="/logo/square-logo.png"
-                    alt="HCMUTE Logo"
+                    alt="HCM-UTE Logo"
                     className="h-12 w-auto object-contain"
                   />
                 </div>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-extrabold text-base sm:text-lg leading-tight">
-                      HCMUTE
+                      HCM-UTE
                     </span>
                     <span className="text-blue-200/60">•</span>
                     <span className="text-white font-bold text-sm sm:text-base leading-tight">
@@ -128,7 +127,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-colors"
-                  title="HCMUTE Facebook"
+                  title="HCM-UTE Facebook"
                   aria-label="Facebook"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -140,7 +139,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-colors"
-                  title="HCMUTE YouTube"
+                  title="HCM-UTE YouTube"
                   aria-label="YouTube"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -177,7 +176,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link href="#about" className="hover:text-white transition-colors">
-                        Host: HCMUTE Vietnam
+                        Host: HCM-UTE Vietnam
                       </Link>
                     </li>
                     <li>
@@ -282,16 +281,21 @@ export function Footer() {
 
           </div>
 
-          {/* Bottom Sub-Bar matching HCMUTE copyright */}
-          <div className="border-t border-white/20 bg-blue-950/30 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
-            <p className="text-center sm:text-left">
-              © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Engineering-Vietnam. All rights reserved.
-            </p>
-            <p className="text-blue-200/80">
-              Sheraton Saigon Grand Opera Hotel • {CONFERENCE_INFO.address}
-            </p>
-          </div>
+        </div>
+      </div>
 
+      {/* FULL WIDTH DIVIDER: Continuous line across the entire screen */}
+      <div className="w-full border-t border-white/20" />
+
+      {/* Bottom Sub-Bar matching HCM-UTE copyright */}
+      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+        <div className="w-full border-x border-white/20 px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200">
+          <p className="text-center sm:text-left">
+            © 2027 IEEE SMC Society & Ho Chi Minh City University of Technology and Engineering-Vietnam. All rights reserved.
+          </p>
+          <p className="text-blue-200/80">
+            Sheraton Saigon Grand Opera Hotel • {CONFERENCE_INFO.address}
+          </p>
         </div>
       </div>
 

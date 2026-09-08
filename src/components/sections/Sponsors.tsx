@@ -22,7 +22,7 @@ const SPONSORS: SponsorItem[] = [
   },
   {
     name: "Ho Chi Minh City University of Technology and Engineering-Vietnam",
-    shortName: "HCMUTE",
+    shortName: "HCM-UTE",
     type: "Host Institution & Co-Organizer",
     logoType: "hcmute",
   },

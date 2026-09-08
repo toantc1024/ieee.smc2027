@@ -75,7 +75,7 @@ export function Header() {
                   rel="noopener noreferrer"
                   className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors font-medium text-blue-100"
                 >
-                  HCMUTE SMC 2027
+                  HCM-UTE SMC 2027
                 </a>
                 <span className="text-white/30">•</span>
                 <a

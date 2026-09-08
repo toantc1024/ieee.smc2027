@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck } from "lucide-react";
 import { CONFERENCE_STATS } from "@/data/conference";
 import {
   IeeeXploreIcon,
@@ -46,13 +45,12 @@ export function ConferenceHighlights() {
       <div className="w-full border-t border-[#ccd7e2]" />
 
       {/* Bottom: Official Indexing & Academic Inclusion with Bottom-Left Corner Grid Accent */}
-      <div className="relative overflow-hidden px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60">
+      <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-7 bg-white">
         <div className="corner-grid-bl opacity-60" />
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           
-          <div className="space-y-1.5 max-w-2xl">
+          <div className="space-y-1 max-w-2xl">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4.5 h-4.5 text-[#115eff]" />
               <span className="text-sm font-bold text-slate-900">
                 Official Publication & Global Indexing
               </span>

@@ -274,3 +274,104 @@ button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11p
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Active 1px White Line Wave Animations (Cybernetic Signal Flow) */
+@keyframes waveSlow {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-25%, 15px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes waveReverse {
+  0% {
+    transform: translate3d(-25%, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+  100% {
+    transform: translate3d(-25%, 0, 0);
+  }
+}
+
+@keyframes waveFast {
+  0% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+  50% {
+    transform: translate3d(-18%, -10px, 0) scaleY(1.15);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+}
+
+@keyframes waveDeep {
+  0% {
+    transform: translate3d(-15%, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 20px, 0);
+  }
+  100% {
+    transform: translate3d(-15%, 0, 0);
+  }
+}
+
+.animate-wave-slow {
+  animation: waveSlow 24s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-wave-reverse {
+  animation: waveReverse 28s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-wave-fast {
+  animation: waveFast 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-wave-deep {
+  animation: waveDeep 32s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Custom scrollbar for Vertical Tracks Topic Directory */
+.tracks-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.tracks-scroll-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+.tracks-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 4px;
+}
+.tracks-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Marquee Vertical Animation */
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-50% - 0.5rem));
+  }
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--marquee-duration, 35s) linear infinite;
+  will-change: transform;
+}
+

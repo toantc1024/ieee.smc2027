@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Official website for The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), October 6–10, 2027, hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.",
   keywords: [
     "IEEE SMC 2027",
-    "HCMUTE",
+    "HCM-UTE",
     "Ho Chi Minh City University of Technology and Engineering",
     "Systems Man and Cybernetics",
     "Systems Science and Engineering",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "Vietnam Conference",
     "IEEE Xplore",
   ],
-  authors: [{ name: "IEEE SMC Society & HCMUTE" }],
+  authors: [{ name: "IEEE SMC Society & HCM-UTE" }],
   openGraph: {
     title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:

@@ -82,7 +82,7 @@ const HERO_SLIDES: HeroSlide[] = [
     badge: "Official Conference Venue",
     title: "Sheraton Saigon Grand Opera Hotel",
     subtitle: "No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam",
-    highlight: "Premier 5-star venue on historic Dong Khoi Street in central Ho Chi Minh City, hosted by HCMUTE.",
+    highlight: "Premier 5-star venue on historic Dong Khoi Street in central Ho Chi Minh City, hosted by HCM-UTE.",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
       label: "Venue & Travel Guide",
@@ -165,7 +165,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-slate-950 text-white select-none h-[calc(100svh-64px)] max-h-[calc(100svh-64px)] min-h-[520px] lg:h-[calc(100svh-106px)] lg:max-h-[calc(100svh-106px)] lg:min-h-[560px] flex flex-col justify-between"
+      className="relative w-full overflow-hidden bg-slate-950 text-white select-none h-[calc(100svh-64px)] max-h-[calc(100svh-64px)] min-h-[520px] lg:h-[calc(100svh-106px)] lg:max-h-[calc(100svh-106px)] lg:min-h-[560px] flex flex-col justify-between border-b border-white/20"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -203,7 +203,7 @@ export function Hero() {
               </span>
               <span className="text-white/40">•</span>
               <span className="text-white font-semibold">
-                Hosted by HCMUTE • Ho Chi Minh City, Vietnam
+                Hosted by HCM-UTE • Ho Chi Minh City, Vietnam
               </span>
             </div>
 

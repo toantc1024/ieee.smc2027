@@ -6,7 +6,6 @@ import { About } from "@/components/sections/About";
 import { CallForPapers } from "@/components/sections/CallForPapers";
 import { TracksExplorer } from "@/components/sections/TracksExplorer";
 import { ImportantDates } from "@/components/sections/ImportantDates";
-import { Keynotes } from "@/components/sections/Keynotes";
 import { Committee } from "@/components/sections/Committee";
 import { Venue } from "@/components/sections/Venue";
 import { FAQ } from "@/components/sections/FAQ";
@@ -24,7 +23,6 @@ export default function Home() {
       <CallForPapers />
       <TracksExplorer />
       <ImportantDates />
-      <Keynotes />
       <Committee />
       <Venue />
       <FAQ />

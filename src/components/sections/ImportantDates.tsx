@@ -133,7 +133,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:IEEE SMC 2027 Conference in Ho Chi Minh City
-DESCRIPTION:The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), hosted by HCMUTE.
+DESCRIPTION:The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), hosted by HCM-UTE.
 LOCATION:Sheraton Saigon Grand Opera Hotel, No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam
 DTSTART:20271006T080000Z
 DTEND:20271010T180000Z

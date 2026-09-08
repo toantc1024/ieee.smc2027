@@ -26,13 +26,15 @@ export function SectionContainer({
   return (
     <section
       id={id}
-      className={`w-full ${fullWidthBg} relative`}
+      className={`w-full ${fullWidthBg} relative ${
+        borderBottom ? `border-b ${borderColor}` : ""
+      }`}
     >
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
         <div
           className={`w-full relative ${
             hasSideBorders ? `border-x ${borderColor}` : ""
-          } ${borderBottom ? `border-b ${borderColor}` : ""} ${className}`}
+          } ${className}`}
         >
           {children}
         </div>

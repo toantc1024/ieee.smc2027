@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { ArrowUpRight, ShieldCheck, MapPin } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
 
@@ -16,7 +17,7 @@ export function About() {
             About the Conference & Host Institution
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            About IEEE SMC 2027 & HCMUTE
+            About IEEE SMC 2027 & HCM-UTE
           </h2>
         </div>
         <div className="relative z-10 flex items-center gap-2 text-sm font-semibold text-[#115eff] bg-white border border-[#ccd7e2] px-4 py-2 rounded-full shadow-2xs">
@@ -30,27 +31,43 @@ export function About() {
         {/* Left Column: Narrative with 25% larger text */}
         <div className="lg:col-span-7 space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
           <p>
-            <strong>IEEE SMC 2027</strong> is the flagship global conference on systems science and engineering, human–machine systems, and cybernetics, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam (HCMUTE)</strong> on <strong>October 6–10, 2027</strong>.
+            <strong>IEEE SMC 2027</strong> is the flagship global conference on systems science and engineering, human–machine systems, and cybernetics, hosted by <strong>Ho Chi Minh City University of Technology and Engineering-Vietnam (HCM-UTE)</strong> on <strong>October 6–10, 2027</strong>.
           </p>
           <p>
             Under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>, the conference convenes international researchers and innovators across AI, human–AI collaboration, autonomous systems, robotics, digital twins, cyber-physical systems, and trustworthy AI.
           </p>
 
           <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-5 bg-slate-50 border border-slate-200/80 rounded-md flex items-start gap-3.5">
-              <ShieldCheck className="w-6 h-6 text-[#115eff] shrink-0 mt-0.5" />
+            <div className="p-5 bg-white border border-slate-200 rounded-md shadow-2xs flex items-start gap-4">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center">
+                <Image
+                  src="/assets/3d/verified-badge-3d.png"
+                  alt="IEEE Xplore Review"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-contain drop-shadow-xs"
+                />
+              </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">IEEE Xplore® Quality Review</h4>
+                <h4 className="text-base font-bold text-slate-900">IEEE Xplore® Quality Review</h4>
                 <p className="text-sm text-slate-600 mt-1">
                   Accepted and presented papers will be eligible for inclusion in IEEE Xplore® and indexed in Scopus, EI Compendex & Web of Science.
                 </p>
               </div>
             </div>
 
-            <div className="p-5 bg-slate-50 border border-slate-200/80 rounded-md flex items-start gap-3.5">
-              <MapPin className="w-6 h-6 text-[#115eff] shrink-0 mt-0.5" />
+            <div className="p-5 bg-white border border-slate-200 rounded-md shadow-2xs flex items-start gap-4">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center">
+                <Image
+                  src="/assets/3d/hotel-venue-3d.png"
+                  alt="Sheraton Saigon Venue"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-contain drop-shadow-xs"
+                />
+              </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Sheraton Saigon Venue</h4>
+                <h4 className="text-base font-bold text-slate-900">Sheraton Saigon Venue</h4>
                 <p className="text-sm text-slate-600 mt-1">
                   Held at the prestigious Sheraton Saigon Grand Opera Hotel in the historic Dong Khoi district of Ho Chi Minh City.
                 </p>
