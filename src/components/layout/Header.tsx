@@ -9,7 +9,6 @@ import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 const NAV_LINKS = [
   { name: "About", href: "#about" },
   { name: "Tracks", href: "#tracks" },
-  { name: "Call for Papers", href: "#cfp" },
   { name: "Dates", href: "#dates" },
   { name: "Committee", href: "#committee" },
   { name: "Venue", href: "#venue" },
@@ -19,7 +18,7 @@ const NAV_LINKS = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState<string>("Call for Papers");
+  const [activeNav, setActiveNav] = useState<string>("About");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -145,8 +144,8 @@ export function Header() {
                         onClick={() => setActiveNav(link.name)}
                         className={`inline-flex items-center px-3.5 xl:px-4 py-2 text-sm xl:text-[15px] font-semibold rounded-[0.26rem] transition-all duration-150 select-none ${
                           isActive
-                            ? "bg-[#115eff] text-white shadow-xs"
-                            : "text-slate-800 hover:bg-[#115eff] hover:text-white"
+                            ? "bg-slate-100 text-black font-bold shadow-2xs"
+                            : "text-slate-700 hover:bg-slate-100 hover:text-black"
                         }`}
                       >
                         {link.name}
@@ -199,8 +198,8 @@ export function Header() {
                   }}
                   className={`text-sm font-medium py-2.5 px-3 rounded-[0.26rem] transition-colors flex items-center justify-between ${
                     activeNav === link.name
-                      ? "text-[#115eff] font-bold bg-blue-50"
-                      : "text-slate-800 hover:bg-slate-50 hover:text-[#115eff]"
+                      ? "text-black font-bold bg-slate-100"
+                      : "text-slate-700 hover:bg-slate-100 hover:text-black"
                   }`}
                 >
                   <span>{link.name}</span>
