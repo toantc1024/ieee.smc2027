@@ -71,11 +71,6 @@ export function SubmissionCountdown() {
           
           {/* Left: Deadline Info */}
           <div className="space-y-2 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#115eff]/10 border border-[#115eff]/20 rounded-full text-xs font-bold text-[#115eff]">
-              <span className="w-2 h-2 bg-[#115eff] rounded-full" />
-              <span>Paper Submission Milestone • Workshops, Regular & Special Sessions</span>
-            </div>
-            
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Paper Submission Deadline: April 08, 2027
             </h2>
