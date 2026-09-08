@@ -172,21 +172,21 @@ export function TracksExplorer() {
             No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
           </div>
         ) : (
-          /* Marquee Fade Blur Overflow Container with Symmetrical Top & Bottom Mask */
+          /* Marquee Fade Overflow Container with Completely Smooth, Borderless Top & Bottom Transitions */
           <div
             className="relative z-10 overflow-hidden rounded-md"
             style={{
               maskImage:
-                "linear-gradient(to bottom, transparent 0%, black 44px, black calc(100% - 64px), transparent 100%)",
+                "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
               WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, black 44px, black calc(100% - 64px), transparent 100%)",
+                "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
             }}
           >
-            {/* Top Marquee Fade Blur Overlay */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] via-[#115eff]/85 to-transparent backdrop-blur-[2px] z-20" />
+            {/* Top Smooth Fade Overlay (Zero hard border lines) */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 sm:h-28 bg-gradient-to-b from-[#115eff] via-[#115eff]/70 to-transparent z-20" />
 
-            {/* Bottom Marquee Fade Blur Overlay */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#115eff] via-[#115eff]/90 via-40% to-transparent backdrop-blur-[2px] z-20" />
+            {/* Bottom Smooth Fade Overlay (Zero hard border lines) */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 sm:h-28 bg-gradient-to-t from-[#115eff] via-[#115eff]/70 to-transparent z-20" />
 
             {/* Pure Scrollable Topic Directory for User to Scroll (No Auto-Play) */}
             <div className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3">
