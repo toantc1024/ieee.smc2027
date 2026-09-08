@@ -60,22 +60,12 @@ export const metadata: Metadata = {
     siteName: "IEEE SMC 2027 Conference",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "IEEE SMC 2027 - Ho Chi Minh City, Vietnam - October 6-10, 2027",
-        type: "image/jpeg",
-      },
-    ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:
       "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-AI Symbiosis. Paper Submission Deadline: April 08, 2027.",
-    images: ["/og-image.jpg"],
     creator: "@IEEESMC",
   },
   icons: {
@@ -119,7 +109,6 @@ const jsonLdEvent = {
       addressCountry: "VN",
     },
   },
-  image: ["https://ieee-smc2027.vercel.app/og-image.jpg"],
   description:
     "The flagship conference of the IEEE Systems, Man, and Cybernetics Society (SMC), hosted by Ho Chi Minh City University of Technology and Engineering (HCM-UTE) in Ho Chi Minh City, Vietnam. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.",
   organizer: {
