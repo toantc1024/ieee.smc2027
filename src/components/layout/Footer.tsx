@@ -19,16 +19,15 @@ export function Footer() {
           <div className="corner-dot-dark-tr opacity-50 z-0 pointer-events-none" aria-hidden="true" />
           <div className="corner-dot-dark-bl opacity-40 z-0 pointer-events-none" aria-hidden="true" />
 
-          {/* Decorative HCM-UTE Flower Motif in Bottom-Right Corner (Shifted 50% to bottom, subtle watermark opacity) */}
+          {/* Decorative HCM-UTE Flower Motif in Bottom-Right Corner (Shifted -50% right & -50% bottom, 25% smaller, subtle watermark opacity) */}
           <div 
-            className="absolute right-0 bottom-0 translate-y-1/2 w-[450px] h-[450px] sm:w-[620px] sm:h-[620px] md:w-[740px] md:h-[740px] lg:w-[860px] lg:h-[860px] opacity-[0.07] pointer-events-none select-none z-0 flex items-end justify-end"
+            className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 w-[340px] h-[340px] sm:w-[465px] sm:h-[465px] md:w-[555px] md:h-[555px] lg:w-[645px] lg:h-[645px] opacity-[0.07] pointer-events-none select-none z-0 flex items-center justify-center"
             aria-hidden="true"
           >
             <img
               src="/assets/flower-ute-white-tight.png"
               alt="HCM-UTE Lotus Flower Motif"
               className="w-full h-full object-contain"
-              style={{ objectPosition: "right bottom" }}
             />
           </div>
 
