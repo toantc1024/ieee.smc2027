@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Layers, Cpu, Users, ArrowDown } from "lucide-react";
+import { Search, Layers, Cpu, Users } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { ProgressiveBlur } from "@/components/common/ProgressiveBlur";
@@ -144,29 +144,8 @@ export function TracksExplorer() {
       </div>
 
       {/* Active Pillar Topic Directory */}
-      <div className="relative overflow-hidden px-4 sm:px-6 py-8 sm:py-10 z-10">
+      <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-8 z-10">
         <div className="corner-dot-dark-bl opacity-30" />
-
-        <div className="relative z-10 mb-6 p-4 sm:p-5 bg-white/10 border border-white/20 rounded-md backdrop-blur-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-blue-200 mb-1">
-              Official CFP Scope
-            </div>
-            <p className="text-sm sm:text-base text-blue-50 leading-relaxed">
-              We particularly encourage submissions that focus on the following topics (but are not limited to):
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold px-3 py-1.5 bg-white/15 border border-white/25 rounded-md text-white">
-              {filteredTopics.length} Topics in {activePillar.code}
-            </span>
-            <span className="text-xs font-semibold px-2.5 py-1.5 bg-white/10 border border-white/20 rounded-md text-blue-200 flex items-center gap-1.5">
-              <ArrowDown className="w-3 h-3 text-blue-300 animate-bounce" />
-              <span>Scroll to Explore</span>
-            </span>
-          </div>
-        </div>
 
         {filteredTopics.length === 0 ? (
           <div className="relative z-10 py-12 text-center text-base text-blue-200">

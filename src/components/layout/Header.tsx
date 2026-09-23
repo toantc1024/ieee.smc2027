@@ -144,7 +144,7 @@ export function Header() {
                         onClick={() => setActiveNav(link.name)}
                         className={`inline-flex items-center px-3.5 xl:px-4 py-2 text-sm xl:text-[15px] font-semibold rounded-[0.26rem] transition-all duration-150 select-none ${
                           isActive
-                            ? "bg-slate-100 text-black font-bold shadow-2xs"
+                            ? "bg-[#115eff] text-white font-bold shadow-xs"
                             : "text-slate-700 hover:bg-slate-100 hover:text-black"
                         }`}
                       >
@@ -198,12 +198,12 @@ export function Header() {
                   }}
                   className={`text-sm font-medium py-2.5 px-3 rounded-[0.26rem] transition-colors flex items-center justify-between ${
                     activeNav === link.name
-                      ? "text-black font-bold bg-slate-100"
+                      ? "bg-[#115eff] text-white font-bold shadow-xs"
                       : "text-slate-700 hover:bg-slate-100 hover:text-black"
                   }`}
                 >
                   <span>{link.name}</span>
-                  <span className="text-[#115eff] text-xs">→</span>
+                  <span className={`${activeNav === link.name ? "text-white" : "text-[#115eff]"} text-xs`}>→</span>
                 </Link>
               ))}
 

@@ -267,7 +267,11 @@ export function CallForPapers() {
             <button
               type="button"
               onClick={() => setShowPdfViewer(!showPdfViewer)}
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-5 py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-[#ccd7e2] font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs cursor-pointer"
+              className={`inline-flex items-center justify-center gap-2 min-h-[48px] px-5 py-3 font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs cursor-pointer ${
+                showPdfViewer
+                  ? "bg-[#115eff] hover:bg-[#0a4de6] text-white border border-[#115eff]"
+                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-[#ccd7e2]"
+              }`}
             >
               <span>{showPdfViewer ? "Hide PDF Preview" : "Preview PDF (Scrollable)"}</span>
             </button>

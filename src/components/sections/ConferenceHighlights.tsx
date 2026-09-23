@@ -14,26 +14,23 @@ export function ConferenceHighlights() {
   return (
     <SectionContainer id="highlights" fullWidthBg="bg-white" borderBottom={true}>
       
-      {/* Top: 4 Key Conference Statistics with Full Height Thin Dividers */}
-      <div className="relative overflow-hidden">
-        <div className="corner-dot-tr opacity-70" />
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4">
+      {/* Top: 4 Key Conference Statistics Cards */}
+      <div className="px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {CONFERENCE_STATS.map((stat, i) => (
             <div
               key={i}
-              className={`flex flex-col justify-center px-4 sm:px-6 py-6 sm:py-7 transition-colors hover:bg-slate-50/50 ${
-                i % 2 !== 0 ? "border-l border-[#ccd7e2]" : ""
-              } ${i >= 2 ? "border-t border-[#ccd7e2] lg:border-t-0" : ""} ${
-                i === 2 ? "lg:border-l lg:border-[#ccd7e2]" : ""
-              }`}
+              className="p-5 sm:p-6 bg-slate-50/80 hover:bg-white border border-[#ccd7e2] hover:border-[#115eff] rounded-md shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between group"
             >
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#115eff] tracking-tight">
-                {stat.value}
-              </span>
-              <span className="text-sm sm:text-base font-bold text-slate-900 mt-1.5 leading-snug">
-                {stat.label}
-              </span>
-              <span className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+              <div>
+                <span className="text-3xl sm:text-4xl font-black text-[#115eff] tracking-tight block">
+                  {stat.value}
+                </span>
+                <span className="text-base sm:text-lg font-bold text-slate-900 mt-2 block leading-snug group-hover:text-[#115eff] transition-colors">
+                  {stat.label}
+                </span>
+              </div>
+              <span className="text-xs sm:text-sm text-slate-500 mt-2.5 block leading-relaxed font-medium">
                 {stat.sub}
               </span>
             </div>
@@ -50,14 +47,9 @@ export function ConferenceHighlights() {
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           
           <div className="space-y-1 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-slate-900">
-                Official Publication & Global Indexing
-              </span>
-              <span className="text-xs font-bold text-[#115eff] bg-blue-100/60 px-2 py-0.5 rounded-[0.26rem]">
-                Peer-Reviewed
-              </span>
-            </div>
+            <h3 className="text-sm font-bold text-slate-900">
+              Publication & Global Indexing
+            </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Accepted and presented papers will be published in conference proceedings, eligible for inclusion in <strong>IEEE Xplore®</strong> upon IEEE quality review, and indexed in <strong>Scopus</strong>, <strong>EI Compendex</strong>, and <strong>Web of Science</strong>.
             </p>
