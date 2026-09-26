@@ -105,6 +105,7 @@ export default async function Home() {
         <NewsList />
         <ImportantDates />
         <ConferenceVideo />
+        <Venue />
         <ContactCards />
       </div>
     );

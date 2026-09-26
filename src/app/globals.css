@@ -260,9 +260,9 @@ h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emera
 /* Reduced button radius: exactly 25% smaller (0.26rem / ~4px) */
 button:not([class*="rounded-full"]),
 a.inline-flex:not([class*="rounded-full"])[class*="px-"][class*="py-"],
-input,
-select,
-textarea {
+input:not([class*="rounded-full"]),
+select:not([class*="rounded-full"]),
+textarea:not([class*="rounded-full"]) {
   border-radius: var(--radius-btn) !important;
 }
 
@@ -276,7 +276,7 @@ textarea {
 
 @media (min-width: 768px) {
   .hero-carousel-height {
-    aspect-ratio: 2.35 / 1;
+    aspect-ratio: 2.4 / 1;
     min-height: 520px;
     max-height: calc(100vh - 106px);
   }

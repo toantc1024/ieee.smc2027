@@ -263,7 +263,7 @@ export function HeroCarousel({
                   slide.mobileImage ? "hidden md:block" : ""
                 )}
                 priority={index === 0}
-                quality={90}
+                quality={75}
                 sizes="100vw"
               />
               {slide.mobileImage && (
@@ -273,7 +273,7 @@ export function HeroCarousel({
                   fill
                   className="object-cover object-center block md:hidden"
                   priority={index === 0}
-                  quality={90}
+                  quality={75}
                   sizes="100vw"
                 />
               )}

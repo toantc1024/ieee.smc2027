@@ -23,7 +23,7 @@ export interface NewsItem {
   day: string;
   month: string;
   year: string;
-  category: "Partnership" | "Program" | "Deadline" | "Keynote" | "Announcement";
+  category: "Partnership" | "Program" | "Deadline" | "Keynote" | "Announcement" | string;
   summary: string;
   content: string;
   image?: string;
@@ -33,116 +33,116 @@ export interface NewsItem {
 
 export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   {
-    id: "news-quanser",
-    title: "IEEE SMC 2026 is pleased to welcome Quanser as a Bronze Partner of this year's conference",
-    date: "09/10/2026",
-    day: "10",
-    month: "09",
-    year: "2026",
-    category: "Partnership",
-    summary: "IEEE SMC 2026 is pleased to welcome Quanser as a Bronze Partner of this year’s conference.",
-    content: "The IEEE SMC Organizing Committee is proud to announce Quanser, a global leader in innovative platforms for control, mechatronics, and robotics education, as an official Bronze Partner. Quanser will showcase cutting-edge hardware-in-the-loop and robotics education systems at the conference venue.",
-    image: "/news/giai-nha-robot.jpeg",
-    viewCount: 1420,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8670507.html",
-  },
-  {
-    id: "news-shimadzu",
-    title: "Shimadzu Corporation Joins IEEE SMC 2026 as Bronze Partner",
-    date: "09/07/2026",
-    day: "07",
-    month: "09",
-    year: "2026",
-    category: "Partnership",
-    summary: "IEEE SMC 2026 is pleased to welcome Shimadzu Corporation as a Bronze Partner of this year’s conference.",
-    content: "Shimadzu Corporation, renowned globally for analytical instruments and diagnostic medical equipment, joins IEEE SMC as a Bronze Partner. Their technical contributions in bio-sensing and analytical cyber-systems will be featured in special industrial demonstration sessions.",
-    image: "/news/vina-ute.png",
-    viewCount: 980,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8653404.html",
-  },
-  {
-    id: "news-schedule",
-    title: "IEEE SMC 2026 Schedule‑at‑a‑Glance Now Available Online",
-    date: "09/03/2026",
-    day: "03",
-    month: "09",
-    year: "2026",
-    category: "Program",
-    summary: "The IEEE SMC 2026 Organizing Committee is pleased to share that the official Schedule‑at‑a‑Glance has been published on the conference website.",
-    content: "This condensed four‑day overview enables registered participants to preview tutorials, workshops, keynotes, panel discussions, parallel oral sessions, virtual presentations and social functions to help prepare for the in‑person conference taking place 4 – 7 October.",
-    image: "/news/4.0-tech.jpg",
-    viewCount: 2650,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8625546.html",
-  },
-  {
-    id: "news-squirrel-ai",
-    title: "Squirrel AI Learning Joins IEEE SMC 2026 as Silver Partner",
-    date: "08/21/2026",
-    day: "21",
-    month: "08",
-    year: "2026",
-    category: "Partnership",
-    summary: "IEEE SMC 2026 is pleased to welcome Squirrel AI Learning as a Silver Partner of this year’s conference.",
-    content: "Squirrel AI Learning, an international pioneer in AI-powered adaptive education systems, has entered a Silver Partnership with IEEE SMC. Delegates will have the opportunity to interact with their adaptive learning algorithms and explore human-AI education paradigms.",
-    image: "/news/Hinh khoi nghiep 11.jpg",
-    viewCount: 1180,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8548748.html",
-  },
-  {
-    id: "news-mind-children",
-    title: "Mind Children Inc. Joins IEEE SMC 2026 as Bronze Partner",
-    date: "08/11/2026",
-    day: "11",
-    month: "08",
-    year: "2026",
-    category: "Partnership",
-    summary: "IEEE SMC 2026 welcomes Bronze Partner Mind Children Inc., which will showcase its multilingual social robot Codey for attendees to experience human-robot interaction in Bellevue.",
-    content: "IEEE SMC welcomes Bronze Partner Mind Children Inc., which will showcase its multilingual companion robot Codey for attendees to experience human-robot interaction, affective computing, and social assistive robotics directly in the exhibition hall.",
-    image: "/news/top-50.jpg",
-    viewCount: 890,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8473083.html",
-  },
-  {
-    id: "news-deadline-ext-aug",
-    title: "Final Deadline Extension: Paper Submission and Early-Bird Registration Now Due August 9, 2026",
-    date: "08/03/2026",
-    day: "03",
-    month: "08",
-    year: "2026",
-    category: "Deadline",
-    summary: "In response to continued requests from authors and participants, the IEEE SMC deadline has been extended to August 9, 2026.",
-    content: "In response to continued requests from authors and research groups worldwide, the final deadline extension for paper submission and early-bird registration is now due August 9, 2026. Authors are encouraged to finalize their manuscript submissions promptly.",
-    image: "/news/aun.jpg",
-    viewCount: 4120,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8361825.html",
-  },
-  {
-    id: "news-deadline-ext-jul",
-    title: "Final Paper Submission and Early Bird Registration Deadline Extended",
-    date: "07/26/2026",
-    day: "26",
-    month: "07",
-    year: "2026",
-    category: "Deadline",
-    summary: "In response to numerous requests, the final paper submission and early bird registration deadline has been extended.",
-    content: "In response to numerous requests from international authors, academic institutions, and research labs, the organizing committee has extended the final paper submission and early bird registration deadlines to give additional preparation time.",
-    image: "/news/hydro.jpg",
-    viewCount: 2310,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8279400.html",
-  },
-  {
-    id: "news-keynote-announcement",
-    title: "Third Keynote Anouncement – IEEE SMC 2026",
-    date: "06/29/2026",
-    day: "29",
-    month: "06",
-    year: "2026",
-    category: "Keynote",
-    summary: "IEEE SMC 2026 is honored to feature Dr. Danielle Belgrave as our third keynote speaker.",
-    content: "We are thrilled to announce Dr. Danielle Belgrave as our third keynote speaker for IEEE SMC 2026. Dr. Belgrave will deliver a plenary keynote lecture on healthcare machine learning and human-centric artificial intelligence.",
+    id: "news-cfp-2027",
+    title: "IEEE SMC 2027 Call for Papers Officially Released – Human-AI Symbiosis",
+    date: "01/15/2027",
+    day: "15",
+    month: "01",
+    year: "2027",
+    category: "Call for Papers",
+    summary: "The IEEE SMC 2027 Organizing Committee has published the official Call for Papers under the theme Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.",
+    content: "Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam (HCM-UTE), the 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027) will take place October 6–10, 2027 at the Sheraton Saigon Grand Opera Hotel in Ho Chi Minh City, Vietnam. Submissions across Systems Science & Engineering (SSE), Cybernetics (CYB), and Human-Machine Systems (HMS) are now invited.",
     image: "/news/hoi-thao-ute.jpg",
-    viewCount: 1840,
-    externalUrl: "https://www.ieeesmc2026.org/NewsDetail/8096397.html",
+    viewCount: 3420,
+    externalUrl: "#cfp",
+  },
+  {
+    id: "news-proposals-deadline",
+    title: "Call for Special Sessions, Tutorials and Workshops Proposals Due February 15, 2027",
+    date: "01/25/2027",
+    day: "25",
+    month: "01",
+    year: "2027",
+    category: "Special Sessions",
+    summary: "Proposals for organized Special Sessions, technical Tutorials, and Workshops are now being accepted through February 15, 2027.",
+    content: "Researchers and industry pioneers are invited to submit proposals for Special Sessions, Tutorials, and Workshops for IEEE SMC 2027. Formal notification of accepted proposals will be announced on March 04, 2027.",
+    image: "/news/top-50.jpg",
+    viewCount: 2150,
+    externalUrl: "#dates",
+  },
+  {
+    id: "news-paper-submission-deadline",
+    title: "Paper Submission Deadline for Workshops, Regular and Special Sessions: April 08, 2027",
+    date: "02/05/2027",
+    day: "05",
+    month: "02",
+    year: "2027",
+    category: "Deadline",
+    summary: "Full paper submissions for IEEE SMC 2027 Regular, Special Sessions, and Workshops are due on April 08, 2027.",
+    content: "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link. Accepted and presented papers will be eligible for inclusion in the IEEE Xplore® Digital Library.",
+    image: "/news/aun.jpg",
+    viewCount: 4890,
+    externalUrl: "#dates",
+  },
+  {
+    id: "news-venue-sheraton",
+    title: "Sheraton Saigon Grand Opera Hotel Confirmed as Official Conference Headquarters",
+    date: "02/15/2027",
+    day: "15",
+    month: "02",
+    year: "2027",
+    category: "Announcement",
+    summary: "IEEE SMC 2027 delegates will experience five memorable days in District 1, Ho Chi Minh City at the prestigious Sheraton Saigon Grand Opera Hotel.",
+    content: "Located at No. 88 Dong Khoi, Saigon Ward, District 1, the venue is situated in the cultural and business heart of Saigon, steps from historical landmarks, the Saigon Opera House, and Metro Line 1.",
+    image: "/images/sheraton-saigon-card.jpg",
+    viewCount: 2980,
+    externalUrl: "#venue",
+  },
+  {
+    id: "news-visa-portal",
+    title: "Official Vietnam Electronic Visa (e-Visa) Application Portal Guide for Attendees",
+    date: "02/28/2027",
+    day: "28",
+    month: "02",
+    year: "2027",
+    category: "Announcement",
+    summary: "International attendees can apply directly for official 90-day Vietnam electronic visas online at evisa.gov.vn.",
+    content: "The organizing committee has published official visa guidance for international attendees. Citizens of all countries can apply for electronic visas directly through the official Vietnam government visa portal at https://evisa.gov.vn.",
+    image: "/assets/3d/visa-travel-3d.png",
+    viewCount: 3120,
+    externalUrl: "https://evisa.gov.vn",
+  },
+  {
+    id: "news-technical-pillars",
+    title: "IEEE SMC 2027 Unveils 68+ Technical Tracks Across SSE, CYB, and HMS",
+    date: "03/10/2027",
+    day: "10",
+    month: "03",
+    year: "2027",
+    category: "Program",
+    summary: "Explore the comprehensive technical scope spanning autonomous bionic robotics, quantum cybernetics, and brain-machine interface systems.",
+    content: "The 2027 technical program includes three core pillars: Systems Science & Engineering (27 topics), Cybernetics (28 topics), and Human-Machine Systems (14 topics), addressing cutting-edge artificial intelligence, human-AI symbiosis, and trustworthy autonomous systems.",
+    image: "/news/4.0-tech.jpg",
+    viewCount: 2740,
+    externalUrl: "#tracks",
+  },
+  {
+    id: "news-industry-partnerships",
+    title: "Call for Industry Exhibition & Partnership Sponsorships Open for IEEE SMC 2027",
+    date: "03/20/2027",
+    day: "20",
+    month: "03",
+    year: "2027",
+    category: "Partnership",
+    summary: "Leading technology enterprises, robotics developers, and academic institutions are invited to participate as conference partners.",
+    content: "IEEE SMC 2027 offers premier exhibition booths, industrial demonstration tracks, and diamond/platinum/gold sponsorship packages at the Sheraton Saigon Grand Opera Hotel in Ho Chi Minh City.",
+    image: "/news/giai-nha-robot.jpeg",
+    viewCount: 1640,
+    externalUrl: "#contact",
+  },
+  {
+    id: "news-host-hcmute",
+    title: "HCM-UTE to Host IEEE SMC 2027 – Vietnam's Premier Systems & AI Gathering",
+    date: "04/01/2027",
+    day: "01",
+    month: "04",
+    year: "2027",
+    category: "Announcement",
+    summary: "HCM-UTE welcomes the international systems, cybernetics, and human-machine systems community to Ho Chi Minh City on October 6–10, 2027.",
+    content: "With over six decades of leadership in engineering and technological education, Ho Chi Minh City University of Technology and Engineering (HCM-UTE) is honored to host the flagship annual conference of the IEEE Systems, Man, and Cybernetics Society.",
+    image: "/news/vina-ute.png",
+    viewCount: 3820,
+    externalUrl: "#welcome",
   },
 ];
 
@@ -162,7 +162,21 @@ export function NewsList({
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const categories = ["All", "Partnership", "Program", "Deadline", "Keynote"];
+  // Scrollable categories (excluding "All" which is pinned to the left)
+  const categories = useMemo(() => {
+    const base = [
+      "Partnership",
+      "Program",
+      "Deadline",
+      "Keynote",
+      "Call for Papers",
+      "Workshops",
+      "Special Sessions",
+      "Announcements",
+    ];
+    const fromItems = items.map((i) => i.category).filter(Boolean);
+    return Array.from(new Set([...base, ...fromItems])).filter((c) => c !== "All");
+  }, [items]);
 
   // Category scrolling & dragging state (for the top filter bar)
   const categoryScrollRef = useRef<HTMLDivElement>(null);
@@ -183,14 +197,15 @@ export function NewsList({
   useEffect(() => {
     checkCategoryScroll();
     const el = categoryScrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", checkCategoryScroll, { passive: true });
-    window.addEventListener("resize", checkCategoryScroll);
+    if (el) {
+      el.addEventListener("scroll", checkCategoryScroll, { passive: true });
+      window.addEventListener("resize", checkCategoryScroll);
+    }
     return () => {
-      el.removeEventListener("scroll", checkCategoryScroll);
+      el?.removeEventListener("scroll", checkCategoryScroll);
       window.removeEventListener("resize", checkCategoryScroll);
     };
-  }, [checkCategoryScroll]);
+  }, [checkCategoryScroll, categories]);
 
   const onCatPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.pointerType === "touch" || e.button !== 0) return;
@@ -207,7 +222,7 @@ export function NewsList({
     const el = categoryScrollRef.current;
     if (!el) return;
     const deltaX = e.clientX - dragCatStartX.current;
-    if (Math.abs(deltaX) > 10) {
+    if (Math.abs(deltaX) > 15) {
       hasDraggedCat.current = true;
       el.scrollLeft = dragCatScrollLeft.current - deltaX;
     }
@@ -224,15 +239,16 @@ export function NewsList({
   }, []);
 
   const scrollCategories = (dir: "left" | "right") => {
-    const el = categoryScrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -220 : 220, behavior: "smooth" });
+    categoryScrollRef.current?.scrollBy({
+      left: dir === "left" ? -240 : 240,
+      behavior: "smooth",
+    });
   };
 
-  const handleCategorySelect = (cat: string) => {
+  const handleCategorySelect = useCallback((cat: string) => {
     if (hasDraggedCat.current) return;
     setActiveCategory(cat);
-  };
+  }, []);
 
   // Filter and sort items (newest first)
   const filteredAndSortedItems = useMemo(() => {
@@ -375,7 +391,7 @@ export function NewsList({
             placeholder="Search news, announcements, tracks, speakers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-[#115eff] rounded-full text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
+            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-[#115eff] !rounded-full text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
@@ -389,69 +405,92 @@ export function NewsList({
           )}
         </div>
 
-        {/* Draggable Category Badges with Fade */}
-        <div className="relative min-w-0 w-full overflow-hidden">
-          {/* Left fade gradient */}
-          <div
+        {/* Category Badges: Exact pattern from http://localhost:3000/bai-viet */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Fixed "All" badge */}
+          <button
+            type="button"
+            onClick={() => handleCategorySelect("All")}
             className={cn(
-              "pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-12 bg-gradient-to-r from-white to-transparent transition-opacity duration-300",
-              canScrollCatLeft ? "opacity-100" : "opacity-0"
+              "shrink-0 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none",
+              activeCategory === "All"
+                ? "bg-primary text-white shadow-xs"
+                : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
             )}
-          />
-          {canScrollCatLeft && (
-            <button
-              type="button"
-              onClick={() => scrollCategories("left")}
-              className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-8 items-center justify-center rounded-full border border-slate-200 bg-white/95 backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="size-4 text-slate-700" />
-            </button>
-          )}
-
-          {/* Right fade gradient */}
-          <div
-            className={cn(
-              "pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-12 bg-gradient-to-l from-white to-transparent transition-opacity duration-300",
-              canScrollCatRight ? "opacity-100" : "opacity-0"
-            )}
-          />
-          {canScrollCatRight && (
-            <button
-              type="button"
-              onClick={() => scrollCategories("right")}
-              className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-8 items-center justify-center rounded-full border border-slate-200 bg-white/95 backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="size-4 text-slate-700" />
-            </button>
-          )}
-
-          {/* Draggable Category Badges */}
-          <div
-            ref={categoryScrollRef}
-            onPointerDown={onCatPointerDown}
-            onPointerMove={onCatPointerMove}
-            onPointerUp={onCatPointerUp}
-            onPointerLeave={onCatPointerUp}
-            className="flex items-center gap-2.5 overflow-x-auto scrollbar-none py-1.5 px-1 cursor-grab active:cursor-grabbing select-none touch-pan-x"
-            style={{ scrollBehavior: isDraggingCat.current ? "auto" : "smooth" }}
           >
-            {categories.map((cat) => (
+            All
+          </button>
+
+          {/* Separator */}
+          <div className="h-6 w-px shrink-0 bg-neutral-200 dark:bg-border" />
+
+          {/* Scrollable category badges with two-side fade + chevron */}
+          <div className="relative min-w-0 flex-1 overflow-hidden">
+            {/* Left fade — exact same pure gradient as http://localhost:3000/bai-viet */}
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-12 bg-gradient-to-r from-background to-transparent transition-opacity duration-300",
+                canScrollCatLeft ? "opacity-100" : "opacity-0"
+              )}
+            />
+            {/* Left chevron */}
+            {canScrollCatLeft && (
               <button
-                key={cat}
                 type="button"
-                onClick={() => handleCategorySelect(cat)}
-                className={cn(
-                  "px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm uppercase tracking-wider font-extrabold transition-all shrink-0 select-none cursor-pointer whitespace-nowrap",
-                  activeCategory === cat
-                    ? "bg-[#115eff] text-white"
-                    : "bg-slate-50 text-slate-700 border border-slate-200/90 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-300"
-                )}
+                onClick={() => scrollCategories("left")}
+                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                aria-label="Scroll left"
               >
-                {cat.toUpperCase()}
+                <ChevronLeft className="size-3.5 text-foreground/80" />
               </button>
-            ))}
+            )}
+
+            {/* Right fade — exact same pure gradient as http://localhost:3000/bai-viet */}
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-12 bg-gradient-to-l from-background to-transparent transition-opacity duration-300",
+                canScrollCatRight ? "opacity-100" : "opacity-0"
+              )}
+            />
+            {/* Right chevron */}
+            {canScrollCatRight && (
+              <button
+                type="button"
+                onClick={() => scrollCategories("right")}
+                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="size-3.5 text-foreground/80" />
+              </button>
+            )}
+
+            <div
+              ref={categoryScrollRef}
+              className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 px-0.5 cursor-grab active:cursor-grabbing select-none touch-pan-x"
+              onPointerDown={onCatPointerDown}
+              onPointerMove={onCatPointerMove}
+              onPointerUp={onCatPointerUp}
+              onPointerCancel={onCatPointerUp}
+            >
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => handleCategorySelect(activeCategory === cat ? "All" : cat)}
+                  className={cn(
+                    "shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                    activeCategory === cat
+                      ? "bg-primary text-white shadow-xs"
+                      : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+
+              {/* Spacer so fade doesn't cover last badge */}
+              {canScrollCatRight && <div className="shrink-0 w-6" />}
+            </div>
           </div>
         </div>
       </div>
@@ -459,7 +498,7 @@ export function NewsList({
       {/* ------------------------------------------------------------- */}
       {/* NEWS CAROUSEL with Progressive Blur & Left/Right Chevrons     */}
       {/* ------------------------------------------------------------- */}
-      <div className="relative w-full py-6 sm:py-8 group/carousel">
+      <div className="relative w-full pt-1.5 sm:pt-2 pb-10 sm:pb-14 group/carousel">
         {filteredAndSortedItems.length === 0 ? (
           <div className="mx-4 sm:mx-6 p-12 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 text-sm sm:text-base">
             No announcements found matching your filter criteria.
@@ -633,8 +672,8 @@ export function NewsList({
             )}
 
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-flex items-center px-3 py-0.5 bg-blue-50 border border-blue-200 rounded-[var(--radius-sm)] text-xs font-bold uppercase tracking-wider text-[#115eff]">
-                {selectedNews.category.toUpperCase()}
+              <span className="inline-flex items-center px-2.5 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-xs font-semibold text-[#115eff]">
+                {selectedNews.category}
               </span>
               <span className="text-xs text-slate-400">•</span>
               <span className="text-xs sm:text-sm text-slate-600 font-medium">

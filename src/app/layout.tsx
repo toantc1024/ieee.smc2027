@@ -122,7 +122,7 @@ const jsonLdEvent = {
     price: "0",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
-    validFrom: "2026-09-01T00:00:00+07:00",
+    validFrom: "2027-01-01T00:00:00+07:00",
   },
 };
 
