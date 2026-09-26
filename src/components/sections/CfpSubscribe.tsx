@@ -15,7 +15,7 @@ export function CfpSubscribe() {
   };
 
   return (
-    <section className="w-full bg-gradient-to-r from-blue-700 via-[#115eff] to-blue-900 text-white relative overflow-hidden border-b border-white/20">
+    <section className="w-full bg-gradient-to-r from-blue-700 via-[#115eff] to-blue-900 text-white relative overflow-hidden">
       {/* High-Tech Corner Grid (Top-Right) & Dot (Bottom-Left) Accents */}
       <div className="corner-grid-dark-tr opacity-30" />
       <div className="corner-dot-dark-bl opacity-35" />

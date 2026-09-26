@@ -90,19 +90,23 @@ function SponsorLogoBadge({ type }: { type: SponsorItem["logoType"] }) {
 
 export function Sponsors() {
   return (
-    <SectionContainer id="sponsors" fullWidthBg="bg-white" borderBottom={true}>
+    <SectionContainer id="sponsors" fullWidthBg="bg-white">
       
-      {/* Header Strip with Top-Right Corner Grid Accent */}
-      <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-grid-tr opacity-50" />
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] uppercase tracking-wider block mb-1">
-            Partners & Organizing Institutions
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Sponsors & Supporting Societies
-          </h2>
-        </div>
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+              <span className="block text-[#004776]">Sponsors & Partners</span>
+              <span className="block text-[#115eff]">& Supporting Societies</span>
+            </h2>
+            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+              Partners & Organizing Institutions Supporting IEEE SMC 2027
+            </p>
+          </div>
         
         {/* Customized Taller Button with 25% Larger Text */}
         <a
@@ -113,6 +117,7 @@ export function Sponsors() {
           <ArrowUpRight className="w-4 h-4" />
         </a>
       </div>
+    </div>
 
       {/* Sponsors Grid: Content aligned with header */}
       <div className="px-4 sm:px-6 py-8 sm:py-10">
@@ -120,7 +125,7 @@ export function Sponsors() {
           {SPONSORS.map((s, index) => (
             <div
               key={index}
-              className="p-5 bg-slate-50/70 border border-[#ccd7e2] rounded-[0.35rem] text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
+              className="p-5 bg-slate-50/70 border border-slate-200 rounded-[0.35rem] text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
             >
               <SponsorLogoBadge type={s.logoType} />
               

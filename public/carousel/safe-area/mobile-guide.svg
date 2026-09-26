@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HCMUTE Hero — Mobile safe-area guide (portrait model)
+  Canvas 1080 × 1920 (9:16). Container ratio 3:4 on mobile.
+
+  SAFE-AREA CONTRACT:
+  ═══════════════════
+  • Safe area: 900 × 1340 (centered)
+  • Safe area position: x=90..990, y=290..1630
+  • GUARANTEED no crop inside safe area.
+  • Outside = bleed/crop zone — WILL be cropped by object-cover.
+
+  CROP MATH (3:4 container on 9:16 image):
+  • Top crop:    ~240px  (safe area starts at 290 → 50px buffer)
+  • Bottom crop: ~240px  (safe area ends at 1630 → 50px buffer)
+  • Left crop:   0px     (full width visible)
+  • Right crop:  0px     (full width visible)
+
+  On 390px phone: container height = 520px (~62% viewport)
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1080 1920"
+     width="1080" height="1920"
+     font-family="'Be Vietnam Pro','Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <pattern id="mgrid" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0L0 0 0 120" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <pattern id="mcrop" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="16" fill="#ef4444" opacity="0.22"/>
+    </pattern>
+    <pattern id="mbleed" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="6" height="12" fill="#f59e0b" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="#0B1A3B"/>
+  <rect width="1080" height="1920" fill="url(#mgrid)"/>
+
+  <!-- ═══ CROP ZONES (cropped by object-cover at 3:4) ═══ -->
+  <!-- Top crop: 0 → 240px -->
+  <rect x="0" y="0" width="1080" height="240" fill="url(#mcrop)" opacity="0.8"/>
+  <rect x="0" y="0" width="1080" height="240" fill="#ef4444" opacity="0.06"/>
+  <!-- Bottom crop: 1680 → 1920px -->
+  <rect x="0" y="1680" width="1080" height="240" fill="url(#mcrop)" opacity="0.8"/>
+  <rect x="0" y="1680" width="1080" height="240" fill="#ef4444" opacity="0.06"/>
+
+  <!-- Crop zone labels -->
+  <text x="540" y="125" text-anchor="middle" font-size="24" fill="#f87171" font-weight="700" letter-spacing="2">
+    ✂ BỊ CẮT — 240px
+  </text>
+  <text x="540" y="1810" text-anchor="middle" font-size="24" fill="#f87171" font-weight="700" letter-spacing="2">
+    ✂ BỊ CẮT — 240px
+  </text>
+
+  <!-- Crop boundary lines (visible edge after crop) -->
+  <line x1="0" y1="240" x2="1080" y2="240" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 4"/>
+  <line x1="0" y1="1680" x2="1080" y2="1680" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 4"/>
+  <text x="1060" y="235" text-anchor="end" font-size="14" fill="#ef4444" font-weight="500">y=240 (crop edge)</text>
+  <text x="1060" y="1698" text-anchor="end" font-size="14" fill="#ef4444" font-weight="500">y=1680 (crop edge)</text>
+
+  <!-- ═══ BLEED/BUFFER ZONES (visible but outside safe area) ═══ -->
+  <!-- Top buffer: 240 → 290 (50px) -->
+  <rect x="0" y="240" width="1080" height="50" fill="url(#mbleed)" opacity="0.6"/>
+  <!-- Bottom buffer: 1630 → 1680 (50px) -->
+  <rect x="0" y="1630" width="1080" height="50" fill="url(#mbleed)" opacity="0.6"/>
+  <!-- Left bleed: 0 → 90 -->
+  <rect x="0" y="290" width="90" height="1340" fill="url(#mbleed)" opacity="0.6"/>
+  <!-- Right bleed: 990 → 1080 -->
+  <rect x="990" y="290" width="90" height="1340" fill="url(#mbleed)" opacity="0.6"/>
+
+  <!-- Buffer size annotations -->
+  <line x1="60" y1="240" x2="60" y2="290" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="50" y1="240" x2="70" y2="240" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="50" y1="290" x2="70" y2="290" stroke="#fbbf24" stroke-width="2"/>
+  <text x="80" y="272" font-size="16" fill="#fbbf24" font-weight="600">50px</text>
+
+  <line x1="60" y1="1630" x2="60" y2="1680" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="50" y1="1630" x2="70" y2="1630" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="50" y1="1680" x2="70" y2="1680" stroke="#fbbf24" stroke-width="2"/>
+  <text x="80" y="1662" font-size="16" fill="#fbbf24" font-weight="600">50px</text>
+
+  <!-- ═══ SAFE AREA (NEVER CROPPED) ═══ -->
+  <rect x="90" y="290" width="900" height="1340" fill="none" stroke="#10b981" stroke-width="4"/>
+  <rect x="94" y="294" width="892" height="1332" fill="none" stroke="#10b981" stroke-width="1" stroke-opacity="0.25"/>
+
+  <!-- Safe area label -->
+  <g transform="translate(110 328)">
+    <rect width="580" height="44" rx="8" fill="#10b981" fill-opacity="0.15"/>
+    <text x="16" y="30" font-size="22" font-weight="800" fill="#10b981" letter-spacing="1">
+      ✓ VÙNG AN TOÀN — 900 × 1340
+    </text>
+  </g>
+  <text x="110" y="398" font-size="18" fill="#a7f3d0">
+    Nội dung ở đây KHÔNG BAO GIỜ bị cắt.
+  </text>
+  <text x="110" y="422" font-size="18" fill="#a7f3d0">
+    Đặt logo, headline, CTA, stats trong vùng này.
+  </text>
+
+  <!-- Center crosshair -->
+  <line x1="500" y1="960" x2="580" y2="960" stroke="#FBBF24" stroke-width="3"/>
+  <line x1="540" y1="920" x2="540" y2="1000" stroke="#FBBF24" stroke-width="3"/>
+  <text x="560" y="1030" font-size="18" fill="#FBBF24" font-weight="600">TÂM (540, 960)</text>
+
+  <!-- Dimension labels -->
+  <text x="540" y="275" text-anchor="middle" font-size="20" fill="#ffffff" fill-opacity="0.6" font-weight="500">← 1080px →</text>
+  <text x="1040" y="960" font-size="20" fill="#ffffff" fill-opacity="0.6" font-weight="500"
+        transform="rotate(90 1040 960)">← 1920px →</text>
+  <text x="540" y="310" text-anchor="middle" font-size="16" fill="#6ee7b7" font-weight="500">← 900px →</text>
+  <text x="970" y="960" font-size="16" fill="#6ee7b7" font-weight="500"
+        transform="rotate(90 970 960)">← 1340px →</text>
+
+  <!-- ═══ LEGEND ═══ -->
+  <g transform="translate(110 1440)">
+    <rect width="24" height="24" rx="4" fill="#ef4444" fill-opacity="0.2"/>
+    <rect width="24" height="24" rx="4" fill="url(#mcrop)" opacity="0.6"/>
+    <text x="36" y="18" font-size="16" fill="#f87171" font-weight="600">Crop zone (240px) — nội dung bị CẮT</text>
+
+    <rect y="34" width="24" height="24" rx="4" fill="#f59e0b" fill-opacity="0.12"/>
+    <rect y="34" width="24" height="24" rx="4" fill="url(#mbleed)" opacity="0.6"/>
+    <text x="36" y="52" font-size="16" fill="#fbbf24" font-weight="600">Buffer (50px) — hiển thị, ngoài safe area</text>
+
+    <rect y="68" width="24" height="24" rx="4" fill="none" stroke="#10b981" stroke-width="2"/>
+    <text x="36" y="86" font-size="16" fill="#10b981" font-weight="600">Safe area — KHÔNG BAO GIỜ bị cắt ✓</text>
+  </g>
+
+  <!-- Technical info -->
+  <g transform="translate(110 1550)" fill="#94a3b8" font-size="14">
+    <text dy="0">Container: aspect-ratio 3/4 (mobile &lt;768px)</text>
+    <text dy="20">Image: 1080×1920 (9:16) + object-cover center</text>
+    <text dy="40" fill="#6ee7b7">Crop = 1920×(1−0.75)/2 = 240px. Buffer = 290−240 = 50px ✓</text>
+    <text dy="60">On 390px phone: height = 520px (~62% viewport)</text>
+  </g>
+
+  <!-- Corner ticks -->
+  <g stroke="#ffffff" stroke-opacity="0.4" stroke-width="2">
+    <path d="M0 40 L40 40 M40 40 L40 0"/>
+    <path d="M1080 40 L1040 40 M1040 40 L1040 0"/>
+    <path d="M0 1880 L40 1880 M40 1880 L40 1920"/>
+    <path d="M1080 1880 L1040 1880 M1040 1880 L1040 1920"/>
+  </g>
+</svg>

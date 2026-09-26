@@ -8,20 +8,19 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 export function Keynotes() {
   return (
     <SectionContainer id="keynotes" fullWidthBg="bg-white">
-      {/* Section Header Strip with Top-Right Corner Dot Accent */}
-      <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-dot-tr opacity-60" />
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
-            Thought Leadership
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Keynote Speakers & Plenary Sessions
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
+
+        <div className="space-y-3 w-full relative z-10">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <span className="block text-[#004776]">Keynote Speakers</span>
+            <span className="block text-[#115eff]">& Plenary Sessions</span>
           </h2>
-        </div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-[#115eff] bg-blue-50 px-4 py-2 rounded-full border border-blue-200 shadow-2xs">
-          <Award className="w-4 h-4" />
-          <span>Distinguished Global Researchers</span>
+          <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+            Distinguished global thought leaders across systems science, human–AI symbiosis, and cybernetics
+          </p>
         </div>
       </div>
 

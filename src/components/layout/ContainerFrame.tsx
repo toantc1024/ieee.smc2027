@@ -17,7 +17,7 @@ export function ContainerFrame({
   return (
     <div className="w-full relative min-h-screen bg-slate-50/40">
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
-        <div className={`bg-white border-x border-[#ccd7e2] shadow-xs relative ${className}`}>
+        <div className={`bg-white border-x border-slate-200 shadow-xs relative ${className}`}>
           {children}
         </div>
       </div>

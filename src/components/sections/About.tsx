@@ -3,6 +3,7 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { GridPattern } from "@/components/ui/grid-pattern";
 import { CONFERENCE_INFO } from "@/data/conference";
 
 const AFFILIATED_PUBLICATIONS = [
@@ -15,7 +16,16 @@ const AFFILIATED_PUBLICATIONS = [
 export function About() {
   return (
     <SectionContainer id="about" fullWidthBg="bg-white">
-      <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+      {/* Subtle top-right grid pattern with natural radial fade mask (hcmute style) */}
+      <div className="pointer-events-none absolute top-0 right-0 h-80 w-80 select-none overflow-hidden">
+        <GridPattern
+          width={32}
+          height={32}
+          className="stroke-[#115eff]/[0.10] fill-transparent [mask-image:radial-gradient(ellipse_at_top_right,white_20%,transparent_75%)]"
+        />
+      </div>
+
+      <div className="relative z-10 px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
         {/* Left: Shorter Concise Summary */}
         <div className="lg:col-span-5 space-y-3">
           <p className="text-base sm:text-lg text-slate-800 leading-relaxed font-normal">

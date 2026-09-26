@@ -19,8 +19,8 @@ export function SectionContainer({
   className = "",
   fullWidthBg = "bg-white",
   hasSideBorders = true,
-  borderBottom = true,
-  borderColor = "border-[#ccd7e2]",
+  borderBottom = false,
+  borderColor = "border-slate-200",
   id,
 }: SectionContainerProps) {
   return (

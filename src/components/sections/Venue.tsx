@@ -13,24 +13,28 @@ import { CONFERENCE_INFO } from "@/data/conference";
 export function Venue() {
   return (
     <SectionContainer id="venue" fullWidthBg="bg-white">
-      {/* Section Header Strip with Top-Right Corner Dot Accent */}
-      <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-dot-tr opacity-60" />
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
-            Destination & Accommodation
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Conference Venue & City Guide
-          </h2>
-        </div>
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+              <span className="block text-[#004776]">Conference Venue</span>
+              <span className="block text-[#115eff]">& City Guide</span>
+            </h2>
+            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+              {CONFERENCE_INFO.venue} • Ho Chi Minh City, Vietnam
+            </p>
+          </div>
 
         <div className="relative z-10 flex items-center gap-3">
           <a
             href={CONFERENCE_INFO.googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-[#ccd7e2] font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
           >
             <MapPin className="w-4 h-4 text-[#115eff]" />
             <span>Open in Google Maps</span>
@@ -38,9 +42,10 @@ export function Venue() {
           </a>
         </div>
       </div>
+    </div>
 
       {/* Main Venue Overview: Two Columns with Vertical Thin Divider */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 border-b border-[#ccd7e2]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 border-b border-slate-200">
         
         {/* Left Column: Sheraton Saigon Grand Opera Hotel Narrative */}
         <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 space-y-4">
@@ -84,7 +89,7 @@ export function Venue() {
         </div>
 
         {/* Right Column: Key Logistics & Host Details */}
-        <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 bg-slate-50/70 border-t lg:border-t-0 lg:border-l border-[#ccd7e2] flex flex-col justify-between">
+        <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 bg-slate-50/70 border-t lg:border-t-0 lg:border-l border-slate-200 flex flex-col justify-between">
           <div>
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
               Key Destination Facts

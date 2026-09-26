@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HCMUTE Hero — Desktop safe-area guide (landscape model)
+  Canvas 2400 × 1000 (2.4:1). Container ratio 2.4:1 on desktop.
+
+  SAFE-AREA CONTRACT:
+  ═══════════════════
+  • Safe area: 1820 × 880 (centered)
+  • Safe area position: x=290..2110, y=60..940
+  • GUARANTEED no crop inside safe area.
+  • Container ratio = image ratio = 2.4:1 → NO CROP at all.
+  • All 2400×1000 pixels are visible on desktop.
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 2400 1000"
+     width="2400" height="1000"
+     font-family="'Be Vietnam Pro','Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <pattern id="dgrid" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0L0 0 0 120" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <pattern id="dbleed" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="6" height="12" fill="#f59e0b" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="2400" height="1000" fill="#0B1A3B"/>
+  <rect width="2400" height="1000" fill="url(#dgrid)"/>
+
+  <!-- ═══ BLEED ZONES (visible, outside safe area, NO crop on desktop) ═══ -->
+  <!-- Top bleed: 0 → 60 -->
+  <rect x="0" y="0" width="2400" height="60" fill="url(#dbleed)" opacity="0.6"/>
+  <!-- Bottom bleed: 940 → 1000 -->
+  <rect x="0" y="940" width="2400" height="60" fill="url(#dbleed)" opacity="0.6"/>
+  <!-- Left bleed: 0 → 290 -->
+  <rect x="0" y="60" width="290" height="880" fill="url(#dbleed)" opacity="0.6"/>
+  <!-- Right bleed: 2110 → 2400 -->
+  <rect x="2110" y="60" width="290" height="880" fill="url(#dbleed)" opacity="0.6"/>
+
+  <!-- Bleed labels -->
+  <text x="145" y="505" text-anchor="middle" font-size="18" fill="#fbbf24" font-weight="500"
+        transform="rotate(-90 145 505)">290px bleed</text>
+  <text x="2255" y="505" text-anchor="middle" font-size="18" fill="#fbbf24" font-weight="500"
+        transform="rotate(90 2255 505)">290px bleed</text>
+  <text x="1200" y="40" text-anchor="middle" font-size="16" fill="#fbbf24" font-weight="500">60px bleed</text>
+  <text x="1200" y="980" text-anchor="middle" font-size="16" fill="#fbbf24" font-weight="500">60px bleed</text>
+
+  <!-- ═══ SAFE AREA (NEVER CROPPED) ═══ -->
+  <rect x="290" y="60" width="1820" height="880" fill="none" stroke="#10b981" stroke-width="4"/>
+  <rect x="294" y="64" width="1812" height="872" fill="none" stroke="#10b981" stroke-width="1" stroke-opacity="0.25"/>
+
+  <!-- Safe area label -->
+  <g transform="translate(310 95)">
+    <rect width="580" height="42" rx="8" fill="#10b981" fill-opacity="0.15"/>
+    <text x="14" y="30" font-size="22" font-weight="800" fill="#10b981" letter-spacing="1">
+      ✓ VÙNG AN TOÀN — 1820 × 880
+    </text>
+  </g>
+  <text x="310" y="160" font-size="18" fill="#a7f3d0">
+    Container = Image ratio (2.4:1) → KHÔNG có crop. Toàn bộ ảnh hiển thị.
+  </text>
+  <text x="310" y="185" font-size="18" fill="#a7f3d0">
+    Bleed zone chỉ là padding — vẫn hiển thị trên desktop, nhưng có thể bị crop trên mobile.
+  </text>
+
+  <!-- Center crosshair -->
+  <line x1="1160" y1="500" x2="1240" y2="500" stroke="#FBBF24" stroke-width="3"/>
+  <line x1="1200" y1="460" x2="1200" y2="540" stroke="#FBBF24" stroke-width="3"/>
+  <text x="1220" y="570" font-size="18" fill="#FBBF24" font-weight="600">TÂM (1200, 500)</text>
+
+  <!-- Dimension labels -->
+  <text x="1200" y="995" text-anchor="middle" font-size="18" fill="#94a3b8" font-weight="500">← 2400px →</text>
+  <text x="2390" y="500" font-size="18" fill="#94a3b8" font-weight="500"
+        text-anchor="end" transform="rotate(90 2390 500)">← 1000px →</text>
+
+  <!-- ═══ LEGEND ═══ -->
+  <g transform="translate(310 730)">
+    <rect width="24" height="24" rx="4" fill="#f59e0b" fill-opacity="0.15"/>
+    <rect width="24" height="24" rx="4" fill="url(#dbleed)" opacity="0.6"/>
+    <text x="36" y="18" font-size="16" fill="#fbbf24" font-weight="600">Bleed — hiển thị trên desktop, CÓ THỂ mất trên mobile</text>
+
+    <rect y="34" width="24" height="24" rx="4" fill="none" stroke="#10b981" stroke-width="2"/>
+    <text x="36" y="52" font-size="16" fill="#10b981" font-weight="600">Vùng an toàn — KHÔNG BAO GIỜ bị cắt ✓</text>
+  </g>
+
+  <!-- Technical info -->
+  <g transform="translate(310 820)" fill="#94a3b8" font-size="14" font-weight="400">
+    <text dy="0">Container: aspect-ratio 2.4/1 (desktop ≥768px)</text>
+    <text dy="20">Image: 2400×1000 (2.4:1) — EXACT MATCH → no crop</text>
+    <text dy="40" fill="#6ee7b7">Safe area always 100% visible on desktop ✓</text>
+  </g>
+
+  <!-- Corner ticks -->
+  <g stroke="#ffffff" stroke-opacity="0.5" stroke-width="2">
+    <path d="M0 40 L40 40 M40 40 L40 0"/>
+    <path d="M2400 40 L2360 40 M2360 40 L2360 0"/>
+    <path d="M0 960 L40 960 M40 960 L40 1000"/>
+    <path d="M2400 960 L2360 960 M2360 960 L2360 1000"/>
+  </g>
+
+  <!-- Footer -->
+  <g fill="#94a3b8" font-size="13" font-weight="600" letter-spacing="2">
+    <text x="310" y="900">HCMUTE · DESKTOP SAFE-AREA GUIDE · 2400×1000 · NO CROP</text>
+  </g>
+</svg>

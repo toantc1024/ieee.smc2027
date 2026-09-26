@@ -20,9 +20,46 @@ import { IMPORTANT_DATES, ImportantDate, CONFERENCE_INFO } from "@/data/conferen
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { GoogleCalendarIcon } from "@/components/common/ProviderIcons";
 
-export function ImportantDates() {
+export interface ImportantDatesProps {
+  title?: string;
+  subtitle?: string;
+  viewDetailsUrl?: string;
+}
+
+export const OFFICIAL_PROMPT_DATES = [
+  {
+    id: "proposals",
+    title: "Special Session/Workshop/Tutorial Proposals",
+    originalDeadline: "February 8, 2026",
+    extendedDeadline: "February 23, 2026",
+    category: "Proposals",
+    status: "Extended",
+  },
+  {
+    id: "regular-papers",
+    title: "Regular/Special Session/Workshop Paper Submission",
+    originalDeadline: "March 22, 2026",
+    extendedDeadline: "April 19, 2026",
+    category: "Regular & Special Papers",
+    status: "Extended",
+  },
+  {
+    id: "wip-industry",
+    title: "Work-in-Progress and Industry Paper Submission",
+    originalDeadline: "April 12, 2026",
+    extendedDeadline: "May 3, 2026",
+    category: "Industry & WIP",
+    status: "Extended",
+  },
+];
+
+export function ImportantDates({
+  title = "Important Dates",
+  subtitle = "Key conference deadlines and final submission extension schedules",
+  viewDetailsUrl = "https://www.ieeesmc2026.org/Important-Dates",
+}: ImportantDatesProps) {
   const [activeMilestoneId, setActiveMilestoneId] = useState<string>("paper-submission");
-  const [viewMode, setViewMode] = useState<"roadmap" | "tree" | "table">("roadmap");
+  const [viewMode, setViewMode] = useState<"featured" | "roadmap" | "tree" | "table">("featured");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -63,80 +100,50 @@ export function ImportantDates() {
     scrollMilestoneIntoView(prevIdx);
   };
 
-  const scrollRibbon = (direction: "left" | "right") => {
-    if (!scrollContainerRef.current) return;
-    const container = scrollContainerRef.current;
-    const scrollAmount = 340;
-    container.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
   const handleCopyMilestone = (item: ImportantDate) => {
     navigator.clipboard.writeText(
-      `IEEE SMC 2027 Milestone: ${item.title} - ${item.date} (23:59 AoE) - https://ieeesmc2027.hcmute.edu.vn`
+      `IEEE SMC Milestone: ${item.title} - ${item.date} (23:59 AoE)`
     );
     setCopiedId(item.id);
     setTimeout(() => setCopiedId(null), 2500);
   };
 
   const generateGoogleCalendarUrl = (item: ImportantDate) => {
-    // Format date string
     const dateObj = new Date(item.dateIso);
     const dateStr = dateObj.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    const title = encodeURIComponent(`IEEE SMC 2027: ${item.title}`);
-    const details = encodeURIComponent(
-      `${item.description}\n\nConference: IEEE SMC 2027 (Ho Chi Minh City, Vietnam)\nWebsite: https://ieeesmc2027.hcmute.edu.vn`
+    const titleEnc = encodeURIComponent(`IEEE SMC: ${item.title}`);
+    const detailsEnc = encodeURIComponent(
+      `${item.description}\n\nConference: IEEE SMC\nWebsite: https://www.ieeesmc2026.org/Important-Dates`
     );
-    const location = encodeURIComponent(CONFERENCE_INFO.venue + ", " + CONFERENCE_INFO.location);
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}&location=${location}`;
+    const locEnc = encodeURIComponent(CONFERENCE_INFO.venue + ", " + CONFERENCE_INFO.location);
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleEnc}&dates=${dateStr}/${dateStr}&details=${detailsEnc}&location=${locEnc}`;
   };
 
   const handleDownloadIcs = () => {
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//IEEE SMC 2027//Ho Chi Minh City Vietnam//EN
+PRODID:-//IEEE SMC//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-SUMMARY:IEEE SMC 2027 Proposals Deadline (Special Sessions, Tutorials & Workshops)
-DESCRIPTION:Submission of Proposals for Special Sessions, Tutorials and Workshops for IEEE SMC 2027.
-LOCATION:Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam
-DTSTART:20270215T235959Z
-DTEND:20270216T000000Z
+SUMMARY:IEEE SMC Proposals Deadline (Special Sessions, Tutorials & Workshops)
+DESCRIPTION:Submission of Proposals for Special Sessions, Tutorials and Workshops.
+DTSTART:20260223T235959Z
+DTEND:20260224T000000Z
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:IEEE SMC 2027 Paper Submission Deadline (Workshops, Regular & Special Sessions)
-DESCRIPTION:Paper submission deadline for Workshops, Regular and Special Sessions for IEEE SMC 2027 via PaperCept.
-LOCATION:Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam
-DTSTART:20270408T235959Z
-DTEND:20270409T000000Z
+SUMMARY:IEEE SMC Paper Submission Deadline (Workshops, Regular & Special Sessions)
+DESCRIPTION:Paper submission deadline for Workshops, Regular and Special Sessions.
+DTSTART:20260419T235959Z
+DTEND:20260420T000000Z
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:IEEE SMC 2027 Paper Acceptance Notification
-DESCRIPTION:Notification of Papers Acceptance for Workshops, Regular and Special Sessions.
-LOCATION:Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam
-DTSTART:20270530T235959Z
-DTEND:20270531T000000Z
-STATUS:CONFIRMED
-END:VEVENT
-BEGIN:VEVENT
-SUMMARY:IEEE SMC 2027 Final Camera-Ready Paper Submission
-DESCRIPTION:Final Paper Camera-ready Submission of Regular, Special Sessions and Workshops.
-LOCATION:Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam
-DTSTART:20270715T235959Z
-DTEND:20270716T000000Z
-STATUS:CONFIRMED
-END:VEVENT
-BEGIN:VEVENT
-SUMMARY:IEEE SMC 2027 Conference in Ho Chi Minh City
-DESCRIPTION:The 2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027), hosted by HCM-UTE.
-LOCATION:Sheraton Saigon Grand Opera Hotel, No. 88 Dong Khoi, Saigon Ward, Ho Chi Minh City, Vietnam
-DTSTART:20271006T080000Z
-DTEND:20271010T180000Z
+SUMMARY:IEEE SMC Work-in-Progress and Industry Paper Submission
+DESCRIPTION:Work-in-Progress and Industry Paper Submission Deadline.
+DTSTART:20260503T235959Z
+DTEND:20260504T000000Z
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`;
@@ -144,81 +151,178 @@ END:VCALENDAR`;
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute("download", "ieee-smc-2027-dates.ics");
+    link.setAttribute("download", "ieee-smc-dates.ics");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <SectionContainer id="dates">
-      {/* Section Header */}
-      <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-7 border-b border-[#ccd7e2] bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-grid-tr opacity-50" />
-        
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#115eff]/10 border border-[#115eff]/20 rounded-full text-xs font-bold text-[#115eff] mb-1.5">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Interactive Conference Roadmap</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Important Dates & Timeline
-          </h2>
-        </div>
+    <SectionContainer id="dates" fullWidthBg="bg-white">
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
-        {/* View Mode Switcher + ICS Download */}
-        <div className="relative z-10 flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+              <span className="block text-[#004776]">Important Dates</span>
+              <span className="block text-[#115eff]">& Key Deadlines</span>
+            </h2>
+            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+              {subtitle}
+            </p>
+          </div>
+
+          {/* View Mode Switcher + View Details Button */}
+          <div className="relative z-10 flex flex-wrap items-center gap-2.5">
           {/* View Mode Buttons */}
-          <div className="bg-white border border-[#ccd7e2] p-1 rounded-[0.35rem] flex items-center shadow-2xs">
+          <div className="bg-white border border-slate-200 p-1 rounded-md flex items-center shadow-2xs">
+            <button
+              onClick={() => setViewMode("featured")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-all ${
+                viewMode === "featured"
+                  ? "bg-[#115eff] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              <span>Key Deadlines</span>
+            </button>
+
             <button
               onClick={() => setViewMode("roadmap")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[0.26rem] text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-all ${
                 viewMode === "roadmap"
                   ? "bg-[#115eff] text-white shadow-xs"
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
-              title="Interactive Horizontal Stepper"
             >
               <Calendar className="w-3.5 h-3.5" />
-              <span>Roadmap</span>
+              <span>Full Roadmap</span>
             </button>
 
             <button
               onClick={() => setViewMode("tree")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[0.26rem] text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-all ${
                 viewMode === "tree"
                   ? "bg-[#115eff] text-white shadow-xs"
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
-              title="Alternating Connected Timeline (CFP PDF Style)"
             >
               <GitCommit className="w-3.5 h-3.5" />
               <span>CFP Tree</span>
             </button>
-
-            <button
-              onClick={() => setViewMode("table")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[0.26rem] text-xs font-bold transition-all ${
-                viewMode === "table"
-                  ? "bg-[#115eff] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              }`}
-              title="Table Summary"
-            >
-              <List className="w-3.5 h-3.5" />
-              <span>Table</span>
-            </button>
           </div>
 
-          <button
-            onClick={handleDownloadIcs}
-            className="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
+          <a
+            href={viewDetailsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 min-h-[38px] px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold rounded-md transition-all shadow-xs"
           >
-            <Download className="w-4 h-4" />
-            <span>Export (.ICS)</span>
-          </button>
+            <span>View Details</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
       </div>
+    </div>
+
+      {/* VIEW 0: 3 FEATURED MILESTONE CARDS (Exact match to IEEE SMC Official Homepage) */}
+      {viewMode === "featured" && (
+        <div className="px-4 sm:px-6 py-8 sm:py-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {OFFICIAL_PROMPT_DATES.map((item, idx) => (
+              <div
+                key={item.id}
+                className="relative overflow-hidden p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group"
+              >
+                {/* HCMUTE Brand Corner Patterns on Hover */}
+                <div className="corner-grid-tr opacity-0 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                <div className="corner-dot-bl opacity-0 group-hover:opacity-30 transition-opacity pointer-events-none" />
+
+                <div className="relative z-10">
+                  {/* Category Pill + Step number */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[11px] font-bold text-[#115eff] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded uppercase tracking-wider">
+                      {item.category}
+                    </span>
+                    <span className="text-xs font-black text-slate-300 group-hover:text-[#115eff] transition-colors">
+                      0{idx + 1}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug mb-5">
+                    {item.title}
+                  </h3>
+
+                  {/* Deadline Box */}
+                  <div className="p-4 bg-slate-50 border border-slate-200/90 rounded-lg space-y-1.5">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Submission Deadline
+                    </div>
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-sm line-through text-slate-400 font-semibold">
+                        {item.originalDeadline}
+                      </span>
+                      <span className="text-base sm:text-lg font-black text-[#115eff]">
+                        {item.extendedDeadline}
+                      </span>
+                    </div>
+                    <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>{item.status} Deadline</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <a
+                    href={viewDetailsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-[#115eff] hover:underline inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+                  >
+                    <span>View Details</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    23:59 AoE
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Action Row below cards */}
+          <div className="mt-8 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-slate-500 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#115eff]" />
+              <span>All submission deadlines are set to <strong>23:59 Anywhere on Earth (AoE)</strong>.</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setViewMode("roadmap")}
+                className="text-xs font-bold text-slate-700 hover:text-[#115eff] transition-colors"
+              >
+                Explore Full Interactive Timeline →
+              </button>
+              <a
+                href={viewDetailsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold rounded-md transition-all shadow-xs"
+              >
+                <span>View All Details</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* VIEW 1: SMART INTERACTIVE ROADMAP (Default) */}
       {viewMode === "roadmap" && (
@@ -242,7 +346,7 @@ END:VCALENDAR`;
 
             <button
               onClick={() => handleSelectMilestone("paper-submission", 2)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 bg-white text-[#115eff] border border-[#ccd7e2] hover:bg-blue-50 rounded-[0.26rem] transition-colors shadow-2xs shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 rounded-[0.26rem] transition-colors shadow-2xs shrink-0"
             >
               <span>View Milestone Details</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -263,7 +367,7 @@ END:VCALENDAR`;
               <button
                 onClick={handlePrevMilestone}
                 aria-label="Previous timeline milestone"
-                className="w-9 h-9 bg-white hover:bg-slate-100 border border-[#ccd7e2] rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
+                className="w-9 h-9 bg-white hover:bg-slate-100 border border-slate-200 rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
                 title="Previous milestone"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -271,7 +375,7 @@ END:VCALENDAR`;
               <button
                 onClick={handleNextMilestone}
                 aria-label="Next timeline milestone"
-                className="w-9 h-9 bg-white hover:bg-slate-100 border border-[#ccd7e2] rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
+                className="w-9 h-9 bg-white hover:bg-slate-100 border border-slate-200 rounded-[0.26rem] flex items-center justify-center text-slate-700 hover:text-[#115eff] transition-all shadow-2xs"
                 title="Next milestone"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -356,7 +460,7 @@ END:VCALENDAR`;
           </div>
 
           {/* Featured Active Milestone Inspector Card */}
-          <div className="p-6 sm:p-8 bg-gradient-to-br from-blue-50/70 via-white to-slate-50 border border-[#ccd7e2] rounded-md shadow-xs">
+          <div className="p-6 sm:p-8 bg-gradient-to-br from-blue-50/70 via-white to-slate-50 border border-slate-200 rounded-md shadow-xs">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-200">
               
               <div className="space-y-2">
@@ -364,7 +468,7 @@ END:VCALENDAR`;
                   <span className="px-3 py-1 bg-[#115eff] text-white text-xs font-bold rounded-md uppercase tracking-wider">
                     Milestone {String(activeIndex + 1).padStart(2, "0")} of 09
                   </span>
-                  <span className="px-3 py-1 bg-white border border-[#ccd7e2] text-slate-700 text-xs font-bold rounded-md capitalize">
+                  <span className="px-3 py-1 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-md capitalize">
                     {activeMilestone.category} Phase
                   </span>
                   {activeMilestone.highlight && (
@@ -407,7 +511,7 @@ END:VCALENDAR`;
                   href={generateGoogleCalendarUrl(activeMilestone)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-[#ccd7e2] text-slate-800 text-xs sm:text-sm font-bold rounded-[0.26rem] transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold rounded-[0.26rem] transition-colors shadow-2xs"
                 >
                   <GoogleCalendarIcon className="w-4 h-4" />
                   <span>Google Calendar</span>
@@ -415,7 +519,7 @@ END:VCALENDAR`;
 
                 <button
                   onClick={() => handleCopyMilestone(activeMilestone)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-[#ccd7e2] text-slate-800 text-xs sm:text-sm font-bold rounded-[0.26rem] transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold rounded-[0.26rem] transition-colors shadow-2xs"
                 >
                   {copiedId === activeMilestone.id ? (
                     <>
@@ -565,9 +669,9 @@ END:VCALENDAR`;
       {/* VIEW 3: COMPACT TABLE VIEW */}
       {viewMode === "table" && (
         <div className="px-4 sm:px-6 py-8 sm:py-10">
-          <div className="overflow-x-auto border border-[#ccd7e2] rounded-md shadow-2xs">
+          <div className="overflow-x-auto border border-slate-200 rounded-md shadow-2xs">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-700 font-bold uppercase text-xs border-b border-[#ccd7e2]">
+              <thead className="bg-slate-50 text-slate-700 font-bold uppercase text-xs border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-3.5">#</th>
                   <th className="px-4 py-3.5">Milestone Date</th>
@@ -576,7 +680,7 @@ END:VCALENDAR`;
                   <th className="px-4 py-3.5 text-right">Quick Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#ccd7e2] bg-white">
+              <tbody className="divide-y divide-slate-200 bg-white">
                 {IMPORTANT_DATES.map((item, idx) => (
                   <tr
                     key={item.id}
@@ -612,14 +716,14 @@ END:VCALENDAR`;
                           href={generateGoogleCalendarUrl(item)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 bg-white hover:bg-blue-50 border border-[#ccd7e2] text-[#115eff] rounded hover:border-[#115eff] transition-colors"
+                          className="p-2 bg-white hover:bg-blue-50 border border-slate-200 text-[#115eff] rounded hover:border-[#115eff] transition-colors"
                           title="Add to Google Calendar"
                         >
                           <GoogleCalendarIcon className="w-4 h-4" />
                         </a>
                         <button
                           onClick={() => handleCopyMilestone(item)}
-                          className="p-2 bg-white hover:bg-slate-50 border border-[#ccd7e2] text-slate-700 rounded hover:text-[#115eff] transition-colors"
+                          className="p-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded hover:text-[#115eff] transition-colors"
                           title="Copy date"
                         >
                           {copiedId === item.id ? (

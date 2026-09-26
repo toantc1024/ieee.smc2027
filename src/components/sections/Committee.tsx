@@ -12,24 +12,24 @@ export function Committee() {
 
   return (
     <SectionContainer id="committee" fullWidthBg="bg-white">
-      {/* Section Header Strip with Top-Right Corner Grid Accent */}
-      <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-grid-tr opacity-50" />
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
-            Leadership & Governance
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Organizing Committee
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
+
+        <div className="space-y-3 w-full relative z-10">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <span className="block text-[#004776]">Organizing Committee</span>
+            <span className="block text-[#115eff]">& Leadership</span>
           </h2>
+          <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+            International Steering & Local Organizing Committees
+          </p>
         </div>
-        <span className="relative z-10 text-sm font-semibold text-[#115eff] bg-white border border-[#ccd7e2] px-4 py-2 rounded-full shadow-2xs">
-          International Steering & Local Organizing Committees
-        </span>
       </div>
 
       {/* Committee Category Tabs: Full Width Divider */}
-      <div className="px-4 sm:px-6 py-3.5 border-b border-[#ccd7e2] bg-slate-50/30 flex flex-wrap items-center gap-2">
+      <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-slate-50/30 flex flex-wrap items-center gap-2">
         {COMMITTEE_GROUPS.map((group, idx) => (
           <button
             key={group.groupName}

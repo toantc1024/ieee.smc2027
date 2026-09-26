@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Search, Layers, Cpu, Users } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
-import { ProgressiveBlur } from "@/components/common/ProgressiveBlur";
 
 export function TracksExplorer() {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
@@ -68,17 +67,18 @@ export function TracksExplorer() {
       <div className="absolute inset-0 bg-dot-dark opacity-35 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 via-transparent to-blue-950/30 pointer-events-none" />
 
-      {/* Section Header Strip */}
-      <div className="relative overflow-hidden border-b border-white/20 px-4 sm:px-6 py-5 sm:py-6 bg-blue-700/40 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-grid-dark-tr opacity-40" />
+      {/* Section Header matching standard 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="corner-grid-dark-tr opacity-40 pointer-events-none" />
 
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-blue-200 block mb-1 uppercase tracking-wider">
-            Technical Scope & Research Topics
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Technical Tracks & 3 Core Pillars
+        <div className="space-y-3 relative z-10 flex-1">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <span className="block text-blue-100">Technical Tracks</span>
+            <span className="block text-white">& 3 Core Pillars</span>
           </h2>
+          <p className="text-base sm:text-lg text-blue-100/90 font-medium">
+            Systems Science • Cybernetics • Human–Machine Systems
+          </p>
         </div>
 
         {/* Search Bar */}
@@ -152,15 +152,11 @@ export function TracksExplorer() {
             No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
           </div>
         ) : (
-          /* Marquee Fade Blur Overflow Container Powered by MagicUI Progressive Blur */
+          /* Scrollable Overflow Container with Natural Pure Gradient Fade */
           <div className="relative z-10 overflow-hidden rounded-md">
-            {/* MagicUI Progressive Blur (Multi-layer zero-border optical blur gradient) */}
-            <ProgressiveBlur position="top" height="90px" />
-            <ProgressiveBlur position="bottom" height="110px" />
-
-            {/* MagicUI Gradient Color Fade Overlays */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 sm:h-28 bg-gradient-to-b from-[#115eff] via-[#115eff]/65 to-transparent z-30" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 sm:h-28 bg-gradient-to-t from-[#115eff] via-[#115eff]/65 to-transparent z-30" />
+            {/* Natural Pure Gradient Color Fade Overlays (matching hcmute-website-frontend) */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] to-transparent z-30" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-[#115eff] to-transparent z-30" />
 
             {/* Pure Scrollable Topic Directory for User to Scroll (No Auto-Play) */}
             <div className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3">

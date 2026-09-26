@@ -15,12 +15,33 @@ const NAV_LINKS = [
   { name: "FAQ", href: "#faq" },
 ];
 
+import { HeaderConfig, NavLinkItem, DEFAULT_HEADER_DATA } from "@/lib/header-config";
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState<string>("About");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [headerConfig, setHeaderConfig] = useState<HeaderConfig | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/header")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.header) setHeaderConfig(res.header);
+      })
+      .catch(() => {});
+  }, []);
+
+  const navLinks = headerConfig?.navLinks || NAV_LINKS;
+  const hotline = headerConfig?.topbar?.hotline || CONFERENCE_INFO.hotline;
+  const email = headerConfig?.topbar?.email || CONFERENCE_INFO.contactEmail;
+  const showTopbar = headerConfig?.topbar?.enabled !== false;
+  const ctaLabel = headerConfig?.ctaButton?.label || "Call for Papers";
+  const ctaHref = headerConfig?.ctaButton?.href || "#cfp";
+  const showCta = headerConfig?.ctaButton?.enabled !== false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,10 +54,11 @@ export function Header() {
   return (
     <>
       {/* Top Utility Bar (Exact HCM-UTE Blue #115eff with Two Side Borders) */}
-      <div className="hidden lg:block bg-[#115eff] text-white relative z-50 text-xs border-b border-white/20">
+      {showTopbar && (
+        <div className="block bg-[#115eff] text-white relative z-50 text-xs border-b border-white/20">
         <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           {/* Two Side Vertical Borders aligned with site width - Full height touching top & bottom */}
-          <div className="w-full border-x border-white/20 px-4 sm:px-6 py-2 flex items-center justify-between">
+          <div className="w-full border-x border-white/20 px-3 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between gap-3 overflow-x-auto scrollbar-none">
             
             {/* Left: Contact info + University & Society portal links */}
             <div className="flex items-center gap-4">
@@ -46,19 +68,19 @@ export function Header() {
                 title="Conference Hotline"
               >
                 <Phone className="w-3.5 h-3.5 text-blue-200" />
-                <span>{CONFERENCE_INFO.hotline}</span>
+                <span>{hotline}</span>
               </a>
 
               <a
-                href={`mailto:${CONFERENCE_INFO.contactEmail}`}
+                href={`mailto:${email}`}
                 className="flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors"
                 title="Conference Secretariat Email"
               >
                 <Mail className="w-3.5 h-3.5 text-blue-200" />
-                <span>{CONFERENCE_INFO.contactEmail}</span>
+                <span>{email}</span>
               </a>
 
-              <div className="flex items-center gap-2 pl-2 border-l border-white/20 text-blue-100">
+              <div className="hidden md:flex items-center gap-2 pl-2 border-l border-white/20 text-blue-100">
                 <a
                   href="https://www.ieeesmc.org/"
                   target="_blank"
@@ -111,12 +133,17 @@ export function Header() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Main Sticky Navbar with Two Side Vertical Borders - Flat border without shadow */}
-      <header className="sticky top-0 z-40 w-full transition-all duration-200 bg-white border-b border-[#ccd7e2]">
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-200 bg-white border-b border-slate-200 ${
+          isScrolled ? "shadow-xs" : ""
+        }`}
+      >
         <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           {/* Two Side Vertical Borders Aligned with topbar & main container */}
-          <div className="w-full border-x border-[#ccd7e2] px-4 sm:px-6">
+          <div className="w-full border-x border-slate-200 px-4 sm:px-6">
             <div className="flex items-center justify-between h-16 sm:h-20">
               
               {/* Left: HCM-UTE official horizontal tagline logo */}
@@ -135,7 +162,7 @@ export function Header() {
               {/* Right: Desktop Navigation + Customized Prominent CTA Button */}
               <div className="hidden lg:flex items-center gap-1 xl:gap-2">
                 <nav className="flex items-center gap-1 xl:gap-1.5">
-                  {NAV_LINKS.map((link) => {
+                  {navLinks.map((link: NavLinkItem) => {
                     const isActive = activeNav === link.name;
                     return (
                       <Link
@@ -145,7 +172,7 @@ export function Header() {
                         className={`inline-flex items-center px-3.5 xl:px-4 py-2 text-sm xl:text-[15px] font-semibold rounded-[0.26rem] transition-all duration-150 select-none ${
                           isActive
                             ? "bg-[#115eff] text-white font-bold shadow-xs"
-                            : "text-slate-700 hover:bg-slate-100 hover:text-black"
+                            : "text-slate-700 hover:bg-slate-100 hover:text-[#004776]"
                         }`}
                       >
                         {link.name}
@@ -155,14 +182,16 @@ export function Header() {
                 </nav>
 
                 {/* Customized Taller CTA Button with 25% Larger Text */}
-                <a
-                  href="#cfp"
-                  className="ml-2 inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-2.5 text-sm sm:text-base font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-[0.26rem] shadow-sm hover:shadow-md transition-all duration-150"
-                >
-                  <PaperCeptIcon className="w-4 h-4 text-white" />
-                  <span>Call for Papers</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
+                {showCta && (
+                  <a
+                    href={ctaHref}
+                    className="ml-2 inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-2.5 text-sm sm:text-base font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-[0.26rem] shadow-sm hover:shadow-md transition-all duration-150"
+                  >
+                    <PaperCeptIcon className="w-4 h-4 text-white" />
+                    <span>{ctaLabel}</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                )}
               </div>
 
               {/* Mobile Right Controls: Hamburger */}
@@ -183,12 +212,12 @@ export function Header() {
 
         {/* Mobile Dropdown Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#ccd7e2] bg-white px-5 py-6 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden border-t border-slate-200 bg-white px-5 py-6 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex flex-col space-y-2">
               <div className="text-xs font-semibold text-slate-500 px-2 pb-1">
                 Navigation
               </div>
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link: NavLinkItem) => (
                 <Link
                   key={link.name}
                   href={link.href}
@@ -199,7 +228,7 @@ export function Header() {
                   className={`text-sm font-medium py-2.5 px-3 rounded-[0.26rem] transition-colors flex items-center justify-between ${
                     activeNav === link.name
                       ? "bg-[#115eff] text-white font-bold shadow-xs"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-black"
+                      : "text-slate-700 hover:bg-slate-100 hover:text-[#004776]"
                   }`}
                 >
                   <span>{link.name}</span>
@@ -239,7 +268,7 @@ export function Header() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-slate-150">
-              <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+              <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
                 <Search className="w-4 h-4 text-[#115eff]" />
                 <span>Search Conference Topics & Guidelines</span>
               </div>

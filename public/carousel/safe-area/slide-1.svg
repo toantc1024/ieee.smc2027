@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Demo slide #1 — uses the safe-area template. Critical content sits in the 1:1 center. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1000" width="2400" height="1000"
+     font-family="'Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1f3a"/>
+      <stop offset="100%" stop-color="#0a3d62"/>
+    </linearGradient>
+    <pattern id="grid1" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0L0 0 0 120" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="diag1" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="16" fill="#ef4444" opacity="0.18"/>
+    </pattern>
+  </defs>
+
+  <rect width="2400" height="1000" fill="url(#bg1)"/>
+  <rect width="2400" height="1000" fill="url(#grid1)"/>
+  <!-- Unsafe crop zone hatching -->
+  <path d="M0 0H2400V1000H0Z M700 0H1700V1000H700Z" fill="url(#diag1)" fill-rule="evenodd" opacity="0.55"/>
+
+  <!-- Desktop / tablet safe zones -->
+  <rect x="100" y="50" width="2200" height="900" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-dasharray="10 8"/>
+  <rect x="400" y="50" width="1600" height="900" fill="none" stroke="#60a5fa" stroke-opacity="0.55" stroke-dasharray="6 6"/>
+
+  <!-- Mobile 1:1 safe square -->
+  <rect x="700" y="0" width="1000" height="1000" fill="#10b981" fill-opacity="0.08" stroke="#10b981" stroke-width="4"/>
+
+  <!-- Brand content inside mobile-safe square -->
+  <g transform="translate(1200,500)" text-anchor="middle" fill="#ffffff">
+    <circle r="60" cx="0" cy="-230" fill="#10b981"/>
+    <text y="-215" font-size="54" font-weight="800" fill="#0b1f3a">01</text>
+    <text y="-110" font-size="34" font-weight="600" fill="#a7f3d0" letter-spacing="6">HCMUTE · TRANG CHỦ</text>
+    <text y="-30" font-size="90" font-weight="900">Đào tạo kỹ sư</text>
+    <text y="70" font-size="90" font-weight="900">thế hệ mới</text>
+    <text y="150" font-size="28" fill="#cbd5e1">Nội dung quan trọng nằm trong vùng 1:1 trung tâm — an toàn trên mọi thiết bị.</text>
+    <g transform="translate(-160,210)">
+      <rect width="320" height="72" rx="36" fill="#10b981"/>
+      <text x="160" y="47" font-size="26" font-weight="700" fill="#0b1f3a">Khám phá ngành học</text>
+    </g>
+  </g>
+
+  <!-- Corner registration ticks -->
+  <g stroke="#ffffff" stroke-opacity="0.6" stroke-width="2">
+    <path d="M0 40 L40 40 M40 40 L40 0"/>
+    <path d="M2400 40 L2360 40 M2360 40 L2360 0"/>
+    <path d="M0 960 L40 960 M40 960 L40 1000"/>
+    <path d="M2400 960 L2360 960 M2360 960 L2360 1000"/>
+  </g>
+
+  <!-- Legend -->
+  <g font-size="14" fill="#cbd5e1">
+    <text x="120" y="930">Desktop safe 2200×900</text>
+    <text x="420" y="930" fill="#93c5fd">Tablet safe 1600×900</text>
+    <text x="1720" y="930" fill="#6ee7b7">Mobile 1:1 safe (critical content here)</text>
+  </g>
+</svg>

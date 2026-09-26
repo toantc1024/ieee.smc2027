@@ -12,7 +12,7 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export function ConferenceHighlights() {
   return (
-    <SectionContainer id="highlights" fullWidthBg="bg-white" borderBottom={true}>
+    <SectionContainer id="highlights" fullWidthBg="bg-white">
       
       {/* Top: 4 Key Conference Statistics Cards */}
       <div className="px-4 sm:px-6 py-6 sm:py-8">
@@ -20,7 +20,7 @@ export function ConferenceHighlights() {
           {CONFERENCE_STATS.map((stat, i) => (
             <div
               key={i}
-              className="p-5 sm:p-6 bg-slate-50/80 hover:bg-white border border-[#ccd7e2] hover:border-[#115eff] rounded-md shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between group"
+              className="p-5 sm:p-6 bg-slate-50/80 hover:bg-white border border-slate-200 hover:border-[#115eff] rounded-md shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between group"
             >
               <div>
                 <span className="text-3xl sm:text-4xl font-black text-[#115eff] tracking-tight block">
@@ -39,7 +39,7 @@ export function ConferenceHighlights() {
       </div>
 
       {/* FULL WIDTH DIVIDER: Connects directly from left border to right border, no padding/margin */}
-      <div className="w-full border-t border-[#ccd7e2]" />
+      <div className="w-full border-t border-slate-200" />
 
       {/* Bottom: Official Indexing & Academic Inclusion with Bottom-Left Corner Grid Accent */}
       <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-7 bg-white">
@@ -57,22 +57,22 @@ export function ConferenceHighlights() {
 
           {/* Provider Badges */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ccd7e2] rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
               <IeeeXploreIcon className="w-4 h-4" />
               <span>IEEE Xplore</span>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ccd7e2] rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
               <ScopusIcon className="w-4 h-4" />
               <span>Scopus</span>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ccd7e2] rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
               <EiCompendexIcon className="w-4 h-4" />
               <span>EI Compendex</span>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#ccd7e2] rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-[0.26rem] text-xs font-bold text-slate-800 shadow-2xs">
               <WebOfScienceIcon className="w-4 h-4" />
               <span>Web of Science</span>
             </div>

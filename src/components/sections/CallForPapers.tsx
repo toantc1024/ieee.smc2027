@@ -17,24 +17,28 @@ export function CallForPapers() {
 
   return (
     <SectionContainer id="cfp" fullWidthBg="bg-white">
-      {/* Section Header Strip with Top-Right Corner Dot Accent */}
-      <div className="relative overflow-hidden border-b border-[#ccd7e2] px-4 sm:px-6 py-5 sm:py-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-4">
-        <div className="corner-dot-tr opacity-60" />
-        <div className="relative z-10">
-          <span className="text-sm font-bold text-[#115eff] block mb-1 uppercase tracking-wider">
-            Call for Papers (CFP)
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Submission Categories & Guidelines
-          </h2>
-        </div>
+      {/* Section Header matching standard HCMUTE 2-line headline style */}
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
+        <div className="corner-dot-tr opacity-75 pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+              <span className="block text-[#004776]">Call For Papers</span>
+              <span className="block text-[#115eff]">& Submission Guidelines</span>
+            </h2>
+            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+              Submission Categories & Technical Topics • IEEE SMC 2027
+            </p>
+          </div>
 
         <div className="relative z-10 flex items-center gap-3">
           <a
             href={CONFERENCE_INFO.cfpPdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-[#115eff] border border-[#ccd7e2] font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-[#115eff] border border-slate-200 font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
           >
             <FileDown className="w-4 h-4" />
             <span>Download CFP (PDF)</span>
@@ -42,6 +46,7 @@ export function CallForPapers() {
           </a>
         </div>
       </div>
+    </div>
 
       {/* Main Container Padding */}
       <div className="px-4 sm:px-6 py-8 sm:py-10">
@@ -54,7 +59,7 @@ export function CallForPapers() {
 
         {/* Official Paper Submission Rules Box from PDF */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="p-6 sm:p-7 border border-[#ccd7e2] bg-white rounded-md shadow-2xs flex flex-col justify-between">
+          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 text-sm font-bold text-[#115eff] uppercase tracking-wider mb-2">
                 <Image
@@ -80,7 +85,7 @@ export function CallForPapers() {
             </div>
           </div>
 
-          <div className="p-6 sm:p-7 border border-[#ccd7e2] bg-white rounded-md shadow-2xs flex flex-col justify-between">
+          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 text-sm font-bold text-[#115eff] uppercase tracking-wider mb-2">
                 <Image
@@ -270,7 +275,7 @@ export function CallForPapers() {
               className={`inline-flex items-center justify-center gap-2 min-h-[48px] px-5 py-3 font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs cursor-pointer ${
                 showPdfViewer
                   ? "bg-[#115eff] hover:bg-[#0a4de6] text-white border border-[#115eff]"
-                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-[#ccd7e2]"
+                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200"
               }`}
             >
               <span>{showPdfViewer ? "Hide PDF Preview" : "Preview PDF (Scrollable)"}</span>
@@ -290,8 +295,8 @@ export function CallForPapers() {
 
         {/* Vertical Scrollable PDF Viewer */}
         {showPdfViewer && (
-          <div className="mt-4 border border-[#ccd7e2] rounded-md overflow-hidden bg-slate-100 shadow-sm">
-            <div className="px-4 py-2.5 bg-slate-200/80 border-b border-slate-300 flex items-center justify-between text-xs font-semibold text-slate-700">
+          <div className="mt-4 border border-slate-200 rounded-md overflow-hidden bg-slate-100 shadow-sm">
+            <div className="px-4 py-2.5 bg-slate-200/80 border-b border-slate-200 flex items-center justify-between text-xs font-semibold text-slate-700">
               <span>Official 2-Page Brochure (Vertical Scroll)</span>
               <a
                 href={CONFERENCE_INFO.cfpPdfUrl}

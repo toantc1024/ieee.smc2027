@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HCMUTE Hero — Mobile showcase slide (portrait model)
+  Canvas 1080 × 1920 (9:16). Content stacked vertically within safe zone.
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1080 1920"
+     width="1080" height="1920"
+     font-family="'Be Vietnam Pro','Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="mbg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%"   stop-color="#051B4B"/>
+      <stop offset="45%"  stop-color="#0B3A99"/>
+      <stop offset="100%" stop-color="#1E63D8"/>
+    </linearGradient>
+    <radialGradient id="mglowAmber" cx="30%" cy="80%" r="50%">
+      <stop offset="0%"   stop-color="#FBBF24" stop-opacity="0.45"/>
+      <stop offset="60%"  stop-color="#F59E0B" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mglowCyan" cx="80%" cy="20%" r="50%">
+      <stop offset="0%"   stop-color="#38BDF8" stop-opacity="0.35"/>
+      <stop offset="70%"  stop-color="#0EA5E9" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="mmesh" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0 H0 V80" fill="none" stroke="#FFFFFF" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+    <pattern id="mdots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#FFFFFF" fill-opacity="0.15"/>
+    </pattern>
+    <linearGradient id="mctaGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="mcardGlass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="msoft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" in="SourceAlpha" result="b"/>
+      <feOffset dx="0" dy="8" in="b" result="ob"/>
+      <feComponentTransfer in="ob" result="sh"><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+      <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#mbg)"/>
+  <rect width="1080" height="1920" fill="url(#mmesh)"/>
+  <circle cx="140" cy="1600" r="480" fill="url(#mglowAmber)"/>
+  <circle cx="940" cy="300" r="500" fill="url(#mglowCyan)"/>
+
+  <!-- Background watermark -->
+  <g opacity="0.05" transform="translate(-30 1400)">
+    <text font-size="360" font-weight="900" fill="#FFFFFF" letter-spacing="-15">UTE</text>
+  </g>
+
+  <!-- Decorative circles -->
+  <g stroke="#93C5FD" stroke-opacity="0.25" fill="none" stroke-width="1.5">
+    <circle cx="860" cy="400" r="280"/>
+    <circle cx="860" cy="400" r="200"/>
+    <circle cx="860" cy="400" r="120"/>
+  </g>
+  <g stroke="#FBBF24" stroke-opacity="0.4" fill="none" stroke-width="1.5" stroke-dasharray="2 8">
+    <circle cx="860" cy="400" r="340"/>
+  </g>
+
+  <!-- Dot pattern bottom -->
+  <rect x="0" y="1780" width="1080" height="140" fill="url(#mdots)"/>
+
+  <!-- ── Corner meta ── -->
+  <g fill="#FFFFFF" fill-opacity="0.5" font-size="14" font-weight="600" letter-spacing="2">
+    <text x="90" y="340">TP. HỒ CHÍ MINH · VIỆT NAM</text>
+    <text x="990" y="340" text-anchor="end">HCMUTE.EDU.VN</text>
+  </g>
+
+  <!-- ── Content: Vertical stacked ── -->
+
+  <!-- Badge -->
+  <g transform="translate(90 440)">
+    <rect width="340" height="52" rx="26" fill="#FFFFFF" fill-opacity="0.1" stroke="#FBBF24" stroke-opacity="0.7"/>
+    <circle cx="28" cy="26" r="7" fill="#FBBF24"/>
+    <text x="50" y="34" font-size="19" font-weight="700" fill="#FBBF24" letter-spacing="2">
+      HCM-UTE · EST. 1962
+    </text>
+  </g>
+
+  <!-- Headline -->
+  <g transform="translate(90 550)" fill="#FFFFFF">
+    <text font-size="80" font-weight="900" letter-spacing="-2">
+      <tspan x="0" y="80">Kiến tạo</tspan>
+      <tspan x="0" y="170">thế hệ kỹ sư</tspan>
+      <tspan x="0" y="260" fill="#FBBF24">số 2026</tspan>
+    </text>
+  </g>
+
+  <!-- Accent bar -->
+  <rect x="90" y="850" width="160" height="6" rx="3" fill="#FBBF24"/>
+
+  <!-- Description -->
+  <text x="90" y="910" font-size="26" fill="#E2E8F0" font-weight="500">
+    <tspan x="90" dy="0">Công nghệ · Sáng tạo · Hội nhập</tspan>
+    <tspan x="90" dy="38">nơi đam mê trở thành năng lực,</tspan>
+    <tspan x="90" dy="38">năng lực trở thành giá trị bền vững.</tspan>
+  </text>
+
+  <!-- CTA buttons — stacked vertically -->
+  <g transform="translate(90 1060)">
+    <g>
+      <rect width="400" height="72" rx="36" fill="url(#mctaGrad)"/>
+      <text x="200" y="47" text-anchor="middle" font-size="24" font-weight="800" fill="#1F2937">
+        Khám phá HCM-UTE →
+      </text>
+    </g>
+    <g transform="translate(0 95)">
+      <rect width="360" height="72" rx="36" fill="none" stroke="#FFFFFF" stroke-opacity="0.6"/>
+      <text x="180" y="47" text-anchor="middle" font-size="24" font-weight="700" fill="#FFFFFF">
+        Tuyển sinh 2026
+      </text>
+    </g>
+  </g>
+
+  <!-- Stats card — full width at bottom -->
+  <g transform="translate(90 1340)" filter="url(#msoft)">
+    <rect width="900" height="300" rx="20"
+          fill="url(#mcardGlass)" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <text x="36" y="46" font-size="15" fill="#CBD5E1" font-weight="700" letter-spacing="3">
+      THÀNH TỰU NỔI BẬT · 2025
+    </text>
+    <line x1="36" y1="66" x2="864" y2="66" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <!-- Stat 1 -->
+    <g>
+      <text x="36"  y="130" font-size="54" font-weight="900" fill="#FBBF24">60K+</text>
+      <text x="36"  y="165" font-size="15" fill="#CBD5E1" font-weight="500">Sinh viên &amp; cựu SV</text>
+    </g>
+    <line x1="270" y1="85" x2="270" y2="230" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <!-- Stat 2 -->
+    <g>
+      <text x="300" y="130" font-size="54" font-weight="900" fill="#FBBF24">866</text>
+      <text x="300" y="165" font-size="15" fill="#CBD5E1" font-weight="500">Bài báo ISI/Scopus</text>
+    </g>
+    <line x1="530" y1="85" x2="530" y2="230" stroke="#FFFFFF" stroke-opacity="0.15"/>
+    <!-- Stat 3 -->
+    <g>
+      <text x="560" y="130" font-size="48" font-weight="900" fill="#FBBF24">TOP 10</text>
+      <text x="560" y="165" font-size="15" fill="#CBD5E1" font-weight="500">ĐH kỹ thuật Việt Nam</text>
+    </g>
+    <text x="36" y="250" font-size="14" fill="#E2E8F0" fill-opacity="0.7">
+      Xếp hạng TOP KHCN ISI/Scopus · đầu tư hạ tầng lab &amp; hợp tác DN.
+    </text>
+  </g>
+
+  <!-- Bottom meta -->
+  <g fill="#FFFFFF" fill-opacity="0.45" font-size="14" font-weight="600" letter-spacing="2">
+    <text x="90" y="1850">MOBILE · 1080×1920 · 9:16</text>
+    <text x="990" y="1850" text-anchor="end">01 / 03</text>
+  </g>
+</svg>

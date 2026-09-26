@@ -1,0 +1,36 @@
+import React from "react";
+import { Hero } from "@/components/sections/Hero";
+import { SubmissionCountdown } from "@/components/sections/SubmissionCountdown";
+import { ConferenceHighlights } from "@/components/sections/ConferenceHighlights";
+import { About } from "@/components/sections/About";
+import { CallForPapers } from "@/components/sections/CallForPapers";
+import { TracksExplorer } from "@/components/sections/TracksExplorer";
+import { ImportantDates } from "@/components/sections/ImportantDates";
+import { Committee } from "@/components/sections/Committee";
+import { Venue } from "@/components/sections/Venue";
+import { FAQ } from "@/components/sections/FAQ";
+import { CfpSubscribe } from "@/components/sections/CfpSubscribe";
+import { Sponsors } from "@/components/sections/Sponsors";
+import { Footer } from "@/components/layout/Footer";
+
+export function OldHomepage() {
+  return (
+    <>
+      <Hero />
+      <SubmissionCountdown />
+      <ConferenceHighlights />
+      <About />
+      <CallForPapers />
+      <TracksExplorer />
+      <ImportantDates />
+      <Committee />
+      <Venue />
+      <FAQ />
+      <CfpSubscribe />
+      <Sponsors />
+      <Footer />
+    </>
+  );
+}
+
+export default OldHomepage;

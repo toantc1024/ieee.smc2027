@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Demo slide #3 — teal accent, content still inside mobile 1:1 safe zone. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1000" width="2400" height="1000"
+     font-family="'Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <pattern id="grid3" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0L0 0 0 120" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="diag3" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="16" fill="#ffffff" opacity="0.10"/>
+    </pattern>
+  </defs>
+
+  <rect width="2400" height="1000" fill="url(#bg3)"/>
+  <rect width="2400" height="1000" fill="url(#grid3)"/>
+  <path d="M0 0H2400V1000H0Z M700 0H1700V1000H700Z" fill="url(#diag3)" fill-rule="evenodd"/>
+
+  <rect x="100" y="50" width="2200" height="900" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-dasharray="10 8"/>
+  <rect x="400" y="50" width="1600" height="900" fill="none" stroke="#5eead4" stroke-opacity="0.55" stroke-dasharray="6 6"/>
+
+  <rect x="700" y="0" width="1000" height="1000" fill="#5eead4" fill-opacity="0.08" stroke="#5eead4" stroke-width="4"/>
+
+  <g transform="translate(1200,500)" text-anchor="middle" fill="#ffffff">
+    <circle r="60" cx="0" cy="-230" fill="#5eead4"/>
+    <text y="-215" font-size="54" font-weight="800" fill="#134e4a">03</text>
+    <text y="-110" font-size="34" font-weight="600" fill="#99f6e4" letter-spacing="6">HỢP TÁC QUỐC TẾ</text>
+    <text y="-30" font-size="90" font-weight="900">Cơ hội học tập</text>
+    <text y="70" font-size="90" font-weight="900">xuyên biên giới</text>
+    <text y="150" font-size="28" fill="#ccfbf1">Safe-area contract: 1:1 trung tâm luôn được giữ nguyên — không crop logo, headline, CTA.</text>
+    <g transform="translate(-160,210)">
+      <rect width="320" height="72" rx="36" fill="#5eead4"/>
+      <text x="160" y="47" font-size="26" font-weight="700" fill="#134e4a">Chương trình liên kết</text>
+    </g>
+  </g>
+
+  <g stroke="#ffffff" stroke-opacity="0.6" stroke-width="2">
+    <path d="M0 40 L40 40 M40 40 L40 0"/>
+    <path d="M2400 40 L2360 40 M2360 40 L2360 0"/>
+    <path d="M0 960 L40 960 M40 960 L40 1000"/>
+    <path d="M2400 960 L2360 960 M2360 960 L2360 1000"/>
+  </g>
+
+  <g font-size="14" fill="#ccfbf1">
+    <text x="120" y="930">Desktop safe 2200×900</text>
+    <text x="420" y="930" fill="#5eead4">Tablet safe 1600×900</text>
+    <text x="1720" y="930" fill="#5eead4">Mobile 1:1 safe (critical content here)</text>
+  </g>
+</svg>

@@ -125,7 +125,7 @@ export function HcmuteLogo({
             HCM-UTE
           </span>
           <span className="text-slate-300 font-light text-sm">|</span>
-          <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
+          <span className="font-bold text-foreground text-sm sm:text-base tracking-tight">
             IEEE SMC 2027
           </span>
         </div>

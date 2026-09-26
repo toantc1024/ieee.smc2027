@@ -32,7 +32,7 @@ export function SubmissionCountdown() {
   )}`;
 
   return (
-    <SectionContainer id="submission-countdown" fullWidthBg="bg-white" borderBottom={true}>
+    <SectionContainer id="submission-countdown" fullWidthBg="bg-white">
       <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-8">
         {/* Subtle Top-Right Corner Grid Accent */}
         <div className="corner-grid-tr opacity-60" />
@@ -105,7 +105,7 @@ export function SubmissionCountdown() {
               href={CONFERENCE_INFO.cfpPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] sm:min-h-[48px] px-4 sm:px-5 py-2.5 bg-white hover:bg-blue-50 text-[#115eff] border border-[#ccd7e2] font-bold text-xs sm:text-sm rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] sm:min-h-[48px] px-4 sm:px-5 py-2.5 bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200 font-bold text-xs sm:text-sm rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
             >
               <FileDown className="w-3.5 h-3.5" />
               <span>CFP (PDF)</span>

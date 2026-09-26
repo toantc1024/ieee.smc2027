@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mobile slide #2 — 9:16 portrait, orange/amber. Safe area 900×1340 (y=290..1630). Container 3:4. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920"
+     font-family="'Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="mbg2" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#7c2d12"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <pattern id="mgrid2" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M120 0L0 0 0 120" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="mdiag2" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="16" fill="#fafafa" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#mbg2)"/>
+  <rect width="1080" height="1920" fill="url(#mgrid2)"/>
+
+  <!-- Crop zones: 240px top/bottom (3:4 container on 9:16 image) -->
+  <rect x="0" y="0" width="1080" height="240" fill="url(#mdiag2)" opacity="0.5"/>
+  <rect x="0" y="1680" width="1080" height="240" fill="url(#mdiag2)" opacity="0.5"/>
+  <line x1="0" y1="240" x2="1080" y2="240" stroke="#fde68a" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.5"/>
+  <line x1="0" y1="1680" x2="1080" y2="1680" stroke="#fde68a" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.5"/>
+
+  <!-- Visible area outline -->
+  <rect x="0" y="240" width="1080" height="1440" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-dasharray="10 8"/>
+  <rect x="90" y="290" width="900" height="1340" fill="#fde68a" fill-opacity="0.05" stroke="#fde68a" stroke-width="3"/>
+
+  <!-- Brand content -->
+  <g text-anchor="middle" fill="#ffffff">
+    <circle cx="540" cy="440" r="55" fill="#fde68a"/>
+    <text x="540" y="458" font-size="48" font-weight="800" fill="#7c2d12" text-anchor="middle">02</text>
+
+    <text x="540" y="560" font-size="32" font-weight="600" fill="#fde68a" letter-spacing="5">NGHIÊN CỨU KHOA HỌC</text>
+
+    <text x="540" y="700" font-size="82" font-weight="900">Kết nối tri thức</text>
+    <text x="540" y="800" font-size="82" font-weight="900">thúc đẩy đổi mới</text>
+
+    <text x="540" y="920" font-size="26" fill="#fed7aa">
+      Toàn bộ bố cục nằm gọn trong vùng an toàn
+    </text>
+    <text x="540" y="960" font-size="26" fill="#fed7aa">
+      — không bị cắt ở mọi kích thước màn hình.
+    </text>
+
+    <g transform="translate(380 1040)">
+      <rect width="320" height="72" rx="36" fill="#fde68a"/>
+      <text x="160" y="47" font-size="26" font-weight="700" fill="#7c2d12" text-anchor="middle">Xem dự án nghiên cứu</text>
+    </g>
+  </g>
+
+  <!-- Corner ticks -->
+  <g stroke="#ffffff" stroke-opacity="0.5" stroke-width="2">
+    <path d="M0 40 L40 40 M40 40 L40 0"/>
+    <path d="M1080 40 L1040 40 M1040 40 L1040 0"/>
+    <path d="M0 1880 L40 1880 M40 1880 L40 1920"/>
+    <path d="M1080 1880 L1040 1880 M1040 1880 L1040 1920"/>
+  </g>
+
+  <g font-size="14" fill="#fed7aa">
+    <text x="90" y="1840">Full canvas 1080×1920</text>
+    <text x="90" y="1860" fill="#fde68a">Mobile safe 900×1400 (critical content here)</text>
+  </g>
+</svg>
