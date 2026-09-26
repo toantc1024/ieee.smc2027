@@ -124,16 +124,17 @@ export function WelcomeLetter({
               </p>
 
               {/* Four Chairs Grid: General Chairs & Honorary Chairs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 sm:pt-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 sm:pt-8">
                 {CHAIR_MEMBERS.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
-                    {/* The Card Box - Border only, white by default, hover border turns primary blue */}
-                    <div className="relative rounded-2xl bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-visible">
+                    {/* The Card Box - Clean overflow-hidden container */}
+                    <div className="relative rounded-2xl bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
+                      
                       {/* Top: Image Canvas with White Background (Hover: Solid Primary Blue) */}
-                      <div className="relative w-full h-72 sm:h-80 rounded-t-2xl bg-white group-hover:bg-[#115eff] transition-colors duration-300">
+                      <div className="relative w-full h-64 sm:h-72 bg-slate-50/70 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
                         {/* Clipped background elements (dots only) behind the cutout */}
-                        <div className="absolute inset-0 rounded-t-2xl overflow-hidden pointer-events-none">
-                          {/* Blue Dot Pattern: single diagonal gradient */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                          {/* Blue Dot Pattern */}
                           <div
                             className="absolute inset-0 bg-dot-pattern opacity-50 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"
                             style={{
@@ -142,7 +143,7 @@ export function WelcomeLetter({
                             }}
                           />
 
-                          {/* Crisp White Dot Pattern in hover (blue) state: single diagonal gradient */}
+                          {/* Crisp White Dot Pattern in hover (blue) state */}
                           <div
                             className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none"
                             style={{
@@ -152,33 +153,34 @@ export function WelcomeLetter({
                           />
                         </div>
 
-                        {/* Head Over Card: Cutout sits in front of the dot pattern, overflows over the top edge */}
-                        <div className="absolute bottom-0 inset-x-0 flex items-end justify-center pointer-events-none z-10">
+                        {/* Image strictly scaled and fitted inside the container without any horizontal or vertical overflow */}
+                        <div className="relative w-full h-full flex items-end justify-center z-10">
                           <Image
                             src={chair.image}
                             alt={chair.name}
                             width={360}
                             height={440}
-                            className="h-80 sm:h-96 w-auto max-w-none object-contain object-bottom transition-transform duration-300 ease-out group-hover:scale-105"
+                            className="h-full w-auto max-h-full max-w-full object-contain object-bottom transition-transform duration-300 ease-out group-hover:scale-105"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           />
                         </div>
                       </div>
 
-                      {/* Bottom: FULL WIDTH of the card */}
-                      <div className="relative z-20 w-full -mt-4 p-5 bg-white group-hover:bg-[#115eff] rounded-b-2xl border-t border-slate-200 group-hover:border-slate-200/40 transition-colors duration-300 flex flex-col justify-between flex-1 overflow-hidden">
+                      {/* Bottom Details Section */}
+                      <div className="relative z-20 w-full p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1">
                         <div className="relative z-10">
-                          <span className="inline-block text-xs font-semibold uppercase tracking-wider mb-2 px-2.5 py-0.5 rounded transition-colors bg-[#115eff] text-white border border-[#115eff] group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
+                          <span className="inline-block text-[11px] font-bold uppercase tracking-wider mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
                             {chair.role}
                           </span>
                           <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
                             {chair.name}
                           </h4>
-                          <p className="text-xs text-[#004776]/70 group-hover:!text-white/90 mt-1 font-medium transition-colors duration-300">
+                          <p className="text-xs text-[#004776]/70 group-hover:!text-white/90 mt-1.5 font-medium leading-relaxed transition-colors duration-300">
                             {chair.affiliation}, {chair.country}
                           </p>
                         </div>
                       </div>
+
                     </div>
                   </div>
                 ))}
