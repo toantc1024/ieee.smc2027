@@ -105,6 +105,27 @@ export async function GET() {
           hidden: false,
         },
         {
+          id: "committees-section-1",
+          type: "CommitteesSection",
+          props: {
+            title: "Organizing & Technical Committees",
+            subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
+            badge: "Leadership & Organization",
+            autoplayDelay: 3500,
+          },
+          hidden: false,
+        },
+        {
+          id: "payment-methods-1",
+          type: "PaymentMethods",
+          props: {
+            title: "Registration & Payment Methods",
+            subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
+            badge: "Registration Guide",
+          },
+          hidden: false,
+        },
+        {
           id: "venue-1",
           type: "Venue",
           props: {},

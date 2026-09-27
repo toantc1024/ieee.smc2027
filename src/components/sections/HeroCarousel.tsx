@@ -264,7 +264,7 @@ export function HeroCarousel({
                 )}
                 priority={index === 0}
                 quality={75}
-                sizes="100vw"
+                sizes={slide.mobileImage ? "(min-width: 768px) 100vw, 1px" : "100vw"}
               />
               {slide.mobileImage && (
                 <Image
@@ -274,7 +274,7 @@ export function HeroCarousel({
                   className="object-cover object-center block md:hidden"
                   priority={index === 0}
                   quality={75}
-                  sizes="100vw"
+                  sizes="(max-width: 767px) 100vw, 1px"
                 />
               )}
               {/* Subtle dark gradient overlay only when text overlay is enabled */}

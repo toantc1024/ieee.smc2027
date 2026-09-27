@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
-  Mail,
-  MapPin,
-  Globe,
   Copy,
   Check,
   ExternalLink,
@@ -66,156 +64,262 @@ export function ContactCards({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Email */}
-          <div className="relative overflow-hidden p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
-            {/* HCMUTE Brand Patterns on Card Hover */}
-            <div className="corner-grid-tr opacity-0 group-hover:opacity-40 transition-opacity pointer-events-none" />
-            <div className="corner-dot-bl opacity-0 group-hover:opacity-30 transition-opacity pointer-events-none" />
+          <div className="relative overflow-hidden bg-white border border-slate-200 hover:border-[#115eff] hover:bg-[#115eff] rounded-2xl shadow-2xs hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+            {/* HCMUTE Brand Patterns */}
+            <div className="corner-grid-tr opacity-40 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
+            <div className="corner-dot-bl opacity-30 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
 
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-blue-50 text-[#115eff] rounded-xl flex items-center justify-center mb-5 border border-blue-100 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
-                <Mail className="w-7 h-7" />
-              </div>
+            {/* High-tech Crisp White Pattern on Card Hover */}
+            <div
+              className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+              style={{
+                maskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+                WebkitMaskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+              }}
+            />
+            {/* Ambient light glow on hover */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-                E-mail
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Official Support Desk
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                For questions regarding paper submission, proposals, registration, or partner sponsorships.
-              </p>
+            {/* Card Body */}
+            <div className="p-6 sm:p-7 relative z-10 flex-1 flex flex-col justify-between">
+              <div>
+                {/* 3D Icon Container */}
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center p-1.5 overflow-hidden mb-5 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
+                  <Image
+                    src="/assets/3d-icons/email__3d-icon.jpg"
+                    alt="Official Support Email"
+                    width={60}
+                    height={60}
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                </div>
 
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-md text-xs font-mono text-slate-800 break-all mb-2">
-                {displayEmail}
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                  E-mail
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                  Official Support Desk
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                  For questions regarding paper submission, proposals, registration, or partner sponsorships.
+                </p>
+
+                {/* Email Display Box: Pure white on hover */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 break-all mb-2 group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                  <span className="group-hover:!text-white">{displayEmail}</span>
+                </div>
               </div>
             </div>
 
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <a
-                href={`mailto:${displayEmail}`}
-                className="text-xs font-bold text-[#115eff] hover:underline inline-flex items-center gap-1"
-              >
-                <span>Compose Email</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+            {/* Full-width Divider */}
+            <div className="w-full border-t border-slate-200/80 group-hover:border-white/20 transition-colors duration-300" />
 
-              <button
-                onClick={() => handleCopy("email", displayEmail)}
-                className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1 cursor-pointer"
-              >
-                {copiedType === "email" ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-600 font-semibold">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
+            {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
+            <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                <a
+                  href={`mailto:${displayEmail}`}
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                >
+                  <span>Compose</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy("email", displayEmail)}
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                >
+                  {copiedType === "email" ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Card 2: Location & Venue */}
-          <div className="relative overflow-hidden p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
-            {/* HCMUTE Brand Patterns on Card Hover */}
-            <div className="corner-grid-tr opacity-0 group-hover:opacity-40 transition-opacity pointer-events-none" />
-            <div className="corner-dot-bl opacity-0 group-hover:opacity-30 transition-opacity pointer-events-none" />
+          <div className="relative overflow-hidden bg-white border border-slate-200 hover:border-[#115eff] hover:bg-[#115eff] rounded-2xl shadow-2xs hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+            {/* HCMUTE Brand Patterns */}
+            <div className="corner-grid-tr opacity-40 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
+            <div className="corner-dot-bl opacity-30 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
 
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-blue-50 text-[#115eff] rounded-xl flex items-center justify-center mb-5 border border-blue-100 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
-                <MapPin className="w-7 h-7" />
-              </div>
+            {/* High-tech Crisp White Pattern on Card Hover */}
+            <div
+              className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+              style={{
+                maskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+                WebkitMaskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+              }}
+            />
+            {/* Ambient light glow on hover */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-                Location
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                {displayLocation}
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                Official host city offering vibrant innovation, cultural heritage, and world-class hospitality in Vietnam.
-              </p>
+            {/* Card Body */}
+            <div className="p-6 sm:p-7 relative z-10 flex-1 flex flex-col justify-between">
+              <div>
+                {/* 3D Icon Container */}
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center p-1.5 overflow-hidden mb-5 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
+                  <Image
+                    src="/assets/3d-icons/location__3d-icon.jpg"
+                    alt="Conference Venue Location"
+                    width={60}
+                    height={60}
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                </div>
 
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-700 leading-relaxed">
-                <strong className="text-slate-900 font-semibold">{displayVenue}</strong>
-                <span className="block text-slate-500 mt-1">
-                  {CONFERENCE_INFO.address}
-                </span>
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                  Location
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                  {displayLocation}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                  Official host city offering vibrant innovation, cultural heritage, and world-class hospitality in Vietnam.
+                </p>
+
+                {/* Address Display Box: Pure white on hover */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 leading-relaxed group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white transition-all duration-300">
+                  <strong className="text-slate-900 group-hover:!text-white font-semibold transition-colors duration-300 block">
+                    {displayVenue}
+                  </strong>
+                  <span className="block text-slate-500 group-hover:!text-blue-100 mt-1 transition-colors duration-300">
+                    {CONFERENCE_INFO.address}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <a
-                href={CONFERENCE_INFO.googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-bold text-[#115eff] hover:underline inline-flex items-center gap-1"
-              >
-                <span>Google Maps</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+            {/* Full-width Divider */}
+            <div className="w-full border-t border-slate-200/80 group-hover:border-white/20 transition-colors duration-300" />
 
-              <span className="text-xs text-slate-400">Host City</span>
+            {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
+            <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                <a
+                  href={CONFERENCE_INFO.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                >
+                  <span>Google Maps</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy("location", `${displayVenue}, ${CONFERENCE_INFO.address}`)}
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                >
+                  {copiedType === "location" ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy Address</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Card 3: Website & Digital Services */}
-          <div className="relative overflow-hidden p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
-            {/* HCMUTE Brand Patterns on Card Hover */}
-            <div className="corner-grid-tr opacity-0 group-hover:opacity-40 transition-opacity pointer-events-none" />
-            <div className="corner-dot-bl opacity-0 group-hover:opacity-30 transition-opacity pointer-events-none" />
+          <div className="relative overflow-hidden bg-white border border-slate-200 hover:border-[#115eff] hover:bg-[#115eff] rounded-2xl shadow-2xs hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+            {/* HCMUTE Brand Patterns */}
+            <div className="corner-grid-tr opacity-40 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
+            <div className="corner-dot-bl opacity-30 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
 
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-blue-50 text-[#115eff] rounded-xl flex items-center justify-center mb-5 border border-blue-100 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
-                <Globe className="w-7 h-7" />
-              </div>
+            {/* High-tech Crisp White Pattern on Card Hover */}
+            <div
+              className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+              style={{
+                maskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+                WebkitMaskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
+              }}
+            />
+            {/* Ambient light glow on hover */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-                Website & Hotline
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Official Web Portal
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                Access official announcements, CFP guidelines, submission portals, and secretariat hotline support: {CONFERENCE_INFO.hotline}.
-              </p>
+            {/* Card Body */}
+            <div className="p-6 sm:p-7 relative z-10 flex-1 flex flex-col justify-between">
+              <div>
+                {/* 3D Icon Container */}
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center p-1.5 overflow-hidden mb-5 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
+                  <Image
+                    src="/assets/3d-icons/portal__3d-icon.png"
+                    alt="Official Conference Portal"
+                    width={60}
+                    height={60}
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                </div>
 
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-md text-xs font-mono text-slate-800 break-all">
-                {displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                  Website & Hotline
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                  Official Web Portal
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                  Access official announcements, CFP guidelines, submission portals, and secretariat hotline support: {CONFERENCE_INFO.hotline}.
+                </p>
+
+                {/* URL Display Box: Pure white on hover */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 break-all group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                  <span className="group-hover:!text-white">
+                    {displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <a
-                href={displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-bold text-[#115eff] hover:underline inline-flex items-center gap-1"
-              >
-                <span>Open Website</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+            {/* Full-width Divider */}
+            <div className="w-full border-t border-slate-200/80 group-hover:border-white/20 transition-colors duration-300" />
 
-              <button
-                onClick={() => handleCopy("website", displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`)}
-                className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1 cursor-pointer"
-              >
-                {copiedType === "website" ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-600 font-semibold">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
+            {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
+            <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                <a
+                  href={displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                >
+                  <span>Open Portal</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy("website", displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`)}
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                >
+                  {copiedType === "website" ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy URL</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

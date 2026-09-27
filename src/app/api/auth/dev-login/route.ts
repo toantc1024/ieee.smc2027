@@ -4,14 +4,14 @@ import { createSessionToken, upsertUser, SESSION_COOKIE_NAME } from "@/lib/auth"
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const email = body.email || "admin@hcmute.edu.vn";
-    const name = body.name || "HCMUTE Conference Administrator";
+    const email = body.email || "tctoan1024@gmail.com";
+    const name = body.name || "Toan Tran (Admin)";
 
     const dbUser = await upsertUser({
       id: `dev_${email}`,
       email,
       name,
-      avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=hcmute",
+      avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=tctoan",
       role: "ADMIN",
       provider: "dev_mock",
     });

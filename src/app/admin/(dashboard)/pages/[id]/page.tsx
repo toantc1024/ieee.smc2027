@@ -3,6 +3,21 @@
 import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   ArrowLeft,
   Save,
   Check,
@@ -12,8 +27,9 @@ import {
   Copy,
   Eye,
   EyeOff,
-  ArrowUp,
-  ArrowDown,
+  ChevronUp,
+  ChevronDown,
+  GripVertical,
   Monitor,
   Tablet,
   Smartphone,
@@ -34,6 +50,8 @@ import { TracksExplorer } from "@/components/sections/TracksExplorer";
 import { ImportantDates } from "@/components/sections/ImportantDates";
 import { About } from "@/components/sections/About";
 import { Committee } from "@/components/sections/Committee";
+import { CommitteesSection } from "@/components/sections/CommitteesSection";
+import { PaymentMethods } from "@/components/sections/PaymentMethods";
 import { Venue } from "@/components/sections/Venue";
 import { FAQ } from "@/components/sections/FAQ";
 import { Sponsors } from "@/components/sections/Sponsors";
@@ -51,6 +69,31 @@ const AVAILABLE_BLOCKS = [
     description: "Banner quay vòng toàn màn hình với hiệu ứng chuyển ảnh GSAP và bộ đếm hoa sen",
     defaultProps: {
       autoplayDuration: 7,
+      showOverlayText: true,
+      showIndicators: true,
+    },
+  },
+  {
+    type: "CommitteesSection",
+    title: "Ban Điều Hành & Thành Viên (Committees Carousel)",
+    category: "Tổ chức",
+    description: "Khối ban tổ chức xanh hoàng gia chuẩn HCMUTE, lưới chevron hai bên, cuộn tự động và làm mờ viền",
+    defaultProps: {
+      title: "Organizing & Technical Committees",
+      subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
+      badge: "Leadership & Organization",
+      autoplayDelay: 3500,
+    },
+  },
+  {
+    type: "PaymentMethods",
+    title: "Đăng Ký & Cổng Thanh Toán (Payment Methods)",
+    category: "Nộp bài",
+    description: "Biểu phí tác giả, mã VietQR nội địa, điện chuyển khoản SWIFT quốc tế và thanh toán thẻ PaperCept",
+    defaultProps: {
+      title: "Registration & Payment Methods",
+      subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
+      badge: "Registration Guide",
     },
   },
   {
@@ -59,10 +102,10 @@ const AVAILABLE_BLOCKS = [
     category: "Giới thiệu",
     description: "Thông điệp từ General Chairs và chủ đề Human-Centric Intelligence",
     defaultProps: {
+      heading: "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       title: "Welcome Message from the General Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
       theme: "Human-Centric Intelligence: Shaping the Digital Future",
-      datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
     },
   },
   {
@@ -105,7 +148,7 @@ const AVAILABLE_BLOCKS = [
     defaultProps: {
       title: "Contact the Organizing Secretariat",
       subtitle: "Have questions regarding paper submissions, proposals, or travel visas? We are here to assist you.",
-      email: "smc2027@hcmute.edu.vn",
+      email: "ieeesmc2027@hcmute.edu.vn",
       location: "Ho Chi Minh City, Vietnam",
       venue: "Sheraton Saigon Grand Opera Hotel",
       website: "ieeesmc2027.hcmute.edu.vn",
@@ -162,7 +205,7 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "Committee",
-    title: "Ban tổ chức (Organizing Committee)",
+    title: "Ban tổ chức dạng danh sách (Organizing Committee)",
     category: "Tổ chức",
     description: "Danh sách General Chairs, Program Chairs và ban điều hành quốc tế",
     defaultProps: {},
@@ -218,12 +261,187 @@ interface PageBlockItem {
 }
 
 interface WebsitePageRecord {
-  id: number;
+  id: number | string;
   slug: string;
   title: string;
   blocks: PageBlockItem[];
   is_published: boolean;
   updated_at: string;
+}
+
+/**
+ * Sortable Block Item matching HCMUTE website frontend page builder mechanics 1-to-1
+ */
+function SortableBlockWrapper({
+  block,
+  index,
+  totalBlocks,
+  isSelected,
+  onSelect,
+  onMoveUp,
+  onMoveDown,
+  onDuplicate,
+  onToggleHide,
+  onRemove,
+  children,
+}: {
+  block: PageBlockItem;
+  index: number;
+  totalBlocks: number;
+  isSelected: boolean;
+  onSelect: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onDuplicate: () => void;
+  onToggleHide: () => void;
+  onRemove: () => void;
+  children: React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: block.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.35 : 1,
+    zIndex: isDragging ? 50 : isSelected ? 30 : 1,
+  };
+
+  const blockMeta = AVAILABLE_BLOCKS.find((b) => b.type === block.type);
+  const blockTitle = blockMeta?.title || block.type;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect();
+      }}
+      className={cn(
+        "relative group bg-white rounded-xl transition-all duration-150 select-none",
+        isSelected
+          ? "ring-2 ring-[#115eff] shadow-xl"
+          : "border border-slate-200/80 hover:border-blue-300 shadow-xs",
+        isDragging && "ring-2 ring-blue-400 shadow-2xl scale-[1.01]"
+      )}
+    >
+      {/* ── Top Floating Action Pill (HCMUTE Page Builder Mechanism) ── */}
+      <div
+        className={cn(
+          "absolute top-2 left-2 z-40 flex items-center gap-1.5 h-8 bg-[#115eff] text-white rounded-lg px-2.5 py-1 shadow-md shadow-blue-600/30 border border-blue-400/80 transition-all duration-150",
+          isSelected || isDragging ? "opacity-100 scale-100" : "opacity-90 group-hover:opacity-100"
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Drag Handle with Grip Icon */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="flex items-center gap-1.5 px-1 py-0.5 text-white font-bold cursor-grab active:cursor-grabbing select-none shrink-0"
+          title="Nhấn giữ để kéo thả thay đổi vị trí khối"
+        >
+          <GripVertical className="w-3.5 h-3.5 text-blue-100" />
+          <span className="w-4 h-4 rounded bg-white text-[#115eff] text-[10px] font-extrabold flex items-center justify-center">
+            {index + 1}
+          </span>
+          <span className="text-xs font-bold tracking-tight max-w-[170px] truncate leading-none text-white">
+            {blockTitle}
+          </span>
+        </div>
+
+        {block.hidden && (
+          <span className="text-[10px] bg-amber-400 text-amber-950 font-bold px-1.5 py-0.5 rounded leading-none">
+            Đang ẩn
+          </span>
+        )}
+
+        <div className="h-3.5 w-px bg-blue-400/80 mx-0.5 shrink-0" />
+
+        {/* Move Up */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveUp();
+          }}
+          disabled={index === 0}
+          className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 disabled:opacity-30 transition-colors cursor-pointer shrink-0"
+          title="Di chuyển lên trên"
+        >
+          <ChevronUp className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Move Down */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveDown();
+          }}
+          disabled={index === totalBlocks - 1}
+          className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 disabled:opacity-30 transition-colors cursor-pointer shrink-0"
+          title="Di chuyển xuống dưới"
+        >
+          <ChevronDown className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Duplicate */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDuplicate();
+          }}
+          className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 transition-colors cursor-pointer shrink-0"
+          title="Nhân bản khối này"
+        >
+          <Copy className="w-3 h-3" />
+        </button>
+
+        {/* Visibility */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleHide();
+          }}
+          className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 transition-colors cursor-pointer shrink-0"
+          title={block.hidden ? "Hiện khối" : "Ẩn khối"}
+        >
+          {block.hidden ? (
+            <EyeOff className="w-3.5 h-3.5 text-amber-300" />
+          ) : (
+            <Eye className="w-3.5 h-3.5" />
+          )}
+        </button>
+
+        {/* Remove */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="w-6 h-6 flex items-center justify-center rounded text-rose-200 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer shrink-0"
+          title="Xóa khối"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Render Component Preview */}
+      <div className={cn("overflow-hidden rounded-xl", block.hidden && "opacity-60")}>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export default function PageBuilderRoute({
@@ -245,6 +463,14 @@ export default function PageBuilderRoute({
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [paletteSearch, setPaletteSearch] = useState("");
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
   useEffect(() => {
     fetch(`/api/admin/pages/${id}`)
       .then((res) => res.json())
@@ -262,6 +488,20 @@ export default function PageBuilderRoute({
       .finally(() => setLoading(false));
   }, [id]);
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setBlocks((items) => {
+      const oldIndex = items.findIndex((i) => i.id === active.id);
+      const newIndex = items.findIndex((i) => i.id === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        return arrayMove(items, oldIndex, newIndex);
+      }
+      return items;
+    });
+  };
+
   const handleSave = async () => {
     setSaving(true);
     setSavedSuccess(false);
@@ -278,7 +518,7 @@ export default function PageBuilderRoute({
         setTimeout(() => setSavedSuccess(false), 3000);
       }
     } catch {
-      alert("Lỗi lưu trang vào Neon DB");
+      alert("Lỗi lưu trang vào cơ sở dữ liệu");
     } finally {
       setSaving(false);
     }
@@ -327,11 +567,7 @@ export default function PageBuilderRoute({
   const moveBlock = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1;
     if (target < 0 || target >= blocks.length) return;
-    const next = [...blocks];
-    const temp = next[index];
-    next[index] = next[target];
-    next[target] = temp;
-    setBlocks(next);
+    setBlocks((items) => arrayMove(items, index, target));
   };
 
   const updateBlockProps = (blockId: string, newProps: Record<string, unknown>) => {
@@ -340,14 +576,12 @@ export default function PageBuilderRoute({
     );
   };
 
-  // Open Raw JSON modal
   const openJsonEditor = () => {
     setRawJsonText(JSON.stringify(blocks, null, 2));
     setJsonError(null);
     setJsonModalOpen(true);
   };
 
-  // Apply Raw JSON
   const applyJsonData = () => {
     try {
       const parsed = JSON.parse(rawJsonText);
@@ -365,7 +599,7 @@ export default function PageBuilderRoute({
   const renderBlockPreview = (block: PageBlockItem) => {
     if (block.hidden) {
       return (
-        <div className="p-12 text-center bg-slate-100/70 border-2 border-dashed border-slate-300 rounded-lg text-slate-400 text-xs font-semibold">
+        <div className="p-12 text-center bg-slate-100/70 border-2 border-dashed border-slate-300 rounded-xl text-slate-400 text-xs font-semibold">
           Khối [{block.type}] đang bị ẩn trên trang công khai
         </div>
       );
@@ -374,6 +608,10 @@ export default function PageBuilderRoute({
     switch (block.type) {
       case "HeroCarousel":
         return <HeroCarousel {...block.props} />;
+      case "CommitteesSection":
+        return <CommitteesSection {...block.props} />;
+      case "PaymentMethods":
+        return <PaymentMethods {...block.props} />;
       case "WelcomeLetter":
         return <WelcomeLetter {...block.props} />;
       case "NewsList":
@@ -412,13 +650,13 @@ export default function PageBuilderRoute({
         return (
           <div
             dangerouslySetInnerHTML={{
-              __html: block.props?.content || "<p>Nội dung trống</p>",
+              __html: (block.props?.content as string) || "<p>Nội dung trống</p>",
             }}
           />
         );
       default:
         return (
-          <div className="p-8 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg">
+          <div className="p-8 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl">
             Khối chưa định nghĩa: {block.type}
           </div>
         );
@@ -439,7 +677,7 @@ export default function PageBuilderRoute({
     return (
       <div className="py-24 text-center text-slate-500 text-sm flex flex-col items-center gap-3">
         <RefreshCw className="w-6 h-6 animate-spin text-[#115eff]" />
-        <span>Đang tải giao diện kéo thả (Drag & Drop Canvas)...</span>
+        <span>Đang tải giao diện kéo thả (HCMUTE Drag & Drop Canvas)...</span>
       </div>
     );
   }
@@ -448,7 +686,6 @@ export default function PageBuilderRoute({
     <div className="space-y-4 -mx-4 sm:-mx-6 lg:-mx-8 -my-4 sm:-my-6 lg:-my-8 font-sans">
       {/* Top Toolbar Header */}
       <div className="sticky top-16 z-30 bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
-        
         {/* Left: Back & Page title */}
         <div className="flex items-center gap-3">
           <Link
@@ -459,10 +696,10 @@ export default function PageBuilderRoute({
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-slate-900 text-sm">
+            <span className="font-extrabold text-[#004776] text-sm">
               {page?.title}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-[#115eff] font-mono">
+            <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-[#115eff] font-mono font-semibold">
               /{page?.slug === "home" ? "" : page?.slug}
             </span>
           </div>
@@ -555,16 +792,15 @@ export default function PageBuilderRoute({
 
       {/* Main 3-Column Layout: Palette (Left), Canvas (Center), Inspector (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[calc(100vh-125px)]">
-        
-        {/* Left Column: Component Palette (Khối giao diện) */}
+        {/* Left Column: Component Palette */}
         <div className="lg:col-span-3 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-125px)]">
           <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#004776]">
               <Layers className="w-4 h-4 text-[#115eff]" />
               <span>Kho Khối Giao Diện (Components)</span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Nhấn &ldquo;+ Thêm&rdquo; để đưa khối vào trang web
+              Nhấn &ldquo;+ Thêm khối&rdquo; để chèn vào trang
             </p>
           </div>
 
@@ -574,7 +810,7 @@ export default function PageBuilderRoute({
               type="text"
               value={paletteSearch}
               onChange={(e) => setPaletteSearch(e.target.value)}
-              placeholder="Tìm kiếm khối (Hero, FAQ, Tracks...)"
+              placeholder="Tìm khối (Committees, Payment, FAQ...)"
               className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:bg-white focus:border-[#115eff]"
             />
           </div>
@@ -584,14 +820,14 @@ export default function PageBuilderRoute({
             {filteredPalette.map((b) => (
               <div
                 key={b.type}
-                className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-lg transition-all group flex flex-col justify-between gap-2"
+                className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-xl transition-all group flex flex-col justify-between gap-2 shadow-2xs"
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900 group-hover:text-[#115eff] transition-colors">
                       {b.title}
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-medium">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-semibold">
                       {b.category}
                     </span>
                   </div>
@@ -603,7 +839,7 @@ export default function PageBuilderRoute({
                 <button
                   type="button"
                   onClick={() => addBlock(b.type)}
-                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded transition-all cursor-pointer shadow-2xs active:scale-95"
+                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Thêm khối</span>
@@ -613,133 +849,67 @@ export default function PageBuilderRoute({
           </div>
         </div>
 
-        {/* Center Column: Live Drag-and-Drop Canvas */}
-        <div className="lg:col-span-6 bg-slate-200/60 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-125px)] flex flex-col items-center">
-          
+        {/* Center Column: Live Drag-and-Drop Canvas with Dot-Matrix Pattern */}
+        <div className="lg:col-span-6 bg-[#edf2f7] bg-[radial-gradient(#94a3b8_1.25px,transparent_1.25px)] [background-size:24px_24px] p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-125px)] flex flex-col items-center">
           <div
             className={cn(
               "w-full transition-all duration-300 space-y-6",
               viewport === "desktop" && "max-w-full",
-              viewport === "tablet" && "max-w-[768px] shadow-2xl rounded-xl overflow-hidden bg-white",
-              viewport === "mobile" && "max-w-[390px] shadow-2xl rounded-2xl overflow-hidden bg-white border-8 border-slate-800"
+              viewport === "tablet" && "max-w-[768px] shadow-2xl rounded-2xl overflow-hidden bg-white",
+              viewport === "mobile" && "max-w-[390px] shadow-2xl rounded-3xl overflow-hidden bg-white border-8 border-slate-800"
             )}
           >
             {blocks.length === 0 ? (
-              <div className="p-16 text-center bg-white border-2 border-dashed border-slate-300 rounded-xl space-y-3">
+              <div className="p-16 text-center bg-white border-2 border-dashed border-slate-300 rounded-2xl space-y-3">
                 <Layers className="w-10 h-10 text-slate-400 mx-auto" />
                 <h4 className="font-bold text-slate-800 text-base">Trang chưa có khối nào</h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Chọn các khối từ bảng bên trái (ví dụ: Hero Carousel, Call for Papers, Timeline...) để bắt đầu thiết kế.
+                  Chọn các khối từ bảng bên trái (ví dụ: Hero Carousel, Committees, Payment Methods, Timeline...) để bắt đầu thiết kế.
                 </p>
               </div>
             ) : (
-              blocks.map((block, index) => {
-                const isSelected = block.id === selectedBlockId;
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={blocks.map((b) => b.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-6 w-full">
+                    {blocks.map((block, index) => {
+                      const isSelected = block.id === selectedBlockId;
 
-                return (
-                  <div
-                    key={block.id}
-                    onClick={() => setSelectedBlockId(block.id)}
-                    className={cn(
-                      "relative group bg-white rounded-lg transition-all",
-                      isSelected
-                        ? "ring-2 ring-[#115eff] shadow-lg"
-                        : "border border-slate-200 hover:border-slate-300 shadow-2xs"
-                    )}
-                  >
-                    {/* Block Floating Control Strip */}
-                    <div className="sticky top-2 z-30 px-3 py-1.5 mx-2 my-2 bg-slate-900/90 text-white rounded-md backdrop-blur-md flex items-center justify-between text-xs shadow-md">
-                      <div className="flex items-center gap-2">
-                        <span className="w-4 h-4 rounded bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
-                          {index + 1}
-                        </span>
-                        <span className="font-bold text-slate-100">
-                          {AVAILABLE_BLOCKS.find((b) => b.type === block.type)?.title || block.type}
-                        </span>
-                        {block.hidden && (
-                          <span className="text-[10px] bg-amber-500/80 px-1.5 py-0.5 rounded text-white font-bold">
-                            Đang ẩn
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Action buttons */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveBlock(index, "up");
-                          }}
-                          disabled={index === 0}
-                          className="p-1 text-slate-300 hover:text-white rounded hover:bg-white/10 disabled:opacity-30 cursor-pointer"
-                          title="Di chuyển lên trên"
+                      return (
+                        <SortableBlockWrapper
+                          key={block.id}
+                          block={block}
+                          index={index}
+                          totalBlocks={blocks.length}
+                          isSelected={isSelected}
+                          onSelect={() => setSelectedBlockId(block.id)}
+                          onMoveUp={() => moveBlock(index, "up")}
+                          onMoveDown={() => moveBlock(index, "down")}
+                          onDuplicate={() => duplicateBlock(index)}
+                          onToggleHide={() => toggleHideBlock(index)}
+                          onRemove={() => removeBlock(index)}
                         >
-                          <ArrowUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveBlock(index, "down");
-                          }}
-                          disabled={index === blocks.length - 1}
-                          className="p-1 text-slate-300 hover:text-white rounded hover:bg-white/10 disabled:opacity-30 cursor-pointer"
-                          title="Di chuyển xuống dưới"
-                        >
-                          <ArrowDown className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            duplicateBlock(index);
-                          }}
-                          className="p-1 text-slate-300 hover:text-white rounded hover:bg-white/10 cursor-pointer"
-                          title="Nhân bản khối"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleHideBlock(index);
-                          }}
-                          className="p-1 text-slate-300 hover:text-white rounded hover:bg-white/10 cursor-pointer"
-                          title={block.hidden ? "Hiện khối" : "Ẩn khối"}
-                        >
-                          {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5" />}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeBlock(index);
-                          }}
-                          className="p-1 text-rose-300 hover:text-rose-100 rounded hover:bg-rose-500/30 cursor-pointer"
-                          title="Xóa khối khỏi trang"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Live Block Rendering Area */}
-                    <div className="overflow-hidden">
-                      {renderBlockPreview(block)}
-                    </div>
+                          {renderBlockPreview(block)}
+                        </SortableBlockWrapper>
+                      );
+                    })}
                   </div>
-                );
-              })
+                </SortableContext>
+              </DndContext>
             )}
           </div>
         </div>
 
-        {/* Right Column: Properties Inspector (Bảng thuộc tính) */}
+        {/* Right Column: Properties Inspector */}
         <div className="lg:col-span-3 bg-white border-l border-slate-200 p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-125px)]">
           <div className="space-y-1 pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#004776]">
               <Sliders className="w-4 h-4 text-[#115eff]" />
               <span>Bảng Thuộc Tính (Inspector)</span>
             </div>
@@ -754,7 +924,7 @@ export default function PageBuilderRoute({
                 <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
                   Khối được chọn
                 </span>
-                <div className="font-extrabold text-slate-900 text-sm">
+                <div className="font-extrabold text-[#004776] text-sm">
                   {AVAILABLE_BLOCKS.find((b) => b.type === selectedBlock.type)?.title || selectedBlock.type}
                 </div>
                 <div className="text-[11px] text-slate-500 font-mono">
@@ -769,11 +939,129 @@ export default function PageBuilderRoute({
                   type="checkbox"
                   checked={!selectedBlock.hidden}
                   onChange={() => toggleHideBlock(selectedBlockIndex)}
-                  className="rounded text-[#115eff] focus:ring-blue-500"
+                  className="rounded text-[#115eff] focus:ring-blue-500 cursor-pointer"
                 />
               </div>
 
-              {/* Type Specific Form Inputs */}
+              {/* CommitteesSection Inspector */}
+              {selectedBlock.type === "CommitteesSection" && (
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="font-bold text-slate-800 block text-xs">
+                    Thuộc tính Ban Điều Hành & Ủy Ban
+                  </span>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Huy hiệu (Badge)</label>
+                    <input
+                      type="text"
+                      value={String(selectedBlock.props?.badge ?? "Leadership & Organization")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          badge: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Tiêu đề (Title)</label>
+                    <input
+                      type="text"
+                      value={String(selectedBlock.props?.title ?? "Organizing & Technical Committees")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          title: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Mô tả phụ (Subtitle)</label>
+                    <textarea
+                      rows={2}
+                      value={String(selectedBlock.props?.subtitle ?? "Distinguished leadership and academic committee chairs driving IEEE SMC 2027")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          subtitle: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff] resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Thời gian tự cuộn carousel (ms)</label>
+                    <input
+                      type="number"
+                      min={1000}
+                      step={500}
+                      value={Number(selectedBlock.props?.autoplayDelay ?? 3500)}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          autoplayDelay: Number(e.target.value),
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* PaymentMethods Inspector */}
+              {selectedBlock.type === "PaymentMethods" && (
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="font-bold text-slate-800 block text-xs">
+                    Thuộc tính Đăng Ký & Thanh Toán
+                  </span>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Huy hiệu (Badge)</label>
+                    <input
+                      type="text"
+                      value={String(selectedBlock.props?.badge ?? "Registration Guide")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          badge: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Tiêu đề (Title)</label>
+                    <input
+                      type="text"
+                      value={String(selectedBlock.props?.title ?? "Registration & Payment Methods")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          title: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-1">Mô tả phụ (Subtitle)</label>
+                    <textarea
+                      rows={2}
+                      value={String(selectedBlock.props?.subtitle ?? "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027")}
+                      onChange={(e) =>
+                        updateBlockProps(selectedBlock.id, {
+                          ...selectedBlock.props,
+                          subtitle: e.target.value,
+                        })
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff] resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* HeroCarousel Inspector */}
               {selectedBlock.type === "HeroCarousel" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
@@ -799,11 +1087,11 @@ export default function PageBuilderRoute({
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-slate-200">
                     <label className="text-slate-600 text-xs">
-                      Hiển thị chữ đè lên ảnh (Overlay Text & Badge)
+                      Hiển thị chữ đè lên ảnh
                     </label>
                     <input
                       type="checkbox"
-                      checked={Boolean(selectedBlock.props?.showOverlayText ?? false)}
+                      checked={Boolean(selectedBlock.props?.showOverlayText ?? true)}
                       onChange={(e) =>
                         updateBlockProps(selectedBlock.id, {
                           ...selectedBlock.props,
@@ -813,25 +1101,10 @@ export default function PageBuilderRoute({
                       className="rounded text-[#115eff] focus:ring-blue-500"
                     />
                   </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-200">
-                    <label className="text-slate-600 text-xs">
-                      Hiển thị bộ đếm thứ tự slide (Order Indicators)
-                    </label>
-                    <input
-                      type="checkbox"
-                      checked={Boolean(selectedBlock.props?.showIndicators ?? false)}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          showIndicators: e.target.checked,
-                        })
-                      }
-                      className="rounded text-[#115eff] focus:ring-blue-500"
-                    />
-                  </div>
                 </div>
               )}
 
+              {/* CustomHTML Inspector */}
               {selectedBlock.type === "CustomHTML" && (
                 <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
@@ -852,6 +1125,7 @@ export default function PageBuilderRoute({
                 </div>
               )}
 
+              {/* WelcomeLetter Inspector */}
               {selectedBlock.type === "WelcomeLetter" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
@@ -885,123 +1159,10 @@ export default function PageBuilderRoute({
                       className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Lời chào</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.salutation ?? "Dear Colleagues & Honored Participants,")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          salutation: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Chủ đề (Theme)</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.theme ?? "Human-Centric Intelligence: Shaping the Digital Future")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          theme: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
                 </div>
               )}
 
-              {selectedBlock.type === "NewsList" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Tin Tức
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Conference News & Announcements")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Mô tả phụ</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Stay updated with the latest milestones, partnership alerts, and program schedules")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {selectedBlock.type === "ConferenceVideo" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Video Giới Thiệu
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "IEEE SMC 2027 Comes to Ho Chi Minh City")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Link Embed YouTube</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.videoUrl ?? "https://www.youtube.com/embed/I1UGApHrQKo?si=pJEHr9cVC0WN1JFF")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          videoUrl: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-1">Tên khách sạn/địa điểm</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.venueName ?? "Sheraton Saigon Grand Opera Hotel")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          venueName: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
+              {/* ContactCards Inspector */}
               {selectedBlock.type === "ContactCards" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
@@ -1011,7 +1172,7 @@ export default function PageBuilderRoute({
                     <label className="block text-slate-600 mb-1">Email liên hệ</label>
                     <input
                       type="text"
-                      value={String(selectedBlock.props?.email ?? "smc2027@hcmute.edu.vn")}
+                      value={String(selectedBlock.props?.email ?? "ieeesmc2027@hcmute.edu.vn")}
                       onChange={(e) =>
                         updateBlockProps(selectedBlock.id, {
                           ...selectedBlock.props,
@@ -1099,7 +1260,6 @@ export default function PageBuilderRoute({
             </div>
           )}
         </div>
-
       </div>
 
       {/* Raw Page JSON Editor Modal */}

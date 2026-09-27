@@ -1,0 +1,89 @@
+name: Production CI/CD Auto-Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: production_deployment
+  cancel-in-progress: true
+
+jobs:
+  # 1. Validation Job: Test & Build Check
+  verify:
+    name: Verify Build & Types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 11.3.0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy' }}
+
+      - name: Next.js Production Build Test
+        run: pnpm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'temporary-ci-secret-key-32chars-long' }}
+          NEXT_TELEMETRY_DISABLED: 1
+
+  # 2. Deployment Job: Automated Deploy to Server via SSH
+  deploy:
+    name: Deploy to Production Server
+    needs: verify
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script_stop: true
+          script: |
+            echo "🚀 Starting automated deployment for IEEE SMC 2027..."
+            cd ${{ secrets.DEPLOY_PATH || '/var/www/ieee-smc-2027' }}
+
+            # 1. Pull latest code
+            echo "📥 Pulling latest git changes..."
+            git pull origin main
+
+            # 2. Write environment variables if updated
+            if [ -n "${{ secrets.DATABASE_URL }}" ]; then
+              echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+              echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
+              echo "NODE_ENV=\"production\"" >> .env
+            fi
+
+            # 3. Build & start docker containers
+            echo "🐳 Building and starting Docker containers..."
+            docker compose build --pull
+            docker compose up -d --remove-orphans
+
+            # 4. Deploy database schema migrations
+            echo "🗄️ Running Prisma migrations..."
+            docker compose exec -T app npx prisma migrate deploy
+
+            # 5. Clean up old dangling docker images
+            docker image prune -f
+
+            echo "✅ Deployment completed successfully!"

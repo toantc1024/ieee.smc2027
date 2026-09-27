@@ -2,22 +2,25 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, Search, Menu, X, ArrowUpRight, FileDown } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
 import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 const NAV_LINKS = [
-  { name: "About", href: "#about" },
-  { name: "Tracks", href: "#tracks" },
-  { name: "Dates", href: "#dates" },
-  { name: "Committee", href: "#committee" },
-  { name: "Venue", href: "#venue" },
-  { name: "FAQ", href: "#faq" },
+  { name: "About", href: "/#about" },
+  { name: "Tracks", href: "/#tracks" },
+  { name: "Dates", href: "/#dates" },
+  { name: "Committees", href: "/committees" },
+  { name: "Registration", href: "/#registration" },
+  { name: "Venue", href: "/#venue" },
+  { name: "FAQ", href: "/#faq" },
 ];
 
 import { HeaderConfig, NavLinkItem, DEFAULT_HEADER_DATA } from "@/lib/header-config";
 
 export function Header() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState<string>("About");
@@ -50,6 +53,10 @@ export function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <>

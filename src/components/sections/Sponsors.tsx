@@ -5,6 +5,7 @@ import { ArrowUpRight, Award, Building2 } from "lucide-react";
 import { IeeeIcon } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
+import { IeeeSmc2027LogoGroup } from "@/components/common/IeeeSmc2027LogoGroup";
 
 interface SponsorItem {
   name: string;
@@ -120,7 +121,15 @@ export function Sponsors() {
     </div>
 
       {/* Sponsors Grid: Content aligned with header */}
-      <div className="px-4 sm:px-6 py-8 sm:py-10">
+      <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
+        {/* Official Society Co-Sponsorship Banner Lockup */}
+        <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-xl flex flex-col items-center justify-center text-center">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-4">
+            Official Technical Co-Sponsorship & Society Society Affiliation
+          </span>
+          <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {SPONSORS.map((s, index) => (
             <div

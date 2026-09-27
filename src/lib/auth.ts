@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { sql, type UserRecord } from "./db";
+import prisma from "./prisma";
+import { Role } from "@prisma/client";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "ieee_smc_2027_ultra_secure_jwt_secret_key_92837482"
@@ -8,12 +9,17 @@ const JWT_SECRET = new TextEncoder().encode(
 
 export const SESSION_COOKIE_NAME = "admin_session";
 
+export const ADMIN_EMAILS = [
+  "tctoan1024@gmail.com",
+  "admin@hcmute.edu.vn",
+];
+
 export interface SessionUser {
   id: string;
   email: string;
   name: string;
   avatar?: string | null;
-  role: string;
+  role: "ADMIN" | "USER";
 }
 
 export async function createSessionToken(user: SessionUser): Promise<string> {
@@ -38,7 +44,7 @@ export async function verifySessionToken(token: string): Promise<SessionUser | n
       email: payload.email as string,
       name: payload.name as string,
       avatar: (payload.avatar as string) || null,
-      role: (payload.role as string) || "ADMIN",
+      role: (payload.role as "ADMIN" | "USER") || "USER",
     };
   } catch {
     return null;
@@ -63,18 +69,47 @@ export async function upsertUser(user: {
   avatar?: string | null;
   role?: string;
   provider?: string;
-}): Promise<UserRecord> {
-  const role = user.role || "ADMIN";
-  const provider = user.provider || "google";
+}) {
+  const isSuperAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+  
+  const existing = await prisma.user.findUnique({
+    where: { email: user.email },
+  });
 
-  const rows = await sql`
-    INSERT INTO users (id, email, name, avatar, role, provider, updated_at)
-    VALUES (${user.id}, ${user.email}, ${user.name}, ${user.avatar || null}, ${role}, ${provider}, CURRENT_TIMESTAMP)
-    ON CONFLICT (email) DO UPDATE SET
-      name = EXCLUDED.name,
-      avatar = EXCLUDED.avatar,
-      updated_at = CURRENT_TIMESTAMP
-    RETURNING id, email, name, avatar, role, provider, created_at, updated_at;
-  `;
-  return rows[0] as UserRecord;
+  const finalRole: Role = isSuperAdmin
+    ? Role.ADMIN
+    : existing?.role
+    ? existing.role
+    : user.role === "ADMIN"
+    ? Role.ADMIN
+    : Role.USER;
+
+  const result = await prisma.user.upsert({
+    where: { email: user.email },
+    update: {
+      name: user.name,
+      avatar: user.avatar !== undefined ? user.avatar : existing?.avatar || null,
+      role: finalRole,
+      updatedAt: new Date(),
+    },
+    create: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar || null,
+      role: finalRole,
+      provider: user.provider || "google",
+    },
+  });
+
+  return {
+    id: result.id,
+    email: result.email,
+    name: result.name,
+    avatar: result.avatar,
+    role: result.role as "ADMIN" | "USER",
+    provider: result.provider,
+    created_at: result.createdAt.toISOString(),
+    updated_at: result.updatedAt.toISOString(),
+  };
 }

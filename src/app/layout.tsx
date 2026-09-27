@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -60,13 +61,22 @@ export const metadata: Metadata = {
     siteName: "IEEE SMC 2027 Conference",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+        alt: "IEEE SMC 2027 • Ho Chi Minh City, Vietnam",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:
-      "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-AI Symbiosis. Paper Submission Deadline: April 08, 2027.",
+      "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-Centric Intelligence.",
     creator: "@IEEESMC",
+    images: ["/api/og"],
   },
   icons: {
     icon: [
@@ -148,6 +158,9 @@ export default function RootLayout({
 
         {/* Main Content */}
         <main className="grow w-full flex flex-col">{children}</main>
+
+        {/* Full-width HCMUTE styled footer */}
+        <Footer />
       </body>
     </html>
   );

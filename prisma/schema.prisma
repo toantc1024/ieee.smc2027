@@ -1,0 +1,76 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  avatar    String?
+  role      Role     @default(USER)
+  provider  String   @default("google")
+  posts     Post[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Post {
+  id          String     @id @default(uuid())
+  slug        String     @unique
+  title       String
+  summary     String?
+  content     String     @db.Text
+  coverImage  String?    @map("cover_image")
+  status      PostStatus @default(DRAFT)
+  category    String     @default("General")
+  views       Int        @default(0)
+  authorId    String?    @map("author_id")
+  author      User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([slug])
+  @@map("posts")
+}
+
+model Page {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  title           String
+  blocks          Json     @default("[]")
+  isPublished     Boolean  @default(true) @map("is_published")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("website_pages")
+}
+
+model Setting {
+  key       String   @id
+  data      Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("website_settings")
+}
