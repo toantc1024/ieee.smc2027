@@ -434,3 +434,77 @@ button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11p
   will-change: transform;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   HCMUTE Signature Page Borders: Fixed lines at --site-width boundaries
+   ═══════════════════════════════════════════════════════════════ */
+.page-border-x::before,
+.page-border-x::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.page-border-x::before {
+  left: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+.page-border-x::after {
+  right: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+/* ── Colored section: white border-x overlay ── */
+.page-border-x-light {
+  position: relative;
+}
+
+.page-border-x-light::before,
+.page-border-x-light::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.page-border-x-light::before {
+  left: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+.page-border-x-light::after {
+  right: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+/* ── Standard section: border-color overlay for white/light backgrounds ── */
+.page-border-x-dark {
+  position: relative;
+}
+
+.page-border-x-dark::before,
+.page-border-x-dark::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.page-border-x-dark::before {
+  left: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+.page-border-x-dark::after {
+  right: max(0px, calc((100% - var(--site-width)) / 2));
+}
+
+

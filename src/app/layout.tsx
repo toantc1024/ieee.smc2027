@@ -152,8 +152,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdEvent) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-white text-foreground font-sans selection:bg-blue-600 selection:text-white">
-        {/* Full-width HCMUTE styled header with topbar and sticky 3-column nav */}
+      <body className="page-border-x min-h-full flex flex-col bg-white text-foreground font-sans selection:bg-blue-600 selection:text-white relative">
+        {/* Full-width HCMUTE styled header with topbar, sticky nav, and full-width mega menu */}
         <Header />
 
         {/* Main Content */}
