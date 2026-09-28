@@ -1,7 +1,35 @@
 import { ImageResponse } from "next/og";
 import { type NextRequest } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export const runtime = "nodejs";
+
+// Cache official logo as base64 data URI for instant rendering
+let cachedLogoBase64: string | null = null;
+
+function getOfficialLogoBase64(): string {
+  if (cachedLogoBase64 !== null) {
+    return cachedLogoBase64;
+  }
+  try {
+    const logoPath = path.join(
+      process.cwd(),
+      "public",
+      "logo",
+      "ieee-smc-2027-logo-group-transparent.png"
+    );
+    if (fs.existsSync(logoPath)) {
+      const buffer = fs.readFileSync(logoPath);
+      cachedLogoBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
+      return cachedLogoBase64;
+    }
+  } catch (err) {
+    console.error("Failed to load official logo for OG route:", err);
+  }
+  cachedLogoBase64 = "";
+  return "";
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -9,11 +37,12 @@ export async function GET(request: NextRequest) {
   const title = searchParams.get("title") || "IEEE SMC 2027 • Ho Chi Minh City, Vietnam";
   const description =
     searchParams.get("description") ||
-    "The 2027 IEEE International Conference on Systems, Man, and Cybernetics, hosted by HCM-UTE. Theme: Human-Centric Intelligence: Shaping the Digital Future.";
+    "The 2027 IEEE International Conference on Systems, Man, and Cybernetics. October 6–10, 2027 • Ho Chi Minh City, Vietnam. Theme: Human-Centric Intelligence: Shaping the Digital Future.";
   const badge = searchParams.get("badge") || "FLAGSHIP CONFERENCE";
   const cover = searchParams.get("cover");
 
   const titleSize = title.length > 60 ? 38 : title.length > 40 ? 44 : 52;
+  const logoBase64 = getOfficialLogoBase64();
 
   return new ImageResponse(
     (
@@ -28,7 +57,7 @@ export async function GET(request: NextRequest) {
           fontFamily: "sans-serif",
         }}
       >
-        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right */}
+        {/* Subtle Royal Blue Dot Pattern in Top-Right */}
         <div
           style={{
             position: "absolute",
@@ -57,39 +86,31 @@ export async function GET(request: NextRequest) {
             zIndex: 10,
           }}
         >
-          {/* Header Identity Lockup */}
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "12px",
-                backgroundColor: "#115eff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                fontWeight: 900,
-                fontSize: "20px",
-              }}
-            >
-              UTE
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* Official IEEE SMC 2027 Logo Lockup */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {logoBase64 ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoBase64}
+                alt="IEEE SMC 2027"
+                style={{
+                  height: "54px",
+                  width: "309px",
+                  objectFit: "contain",
+                }}
+              />
+            ) : (
               <span
                 style={{
-                  fontSize: "15px",
-                  fontWeight: 800,
+                  fontSize: "22px",
+                  fontWeight: 900,
                   color: "#004776",
-                  letterSpacing: "-0.01em",
+                  letterSpacing: "-0.02em",
                 }}
               >
-                HCM-UTE • IEEE SMC 2027
+                IEEE SMC 2027
               </span>
-              <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 500 }}>
-                HCMC University of Technology & Education
-              </span>
-            </div>
+            )}
           </div>
 
           {/* Main Title & Narrative Section */}
