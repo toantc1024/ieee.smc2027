@@ -192,10 +192,7 @@ export function Footer() {
                     </span>
                   </div>
                   <span className="text-blue-100 text-xs font-medium leading-snug mt-1">
-                    Trường Đại học Sư phạm Kỹ thuật TP. Hồ Chí Minh
-                  </span>
-                  <span className="text-blue-200/80 text-[11px] leading-tight">
-                    Ho Chi Minh City University of Technology and Engineering
+                    Ho Chi Minh City University of Technology and Engineering (HCM-UTE)
                   </span>
                 </div>
               </div>
@@ -279,12 +276,12 @@ export function Footer() {
         <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
           <div className="w-full border-x border-white/20 px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
             <p className="text-blue-100 text-center md:text-left leading-relaxed">
-              © {new Date().getFullYear()} IEEE SMC Society & Trường Đại học Sư phạm Kỹ thuật TP. Hồ Chí Minh (HCM-UTE). Tất cả các quyền được bảo lưu.
+              © {new Date().getFullYear()} IEEE SMC Society & HCM-UTE. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 text-blue-200/90 text-xs">
-              <span>Sheraton Saigon Grand Opera Hotel • TP. Hồ Chí Minh</span>
+              <span>Sheraton Saigon Grand Opera Hotel • Ho Chi Minh City</span>
               <span className="hidden sm:inline text-white/30">•</span>
-              <span>Phòng Quản trị Thương hiệu & Truyền thông HCM-UTE</span>
+              <span>HCM-UTE (University of Technology and Engineering)</span>
             </div>
           </div>
         </div>
