@@ -170,18 +170,23 @@ export function Footer() {
             
             {/* Column 1: IEEE SMC 2027 Tagline Logo & Contact Details */}
             <div className="lg:col-span-5 space-y-5">
-              <Link
-                href="/"
-                className="inline-flex items-center bg-white rounded-xl px-4 py-2.5 shadow-md hover:bg-white/95 transition-all group max-w-full"
-                title="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/logo/tagline.png"
-                  alt="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
-                  className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]"
-                />
-              </Link>
+              <div className="space-y-2">
+                <Link
+                  href="/"
+                  className="inline-flex items-center bg-white rounded-xl px-4 py-2.5 shadow-md hover:bg-white/95 transition-all group max-w-full"
+                  title="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/logo/tagline.png"
+                    alt="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
+                    className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                  />
+                </Link>
+                <p className="text-blue-100/95 text-xs sm:text-sm font-medium leading-relaxed">
+                  A premier hub for technical education, research, and innovation in Vietnam.
+                </p>
+              </div>
 
               <p className="text-blue-100 text-sm leading-relaxed max-w-md font-normal">
                 Hosted by HCM-UTE Vietnam under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>. Bringing together worldwide researchers and industry innovators in systems science, human–machine symbiosis, and cybernetics.
