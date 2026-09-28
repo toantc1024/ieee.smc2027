@@ -25,11 +25,11 @@ const CHAIR_PHOTO_MAP: Record<string, string> = {
   "Dinh-Thanh Chau": "/chairs/prof-dinh-thanh-chau.webp",
   "Yo-Ping Huang": "/chairs/prof-yo-ping-huang.webp",
   // Steering Committee
-  "Sam Kwong": "/chairs/steering/sam-kwong.jpg",
-  "Imre Rudas": "/chairs/steering/imre-rudas.jpeg",
-  "Adrian Stoica": "/chairs/steering/adrian-stoica.jpg",
-  "Ljiljana Trajkovic": "/chairs/steering/ljiljana-trajkovic.jpg",
-  "Eddie Tunstel": "/chairs/steering/eddie-tunstel.jpg",
+  "Sam Kwong": "/chairs/steering/sam-kwong.webp",
+  "Imre Rudas": "/chairs/steering/imre-rudas.webp",
+  "Adrian Stoica": "/chairs/steering/adrian-stoica.webp",
+  "Ljiljana Trajkovic": "/chairs/steering/ljiljana-trajkovic.webp",
+  "Eddie Tunstel": "/chairs/steering/eddie-tunstel.webp",
   // Other Committee Leaders
   "Ha-Hai Phan": "/chairs/prof-ha-hai-phan.png",
   "Rodney Roberts": "/chairs/prof-rodney-roberts.png",
