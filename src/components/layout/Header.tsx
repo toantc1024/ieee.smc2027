@@ -225,7 +225,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                       target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
                       rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       onClick={closeMenu}
-                      className="group/promo relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
+                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
                     >
                       {/* Dot Pattern in Default state */}
                       <div
@@ -242,7 +242,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                           className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
                         />
                         {activeItem.promoCard.badge && (
-                          <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm group-hover/promo:bg-white group-hover/promo:text-[#115eff] transition-colors">
+                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
                             {activeItem.promoCard.badge}
                           </div>
                         )}
@@ -250,15 +250,15 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
 
                       {/* Bottom Content Area */}
                       <div className="relative z-[2] p-3.5 flex flex-col gap-1">
-                        <h4 className="text-[13.5px] font-bold text-slate-900 group-hover/promo:text-white transition-colors duration-200 leading-snug">
+                        <h4 className="promo-card-title text-[13.5px] font-bold text-slate-900 transition-colors duration-200 leading-snug">
                           {activeItem.promoCard.title}
                         </h4>
                         {activeItem.promoCard.description && (
-                          <p className="text-[11.5px] text-slate-500 group-hover/promo:text-white/90 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
+                          <p className="promo-card-desc text-[11.5px] text-slate-500 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
                             {activeItem.promoCard.description}
                           </p>
                         )}
-                        <span className="text-[12px] font-semibold text-[#115eff] group-hover/promo:text-white transition-colors duration-200 inline-flex items-center gap-1 mt-1 group-hover/promo:gap-1.5">
+                        <span className="promo-card-cta text-[12px] font-semibold text-[#115eff] transition-colors duration-200 inline-flex items-center gap-1 mt-1 group-hover/promo:gap-1.5">
                           {activeItem.promoCard.ctaText || "Khám phá ngay"}
                           <span aria-hidden="true">›</span>
                         </span>
@@ -622,7 +622,6 @@ export function Header() {
                     }
                     return pathname === link.href || pathname.startsWith(link.href + "/");
                   })();
-                  const isActive = isMenuOpen || isCurrentPage;
 
                   return (
                     <div
@@ -652,9 +651,11 @@ export function Header() {
                         }}
                         className={cn(
                           "group/btn inline-flex items-center gap-1 font-bold uppercase text-[11px] lg:text-[11.5px] xl:text-xs 2xl:text-[13px] px-2.5 xl:px-3 h-8.5 xl:h-9.5 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
-                          isActive
+                          isCurrentPage
                             ? "bg-[#115eff] text-white shadow-xs hover:bg-[#0a4de6]"
-                            : "text-[#004776] hover:bg-[#115eff] hover:text-white hover:shadow-xs"
+                            : isMenuOpen
+                            ? "bg-blue-50 text-[#115eff] shadow-2xs"
+                            : "text-[#004776] hover:bg-blue-50 hover:text-[#115eff]"
                         )}
                         aria-expanded={isMenuOpen}
                       >
@@ -663,10 +664,11 @@ export function Header() {
                           <ChevronDown
                             className={cn(
                               "w-3 h-3 xl:w-3.5 xl:h-3.5 transition-transform duration-200",
-                              isActive
+                              isCurrentPage
                                 ? "text-white"
-                                : "text-slate-400 group-hover/btn:text-white",
-                              isMenuOpen && "rotate-180"
+                                : isMenuOpen
+                                ? "text-[#115eff] rotate-180"
+                                : "text-slate-400 group-hover/btn:text-[#115eff]"
                             )}
                           />
                         )}

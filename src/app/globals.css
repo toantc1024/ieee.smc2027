@@ -308,6 +308,32 @@ article:hover .news-card-badge,
   border-color: #ffffff !important;
 }
 
+/* Header Mega Menu Promo Card hover styling: guarantee pure white text on hover */
+.header-promo-card:hover {
+  background-color: #115eff !important;
+  border-color: #115eff !important;
+}
+
+.header-promo-card:hover .promo-card-title,
+.header-promo-card:hover h4 {
+  color: #ffffff !important;
+}
+
+.header-promo-card:hover .promo-card-desc,
+.header-promo-card:hover p {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.header-promo-card:hover .promo-card-cta,
+.header-promo-card:hover span {
+  color: #ffffff !important;
+}
+
+.header-promo-card:hover .promo-card-badge {
+  background-color: #ffffff !important;
+  color: #115eff !important;
+}
+
 /* Customized prominent button heights (avoiding cramped default shadcn heights) */
 a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]),
 button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]) {
