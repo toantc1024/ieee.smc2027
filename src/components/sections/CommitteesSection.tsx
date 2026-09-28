@@ -273,69 +273,96 @@ export function CommitteesSection({
               return (
                 <div
                   key={`${member.name}-${index}`}
-                  className="w-[280px] sm:w-[320px] shrink-0 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  className="w-[280px] sm:w-[320px] shrink-0 group relative flex flex-col"
                   style={{ scrollSnapAlign: "start" }}
                 >
-                  {/* Photo Frame or Academic Avatar Badge */}
-                  <div className="relative w-full h-56 sm:h-64 bg-slate-50 border-b border-slate-100 flex items-center justify-center overflow-hidden">
-                    {photo ? (
-                      <Image
-                        src={photo}
-                        alt={member.name}
-                        fill
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        sizes="320px"
-                      />
-                    ) : (
-                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 flex items-center justify-center text-[#115eff] font-bold text-2xl shadow-inner group-hover:scale-105 transition-transform">
-                        {member.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .filter(Boolean)
-                          .slice(-2)
-                          .join("")}
+                  {/* The Card Box - Clean overflow-hidden container */}
+                  <div className="relative rounded-2xl bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
+                    {/* Top: Image Canvas with Slate/White Background (Hover: Solid Primary Blue #115eff) */}
+                    <div className="relative w-full h-64 sm:h-72 bg-slate-50/70 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
+                      {/* Clipped background elements (dots only) behind the cutout */}
+                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {/* Blue Dot Pattern */}
+                        <div
+                          className="absolute inset-0 bg-dot-pattern opacity-50 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"
+                          style={{
+                            maskImage:
+                              "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                            WebkitMaskImage:
+                              "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                          }}
+                        />
+
+                        {/* Crisp White Dot Pattern in hover (blue) state */}
+                        <div
+                          className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none"
+                          style={{
+                            maskImage:
+                              "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                            WebkitMaskImage:
+                              "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                          }}
+                        />
                       </div>
-                    )}
 
-                    {/* Role Badge pinned at top-left */}
-                    <div className="absolute top-3 left-3 z-10">
-                      <span className="inline-block px-2.5 py-1 rounded bg-[#115eff] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
-                        {member.role}
-                      </span>
+                      {/* Role Badge pinned at top-left */}
+                      <div className="absolute top-3 left-3 z-20">
+                        <span className="inline-block px-2.5 py-0.5 rounded bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white text-[11px] font-bold uppercase tracking-wider shadow-xs transition-colors duration-300">
+                          {member.role}
+                        </span>
+                      </div>
+
+                      {/* Country Badge at top-right */}
+                      <div className="absolute top-3 right-3 z-20">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/90 backdrop-blur-xs border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs group-hover:bg-white group-hover:text-[#115eff] group-hover:border-transparent transition-colors duration-300">
+                          <Globe className="w-3 h-3 text-[#115eff]" />
+                          <span>{member.country}</span>
+                        </span>
+                      </div>
+
+                      {/* Image strictly scaled and fitted inside the container */}
+                      <div className="relative w-full h-full flex items-end justify-center z-10">
+                        {photo ? (
+                          <Image
+                            src={photo}
+                            alt={member.name}
+                            width={360}
+                            height={440}
+                            className="h-full w-auto max-h-full max-w-full object-contain object-bottom transition-transform duration-300 ease-out group-hover:scale-105"
+                            sizes="320px"
+                          />
+                        ) : (
+                          <div className="w-24 h-24 mb-6 rounded-full bg-white border border-blue-200 flex items-center justify-center text-[#115eff] font-bold text-2xl shadow-inner group-hover:scale-105 transition-transform">
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .filter(Boolean)
+                              .slice(-2)
+                              .join("")}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Country Badge at top-right */}
-                    <div className="absolute top-3 right-3 z-10">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/90 backdrop-blur-xs border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
-                        <Globe className="w-3 h-3 text-[#115eff]" />
-                        <span>{member.country}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Member Details */}
-                  <div className="p-5 flex flex-col justify-between flex-1">
-                    <div>
-                      <h3 className="text-lg font-bold text-[#004776] group-hover:text-[#115eff] transition-colors leading-snug">
-                        {member.name}
-                      </h3>
-                      <p className="text-xs text-slate-600 font-medium mt-1.5 leading-relaxed">
-                        {member.role} • IEEE SMC 2027
-                      </p>
-                      {member.affiliation && (
-                        <p className="text-xs text-slate-500 font-normal mt-1 leading-snug">
+                    {/* Bottom Details Section */}
+                    <div className="relative z-20 w-full p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1">
+                      <div className="relative z-10">
+                        <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
+                          {member.name}
+                        </h4>
+                        <p className="text-xs text-[#004776]/70 group-hover:!text-white/90 mt-1.5 font-medium leading-relaxed transition-colors duration-300">
                           {member.affiliation}
                         </p>
-                      )}
-                    </div>
+                      </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                      <span className="font-semibold text-slate-600">
-                        {member.country}
-                      </span>
-                      <span className="text-[#115eff] font-bold flex items-center gap-1 group-hover:underline">
-                        <span>Delegate</span>
-                      </span>
+                      <div className="mt-4 pt-3 border-t border-slate-100 group-hover:border-white/20 flex items-center justify-between text-xs text-slate-500 group-hover:text-white/80 transition-colors duration-300">
+                        <span className="font-semibold text-slate-600 group-hover:text-white">
+                          {member.country}
+                        </span>
+                        <span className="text-[#115eff] group-hover:text-white font-bold flex items-center gap-1">
+                          <span>Delegate</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
