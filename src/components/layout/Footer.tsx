@@ -168,22 +168,24 @@ export function Footer() {
           {/* Main Footer Content Grid */}
           <div className="relative z-10 px-4 sm:px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            {/* Column 1: IEEE SMC 2027 Tagline Logo & Contact Details */}
+            {/* Column 1: HCM-UTE Official Rectangle Logo & Contact Details */}
             <div className="lg:col-span-5 space-y-5">
-              <div className="space-y-2">
-                <Link
-                  href="/"
-                  className="inline-flex items-center bg-white rounded-xl px-4 py-2.5 shadow-md hover:bg-white/95 transition-all group max-w-full"
-                  title="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
+              <div className="space-y-3">
+                <a
+                  href="https://hcmute.edu.vn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center transition-opacity hover:opacity-90 max-w-full"
+                  title="HCM-UTE • Ho Chi Minh City University of Technology and Engineering"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/logo/tagline.png"
-                    alt="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
-                    className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                    src="/logo/rectangle-logo.png"
+                    alt="HCM-UTE • Ho Chi Minh City University of Technology and Engineering"
+                    className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-[340px] object-contain drop-shadow-xs select-none"
                   />
-                </Link>
-                <p className="text-blue-100/95 text-xs sm:text-sm font-medium leading-relaxed">
+                </a>
+                <p className="text-blue-100/90 text-xs sm:text-sm font-medium leading-relaxed max-w-md">
                   A premier hub for technical education, research, and innovation in Vietnam.
                 </p>
               </div>
