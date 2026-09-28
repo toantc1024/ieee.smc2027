@@ -304,7 +304,7 @@ export function PaymentMethods({
             </div>
           </div>
 
-          {/* Channel 3: Online PaperCept / Credit Card */}
+          {/* Channel 3: Online Card Portal */}
           <div className="p-6 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-lg bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
@@ -315,10 +315,10 @@ export function PaymentMethods({
                 Online Portal
               </div>
               <h4 className="text-lg font-bold text-[#004776] mb-2">
-                PaperCept Online Card Portal
+                Online Card Payment Portal
               </h4>
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                Instant confirmation using international credit cards (Visa, MasterCard, JCB, American Express) via the official IEEE PaperCept gateway.
+                Instant confirmation using international credit cards (Visa, MasterCard, JCB, American Express) via the official payment gateway.
               </p>
 
               <div className="p-4 bg-blue-50/60 border border-blue-100 rounded-lg space-y-2 text-xs">
@@ -327,7 +327,7 @@ export function PaymentMethods({
                   <span>Instant Receipt & Confirmation</span>
                 </div>
                 <p className="text-slate-600 leading-relaxed">
-                  Upon completion, your registration is instantly linked to your PaperCept manuscript ID and early-bird status is locked.
+                  Upon completion, your registration is instantly confirmed and early-bird status is locked.
                 </p>
                 <div className="flex items-center gap-2 pt-2">
                   <span className="px-2 py-0.5 bg-white border border-slate-200 rounded text-[11px] font-bold text-slate-700">
@@ -348,7 +348,7 @@ export function PaymentMethods({
                 href="#cfp"
                 className="w-full py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs rounded-[0.26rem] transition-colors flex items-center justify-center gap-2 shadow-xs"
               >
-                <span>Access PaperCept Portal</span>
+                <span>Access Payment Portal</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>

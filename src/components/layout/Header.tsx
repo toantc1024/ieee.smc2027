@@ -12,10 +12,10 @@ import {
   X,
   ArrowUpRight,
   FileDown,
+  FileText,
   ChevronDown,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 import {
   HeaderConfig,
   NavLinkItem,
@@ -329,7 +329,7 @@ export function Header() {
   const hotline = headerConfig.topbar?.hotline || CONFERENCE_INFO.hotline;
   const email = headerConfig.topbar?.email || CONFERENCE_INFO.contactEmail;
   const showTopbar = headerConfig.topbar?.enabled !== false;
-  const ctaLabel = headerConfig.ctaButton?.label || "Submit Paper (PaperCept)";
+  const ctaLabel = headerConfig.ctaButton?.label || "Submit Paper";
   const ctaHref = headerConfig.ctaButton?.href || "/#cfp";
   const showCta = headerConfig.ctaButton?.enabled !== false;
 
@@ -685,7 +685,7 @@ export function Header() {
                   onClick={closeMenu}
                   className="ml-2 inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-[0.26rem] shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
                 >
-                  <PaperCeptIcon className="w-4 h-4 text-white" />
+                  <FileText className="w-4 h-4 text-white" />
                   <span>{ctaLabel}</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </a>
@@ -835,7 +835,7 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full inline-flex items-center justify-center gap-2 py-3 bg-[#115eff] text-white font-bold text-sm rounded-lg shadow-sm"
             >
-              <PaperCeptIcon className="w-4 h-4 text-white" />
+              <FileText className="w-4 h-4 text-white" />
               <span>{ctaLabel}</span>
             </a>
           )}
@@ -878,7 +878,7 @@ export function Header() {
             />
 
             <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-              <span>Quick: Systems Science • Cybernetics • PaperCept</span>
+              <span>Quick: Systems Science • Cybernetics • Submissions</span>
               <button
                 type="button"
                 onClick={() => {

@@ -191,8 +191,8 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
               icon: "FileDown",
             },
             {
-              id: "sub-cfp-papercept",
-              title: "PaperCept Submission Portal",
+              id: "sub-cfp-portal",
+              title: "Online Submission Portal",
               href: "/#cfp",
               description: "Official online submission system for blind peer review",
               icon: "ExternalLink",
@@ -210,7 +210,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
         },
       ],
       promoCard: {
-        title: "PaperCept Submission Portal",
+        title: "Online Submission Portal",
         description: "Submit original manuscripts and special session papers for IEEE SMC 2027.",
         image: "/assets/cta-background.webp",
         href: "/#cfp",
@@ -419,7 +419,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
   ],
   ctaButton: {
     enabled: true,
-    label: "Submit Paper (PaperCept)",
+    label: "Submit Paper",
     href: "/#cfp",
   },
 };

@@ -8,9 +8,9 @@ import {
   ChevronLeft,
   ChevronRight,
   FileDown,
+  FileText,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
-import { PaperCeptIcon } from "@/components/common/ProviderIcons";
 
 interface HeroSlide {
   id: string;
@@ -24,7 +24,7 @@ interface HeroSlide {
   primaryCta: {
     label: string;
     href: string;
-    icon?: "papercept" | "map" | "tracks" | "download";
+    icon?: "file" | "map" | "tracks" | "download";
   };
   secondaryCta: {
     label: string;
@@ -38,15 +38,15 @@ const HERO_SLIDES: HeroSlide[] = [
     id: "submissions",
     tabNumber: "01",
     tabLabel: "Call for Papers",
-    badge: "Official CFP • Submissions via PaperCept",
+    badge: "Official CFP • Submissions Open",
     title: "IEEE SMC 2027",
     subtitle: "The 2027 IEEE International Conference on Systems, Man, and Cybernetics",
     highlight: "October 6–10, 2027 • Hosted by Ho Chi Minh City University of Technology and Engineering-Vietnam",
     bgImage: "/images/convention_center.jpg",
     primaryCta: {
-      label: "Call for Papers (PaperCept)",
+      label: "Call for Papers",
       href: "#cfp",
-      icon: "papercept",
+      icon: "file",
     },
     secondaryCta: {
       label: "Download CFP (PDF)",
@@ -105,7 +105,7 @@ const HERO_SLIDES: HeroSlide[] = [
     primaryCta: {
       label: "Author Guidelines",
       href: "#cfp",
-      icon: "papercept",
+      icon: "file",
     },
     secondaryCta: {
       label: "April 08 Deadline",
@@ -196,8 +196,8 @@ export function Hero() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] px-6 sm:px-8 py-3 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-md hover:shadow-lg group"
                 >
-                  {currentSlide.primaryCta.icon === "papercept" && (
-                    <PaperCeptIcon className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
+                  {currentSlide.primaryCta.icon === "file" && (
+                    <FileText className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                   )}
                   {currentSlide.primaryCta.icon === "tracks" && (
                     <Layers className="w-4.5 h-4.5 text-[#115eff] shrink-0" />

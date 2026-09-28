@@ -1446,7 +1446,7 @@ export default function HeaderEditorPage() {
                 Nút Kêu Gọi Hành Động (CTA Button)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Nút màu xanh nổi bật ở góc phải Navbar (Ví dụ: Nộp bài qua PaperCept).
+                Nút màu xanh nổi bật ở góc phải Navbar (Ví dụ: Nộp bài qua Submit Paper).
               </p>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -1479,7 +1479,7 @@ export default function HeaderEditorPage() {
                     ctaButton: { ...data.ctaButton, label: e.target.value },
                   })
                 }
-                placeholder="Submit Paper (PaperCept)"
+                placeholder="Submit Paper"
               />
             </div>
 

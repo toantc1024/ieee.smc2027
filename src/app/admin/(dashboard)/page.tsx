@@ -84,7 +84,7 @@ export default async function AdminDashboardPage() {
               Sửa Thanh Điều Hướng (Header)
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Tùy biến thanh thông báo tiện ích trên cùng, hotline, email liên hệ, danh sách menu điều hướng, nút Call-To-Action (PaperCept) và xem trước trực tiếp (Live Preview).
+              Tùy biến thanh thông báo tiện ích trên cùng, hotline, email liên hệ, danh sách menu điều hướng, nút Call-To-Action (Submit Paper) và xem trước trực tiếp (Live Preview).
             </p>
           </div>
 

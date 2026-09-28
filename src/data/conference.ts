@@ -72,13 +72,13 @@ export const CONFERENCE_INFO = {
   contactEmail: "ieeesmc2027@hcmute.edu.vn",
   hotline: "+84 981 479 507 (Vu Van Phong)",
   hotlineRaw: "+84981479507",
-  submissionSystem: "PaperCept",
-  submissionStatus: "PaperCept submission link will be coming shortly",
+  submissionSystem: "Online Submission System",
+  submissionStatus: "Online submission link will be coming shortly",
   submissionPortal: "#cfp",
   cfpPdfUrl: "/cfp-ieee-smc-2027.pdf",
   submissionDeadlineIso: "2027-04-08T23:59:59+07:00",
   submissionNotice:
-    "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
+    "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the online submission system link (will be coming shortly).",
   ieeeXploreNotice:
     "Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the IEEE Xplore® Digital Library, once it meets the requirements of an IEEE quality review.",
   description:
@@ -107,7 +107,7 @@ export const IMPORTANT_DATES: ImportantDate[] = [
     title: "Paper Submission for Workshops, Regular and Special Sessions",
     date: "April 08, 2027",
     dateIso: "2027-04-08T23:59:59Z",
-    description: "Full manuscript submission deadline for Workshops, Regular, and Special Sessions via PaperCept.",
+    description: "Full manuscript submission deadline for Workshops, Regular, and Special Sessions.",
     category: "submission",
     highlight: true,
   },
@@ -364,7 +364,7 @@ export const FAQS: FaqItem[] = [
     category: "Submission",
     question: "What is the official submission system and format?",
     answer:
-      "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
+      "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the official online submission system link (will be coming shortly).",
   },
   {
     category: "Submission",

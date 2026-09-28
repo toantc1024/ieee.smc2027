@@ -56,7 +56,7 @@ export function TracksExplorer() {
 
       <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-blue-200">
         <span>IEEE SMC 2027 Scope</span>
-        <span className="font-semibold text-white/90">PaperCept</span>
+        <span className="font-semibold text-white/90">Technical Track</span>
       </div>
     </div>
   );

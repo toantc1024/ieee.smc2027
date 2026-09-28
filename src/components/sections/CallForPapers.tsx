@@ -152,7 +152,7 @@ export function CallForPapers() {
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
-                <span>PaperCept electronic submission</span>
+                <span>Electronic submission portal</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />

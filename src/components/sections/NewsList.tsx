@@ -69,7 +69,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
     year: "2027",
     category: "Deadline",
     summary: "Full paper submissions for IEEE SMC 2027 Regular, Special Sessions, and Workshops are due on April 08, 2027.",
-    content: "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link. Accepted and presented papers will be eligible for inclusion in the IEEE Xplore® Digital Library.",
+    content: "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the online submission system link. Accepted and presented papers will be eligible for inclusion in the IEEE Xplore® Digital Library.",
     image: "/news/aun.jpg",
     viewCount: 4890,
     externalUrl: "#dates",

@@ -89,7 +89,7 @@ const AVAILABLE_BLOCKS = [
     type: "PaymentMethods",
     title: "Đăng Ký & Cổng Thanh Toán (Payment Methods)",
     category: "Nộp bài",
-    description: "Biểu phí tác giả, mã VietQR nội địa, điện chuyển khoản SWIFT quốc tế và thanh toán thẻ PaperCept",
+    description: "Biểu phí tác giả, mã VietQR nội địa, điện chuyển khoản SWIFT quốc tế và thanh toán thẻ trực tuyến",
     defaultProps: {
       title: "Registration & Payment Methods",
       subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",

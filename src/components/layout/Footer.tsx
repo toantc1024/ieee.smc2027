@@ -68,7 +68,7 @@ const linkGroups = [
     links: [
       { label: "Call for Papers Guidelines", href: "#cfp" },
       { label: "Download CFP PDF", href: CONFERENCE_INFO.cfpPdfUrl },
-      { label: "PaperCept Submission Portal", href: "#cfp" },
+      { label: "Online Submission Portal", href: "#cfp" },
       { label: "Special Session Proposals", href: "#cfp" },
       { label: "Workshop & Tutorial Tracks", href: "#tracks" },
     ],
