@@ -288,7 +288,7 @@ export function HeroCarousel({
         {/* Hero Slide Content Narrative Overlay (Disabled by default, hero image stays clean) */}
         {showOverlayText && (
           <div className="absolute inset-0 z-10 pointer-events-none flex items-center">
-            <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
+            <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
               <div className="max-w-3xl space-y-3.5 sm:space-y-4 pointer-events-auto">
                 {activeSlideData.badge && (
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#115eff]/85 text-white border border-white/20 text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-xs">
@@ -339,7 +339,7 @@ export function HeroCarousel({
 
         {/* Unified Bottom Controls Bar: Aligned with the two-side margin container, elevated with a gap */}
         <div className="absolute inset-x-0 bottom-4 sm:bottom-6 md:bottom-8 z-20 pointer-events-none">
-          <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative flex items-center justify-end">
+          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] relative flex items-center justify-end">
             {/* Optional Circular Countdown Progress Indicators with Rotating Flower */}
             {showIndicators && (
               <div className="pointer-events-auto absolute left-4 sm:left-1/2 sm:-translate-x-1/2">
@@ -411,6 +411,25 @@ export function HeroCarousel({
                 </div>
               </div>
             )}
+
+            {/* Left: Blueprint & Banner Demo Quick Access Badges (Local Demo Only) */}
+            <div className="pointer-events-auto mr-auto flex items-center gap-2">
+              <Link
+                href="/blueprint"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#115eff]/90 hover:bg-[#115eff] text-white text-[11px] font-bold border border-cyan-400/40 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95"
+                title="Xem Bản vẽ Kỹ thuật Blueprint (Desktop & Mobile)"
+              >
+                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                <span>📐 Blueprint (Desktop & Mobile)</span>
+              </Link>
+              <Link
+                href="/banner-demo"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/90 text-slate-200 hover:text-white text-[11px] font-medium border border-white/20 backdrop-blur-md shadow-md transition-all hover:scale-105 active:scale-95"
+                title="Thử nghiệm co giãn trực quan các tỉ lệ màn hình"
+              >
+                <span>Demo Co Giãn</span>
+              </Link>
+            </div>
 
             {/* Right: Chevron Navigation Controls with light glassmorphism, aligned with two-side margin, revealed on carousel hover */}
             <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 opacity-90 sm:opacity-0 sm:group-hover/carousel:opacity-100 sm:translate-y-1 sm:group-hover/carousel:translate-y-0 transition-all duration-300">

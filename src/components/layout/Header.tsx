@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence, type Variants } from "motion/react";
 import {
   Phone,
   Mail,
@@ -25,6 +26,255 @@ import {
 import { getNavIcon } from "@/lib/nav-icons";
 import { cn } from "@/lib/utils";
 
+/* ─── Stripe Direction-Aware Animation Variants (Exact Smooth Ease from HCMUTE) ─── */
+const SMOOTH_EASE = [0.25, 0.1, 0.25, 1] as const;
+
+const stripeContentVariants: Variants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 90 : direction < 0 ? -90 : 0,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      x: {
+        type: "tween",
+        ease: SMOOTH_EASE,
+        duration: 0.32,
+      },
+      opacity: {
+        duration: 0.26,
+        ease: "easeInOut",
+      },
+    },
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -90 : direction < 0 ? 90 : 0,
+    opacity: 0,
+    transition: {
+      x: {
+        type: "tween",
+        ease: SMOOTH_EASE,
+        duration: 0.28,
+      },
+      opacity: {
+        duration: 0.2,
+        ease: "easeInOut",
+      },
+    },
+  }),
+};
+
+/* ─── Dynamic Height Animated Menu Container ─── */
+const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
+  activeItem,
+  direction,
+  closeMenu,
+  columns,
+}: {
+  activeItem: NavLinkItem;
+  direction: number;
+  closeMenu: () => void;
+  columns: NavColumnItem[];
+}) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number | "auto">("auto");
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+
+    let rafId: number | null = null;
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry && entry.contentRect.height > 0) {
+        const maxAllowed =
+          typeof window !== "undefined"
+            ? Math.max(200, window.innerHeight - 88)
+            : 800;
+        const h = Math.min(Math.round(entry.contentRect.height), maxAllowed);
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          setContentHeight(h);
+        });
+      }
+    });
+
+    try {
+      ro.observe(el);
+    } catch {}
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      try {
+        ro.disconnect();
+      } catch {}
+    };
+  }, [activeItem?.id, columns]);
+
+  return (
+    <motion.div
+      animate={{ height: contentHeight }}
+      transition={{
+        height: {
+          type: "tween",
+          ease: SMOOTH_EASE,
+          duration: 0.3,
+        },
+      }}
+      className="overflow-hidden relative transform-gpu will-change-[height] max-h-[calc(100vh-5.5rem)] flex flex-col"
+    >
+      <div ref={contentRef} className="w-full">
+        {/* Aligned with site horizontal padding so content matches header buttons above */}
+        <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] py-0 overflow-hidden relative">
+          <AnimatePresence mode="popLayout" custom={direction} initial={false}>
+            <motion.div
+              key={activeItem.id}
+              custom={direction}
+              variants={stripeContentVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="w-full transform-gpu will-change-[transform,opacity]"
+            >
+              <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80">
+                {/* Columns Section */}
+                {columns.map((col, idx) => {
+                  const isFirst = idx === 0;
+                  const isLast = idx === columns.length - 1 && !activeItem.promoCard;
+
+                  return (
+                    <div
+                      key={col.id}
+                      className={cn(
+                        "group/col flex flex-col min-w-0 flex-1 self-stretch py-6",
+                        isFirst
+                          ? "pl-2.5 xl:pl-3.5 pr-4 xl:pr-6"
+                          : isLast
+                          ? "pl-4 xl:pl-6 pr-2.5 xl:pr-3.5"
+                          : "px-4 xl:px-6"
+                      )}
+                    >
+                      {/* Fixed Title Header */}
+                      <div className="relative pb-2 mb-3 shrink-0">
+                        <h3 className="text-[13.5px] font-extrabold text-slate-900 tracking-normal transition-colors">
+                          {col.title}
+                        </h3>
+                        {/* Thin track line */}
+                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                        {/* Thin animated gradient line on column hover */}
+                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full scale-x-0 group-hover/col:scale-x-100 origin-left transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
+                      </div>
+
+                      {/* Column Links List */}
+                      <div className="flex flex-col gap-1 flex-1">
+                        {col.links.map((link) => {
+                          const IconComp = getNavIcon(link.icon);
+                          return (
+                            <Link
+                              key={link.id}
+                              href={link.href}
+                              target={link.isExternal ? "_blank" : undefined}
+                              rel={link.isExternal ? "noopener noreferrer" : undefined}
+                              onClick={closeMenu}
+                              className="group/item flex flex-col gap-0.5 py-1.5 px-2 rounded-lg hover:bg-slate-50 transition-all duration-150 cursor-pointer min-w-0"
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="w-6 h-6 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
+                                  <IconComp className="w-3.5 h-3.5 text-[#115eff] group-hover/item:text-white transition-colors" />
+                                </div>
+                                <span className="text-[13px] font-bold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
+                                  {link.title}
+                                </span>
+                                {link.badge && (
+                                  <span className="text-[9px] px-1.5 py-0.2 rounded font-bold bg-blue-100 text-[#115eff]">
+                                    {link.badge}
+                                  </span>
+                                )}
+                                {link.isExternal && (
+                                  <ArrowUpRight className="w-3 h-3 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
+                                )}
+                              </div>
+                              {link.description && (
+                                <p className="text-[11.5px] text-slate-500 font-normal leading-normal truncate group-hover/item:text-slate-700 transition-colors pl-8">
+                                  {link.description}
+                                </p>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Right Side Featured Promo Card (Exact HCMUTE UTE Flower style) */}
+                {activeItem.promoCard && (
+                  <div className="w-64 xl:w-72 shrink-0 py-6 pl-5 pr-2 flex flex-col justify-start self-stretch">
+                    <div className="relative pb-2 mb-3">
+                      <h3 className="text-[13px] font-bold text-slate-700 tracking-normal whitespace-nowrap">
+                        {activeItem.promoCard.badge || "Tiêu điểm"}
+                      </h3>
+                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full" />
+                    </div>
+
+                    {/* Promo Card Block */}
+                    <a
+                      href={activeItem.promoCard.href}
+                      target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
+                      rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      onClick={closeMenu}
+                      className="group/promo relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
+                    >
+                      {/* Dot Pattern in Default state */}
+                      <div
+                        className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.3px,transparent_1.3px)] [background-size:12px_12px] opacity-60 group-hover/promo:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
+                        aria-hidden="true"
+                      />
+
+                      {/* Top Image Banner */}
+                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 z-[2]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={activeItem.promoCard.image}
+                          alt={activeItem.promoCard.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
+                        />
+                        {activeItem.promoCard.badge && (
+                          <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm group-hover/promo:bg-white group-hover/promo:text-[#115eff] transition-colors">
+                            {activeItem.promoCard.badge}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bottom Content Area */}
+                      <div className="relative z-[2] p-3.5 flex flex-col gap-1">
+                        <h4 className="text-[13.5px] font-bold text-slate-900 group-hover/promo:text-white transition-colors duration-200 leading-snug">
+                          {activeItem.promoCard.title}
+                        </h4>
+                        {activeItem.promoCard.description && (
+                          <p className="text-[11.5px] text-slate-500 group-hover/promo:text-white/90 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
+                            {activeItem.promoCard.description}
+                          </p>
+                        )}
+                        <span className="text-[12px] font-semibold text-[#115eff] group-hover/promo:text-white transition-colors duration-200 inline-flex items-center gap-1 mt-1 group-hover/promo:gap-1.5">
+                          {activeItem.promoCard.ctaText || "Khám phá ngay"}
+                          <span aria-hidden="true">›</span>
+                        </span>
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -34,9 +284,17 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null);
 
-  // Mega menu hover state
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Direction-aware state tracking
+  const [{ activeMenuId, direction }, setNavState] = useState<{
+    activeMenuId: string | null;
+    direction: number;
+  }>({
+    activeMenuId: null,
+    direction: 0,
+  });
+
+  const currentIndexRef = useRef<number>(-1);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const switchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [headerConfig, setHeaderConfig] = useState<HeaderConfig>(DEFAULT_HEADER_DATA);
@@ -72,63 +330,102 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleMouseEnter = useCallback((id: string) => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    if (switchTimeoutRef.current) {
-      clearTimeout(switchTimeoutRef.current);
-      switchTimeoutRef.current = null;
-    }
+  const handleMouseEnter = useCallback(
+    (id: string, index?: number) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      if (switchTimeoutRef.current) {
+        clearTimeout(switchTimeoutRef.current);
+        switchTimeoutRef.current = null;
+      }
 
-    if (activeMenuId && activeMenuId !== id) {
-      switchTimeoutRef.current = setTimeout(() => {
-        setActiveMenuId(id);
-      }, 50);
-    } else {
-      setActiveMenuId(id);
-    }
-  }, [activeMenuId]);
+      const performSwitch = () => {
+        setNavState((prev) => {
+          if (prev.activeMenuId === id) return prev;
+
+          let dir = 0;
+          if (index !== undefined && currentIndexRef.current !== -1) {
+            if (index > currentIndexRef.current) {
+              dir = 1; // Moving to the right -> new content enters from right
+            } else if (index < currentIndexRef.current) {
+              dir = -1; // Moving to the left -> new content enters from left
+            }
+          }
+
+          if (index !== undefined) {
+            currentIndexRef.current = index;
+          }
+
+          return {
+            activeMenuId: id,
+            direction: dir,
+          };
+        });
+      };
+
+      if (activeMenuId && activeMenuId !== id) {
+        switchTimeoutRef.current = setTimeout(performSwitch, 50);
+      } else {
+        performSwitch();
+      }
+    },
+    [activeMenuId]
+  );
 
   const handleMouseLeave = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
     if (switchTimeoutRef.current) {
       clearTimeout(switchTimeoutRef.current);
       switchTimeoutRef.current = null;
     }
-    closeTimeoutRef.current = setTimeout(() => {
-      setActiveMenuId(null);
-    }, 120);
+    timeoutRef.current = setTimeout(() => {
+      setNavState({
+        activeMenuId: null,
+        direction: 0,
+      });
+      currentIndexRef.current = -1;
+    }, 80);
   }, []);
 
   const handleContentMouseEnter = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
   }, []);
 
   const closeMenu = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-    setActiveMenuId(null);
+    if (switchTimeoutRef.current) {
+      clearTimeout(switchTimeoutRef.current);
+      switchTimeoutRef.current = null;
+    }
+    setNavState({
+      activeMenuId: null,
+      direction: 0,
+    });
+    currentIndexRef.current = -1;
   }, []);
 
   // Compute active item for the full-width mega menu
   const activeItem = useMemo(() => {
     if (!activeMenuId) return null;
-    return navLinks.find(
-      (link) =>
-        link.id === activeMenuId &&
-        ((link.columns && link.columns.length > 0) ||
-          (link.children && link.children.length > 0))
-    ) || null;
+    return (
+      navLinks.find(
+        (link) =>
+          link.id === activeMenuId &&
+          ((link.columns && link.columns.length > 0) ||
+            (link.children && link.children.length > 0))
+      ) || null
+    );
   }, [activeMenuId, navLinks]);
 
   // Compute normalized columns for the active item
@@ -174,7 +471,8 @@ export function Header() {
       {/* ── Top Utility Bar (Exact HCM-UTE Blue #115eff with page-border-x) ── */}
       {showTopbar && (
         <div className="navbar-topbar page-border-x-light hidden lg:block bg-[#115eff] text-white py-1.5 relative z-50 text-xs">
-          <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-8 lg:px-12 flex h-8 items-center justify-between">
+          {/* Flush container matched exactly to site margins */}
+          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex h-8 items-center justify-between">
             {/* Left: Hotline & Email & Badges */}
             <div className="flex items-center gap-3 xl:gap-4 min-w-0">
               <a
@@ -213,25 +511,43 @@ export function Header() {
                 >
                   {headerConfig.topbar?.hostBadgeText || "Host: HCM-UTE"}
                 </a>
-                <span className="text-white/30">•</span>
-                <a
-                  href={CONFERENCE_INFO.cfpPdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1 font-bold"
-                >
-                  <FileDown className="w-3 h-3 text-blue-200" />
-                  <span>CFP PDF</span>
-                </a>
               </div>
             </div>
 
-            {/* Right: Date, Location & Search */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-blue-100 hidden xl:inline font-medium">
-                {CONFERENCE_INFO.datesShort} • Ho Chi Minh City, Vietnam
-              </span>
-              <span className="text-white/30 hidden xl:inline">•</span>
+            {/* Right: Topbar Navigation Links (News, Partnership, CFP PDF, Search) */}
+            <div className="flex items-center gap-2 xl:gap-3 text-xs">
+              <Link
+                href="/#news"
+                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
+                title="Conference News & Updates"
+              >
+                News
+              </Link>
+
+              <span className="text-white/30">•</span>
+
+              <Link
+                href="/#sponsors"
+                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
+                title="Sponsorship & Industrial Exhibition"
+              >
+                Partnership & Exhibition
+              </Link>
+
+              <span className="text-white/30">•</span>
+
+              <a
+                href={CONFERENCE_INFO.cfpPdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1 font-semibold text-blue-100"
+                title="Download Call for Papers PDF"
+              >
+                <FileDown className="w-3 h-3 text-blue-200" />
+                <span>CFP PDF</span>
+              </a>
+
+              <span className="text-white/30">•</span>
 
               <button
                 type="button"
@@ -255,8 +571,9 @@ export function Header() {
             isScrolled && "shadow-[-8px_0_25px_-10px_rgba(0,0,0,0.08),8px_0_25px_-10px_rgba(0,0,0,0.08)]"
           )}
         >
-          <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between h-16 sm:h-20">
-            {/* Left: HCM-UTE Tagline Logo */}
+          {/* Flush container matched exactly to site margins with reduced, compact height */}
+          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-14 sm:h-16 md:h-16">
+            {/* Left: Reduced Size 2027 Conference Official Logo Lockup */}
             <Link
               href="/"
               onClick={() => {
@@ -266,20 +583,20 @@ export function Header() {
                 }
               }}
               className="flex items-center shrink-0 group focus:outline-none py-1"
-              title="HCM-UTE • IEEE SMC 2027"
+              title="IEEE SMC 2027 • HCM-UTE Ho Chi Minh City, Vietnam"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo/tagline.png"
-                alt="HCM-UTE - HCMC University of Technology and Education"
-                className="h-10 sm:h-12 md:h-13 w-auto max-w-[260px] sm:max-w-[340px] object-contain transition-transform duration-200 group-hover:scale-102 shrink-0"
+                src="/logo/ieee-smc-2027-logo-group-transparent.png"
+                alt="IEEE SMC 2027 Ho Chi Minh City, Vietnam • HCM-UTE"
+                className="h-7 sm:h-8 md:h-8.5 w-auto max-w-[180px] sm:max-w-[220px] object-contain transition-transform duration-200 group-hover:scale-102 shrink-0"
               />
             </Link>
 
             {/* Center/Right: Desktop Navigation Trigger Items */}
             <div className="hidden lg:flex items-center gap-1 xl:gap-2">
               <nav className="flex items-center gap-0.5 xl:gap-1 relative">
-                {navLinks.map((link) => {
+                {navLinks.map((link, index) => {
                   const hasMegaMenu =
                     (link.columns && link.columns.length > 0) ||
                     (link.children && link.children.length > 0);
@@ -288,10 +605,13 @@ export function Header() {
                   return (
                     <div
                       key={link.id}
-                      className="relative flex items-center h-full py-2"
+                      className={cn(
+                        "relative flex items-center h-full py-2 group/nav-item",
+                        isItemActive && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
+                      )}
                       onMouseEnter={() => {
                         if (hasMegaMenu) {
-                          handleMouseEnter(link.id);
+                          handleMouseEnter(link.id, index);
                         } else {
                           closeMenu();
                         }
@@ -305,7 +625,7 @@ export function Header() {
                             if (activeMenuId === link.id) {
                               closeMenu();
                             } else {
-                              handleMouseEnter(link.id);
+                              handleMouseEnter(link.id, index);
                             }
                           }}
                           className={cn(
@@ -377,167 +697,60 @@ export function Header() {
         </header>
 
         {/* ════════════════════════════════════════════════════════════════
-            FULL-WIDTH MEGA DROPDOWN (Matches hcmute-website-frontend DesktopNav)
+            FULL-WIDTH MEGA DROPDOWN (Aligned with two side margins & moving animation)
            ════════════════════════════════════════════════════════════════ */}
-        {activeItem && (
-          <div
-            className="absolute left-0 right-0 top-full z-50 pointer-events-none"
-            onMouseEnter={handleContentMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* Flush container matched to site margins */}
-            <div className="w-full max-w-[var(--site-width)] mx-auto pointer-events-auto px-4 sm:px-8 lg:px-12">
-              <div className="w-full bg-white border-x border-b border-slate-200 rounded-b-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08),-8px_15px_25px_-10px_rgba(0,0,0,0.05),8px_15px_25px_-10px_rgba(0,0,0,0.05)] overflow-hidden max-h-[calc(100vh-5.5rem)] flex flex-col animate-in fade-in slide-in-from-top-1 duration-150">
-                <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80">
-                  {/* Columns Section */}
-                  {activeColumns.map((col, idx) => {
-                    const isFirst = idx === 0;
-                    const isLast = idx === activeColumns.length - 1 && !activeItem.promoCard;
-
-                    return (
-                      <div
-                        key={col.id}
-                        className={cn(
-                          "group/col flex flex-col min-w-0 flex-1 self-stretch py-6",
-                          isFirst
-                            ? "pl-6 pr-6 xl:pr-8"
-                            : isLast
-                            ? "pl-6 xl:pl-8 pr-6"
-                            : "px-6 xl:px-8"
-                        )}
-                      >
-                        {/* Fixed Title Header */}
-                        <div className="relative pb-2 mb-3 shrink-0">
-                          <h3 className="text-[13.5px] font-extrabold text-slate-900 tracking-normal transition-colors">
-                            {col.title}
-                          </h3>
-                          {/* Thin track line */}
-                          <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
-                          {/* Thin animated gradient line on column hover */}
-                          <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full scale-x-0 group-hover/col:scale-x-100 origin-left transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
-                        </div>
-
-                        {/* Column Links */}
-                        <div className="flex flex-col gap-1 flex-1">
-                          {col.links.map((link) => {
-                            const IconComp = getNavIcon(link.icon);
-                            return (
-                              <Link
-                                key={link.id}
-                                href={link.href}
-                                target={link.isExternal ? "_blank" : undefined}
-                                rel={link.isExternal ? "noopener noreferrer" : undefined}
-                                onClick={closeMenu}
-                                className="group/item flex flex-col gap-0.5 py-2 px-2.5 rounded-xl hover:bg-blue-50/80 transition-all duration-150 cursor-pointer min-w-0"
-                              >
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <div className="w-6 h-6 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
-                                    <IconComp className="w-3.5 h-3.5 text-[#115eff] group-hover/item:text-white transition-colors" />
-                                  </div>
-                                  <span className="text-[13px] font-bold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
-                                    {link.title}
-                                  </span>
-                                  {link.badge && (
-                                    <span className="text-[9px] px-1.5 py-0.2 rounded font-bold bg-blue-100 text-[#115eff]">
-                                      {link.badge}
-                                    </span>
-                                  )}
-                                  {link.isExternal && (
-                                    <ArrowUpRight className="w-3 h-3 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
-                                  )}
-                                </div>
-                                {link.description && (
-                                  <p className="text-[11.5px] text-slate-500 font-normal leading-normal truncate group-hover/item:text-slate-700 transition-colors pl-8">
-                                    {link.description}
-                                  </p>
-                                )}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Right Side Featured Promo Card (Exact HCMUTE UTE Flower style) */}
-                  {activeItem.promoCard && (
-                    <div className="w-64 xl:w-72 shrink-0 py-6 pl-6 pr-6 flex flex-col justify-start self-stretch bg-slate-50/40">
-                      <div className="relative pb-2 mb-3">
-                        <h3 className="text-[13px] font-bold text-slate-700 tracking-normal whitespace-nowrap">
-                          {activeItem.promoCard.badge || "Tiêu điểm"}
-                        </h3>
-                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
-                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full" />
-                      </div>
-
-                      {/* Promo Card Block */}
-                      <a
-                        href={activeItem.promoCard.href}
-                        target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
-                        rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        onClick={closeMenu}
-                        className="group/promo relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
-                      >
-                        {/* Dot Pattern in Default */}
-                        <div
-                          className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.3px,transparent_1.3px)] [background-size:12px_12px] opacity-60 group-hover/promo:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
-                          aria-hidden="true"
-                        />
-
-                        {/* Top Image Banner */}
-                        <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 z-[2]">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={activeItem.promoCard.image}
-                            alt={activeItem.promoCard.title}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
-                          />
-                          {activeItem.promoCard.badge && (
-                            <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm group-hover/promo:bg-white group-hover/promo:text-[#115eff] transition-colors">
-                              {activeItem.promoCard.badge}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Bottom Content Area */}
-                        <div className="relative z-[2] p-3.5 flex flex-col gap-1">
-                          <h4 className="text-[13.5px] font-bold text-slate-900 group-hover/promo:text-white transition-colors duration-200 leading-snug">
-                            {activeItem.promoCard.title}
-                          </h4>
-                          {activeItem.promoCard.description && (
-                            <p className="text-[11.5px] text-slate-500 group-hover/promo:text-white/90 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
-                              {activeItem.promoCard.description}
-                            </p>
-                          )}
-                          <span className="text-[12px] font-semibold text-[#115eff] group-hover/promo:text-white transition-colors duration-200 inline-flex items-center gap-1 mt-1 group-hover/promo:gap-1.5">
-                            {activeItem.promoCard.ctaText || "Khám phá ngay"}
-                            <span aria-hidden="true">›</span>
-                          </span>
-                        </div>
-                      </a>
-                    </div>
-                  )}
-                </div>
+        <AnimatePresence>
+          {Boolean(activeItem) && activeItem && (
+            <div
+              className="absolute left-0 right-0 top-full z-50 pointer-events-none"
+              onMouseEnter={handleContentMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              {/* Flush container matched exactly to site margins boundaries (no horizontal padding on border) */}
+              <div className="w-full max-w-[var(--site-width)] mx-auto pointer-events-auto">
+                <motion.div
+                  key="mega-menu-container"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: SMOOTH_EASE } }}
+                  exit={{ opacity: 0, y: -4, transition: { duration: 0.08, ease: "easeOut" } }}
+                  className="w-full bg-white border-x border-b border-slate-200 rounded-b-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08),-8px_15px_25px_-10px_rgba(0,0,0,0.05),8px_15px_25px_-10px_rgba(0,0,0,0.05)] overflow-hidden will-change-[transform,opacity] max-h-[calc(100vh-5.5rem)] flex flex-col"
+                >
+                  <DynamicHeightMenu
+                    activeItem={activeItem}
+                    direction={direction}
+                    closeMenu={closeMenu}
+                    columns={activeColumns}
+                  />
+                </motion.div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* ── Background Overlay (Exact NavbarOverlay) ── */}
-      {Boolean(activeItem) && (
-        <div
-          onClick={closeMenu}
-          className="fixed inset-0 z-40 bg-slate-900/[0.08] backdrop-blur-[4px] transition-opacity duration-200 pointer-events-auto"
-          aria-hidden="true"
-        />
-      )}
+      {/* ── Background Overlay (Exact NavbarOverlay from HCMUTE) ── */}
+      <AnimatePresence>
+        {Boolean(activeItem) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.18, ease: "easeOut" } }}
+            exit={{ opacity: 0, transition: { duration: 0.08, ease: "easeOut" } }}
+            onClick={closeMenu}
+            className="fixed inset-0 z-40 bg-slate-900/[0.08] backdrop-blur-[4px] pointer-events-auto"
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
 
       {/* ── Mobile Navigation Drawer ── */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-4 shadow-xl">
           <nav className="space-y-1">
-            {navLinks.map((link) => {
+            {[
+              { id: "mob-news", name: "News", href: "/#news" },
+              ...navLinks,
+              { id: "mob-sponsors", name: "Partnership & Exhibition", href: "/#sponsors" },
+            ].map((link) => {
               const allSubs =
                 link.columns && link.columns.length > 0
                   ? link.columns.flatMap((c) => c.links)

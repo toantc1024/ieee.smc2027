@@ -54,6 +54,11 @@ export interface HeaderConfig {
   };
 }
 
+export const TOPBAR_NAV_ITEMS = [
+  { id: "top-news", label: "News", href: "/#news" },
+  { id: "top-sponsors", label: "Partnership & Exhibition", href: "/#sponsors" },
+];
+
 export const DEFAULT_HEADER_DATA: HeaderConfig = {
   topbar: {
     enabled: true,
@@ -68,78 +73,6 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
     conferenceSubtitle: "Ho Chi Minh City, Vietnam • October 6–10, 2027",
   },
   navLinks: [
-    {
-      id: "nav-about",
-      name: "About",
-      href: "/#about",
-      type: "mega",
-      columns: [
-        {
-          id: "col-about-overview",
-          title: "Overview & Vision",
-          links: [
-            {
-              id: "sub-about-smc",
-              title: "About IEEE SMC 2027",
-              href: "/#about",
-              description: "Flagship conference theme, scope, and international vision",
-              icon: "Info",
-            },
-            {
-              id: "sub-about-welcome",
-              title: "Welcome Letter from General Chairs",
-              href: "/#welcome",
-              description: "Official welcome message from conference leadership",
-              icon: "FileText",
-            },
-            {
-              id: "sub-about-video",
-              title: "Conference Spotlight Video",
-              href: "/#video",
-              description: "Venue teaser and welcoming video from Saigon",
-              icon: "Video",
-            },
-          ],
-        },
-        {
-          id: "col-about-host",
-          title: "Host Institution & Society",
-          links: [
-            {
-              id: "sub-about-hcmute",
-              title: "HCM-UTE Host University",
-              href: "https://hcmute.edu.vn",
-              description: "Vietnam's premier technical engineering university",
-              icon: "School",
-              isExternal: true,
-            },
-            {
-              id: "sub-about-society",
-              title: "IEEE Systems, Man, and Cybernetics Society",
-              href: "https://www.ieeesmc.org/",
-              description: "Global community dedicated to theory and practice of SMC",
-              icon: "Globe",
-              isExternal: true,
-            },
-            {
-              id: "sub-about-hcmc",
-              title: "Host City: Ho Chi Minh City",
-              href: "/#venue",
-              description: "Dynamic economic, cultural, and innovation hub of Vietnam",
-              icon: "Landmark",
-            },
-          ],
-        },
-      ],
-      promoCard: {
-        title: "Sheraton Saigon Grand Opera Hotel",
-        description: "5-star luxury conference venue at 88 Dong Khoi, District 1, Ho Chi Minh City.",
-        image: "/assets/cta-background.webp",
-        href: "/#venue",
-        badge: "Host Venue",
-        ctaText: "Explore Venue",
-      },
-    },
     {
       id: "nav-committees",
       name: "Committees",
@@ -165,11 +98,18 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
               description: "Conference executive chairs and international advisory board",
               icon: "Award",
             },
+            {
+              id: "sub-comm-steering",
+              title: "IEEE SMC Steering Committee",
+              href: "/committees",
+              description: "International leaders overseeing IEEE SMC Society conference governance",
+              icon: "Globe",
+            },
           ],
         },
         {
           id: "col-comm-tech",
-          title: "Technical & Organization",
+          title: "Technical & Local Organization",
           links: [
             {
               id: "sub-comm-tpc",
@@ -177,6 +117,14 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
               href: "/committees",
               description: "Leading researchers managing peer review across all tracks",
               icon: "Layers",
+            },
+            {
+              id: "sub-comm-local",
+              title: "HCM-UTE Local Organizing Committee",
+              href: "/committees",
+              description: "Host university operational leadership in Ho Chi Minh City",
+              icon: "School",
+              badge: "HCM-UTE",
             },
             {
               id: "sub-comm-secretariat",
@@ -198,14 +146,14 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
       },
     },
     {
-      id: "nav-authors",
-      name: "Authors & CFP",
+      id: "nav-submissions",
+      name: "Submissions",
       href: "/#cfp",
       type: "mega",
       columns: [
         {
           id: "col-cfp-info",
-          title: "Submissions & Categories",
+          title: "Call for Papers & Deadlines",
           links: [
             {
               id: "sub-cfp-call",
@@ -233,7 +181,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
         },
         {
           id: "col-cfp-resources",
-          title: "Author Templates & Portals",
+          title: "Author Guidelines & Portals",
           links: [
             {
               id: "sub-cfp-templates",
@@ -271,89 +219,62 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
       },
     },
     {
-      id: "nav-tracks",
-      name: "Tracks & Topics",
+      id: "nav-program",
+      name: "Program",
       href: "/#tracks",
       type: "mega",
       columns: [
         {
-          id: "col-track-sse",
-          title: "Systems Science & Engineering (SSE)",
+          id: "col-track-pillars",
+          title: "3 Technical Pillars",
           links: [
             {
-              id: "sub-sse-autonomous",
-              title: "Autonomous Systems & Robotics",
+              id: "sub-track-sse",
+              title: "Systems Science & Engineering (SSE)",
               href: "/#tracks",
-              description: "Unmanned aerial vehicles, autonomous mobile robots, perception",
-              icon: "Bot",
-            },
-            {
-              id: "sub-sse-smart",
-              title: "Smart Infrastructure & Transportation",
-              href: "/#tracks",
-              description: "Intelligent transport systems, smart grids, resilient infrastructure",
-              icon: "Building2",
-            },
-            {
-              id: "sub-sse-control",
-              title: "Control Theory & Complex Systems",
-              href: "/#tracks",
-              description: "System of systems, adaptive control, mathematical modeling",
+              description: "Autonomous robotics, smart grids, control theory, complex systems",
               icon: "Cpu",
             },
-          ],
-        },
-        {
-          id: "col-track-cyb",
-          title: "Cybernetics (CYB)",
-          links: [
             {
-              id: "sub-cyb-ai",
-              title: "Artificial Intelligence & Machine Learning",
+              id: "sub-track-cyb",
+              title: "Cybernetics (CYB)",
               href: "/#tracks",
-              description: "Deep learning, foundation models, explainable AI, neural computing",
+              description: "Artificial intelligence, deep learning, biomedical cybernetics",
               icon: "Bot",
             },
             {
-              id: "sub-cyb-medical",
-              title: "Bio-Cybernetics & Medical Systems",
+              id: "sub-track-hms",
+              title: "Human-Machine Systems (HMS)",
               href: "/#tracks",
-              description: "Computational healthcare, biomedical signals, diagnostic AI",
-              icon: "Stethoscope",
-            },
-            {
-              id: "sub-cyb-security",
-              title: "Cyber-Physical Security & Privacy",
-              href: "/#tracks",
-              description: "Trustworthy systems, anomaly detection, adversarial defense",
-              icon: "Award",
+              description: "Brain-machine interfaces, collaborative teaming, AR/VR",
+              icon: "UserCheck",
             },
           ],
         },
         {
-          id: "col-track-hms",
-          title: "Human-Machine Systems (HMS)",
+          id: "col-program-schedule",
+          title: "Schedule & Highlights",
           links: [
             {
-              id: "sub-hms-bci",
-              title: "Brain-Machine Interfaces",
-              href: "/#tracks",
-              description: "Neural signal processing, EEG diagnostics, neuro-prosthetics",
-              icon: "UserCheck",
+              id: "sub-prog-keynotes",
+              title: "Plenary & Keynote Speakers",
+              href: "/#dates",
+              description: "Distinguished global keynote presentations and panel debates",
+              icon: "Award",
             },
             {
-              id: "sub-hms-teaming",
-              title: "Human-AI Collaborative Teaming",
+              id: "sub-prog-sessions",
+              title: "Special Sessions & Workshops",
               href: "/#tracks",
-              description: "Co-robots, operator mental workload, cognitive ergonomics",
-              icon: "Users",
+              description: "68+ peer-reviewed topics across 5 intensive conference days",
+              icon: "Layers",
             },
             {
-              id: "sub-hms-ar",
-              title: "Augmented & Virtual Reality",
-              href: "/#tracks",
-              description: "Immersive simulation, haptic interaction, digital twins",
-              icon: "Monitor",
+              id: "sub-prog-dates",
+              title: "5-Day Technical Program (Oct 6–10)",
+              href: "/#dates",
+              description: "Master conference schedule, opening ceremony, and gala banquet",
+              icon: "Calendar",
             },
           ],
         },
@@ -366,12 +287,6 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
         badge: "Technical Scope",
         ctaText: "Browse All Tracks",
       },
-    },
-    {
-      id: "nav-dates",
-      name: "Dates",
-      href: "/#dates",
-      type: "link",
     },
     {
       id: "nav-registration",
@@ -431,66 +346,75 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
       },
     },
     {
-      id: "nav-venue",
-      name: "Venue",
-      href: "/#venue",
+      id: "nav-travel",
+      name: "Travel & Accommodation",
+      href: "/travel",
       type: "mega",
       columns: [
         {
           id: "col-venue-hotel",
-          title: "Hotel & Facilities",
+          title: "Hotel & Conference Venue",
           links: [
             {
               id: "sub-venue-sheraton",
               title: "Sheraton Saigon Grand Opera Hotel",
-              href: "/#venue",
+              href: "/travel#venue",
               description: "88 Dong Khoi, District 1, Ho Chi Minh City, Vietnam",
               icon: "Building2",
             },
             {
               id: "sub-venue-rooms",
               title: "Conference Halls & Accommodation",
-              href: "/#venue",
+              href: "/travel",
               description: "Special delegate room rates and conference session floor plans",
               icon: "Home",
+            },
+            {
+              id: "sub-venue-transport",
+              title: "Airport (SGN) & Local Transit",
+              href: "/travel",
+              description: "Airport pickup, taxi advice, Metro Line 1, and city transit",
+              icon: "MapPin",
             },
           ],
         },
         {
           id: "col-venue-saigon",
-          title: "Saigon Travel & Guide",
+          title: "City Sights & Travel Guide",
           links: [
+            {
+              id: "sub-venue-attractions",
+              title: "Must-Visit Places in Saigon",
+              href: "/travel#travel-attractions",
+              description: "Ben Thanh Market, Post Office, Notre Dame, Cu Chi Tunnels & more",
+              icon: "Compass",
+              badge: "8 Sights",
+            },
             {
               id: "sub-venue-visa",
               title: "Vietnam e-Visa & Entry Requirements",
-              href: "/#venue",
+              href: "/travel",
               description: "Official guide on 90-day multiple entry electronic visas",
               icon: "FileText",
             },
             {
-              id: "sub-venue-transport",
-              title: "Airport (SGN) & Local Transport",
-              href: "/#venue",
-              description: "Airport pickup, taxi advice, and city navigation tips",
-              icon: "MapPin",
+              id: "sub-venue-explore",
+              title: "Explore Ho Chi Minh City",
+              href: "/travel",
+              description: "Dynamic economic, cultural, and innovation hub of Vietnam",
+              icon: "Sparkles",
             },
           ],
         },
       ],
       promoCard: {
-        title: "Explore Ho Chi Minh City",
-        description: "Discover historic French architecture, renowned gastronomy, and vibrant nightlife.",
-        image: "/assets/cta-background.webp",
-        href: "/#venue",
+        title: "Must-Visit Places in Ho Chi Minh City",
+        description: "Discover iconic landmarks including Ben Thanh Market, Central Post Office, and Cu Chi Tunnels.",
+        image: "/images/attractions/post-office.jpg",
+        href: "/travel",
         badge: "Host Destination",
-        ctaText: "Saigon Guide",
+        ctaText: "Explore Sights",
       },
-    },
-    {
-      id: "nav-faq",
-      name: "FAQ",
-      href: "/#faq",
-      type: "link",
     },
   ],
   ctaButton: {

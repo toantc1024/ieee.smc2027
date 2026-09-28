@@ -145,7 +145,7 @@ export async function GET() {
             email: "smc2027@hcmute.edu.vn",
             location: "Ho Chi Minh City, Vietnam",
             venue: "Sheraton Saigon Grand Opera Hotel",
-            website: "ieeesmc2027.hcmute.edu.vn",
+            website: "https://ieee-smc2027.org",
           },
           hidden: false,
         },

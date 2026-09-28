@@ -151,7 +151,7 @@ const AVAILABLE_BLOCKS = [
       email: "ieeesmc2027@hcmute.edu.vn",
       location: "Ho Chi Minh City, Vietnam",
       venue: "Sheraton Saigon Grand Opera Hotel",
-      website: "ieeesmc2027.hcmute.edu.vn",
+      website: "https://ieee-smc2027.org",
     },
   },
   {
@@ -1200,7 +1200,7 @@ export default function PageBuilderRoute({
                     <label className="block text-slate-600 mb-1">Trang web</label>
                     <input
                       type="text"
-                      value={String(selectedBlock.props?.website ?? "ieeesmc2027.hcmute.edu.vn")}
+                      value={String(selectedBlock.props?.website ?? "https://ieee-smc2027.org")}
                       onChange={(e) =>
                         updateBlockProps(selectedBlock.id, {
                           ...selectedBlock.props,

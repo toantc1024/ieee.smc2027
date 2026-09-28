@@ -342,7 +342,7 @@ export async function GET(request: NextRequest) {
                 color: "rgba(255, 255, 255, 0.7)",
               }}
             >
-              ieeesmc2027.hcmute.edu.vn
+              ieee-smc2027.org
             </div>
           </div>
         </div>

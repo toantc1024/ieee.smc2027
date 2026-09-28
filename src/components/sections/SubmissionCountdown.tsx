@@ -26,7 +26,7 @@ export function SubmissionCountdown() {
   const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
     "IEEE SMC 2027 Paper Submission Deadline"
   )}&dates=20270408T165959Z/20270408T165959Z&details=${encodeURIComponent(
-    "Paper submission deadline for IEEE SMC 2027 in Ho Chi Minh City, Vietnam. Official website: https://ieeesmc2027.hcmute.edu.vn"
+    `Paper submission deadline for IEEE SMC 2027 in Ho Chi Minh City, Vietnam. Official website: ${CONFERENCE_INFO.website}`
   )}&location=${encodeURIComponent(
     "Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam"
   )}`;

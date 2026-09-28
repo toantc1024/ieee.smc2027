@@ -29,11 +29,13 @@ export function ContactCards({
 }: ContactCardsProps) {
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
-  // Guarantee no legacy 2026 data can display even if passed via DB props
+  // Guarantee no legacy 2026 or old domain data can display even if passed via DB props
   const displayEmail = email?.includes("2026") ? CONFERENCE_INFO.contactEmail : (email || CONFERENCE_INFO.contactEmail);
   const displayLocation = location?.includes("Bellevue") ? "Ho Chi Minh City, Vietnam" : (location || "Ho Chi Minh City, Vietnam");
   const displayVenue = venue?.includes("Meydenbauer") ? CONFERENCE_INFO.venue : (venue || CONFERENCE_INFO.venue);
-  const displayWebsite = website?.includes("2026") ? CONFERENCE_INFO.website : (website || CONFERENCE_INFO.website);
+  const displayWebsite = (!website || website.includes("2026") || website.includes("hcmute.edu.vn"))
+    ? CONFERENCE_INFO.website
+    : website;
 
   const handleCopy = (type: string, text: string) => {
     navigator.clipboard.writeText(text);

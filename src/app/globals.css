@@ -15,7 +15,9 @@
   --border: #e2e8f0;
   --card: #ffffff;
   --card-foreground: rgb(0, 71, 118);
-  --site-width: 86rem; /* 1376px */
+  --site-width: 80rem; /* 1280px — exact single source of truth from hcmute-website-frontend */
+  --site-px: 1.25rem; /* 20px */
+  --site-px-lg: 1.5rem; /* 24px */
   --radius: 0.35rem; /* Exact HCMUTE base radius: ~5.6px */
   --radius-btn: 0.26rem; /* 25% reduced radius specifically for all buttons: ~4.1px */
   
@@ -266,19 +268,16 @@ textarea:not([class*="rounded-full"]) {
   border-radius: var(--radius-btn) !important;
 }
 
-/* Hero Carousel Responsive Aspect Ratio */
+/* Hero Carousel Responsive Aspect Ratio — Exact 1:1 Safe-Area Contract from HCMUTE */
 .hero-carousel-height {
   width: 100%;
   aspect-ratio: 3 / 4;
-  min-height: 480px;
   height: auto;
 }
 
 @media (min-width: 768px) {
   .hero-carousel-height {
     aspect-ratio: 2.4 / 1;
-    min-height: 520px;
-    max-height: calc(100vh - 106px);
   }
 }
 

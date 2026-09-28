@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ieee-smc2027.vercel.app"),
+  metadataBase: new URL("https://ieee-smc2027.org"),
   title: {
     default: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     template: "%s | IEEE SMC 2027",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:
       "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures. Paper submission deadline: April 08, 2027.",
-    url: "https://ieee-smc2027.vercel.app",
+    url: "https://ieee-smc2027.org",
     siteName: "IEEE SMC 2027 Conference",
     locale: "en_US",
     type: "website",
