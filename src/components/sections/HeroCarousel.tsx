@@ -412,25 +412,6 @@ export function HeroCarousel({
               </div>
             )}
 
-            {/* Left: Blueprint & Banner Demo Quick Access Badges (Local Demo Only) */}
-            <div className="pointer-events-auto mr-auto flex items-center gap-2">
-              <Link
-                href="/blueprint"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#115eff]/90 hover:bg-[#115eff] text-white text-[11px] font-bold border border-cyan-400/40 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95"
-                title="Xem Bản vẽ Kỹ thuật Blueprint (Desktop & Mobile)"
-              >
-                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
-                <span>📐 Blueprint (Desktop & Mobile)</span>
-              </Link>
-              <Link
-                href="/banner-demo"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/90 text-slate-200 hover:text-white text-[11px] font-medium border border-white/20 backdrop-blur-md shadow-md transition-all hover:scale-105 active:scale-95"
-                title="Thử nghiệm co giãn trực quan các tỉ lệ màn hình"
-              >
-                <span>Demo Co Giãn</span>
-              </Link>
-            </div>
-
             {/* Right: Chevron Navigation Controls with light glassmorphism, aligned with two-side margin, revealed on carousel hover */}
             <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 opacity-90 sm:opacity-0 sm:group-hover/carousel:opacity-100 sm:translate-y-1 sm:group-hover/carousel:translate-y-0 transition-all duration-300">
               <button
