@@ -655,8 +655,8 @@ export function Header() {
                           isCurrentPage
                             ? "bg-[#115eff] text-white shadow-xs hover:bg-[#0a4de6]"
                             : isMenuOpen
-                            ? "bg-blue-50 text-[#115eff] shadow-2xs"
-                            : "text-[#004776] hover:bg-blue-50 hover:text-[#115eff]"
+                            ? "bg-[#115eff] text-white shadow-xs"
+                            : "text-[#004776] hover:bg-[#115eff] hover:text-white"
                         )}
                         aria-expanded={isMenuOpen}
                       >
@@ -665,11 +665,10 @@ export function Header() {
                           <ChevronDown
                             className={cn(
                               "w-3 h-3 xl:w-3.5 xl:h-3.5 transition-transform duration-200",
-                              isCurrentPage
+                              (isCurrentPage || isMenuOpen)
                                 ? "text-white"
-                                : isMenuOpen
-                                ? "text-[#115eff] rotate-180"
-                                : "text-slate-400 group-hover/btn:text-[#115eff]"
+                                : "text-slate-400 group-hover/btn:text-white",
+                              isMenuOpen && "rotate-180"
                             )}
                           />
                         )}
