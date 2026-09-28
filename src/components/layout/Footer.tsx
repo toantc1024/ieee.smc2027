@@ -15,7 +15,6 @@ import {
 import { CONFERENCE_INFO } from "@/data/conference";
 
 const AGENT_BACKGROUND = "/assets/cta-background.webp";
-const SQUARE_LOGO_WHITE = "/logo/square-logo-white.png";
 
 const socialLinks = [
   {
@@ -169,33 +168,20 @@ export function Footer() {
           {/* Main Footer Content Grid */}
           <div className="relative z-10 px-4 sm:px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            {/* Column 1: HCMUTE Official Square Logo & Identity + Contact Details */}
+            {/* Column 1: IEEE SMC 2027 Tagline Logo & Contact Details */}
             <div className="lg:col-span-5 space-y-5">
-              <div className="flex items-center gap-3.5">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 bg-white/10 rounded-lg p-1.5 border border-white/20 backdrop-blur-xs">
-                  <Image
-                    src={SQUARE_LOGO_WHITE}
-                    alt="HCM-UTE Official White Logo"
-                    fill
-                    sizes="(max-width: 640px) 56px, 64px"
-                    className="object-contain p-1"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-extrabold text-base sm:text-lg leading-tight tracking-tight">
-                      HCM-UTE
-                    </span>
-                    <span className="text-white/40">•</span>
-                    <span className="text-white font-bold text-sm sm:text-base leading-tight tracking-tight">
-                      IEEE SMC 2027
-                    </span>
-                  </div>
-                  <span className="text-blue-100 text-xs font-medium leading-snug mt-1">
-                    Ho Chi Minh City University of Technology and Engineering (HCM-UTE)
-                  </span>
-                </div>
-              </div>
+              <Link
+                href="/"
+                className="inline-flex items-center bg-white rounded-xl px-4 py-2.5 shadow-md hover:bg-white/95 transition-all group max-w-full"
+                title="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo/tagline.png"
+                  alt="IEEE SMC 2027 • Ho Chi Minh City, Vietnam"
+                  className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                />
+              </Link>
 
               <p className="text-blue-100 text-sm leading-relaxed max-w-md font-normal">
                 Hosted by HCM-UTE Vietnam under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>. Bringing together worldwide researchers and industry innovators in systems science, human–machine symbiosis, and cybernetics.

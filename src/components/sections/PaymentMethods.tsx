@@ -181,21 +181,21 @@ export function PaymentMethods({
                 Domestic (Vietnam)
               </div>
               <h4 className="text-lg font-bold text-[#004776] mb-2">
-                Chuyển Khoản Ngân Hàng (Vietcombank)
+                Domestic Bank Transfer (VietQR / Napas)
               </h4>
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                Dành cho đại biểu và tác giả tại Việt Nam thanh toán học phí / lệ phí hội nghị qua VietQR hoặc Napas 24/7.
+                For authors and delegates in Vietnam paying registration fees via VietQR or Napas 24/7 interbank transfer.
               </p>
 
               <div className="space-y-2 text-xs bg-slate-50 border border-slate-200 rounded-lg p-3">
                 <div>
-                  <span className="text-slate-500 block">Tên đơn vị thụ hưởng:</span>
+                  <span className="text-slate-500 block">Beneficiary Organization:</span>
                   <span className="font-bold text-slate-900">
-                    TRUONG DAI HOC SU PHAM KY THUAT TP. HO CHI MINH
+                    HCM-UTE (HCMC Univ. of Technology & Engineering)
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Số tài khoản:</span>
+                  <span className="text-slate-500 block">Account Number:</span>
                   <div className="flex items-center justify-between font-mono font-bold text-sm text-[#115eff]">
                     <span>038 100 038 9999</span>
                     <button
@@ -212,17 +212,17 @@ export function PaymentMethods({
                   </div>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Ngân hàng:</span>
+                  <span className="text-slate-500 block">Bank Name:</span>
                   <span className="text-slate-800 font-medium">
-                    Vietcombank - CN Thủ Đức, TP.HCM
+                    Vietcombank - Thu Duc Branch, Ho Chi Minh City
                   </span>
                 </div>
                 <div className="pt-1 border-t border-slate-200">
-                  <span className="text-slate-500 block">Cú pháp chuyển tiền:</span>
+                  <span className="text-slate-500 block">Payment Reference:</span>
                   <div className="flex items-center justify-between font-mono text-[11px] font-bold text-slate-800 bg-white p-1.5 rounded border border-slate-200">
-                    <span>SMC2027 [PaperID] [Họ Tên]</span>
+                    <span>SMC2027 [PaperID] [Author Name]</span>
                     <button
-                      onClick={() => handleCopy("syntax", "SMC2027 [PaperID] [Họ Tên]")}
+                      onClick={() => handleCopy("syntax", "SMC2027 [PaperID] [Author Name]")}
                       className="text-slate-500 hover:text-slate-900 cursor-pointer p-0.5"
                     >
                       {copiedKey === "syntax" ? (
@@ -237,8 +237,8 @@ export function PaymentMethods({
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span>Hỗ trợ xuất hóa đơn VAT</span>
-              <span className="text-emerald-600 font-semibold">Tự động đối soát</span>
+              <span>VAT e-Invoice Available</span>
+              <span className="text-emerald-600 font-semibold">Automated Reconciliation</span>
             </div>
           </div>
 
@@ -365,10 +365,10 @@ export function PaymentMethods({
             </div>
             <div>
               <h4 className="text-base font-bold text-[#004776]">
-                Yêu cầu Xuất Hóa Đơn Điện Tử (VAT e-Invoice)
+                Official VAT e-Invoice Request
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                Đại biểu và đơn vị có nhu cầu xuất hóa đơn tài chính (Hóa đơn điện tử của Trường Đại học Sư phạm Kỹ thuật TP. Hồ Chí Minh) vui lòng gửi thông tin công ty, mã số thuế và ủy nhiệm chi tới email ban tài chính:{" "}
+                Delegates and institutions requiring an official financial e-invoice (issued by Ho Chi Minh City University of Technology and Engineering - HCM-UTE), please submit your organization tax ID, legal address, and payment confirmation to the Finance Secretariat:{" "}
                 <strong className="text-[#115eff]">{CONFERENCE_INFO.contactEmail}</strong>.
               </p>
             </div>
@@ -378,7 +378,7 @@ export function PaymentMethods({
             href={`mailto:${CONFERENCE_INFO.contactEmail}?subject=IEEE%20SMC%202027%20VAT%20Invoice%20Request`}
             className="shrink-0 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#115eff] font-bold text-xs rounded-[0.26rem] border border-[#115eff] transition-colors whitespace-nowrap"
           >
-            Yêu cầu Hóa đơn VAT
+            Request VAT Invoice
           </a>
         </div>
       </div>
