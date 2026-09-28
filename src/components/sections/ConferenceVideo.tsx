@@ -19,7 +19,7 @@ export function ConferenceVideo({
   title = "IEEE SMC 2027 Comes to Ho Chi Minh City",
   subtitle = "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments.",
   viewDetailsUrl = "#venue",
-  videoUrl = "https://www.youtube.com/embed/I1UGApHrQKo?si=pJEHr9cVC0WN1JFF",
+  videoUrl = "https://www.youtube.com/embed/jkNA1OPUhQk",
   venueName = "Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City",
   location = "Ho Chi Minh City, Vietnam",
 }: ConferenceVideoProps) {
@@ -30,6 +30,9 @@ export function ConferenceVideo({
     ? "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments."
     : (subtitle || "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments.");
   const safeViewDetailsUrl = (viewDetailsUrl?.includes("2026") || !viewDetailsUrl) ? "#venue" : viewDetailsUrl;
+  const safeVideoUrl = (!videoUrl || videoUrl.includes("I1UGApHrQKo"))
+    ? "https://www.youtube.com/embed/jkNA1OPUhQk"
+    : videoUrl;
 
   return (
     <SectionContainer id="video" fullWidthBg="bg-slate-50/50" className="relative overflow-hidden">
@@ -57,7 +60,7 @@ export function ConferenceVideo({
           <div className="lg:col-span-7 flex flex-col h-full">
             <div className="relative w-full h-full min-h-[300px] aspect-video lg:aspect-auto rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md group">
               <iframe
-                src={videoUrl}
+                src={safeVideoUrl}
                 title="IEEE SMC 2027 Video Presentation"
                 className="w-full h-full object-cover absolute inset-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

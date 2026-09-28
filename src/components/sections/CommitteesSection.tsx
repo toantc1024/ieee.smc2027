@@ -19,10 +19,19 @@ import { COMMITTEE_GROUPS, type CommitteeMember } from "@/data/conference";
 
 // High-resolution chair portraits mapping
 const CHAIR_PHOTO_MAP: Record<string, string> = {
+  // Honorary Chairs
   "Hieu-Giang Le": "/chairs/prof-hieu-giang-le.webp",
   "Saeid Nahavandi": "/chairs/prof-saeid-nahavandi.webp",
+  // General Chairs & Co-Chairs
   "Dinh-Thanh Chau": "/chairs/prof-dinh-thanh-chau.webp",
   "Yo-Ping Huang": "/chairs/prof-yo-ping-huang.webp",
+  // Steering Committee
+  "Sam Kwong": "/chairs/steering/sam-kwong.jpg",
+  "Imre Rudas": "/chairs/steering/imre-rudas.jpeg",
+  "Adrian Stoica": "/chairs/steering/adrian-stoica.jpg",
+  "Ljiljana Trajkovic": "/chairs/steering/ljiljana-trajkovic.jpg",
+  "Eddie Tunstel": "/chairs/steering/eddie-tunstel.jpg",
+  // Other Committee Leaders
   "Ha-Hai Phan": "/chairs/prof-ha-hai-phan.png",
   "Rodney Roberts": "/chairs/prof-rodney-roberts.png",
   "Vladik Kreinovich": "/chairs/prof-vladik-kreinovich.png",
@@ -319,6 +328,11 @@ export function CommitteesSection({
                       <p className="text-xs text-slate-600 font-medium mt-1.5 leading-relaxed">
                         {member.role} • IEEE SMC 2027
                       </p>
+                      {member.affiliation && (
+                        <p className="text-xs text-slate-500 font-normal mt-1 leading-snug">
+                          {member.affiliation}
+                        </p>
+                      )}
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">

@@ -14,20 +14,6 @@ export interface ChairMember {
 
 export const CHAIR_MEMBERS: ChairMember[] = [
   {
-    name: "Assoc. Prof. Dinh-Thanh Chau",
-    role: "General Chair",
-    affiliation: "Vice President, HCM-UTE",
-    country: "Vietnam",
-    image: "/chairs/prof-dinh-thanh-chau.png",
-  },
-  {
-    name: "Prof. Yo-Ping Huang",
-    role: "General Chair",
-    affiliation: "National Taipei University of Technology",
-    country: "Taiwan",
-    image: "/chairs/prof-yo-ping-huang.png",
-  },
-  {
     name: "Assoc. Prof. Hieu-Giang Le",
     role: "Honorary Chair",
     affiliation: "Acting President, HCM-UTE",
@@ -56,7 +42,7 @@ export interface WelcomeLetterProps {
 
 export function WelcomeLetter({
   heading = "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
-  title = "Welcome Message from the General Chairs & Honorary Chairs",
+  title = "Welcome Message from the Honorary Chairs",
   subtitle = "Welcome to IEEE SMC 2027 • Ho Chi Minh City",
   salutation = "Dear Colleagues & Honored Participants,",
   theme = "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
@@ -123,8 +109,8 @@ export function WelcomeLetter({
                 Sincerely and warmly yours,
               </p>
 
-              {/* Four Chairs Grid: General Chairs & Honorary Chairs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 sm:pt-8">
+              {/* Honorary Chairs Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl sm:max-w-3xl mx-auto gap-6 sm:gap-8 pt-6 sm:pt-8">
                 {CHAIR_MEMBERS.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}

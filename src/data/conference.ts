@@ -270,8 +270,38 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
   {
     groupName: "Honorary Chairs",
     members: [
-      { name: "Hieu-Giang Le", role: "Honorary Chair", country: "Vietnam" },
-      { name: "Saeid Nahavandi", role: "Honorary Chair", country: "Australia" },
+      {
+        name: "Hieu-Giang Le",
+        role: "Honorary Chair",
+        country: "Vietnam",
+        affiliation: "Acting President, HCM-UTE",
+      },
+      {
+        name: "Saeid Nahavandi",
+        role: "Honorary Chair",
+        country: "Australia",
+        affiliation: "President, IEEE SMC Society • Swinburne Univ.",
+      },
+    ],
+  },
+  {
+    groupName: "General Chairs & Co-Chairs",
+    members: [
+      {
+        name: "Dinh-Thanh Chau",
+        role: "General Chair",
+        country: "Vietnam",
+        affiliation: "Vice President, HCM-UTE",
+      },
+      {
+        name: "Yo-Ping Huang",
+        role: "General Chair",
+        country: "Taiwan",
+        affiliation: "National Taipei University of Technology",
+      },
+      { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
+      { name: "Philip Chen", role: "General Co-Chair", country: "China" },
+      { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
     ],
   },
   {
@@ -282,16 +312,6 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
       { name: "Adrian Stoica", role: "Steering Committee", country: "USA" },
       { name: "Ljiljana Trajkovic", role: "Steering Committee", country: "Canada" },
       { name: "Eddie Tunstel", role: "Steering Committee", country: "USA" },
-    ],
-  },
-  {
-    groupName: "General Chairs & Co-Chairs",
-    members: [
-      { name: "Dinh-Thanh Chau", role: "General Chair", country: "Vietnam" },
-      { name: "Yo-Ping Huang", role: "General Chair", country: "Taiwan" },
-      { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
-      { name: "Philip Chen", role: "General Co-Chair", country: "China" },
-      { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
     ],
   },
   {
