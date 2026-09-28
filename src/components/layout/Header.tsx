@@ -283,6 +283,17 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null);
+  const [activeHash, setActiveHash] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleHash = () => {
+      setActiveHash(window.location.hash || "");
+    };
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
 
   // Direction-aware state tracking
   const [{ activeMenuId, direction }, setNavState] = useState<{
@@ -600,14 +611,25 @@ export function Header() {
                   const hasMegaMenu =
                     (link.columns && link.columns.length > 0) ||
                     (link.children && link.children.length > 0);
-                  const isItemActive = activeMenuId === link.id;
+                  const isMenuOpen = activeMenuId === link.id;
+                  const isCurrentPage = (() => {
+                    if (!pathname) return false;
+                    if (link.href === "/") {
+                      return pathname === "/" && !activeHash;
+                    }
+                    if (link.href.startsWith("/#")) {
+                      return pathname === "/" && activeHash === link.href.substring(1);
+                    }
+                    return pathname === link.href || pathname.startsWith(link.href + "/");
+                  })();
+                  const isActive = isMenuOpen || isCurrentPage;
 
                   return (
                     <div
                       key={link.id}
                       className={cn(
                         "relative flex items-center h-full py-2 group/nav-item",
-                        isItemActive && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
+                        isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
                       )}
                       onMouseEnter={() => {
                         if (hasMegaMenu) {
@@ -618,43 +640,37 @@ export function Header() {
                       }}
                       onMouseLeave={handleMouseLeave}
                     >
-                      {hasMegaMenu ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (activeMenuId === link.id) {
-                              closeMenu();
-                            } else {
-                              handleMouseEnter(link.id, index);
-                            }
-                          }}
-                          className={cn(
-                            "group/btn inline-flex items-center gap-1 font-bold uppercase text-[11px] lg:text-[11.5px] xl:text-xs 2xl:text-[13px] px-2.5 xl:px-3 h-8.5 xl:h-9.5 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10",
-                            isItemActive
-                              ? "bg-[#115eff] text-white shadow-sm hover:bg-[#0a4de6]"
-                              : "text-slate-800 hover:bg-[#115eff] hover:text-white hover:shadow-xs"
-                          )}
-                          aria-expanded={isItemActive}
-                        >
-                          <span>{link.name}</span>
+                      <Link
+                        href={link.href}
+                        onClick={() => {
+                          closeMenu();
+                          if (link.href.includes("#")) {
+                            setActiveHash("#" + link.href.split("#")[1]);
+                          } else {
+                            setActiveHash("");
+                          }
+                        }}
+                        className={cn(
+                          "group/btn inline-flex items-center gap-1 font-bold uppercase text-[11px] lg:text-[11.5px] xl:text-xs 2xl:text-[13px] px-2.5 xl:px-3 h-8.5 xl:h-9.5 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          isActive
+                            ? "bg-[#115eff] text-white shadow-xs hover:bg-[#0a4de6]"
+                            : "text-[#004776] hover:bg-[#115eff] hover:text-white hover:shadow-xs"
+                        )}
+                        aria-expanded={isMenuOpen}
+                      >
+                        <span>{link.name}</span>
+                        {hasMegaMenu && (
                           <ChevronDown
                             className={cn(
                               "w-3 h-3 xl:w-3.5 xl:h-3.5 transition-transform duration-200",
-                              isItemActive
-                                ? "rotate-180 text-white"
-                                : "text-slate-400 group-hover/btn:text-white"
+                              isActive
+                                ? "text-white"
+                                : "text-slate-400 group-hover/btn:text-white",
+                              isMenuOpen && "rotate-180"
                             )}
                           />
-                        </button>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          onClick={closeMenu}
-                          className="inline-flex items-center gap-1 font-bold uppercase text-[11px] lg:text-[11.5px] xl:text-xs 2xl:text-[13px] px-2.5 xl:px-3 h-8.5 xl:h-9.5 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap text-slate-800 hover:bg-[#115eff] hover:text-white hover:shadow-xs"
-                        >
-                          {link.name}
-                        </Link>
-                      )}
+                        )}
+                      </Link>
                     </div>
                   );
                 })}
@@ -766,7 +782,12 @@ export function Header() {
                       onClick={() => {
                         if (!hasSubs) setMobileMenuOpen(false);
                       }}
-                      className="py-2 text-sm font-bold text-slate-800 hover:text-[#115eff] flex-1"
+                      className={cn(
+                        "py-2 text-sm font-bold flex-1 transition-colors",
+                        (pathname === link.href || (link.href !== "/" && !link.href.startsWith("/#") && pathname?.startsWith(link.href)))
+                          ? "text-[#115eff]"
+                          : "text-[#004776] hover:text-[#115eff]"
+                      )}
                     >
                       {link.name}
                     </Link>
