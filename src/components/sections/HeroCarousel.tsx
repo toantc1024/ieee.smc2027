@@ -34,8 +34,8 @@ export const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [
     title: "IEEE SMC 2027",
     highlight: "Human-AI Symbiosis",
     subtitle: "2027 IEEE International Conference on Systems, Man, and Cybernetics • October 6–10, 2027",
-    image: "/carousel/slide-1-desktop.jpg",
-    mobileImage: "/carousel/slide-1-mobile.jpg",
+    image: "/carousel/Bìa Web IEEE SMC 2027.png",
+    mobileImage: "/carousel/hero-mobile-smc2027.jpg",
     primaryAction: {
       label: "Call for Papers",
       href: "#cfp",
@@ -43,40 +43,6 @@ export const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [
     secondaryAction: {
       label: "Download CFP (PDF)",
       href: "/CFP - IEEE SMC 2027.pdf",
-    },
-  },
-  {
-    id: 2,
-    badge: "October 6–10, 2027 • Ho Chi Minh City",
-    title: "Call for Papers & 3 Core Pillars",
-    highlight: "68 Technical Topics Across 3 Pillars",
-    subtitle: "Systems Science & Engineering • Cybernetics • Human-Machine Systems",
-    image: "/carousel/slide-2-desktop.jpg",
-    mobileImage: "/carousel/slide-2-mobile.jpg",
-    primaryAction: {
-      label: "Explore Research Tracks",
-      href: "#tracks",
-    },
-    secondaryAction: {
-      label: "Important Dates",
-      href: "#dates",
-    },
-  },
-  {
-    id: 3,
-    badge: "Sheraton Saigon Grand Opera Hotel",
-    title: "Welcome to Ho Chi Minh City, Vietnam",
-    highlight: "Hosted by HCM-UTE",
-    subtitle: "Co-organized by Ho Chi Minh City University of Technology and Engineering & IEEE SMC Society",
-    image: "/carousel/slide-3-desktop.jpg",
-    mobileImage: "/carousel/slide-3-mobile.jpg",
-    primaryAction: {
-      label: "Venue & Destination Guide",
-      href: "#venue",
-    },
-    secondaryAction: {
-      label: "Organizing Committee",
-      href: "#committee",
     },
   },
 ];
@@ -337,7 +303,8 @@ export function HeroCarousel({
           </div>
         )}
 
-        {/* Unified Bottom Controls Bar: Aligned with the two-side margin container, elevated with a gap */}
+        {/* Unified Bottom Controls Bar: Only shown when there are multiple slides */}
+        {slides.length > 1 && (
         <div className="absolute inset-x-0 bottom-4 sm:bottom-6 md:bottom-8 z-20 pointer-events-none">
           <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] relative flex items-center justify-end">
             {/* Optional Circular Countdown Progress Indicators with Rotating Flower */}
@@ -443,6 +410,7 @@ export function HeroCarousel({
             </div>
           </div>
         </div>
+        )}
       </section>
 
       {/* SVG Animation Keyframes */}
