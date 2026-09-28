@@ -83,11 +83,6 @@ export function PaymentMethods({
         <div className="corner-dot-tr opacity-70 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#115eff] uppercase tracking-wider">
-            <CreditCard className="w-3.5 h-3.5" />
-            <span>Conference Registration</span>
-          </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight leading-[1.15]">
             <span className="block text-[#004776]">Registration &</span>
             <span className="block text-[#115eff]">Payment Methods</span>

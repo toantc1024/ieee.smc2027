@@ -609,8 +609,9 @@ export function Header() {
               <nav className="flex items-center gap-0.5 xl:gap-1 relative">
                 {navLinks.map((link, index) => {
                   const hasMegaMenu =
-                    (link.columns && link.columns.length > 0) ||
-                    (link.children && link.children.length > 0);
+                    link.type !== "link" &&
+                    ((link.columns && link.columns.length > 0) ||
+                    (link.children && link.children.length > 0));
                   const isMenuOpen = activeMenuId === link.id;
                   const isCurrentPage = (() => {
                     if (!pathname) return false;
@@ -770,9 +771,11 @@ export function Header() {
               { id: "mob-sponsors", name: "Partnership & Exhibition", href: "/#sponsors" },
             ].map((link) => {
               const allSubs =
-                link.columns && link.columns.length > 0
-                  ? link.columns.flatMap((c) => c.links)
-                  : link.children || [];
+                link.type === "link"
+                  ? []
+                  : (link.columns && link.columns.length > 0
+                      ? link.columns.flatMap((c) => c.links)
+                      : link.children || []);
               const hasSubs = allSubs.length > 0;
               const isExpanded = mobileExpandedId === link.id;
 
