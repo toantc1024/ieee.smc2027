@@ -9,7 +9,6 @@ import {
   Download,
   Copy,
   Check,
-  Maximize2,
   ShieldCheck,
   ArrowLeft,
   ExternalLink,
@@ -93,14 +92,6 @@ export default function BlueprintPage() {
                 <span>Chỉ Mobile</span>
               </button>
             </div>
-
-            <Link
-              href="/banner-demo"
-              className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow flex items-center gap-1.5"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Demo Co Giãn</span>
-            </Link>
           </div>
         </div>
       </header>
