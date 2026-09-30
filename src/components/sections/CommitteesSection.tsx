@@ -41,18 +41,23 @@ interface CommitteesSectionProps {
   showAllGroups?: boolean;
 }
 
+// Standardized responsive card dimensions shared across both carousel and non-carousel views
+const CARD_DIMENSION_CLASSES =
+  "w-[150px] sm:w-[180px] md:w-[200px] lg:w-[215px] xl:w-[225px] shrink-0 flex h-full";
+
 /**
  * Single Committee Member Card
  */
 function CommitteeCard({ member }: { member: CommitteeMember }) {
   const photo = CHAIR_PHOTO_MAP[member.name];
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="group/card relative flex flex-col w-full h-full select-none">
       {/* The Card Box */}
       <div className="relative rounded-2xl bg-white border border-slate-200 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
         {/* Top: Image Canvas with Slate/White Background (Hover: Solid Primary Blue #115eff) */}
-        <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0">
+        <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0">
           {/* Clipped background elements (dots only) behind the cutout */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Blue Dot Pattern */}
@@ -78,15 +83,16 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
             />
           </div>
 
-          {/* Image strictly scaled and fitted inside the container */}
-          <div className="relative w-full h-full flex items-end justify-center z-10">
-            {photo ? (
+          {/* Image strictly scaled, full width & anchored to bottom, with error fallback */}
+          <div className="relative w-full h-full flex items-end justify-center z-10 p-0">
+            {photo && !imgError ? (
               <Image
                 src={photo}
                 alt={member.name}
                 fill
-                className="object-contain object-bottom transition-transform duration-300 ease-out group-hover/card:scale-105"
-                sizes="(max-width: 640px) 145px, (max-width: 768px) 180px, (max-width: 1024px) 210px, 230px"
+                className="object-cover object-bottom transition-transform duration-300 ease-out group-hover/card:scale-105"
+                sizes="(max-width: 640px) 150px, (max-width: 768px) 180px, (max-width: 1024px) 200px, 225px"
+                onError={() => setImgError(true)}
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5">
@@ -103,20 +109,18 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
           </div>
         </div>
 
-        {/* Bottom Details Section */}
-        <div className="relative z-20 w-full p-2.5 sm:p-3.5 md:p-4 bg-white group-hover/card:bg-[#115eff] border-t border-slate-200 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[92px] sm:min-h-[105px]">
+        {/* Bottom Details Section: Consistent vertical height across all cards */}
+        <div className="relative z-20 w-full p-2.5 sm:p-3 md:p-3.5 bg-white group-hover/card:bg-[#115eff] border-t border-slate-200 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[105px] sm:min-h-[115px] md:min-h-[120px]">
           <div className="relative z-10">
-            <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 sm:mb-1.5 line-clamp-1">
+            <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
               {member.role}
             </span>
-            <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-2">
+            <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
               {member.name}
             </h4>
-            {member.affiliation && (
-              <p className="text-[11px] sm:text-xs text-slate-500 group-hover/card:!text-white/80 mt-1 font-normal leading-snug transition-colors duration-300 line-clamp-2">
-                {member.affiliation}
-              </p>
-            )}
+            <p className="text-[11px] sm:text-xs text-slate-500 group-hover/card:!text-white/80 mt-0.5 font-normal leading-snug transition-colors duration-300 line-clamp-1">
+              {member.affiliation || "\u00A0"}
+            </p>
           </div>
 
           <div className="mt-2 sm:mt-2.5 pt-2 border-t border-slate-100 group-hover/card:border-white/20 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 group-hover/card:text-white/80 transition-colors duration-300 gap-1">
@@ -232,9 +236,9 @@ function CommitteeCarouselControls({
 
 /**
  * Single Committee Group Row
- * - If items do not overflow: Centered, no chevrons, no fade blur
- * - If items overflow: Infinite circular carousel (Embla loop: true)
- * - Chevrons & natural HCMUTE fade blur visible ONLY on hover
+ * - If items do not overflow: Centered, exact same card size, no chevrons, no fade blur
+ * - If items overflow: Carousel with exact same card size, no duplicates, loop: false
+ * - Chevrons & natural HCMUTE fade blur visible ONLY on hover when scrolling is available
  */
 function CommitteeGroupCarousel({
   group,
@@ -243,20 +247,20 @@ function CommitteeGroupCarousel({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(() => group.members.length > 4);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
-  // Dynamically check if items overflow container width
+  // Dynamically check if items overflow container width based on screen width and card width
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const checkOverflow = () => {
       const w = window.innerWidth;
-      const cardWidth = w < 640 ? 145 : w < 768 ? 180 : w < 1024 ? 210 : 230;
+      const cardWidth = w < 640 ? 150 : w < 768 ? 180 : w < 1024 ? 200 : w < 1280 ? 215 : 225;
       const gap = w < 640 ? 12 : 16;
-      const estimatedTotalWidth =
+      const totalRequiredWidth =
         group.members.length * cardWidth + (group.members.length - 1) * gap;
-      setIsOverflowing(estimatedTotalWidth > el.clientWidth);
+      setIsOverflowing(totalRequiredWidth > el.clientWidth);
     };
 
     checkOverflow();
@@ -269,16 +273,6 @@ function CommitteeGroupCarousel({
       window.removeEventListener("resize", checkOverflow);
     };
   }, [group.members.length]);
-
-  // If overflowing, ensure Embla has enough slides to loop circularly and infinitely
-  const displayMembers = useMemo(() => {
-    if (!isOverflowing) return group.members;
-    if (group.members.length < 8) {
-      const repeat = Math.ceil(8 / group.members.length);
-      return Array.from({ length: repeat }, () => group.members).flat();
-    }
-    return group.members;
-  }, [group.members, isOverflowing]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -298,19 +292,19 @@ function CommitteeGroupCarousel({
       {/* Row Container */}
       <div ref={containerRef} className="relative w-full">
         {!isOverflowing ? (
-          /* Non-overflowing items: Centered, no chevrons, no fade blur */
-          <div className="flex flex-wrap sm:flex-nowrap justify-center items-stretch gap-3 sm:gap-4 md:gap-5 py-2">
+          /* Non-overflowing items: Centered, exact same card size, no chevrons, no fade blur */
+          <div className="flex flex-wrap sm:flex-nowrap justify-center items-stretch gap-3 sm:gap-4 py-2">
             {group.members.map((member, idx) => (
               <div
                 key={`${member.name}-${idx}`}
-                className="w-[145px] sm:w-[180px] md:w-[210px] lg:w-[230px] shrink-0 flex"
+                className={CARD_DIMENSION_CLASSES}
               >
                 <CommitteeCard member={member} />
               </div>
             ))}
           </div>
         ) : (
-          /* Overflowing items: Circular Carousel with hover-only fade blur & chevrons */
+          /* Overflowing items: Carousel with exact same card size, NO duplicates, loop: false */
           <div
             className="group/carousel relative -mx-4 sm:-mx-6 px-4 sm:px-6"
             onMouseEnter={() => setIsHovered(true)}
@@ -319,18 +313,20 @@ function CommitteeGroupCarousel({
             <Carousel
               opts={{
                 align: "start",
-                loop: true,
+                loop: false,
                 dragFree: true,
               }}
               className="w-full"
             >
               <CarouselContent className="-ml-3 sm:-ml-4 py-2 items-stretch">
-                {displayMembers.map((member, idx) => (
+                {group.members.map((member, idx) => (
                   <CarouselItem
                     key={`${member.name}-${idx}`}
-                    className="basis-[44%] sm:basis-[30%] md:basis-[23%] lg:basis-[18%] xl:basis-[15%] pl-3 sm:pl-4 flex"
+                    className="pl-3 sm:pl-4 flex shrink-0"
                   >
-                    <CommitteeCard member={member} />
+                    <div className={CARD_DIMENSION_CLASSES}>
+                      <CommitteeCard member={member} />
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>

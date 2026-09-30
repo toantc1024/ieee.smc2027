@@ -614,8 +614,8 @@ export function Header() {
           {/* Flush container matched exactly to site margins with comfortable height */}
           <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-18 md:h-18">
             {/* Desktop Navigation on Left, CTA on Right (No Header Logo) */}
-            <div className="hidden lg:flex items-center justify-between w-full gap-4 xl:gap-6 2xl:gap-8">
-              <nav className="flex items-center gap-1 xl:gap-1.5 relative">
+            <div className="hidden lg:flex items-center justify-between w-full gap-2 xl:gap-4 2xl:gap-6 min-w-0">
+              <nav className="flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 relative shrink-0">
                 {navLinks.map((link, index) => {
                   const hasMegaMenu =
                     link.type !== "link" &&
@@ -648,7 +648,7 @@ export function Header() {
                           }
                         }}
                         className={cn(
-                          "group/btn inline-flex items-center gap-1.5 font-bold uppercase text-[14px] lg:text-[15px] xl:text-[16px] 2xl:text-[17px] px-3.5 xl:px-4.5 h-10 xl:h-11 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold uppercase text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                           isMenuOpen
                             ? "bg-[#115eff] text-white shadow-xs"
                             : "text-[#004776] hover:bg-[#115eff] hover:text-white"
@@ -659,7 +659,7 @@ export function Header() {
                         {hasMegaMenu && (
                           <ChevronDown
                             className={cn(
-                              "w-4 h-4 transition-transform duration-200",
+                              "w-3.5 h-3.5 transition-transform duration-200",
                               isMenuOpen
                                 ? "text-white rotate-180"
                                 : "text-slate-400 group-hover/btn:text-white"
@@ -672,16 +672,16 @@ export function Header() {
                 })}
               </nav>
 
-              {/* Call-To-Action Button on Far Right with dedicated gap */}
+              {/* Call-To-Action Button on Far Right */}
               {showCta && (
                 <a
                   href={ctaHref}
                   onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-2.5 h-10 xl:h-11 px-5 xl:px-6 text-[14px] lg:text-[15px] xl:text-[16px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap ml-3 xl:ml-6 shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
                 >
-                  <FileText className="w-4 h-4 text-white shrink-0" />
+                  <FileText className="w-3.5 h-3.5 text-white shrink-0" />
                   <span>{ctaLabel}</span>
-                  <ArrowUpRight className="w-4 h-4 shrink-0" />
+                  <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
                 </a>
               )}
             </div>
