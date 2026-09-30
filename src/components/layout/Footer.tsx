@@ -103,7 +103,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="w-full bg-[#115eff] text-white relative z-40 overflow-hidden">
+    <footer className="page-border-x-light w-full bg-[#115eff] text-white relative z-40 overflow-hidden">
       {/* Background Texture & Royal Blue Overlay matching hcmute-website-frontend */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <Image
@@ -123,8 +123,8 @@ export function Footer() {
       <div className="corner-dot-dark-bl opacity-30 pointer-events-none" aria-hidden="true" />
 
       {/* Main Footer Container with Two Continuous Side Vertical Borders */}
-      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-        <div className="w-full border-x border-white/20 flex flex-col relative">
+      <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] relative z-10">
+        <div className="w-full flex flex-col relative">
           
           {/* Top Banner: Host University & CFP Action Bar */}
           <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 border-b border-white/15 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -266,8 +266,8 @@ export function Footer() {
 
       {/* FULL WIDTH DIVIDER & SUB-BAR matching hcmute-website-frontend */}
       <div className="relative border-t border-white/15">
-        <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="w-full border-x border-white/20 px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm sm:text-base">
+        <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
+          <div className="w-full px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm sm:text-base">
             <p className="text-blue-100 text-center md:text-left leading-relaxed">
               © {new Date().getFullYear()} IEEE SMC Society & HCM-UTE. All rights reserved.
             </p>

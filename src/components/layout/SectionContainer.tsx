@@ -12,13 +12,16 @@ interface SectionContainerProps {
 
 /**
  * SectionContainer provides full-width section bands with content
- * strictly aligned to the two side borders.
+ * strictly aligned to the site width.
+ * Note: Continuous side borders are already provided globally by
+ * body.page-border-x at --site-width (1280px). hasSideBorders is false
+ * by default to prevent duplicate borders.
  */
 export function SectionContainer({
   children,
   className = "",
   fullWidthBg = "bg-white",
-  hasSideBorders = true,
+  hasSideBorders = false,
   borderBottom = false,
   borderColor = "border-slate-200",
   id,
@@ -30,7 +33,7 @@ export function SectionContainer({
         borderBottom ? `border-b ${borderColor}` : ""
       }`}
     >
-      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-12">
+      <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
         <div
           className={`w-full relative ${
             hasSideBorders ? `border-x ${borderColor}` : ""
