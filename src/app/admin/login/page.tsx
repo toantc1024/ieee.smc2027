@@ -9,29 +9,24 @@ import { GridPattern } from "@/components/ui/grid-pattern";
 /* ── Poster Slideshow: Ho Chi Minh City Landmarks & HCMUTE ── */
 const SLIDES = [
   {
-    image: "/login/posters/hcmute-center-tower.jpg",
-    title: "HCM-UTE",
-    subtitle: "Host Institution • 01 Vo Van Ngan, Thu Duc City",
-  },
-  {
     image: "/login/posters/hcmc-skyline.jpg",
     title: "SAI GON",
     subtitle: "Dynamic Metropolis & Warm Hospitality",
   },
   {
-    image: "/login/posters/hcmute-center-building.jpg",
+    image: "/login/posters/1-sang-tao.jpg",
     title: "INNOVATE",
-    subtitle: "Human-Centric Intelligence & Advanced Systems",
+    subtitle: "Human-Centric Intelligence & Systems",
   },
   {
-    image: "/login/posters/hcmute-campus.jpg",
+    image: "/login/posters/hcmc-nguyen-hue.jpg",
     title: "CONVERGE",
     subtitle: "Uniting Global Pioneers at IEEE SMC 2027",
   },
   {
-    image: "/login/posters/hcmute-gate.jpg",
-    title: "EXCELLENCE",
-    subtitle: "Pioneering Engineering & Academic Leadership",
+    image: "/login/posters/2-hien-dai.jpg",
+    title: "SYNERGY",
+    subtitle: "Autonomous & Sustainable Future",
   },
   {
     image: "/login/posters/hcmc-ben-thanh.jpg",
