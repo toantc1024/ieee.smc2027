@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Award, Mic, Bell, ArrowRight } from "lucide-react";
+import { Mic, Bell, ArrowRight } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
@@ -35,18 +35,18 @@ export function Keynotes() {
             Plenary Keynote Speakers Announcement Forthcoming
           </h3>
 
-          <p className="mt-2.5 text-base text-slate-600 leading-relaxed max-w-xl">
+          <p className="mt-2.5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
             Distinguished global thought leaders across systems science, human–AI symbiosis, and cybernetics will be announced as plenary speakers.
           </p>
 
-          <div className="mt-6 p-4 bg-white border border-slate-200 rounded-md text-sm text-slate-700 max-w-lg w-full">
+          <div className="mt-6 p-4 bg-white border border-slate-200 rounded-md text-sm sm:text-base text-slate-700 max-w-lg w-full">
             <span className="font-bold text-[#115eff] block mb-1">Conference Theme</span>
             &ldquo;{CONFERENCE_INFO.theme}&rdquo;
           </div>
 
           <a
             href="#subscribe"
-            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm rounded-[0.26rem] transition-all shadow-xs"
+            className="mt-6 inline-flex items-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-xs"
           >
             <Bell className="w-4 h-4" />
             <span>Notify Me When Keynotes Are Announced</span>

@@ -52,7 +52,7 @@ export function ContactCards({
 
         <div className="space-y-3 w-full relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-[#004776]">Contact Us</span>
+            <span className="block text-[#004776]">{title}</span>
             <span className="block text-[#115eff]">& Get in Touch</span>
           </h2>
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-2xl">
@@ -96,18 +96,18 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   E-mail
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">
                   Official Support Desk
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                <p className="text-sm sm:text-base text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
                   For questions regarding paper submission, proposals, registration, or partner sponsorships.
                 </p>
 
                 {/* Email Display Box: Pure white on hover */}
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 break-all mb-2 group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-mono text-slate-800 break-all mb-2 group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
                   <span className="group-hover:!text-white">{displayEmail}</span>
                 </div>
               </div>
@@ -118,28 +118,28 @@ export function ContactCards({
 
             {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
             <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
-              <div className="grid grid-cols-2 gap-2.5 w-full">
+              <div className="grid grid-cols-2 gap-3 w-full">
                 <a
                   href={`mailto:${displayEmail}`}
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
                 >
                   <span>Compose</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                 </a>
 
                 <button
                   type="button"
                   onClick={() => handleCopy("email", displayEmail)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
                 >
                   {copiedType === "email" ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <Check className="w-4 h-4 text-emerald-600 group-hover:!text-emerald-300" />
                       <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4" />
                       <span>Copy</span>
                     </>
                   )}
@@ -179,22 +179,22 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   Location
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">
                   {displayLocation}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                <p className="text-sm sm:text-base text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
                   Official host city offering vibrant innovation, cultural heritage, and world-class hospitality in Vietnam.
                 </p>
 
                 {/* Address Display Box: Pure white on hover */}
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 leading-relaxed group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white transition-all duration-300">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base text-slate-700 leading-relaxed group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white transition-all duration-300">
                   <strong className="text-slate-900 group-hover:!text-white font-semibold transition-colors duration-300 block">
                     {displayVenue}
                   </strong>
-                  <span className="block text-slate-500 group-hover:!text-blue-100 mt-1 transition-colors duration-300">
+                  <span className="block text-slate-500 group-hover:!text-blue-100 mt-1 transition-colors duration-300 text-xs sm:text-sm">
                     {CONFERENCE_INFO.address}
                   </span>
                 </div>
@@ -206,30 +206,30 @@ export function ContactCards({
 
             {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
             <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
-              <div className="grid grid-cols-2 gap-2.5 w-full">
+              <div className="grid grid-cols-2 gap-3 w-full">
                 <a
                   href={CONFERENCE_INFO.googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
                 >
                   <span>Google Maps</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                 </a>
 
                 <button
                   type="button"
                   onClick={() => handleCopy("location", `${displayVenue}, ${CONFERENCE_INFO.address}`)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
                 >
                   {copiedType === "location" ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <Check className="w-4 h-4 text-emerald-600 group-hover:!text-emerald-300" />
                       <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4" />
                       <span>Copy Address</span>
                     </>
                   )}
@@ -269,18 +269,18 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   Website & Hotline
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 group-hover:!text-white mb-2 transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">
                   Official Web Portal
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
+                <p className="text-sm sm:text-base text-slate-600 group-hover:!text-white/90 leading-relaxed mb-4 transition-colors duration-300">
                   Access official announcements, CFP guidelines, submission portals, and secretariat hotline support: {CONFERENCE_INFO.hotline}.
                 </p>
 
                 {/* URL Display Box: Pure white on hover */}
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 break-all group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-mono text-slate-800 break-all group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
                   <span className="group-hover:!text-white">
                     {displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
                   </span>
@@ -293,30 +293,30 @@ export function ContactCards({
 
             {/* Bottom Full-Width Action Buttons (50/50 2 buttons) */}
             <div className="p-4 sm:px-6 sm:py-4 bg-slate-50/60 group-hover:bg-white/5 transition-colors duration-300 relative z-10">
-              <div className="grid grid-cols-2 gap-2.5 w-full">
+              <div className="grid grid-cols-2 gap-3 w-full">
                 <a
                   href={displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-[#115eff] border border-slate-200 hover:bg-blue-50 group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white shadow-2xs group-hover:shadow transition-all duration-300"
                 >
                   <span>Open Portal</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                 </a>
 
                 <button
                   type="button"
                   onClick={() => handleCopy("website", displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-[48px] py-2.5 px-3 rounded-lg text-sm sm:text-base font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 group-hover:bg-white/20 group-hover:!text-white group-hover:border-white/30 group-hover:hover:bg-white/30 shadow-2xs transition-all duration-300 cursor-pointer"
                 >
                   {copiedType === "website" ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600 group-hover:!text-emerald-300" />
+                      <Check className="w-4 h-4 text-emerald-600 group-hover:!text-emerald-300" />
                       <span className="text-emerald-600 group-hover:!text-emerald-300">Copied</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4" />
                       <span>Copy URL</span>
                     </>
                   )}

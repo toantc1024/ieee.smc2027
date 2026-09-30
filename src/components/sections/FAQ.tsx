@@ -40,12 +40,12 @@ export function FAQ() {
 
       {/* Category Tabs: Full Width Divider */}
       <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-slate-50/30 flex flex-wrap items-center gap-2.5">
-        <span className="text-sm font-medium text-slate-600 mr-2">Category:</span>
+        <span className="text-sm sm:text-base font-bold text-slate-700 mr-2">Category:</span>
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`min-h-[40px] px-5 py-2 text-sm font-semibold rounded-[0.26rem] transition-colors cursor-pointer ${
+            className={`min-h-[44px] px-5 py-2.5 text-sm sm:text-base font-bold rounded-[0.26rem] transition-colors cursor-pointer ${
               activeCategory === cat
                 ? "bg-[#115eff] text-white shadow-2xs"
                 : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
@@ -69,7 +69,7 @@ export function FAQ() {
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5 flex-1 min-w-0">
                   {/* Category Tag in a fixed-width column to make all questions and answers align */}
                   <div className="w-24 sm:w-28 shrink-0 pt-0.5">
-                    <span className="inline-flex items-center justify-center w-full text-xs font-bold text-[#115eff] bg-blue-50 border border-blue-200 px-2 py-1 rounded-md text-center">
+                    <span className="inline-flex items-center justify-center w-full text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 border border-blue-200 px-2 py-1 rounded-md text-center">
                       {faq.category}
                     </span>
                   </div>
@@ -102,8 +102,8 @@ export function FAQ() {
 
       {/* Contact Prompt Footer */}
       <div className="px-4 sm:px-6 py-6 sm:py-7 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5 text-sm text-slate-700">
-          <HelpCircle className="w-5 h-5 text-[#115eff]" />
+        <div className="flex items-center gap-2.5 text-sm sm:text-base text-slate-700 font-medium">
+          <HelpCircle className="w-5 h-5 text-[#115eff] shrink-0" />
           <span>Have an inquiry not answered above regarding registration, visas, or special sessions?</span>
         </div>
         <a

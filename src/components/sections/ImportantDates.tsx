@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Clock, ExternalLink } from "lucide-react";
+import { Calendar, Clock, ExternalLink } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export interface ImportantDateItem {
@@ -124,63 +124,115 @@ export function ImportantDates({
 
       {/* Simple Full-Width Block */}
       <div className="px-4 sm:px-6 pb-12 sm:pb-16 w-full">
-        <div className="w-full bg-white border border-slate-300 rounded-[var(--radius)] overflow-hidden shadow-2xs divide-y divide-slate-200">
-          {dates.map((item) => (
-            <div
-              key={item.id}
-              className="group p-5 sm:p-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 hover:bg-slate-50/70 transition-colors"
-            >
-              {/* Title */}
-              <div className="space-y-1">
-                <a
-                  href={viewDetailsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug inline-block"
-                >
-                  {item.title}
-                </a>
-              </div>
-
-              {/* Deadline & Status */}
-              <div className="flex flex-wrap items-baseline sm:items-center gap-2 sm:gap-3 text-sm sm:text-base shrink-0">
-                <span className="font-semibold text-slate-700">Deadline:</span>{" "}
-                {item.extendedDeadline ? (
-                  <>
-                    <span className="line-through text-slate-400 font-medium">
-                      {item.originalDeadline}
-                    </span>{" "}
-                    <span className="font-extrabold text-[#115eff] text-base sm:text-lg">
-                      {item.extendedDeadline}
-                    </span>
-                  </>
-                ) : (
-                  <span className="font-extrabold text-[#115eff] text-base sm:text-lg">
-                    {item.date || item.originalDeadline}
-                  </span>
-                )}
-                {item.status && (
-                  <span
-                    className={`text-[11px] font-bold px-2 py-0.5 uppercase tracking-wider rounded-[var(--radius-sm)] ${
-                      item.highlight
-                        ? "text-blue-700 bg-blue-50 border border-blue-200"
-                        : "text-emerald-700 bg-emerald-50 border border-emerald-200"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                )}
-              </div>
+        <div className="w-full bg-white border border-slate-300 rounded-[var(--radius)] overflow-hidden shadow-2xs">
+          {/* Table Header: Ensures deadlines align in one dedicated column */}
+          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-3.5 bg-slate-100 font-bold text-xs sm:text-sm uppercase tracking-wider text-[#004776] border-b border-slate-200">
+            <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2">
+              <span>Milestone / Event</span>
             </div>
-          ))}
+            <div className="sm:col-span-5 lg:col-span-4 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#115eff]" />
+              <span>Deadline</span>
+            </div>
+          </div>
+
+          {/* Alternating Rows: Blue Primary with White Text & White with Blue-Black Text */}
+          <div className="divide-y divide-slate-200/60">
+            {dates.map((item, idx) => {
+              const isPrimaryRow = idx % 2 === 0;
+
+              return (
+                <div
+                  key={item.id}
+                  className={`p-5 sm:p-6 lg:px-8 transition-colors ${
+                    isPrimaryRow
+                      ? "bg-[#115eff] text-white hover:bg-[#0a4de6]"
+                      : "bg-white text-[#004776] hover:bg-blue-50/50"
+                  }`}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-3 sm:gap-4">
+                    {/* Event / Milestone Title Column */}
+                    <div className="sm:col-span-7 lg:col-span-8">
+                      <a
+                        href={viewDetailsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`text-base sm:text-lg lg:text-xl font-bold leading-snug inline-block transition-colors ${
+                          isPrimaryRow
+                            ? "text-white hover:text-blue-100 underline-offset-4 hover:underline"
+                            : "text-[#004776] hover:text-[#115eff]"
+                        }`}
+                      >
+                        {item.title}
+                      </a>
+                    </div>
+
+                    {/* Deadline Column: Perfectly aligned into one single column */}
+                    <div className="sm:col-span-5 lg:col-span-4 flex flex-wrap items-center gap-2 sm:gap-3">
+                      <span
+                        className={`text-xs sm:hidden font-semibold uppercase tracking-wider ${
+                          isPrimaryRow ? "text-blue-100" : "text-slate-500"
+                        }`}
+                      >
+                        {item.status === "Conference" ? "Dates:" : "Deadline:"}
+                      </span>
+
+                      {item.extendedDeadline ? (
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`line-through font-medium text-sm sm:text-base ${
+                              isPrimaryRow ? "text-blue-200" : "text-slate-400"
+                            }`}
+                          >
+                            {item.originalDeadline}
+                          </span>
+                          <span
+                            className={`text-base sm:text-lg font-extrabold ${
+                              isPrimaryRow ? "text-white" : "text-[#004776]"
+                            }`}
+                          >
+                            {item.extendedDeadline}
+                          </span>
+                        </div>
+                      ) : (
+                        <span
+                          className={`text-base sm:text-lg font-extrabold ${
+                            isPrimaryRow ? "text-white" : "text-[#004776]"
+                          }`}
+                        >
+                          {item.date || item.originalDeadline}
+                        </span>
+                      )}
+
+                      {item.status && (
+                        <span
+                          className={`text-xs font-extrabold px-2.5 py-0.5 sm:py-1 uppercase tracking-wider rounded-[var(--radius-sm)] shadow-2xs ${
+                            isPrimaryRow
+                              ? item.highlight
+                                ? "bg-amber-300 text-slate-950 font-black"
+                                : "bg-white text-[#115eff]"
+                              : item.highlight
+                              ? "bg-blue-100 text-[#115eff] border border-blue-200"
+                              : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
           {/* Action Row with View Details Link & Timezone Notice */}
-          <div className="p-5 sm:p-6 lg:px-8 bg-slate-50/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="text-xs sm:text-sm text-slate-500 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#115eff] shrink-0" />
+          <div className="p-5 sm:p-6 lg:px-8 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="text-sm sm:text-base text-slate-600 flex items-center gap-2.5">
+              <Clock className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
               <span>
                 All submission deadlines are set to{" "}
-                <strong className="text-slate-700 font-semibold">23:59 Anywhere on Earth (AoE)</strong>.
+                <strong className="text-[#004776] font-bold">23:59 Anywhere on Earth (AoE)</strong>.
               </span>
             </div>
 
@@ -188,7 +240,7 @@ export function ImportantDates({
               href={viewDetailsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold rounded-[var(--radius-btn)] transition-all shadow-xs w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-2 min-h-[46px] px-7 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm sm:text-base font-bold rounded-[var(--radius-btn)] transition-all shadow-xs w-full sm:w-auto"
             >
               <span>View Details</span>
               <ExternalLink className="w-4 h-4" />

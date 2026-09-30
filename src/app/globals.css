@@ -532,4 +532,12 @@ button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11p
   right: max(0px, calc((100% - var(--site-width)) / 2));
 }
 
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 

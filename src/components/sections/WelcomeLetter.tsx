@@ -109,8 +109,8 @@ export function WelcomeLetter({
                 Sincerely and warmly yours,
               </p>
 
-              {/* Honorary Chairs Grid - Left Aligned */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl sm:max-w-3xl gap-6 sm:gap-8 pt-6 sm:pt-8">
+              {/* Honorary Chairs Grid - Center Aligned */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl sm:max-w-3xl mx-auto gap-6 sm:gap-8 pt-6 sm:pt-8">
                 {CHAIR_MEMBERS.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}
@@ -152,16 +152,16 @@ export function WelcomeLetter({
                         </div>
                       </div>
 
-                      {/* Bottom Details Section */}
-                      <div className="relative z-20 w-full p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1">
-                        <div className="relative z-10">
-                          <span className="inline-block text-[11px] font-bold uppercase tracking-wider mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
+                      {/* Bottom Details Section - Center Aligned */}
+                      <div className="relative z-20 w-full p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
+                        <div className="relative z-10 flex flex-col items-center text-center">
+                          <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 px-3 py-1 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
                             {chair.role}
                           </span>
-                          <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
+                          <h4 className="text-lg sm:text-xl font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
                             {chair.name}
                           </h4>
-                          <p className="text-xs text-[#004776]/70 group-hover:!text-white/90 mt-1.5 font-medium leading-relaxed transition-colors duration-300">
+                          <p className="text-sm sm:text-base text-[#004776]/80 group-hover:!text-white/90 mt-1.5 font-medium leading-relaxed transition-colors duration-300">
                             {chair.affiliation}, {chair.country}
                           </p>
                         </div>

@@ -38,11 +38,11 @@ export function CallForPapers() {
             href={CONFERENCE_INFO.cfpPdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-[#115eff] border border-slate-200 font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+            className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-slate-50 text-[#115eff] border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
           >
-            <FileDown className="w-4 h-4" />
+            <FileDown className="w-4.5 h-4.5" />
             <span>Download CFP (PDF)</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            <ExternalLink className="w-4 h-4 text-slate-400" />
           </a>
         </div>
       </div>
@@ -61,7 +61,7 @@ export function CallForPapers() {
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm font-bold text-[#115eff] uppercase tracking-wider mb-2">
+              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] uppercase tracking-wider mb-2.5">
                 <Image
                   src="/assets/3d/announcement-3d.png"
                   alt="Submission Policy"
@@ -71,23 +71,23 @@ export function CallForPapers() {
                 />
                 <span>Official Paper Submission Policy</span>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-3">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
                 Submission Format & Language
               </h3>
-              <p className="text-base text-slate-700 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
                 {CONFERENCE_INFO.submissionNotice}
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-slate-500">
-              <Clock className="w-4 h-4 text-[#115eff]" />
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm font-semibold text-slate-600">
+              <Clock className="w-4.5 h-4.5 text-[#115eff]" />
               <span>Submission Deadline: April 08, 2027 (Workshops, Regular & Special Sessions)</span>
             </div>
           </div>
 
           <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm font-bold text-[#115eff] uppercase tracking-wider mb-2">
+              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] uppercase tracking-wider mb-2.5">
                 <Image
                   src="/assets/3d/verified-badge-3d.png"
                   alt="Proceedings & Copyright"
@@ -97,16 +97,16 @@ export function CallForPapers() {
                 />
                 <span>Proceedings & Copyright</span>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-3">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
                 IEEE Xplore® Digital Library Publication
               </h3>
-              <p className="text-base text-slate-700 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
                 {CONFERENCE_INFO.ieeeXploreNotice}
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-[#115eff]">
-              <Database className="w-4 h-4" />
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm font-semibold text-[#115eff]">
+              <Database className="w-4.5 h-4.5" />
               <span>Indexed in Scopus, EI Compendex, and Web of Science</span>
             </div>
           </div>
@@ -129,15 +129,15 @@ export function CallForPapers() {
                   />
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="text-xs font-bold text-[#115eff] bg-blue-50 px-2.5 py-1 rounded-md">
+                  <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Regular Track
                   </span>
-                  <span className="text-xs font-semibold px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
                     April 08, 2027
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                 Regular Research Papers
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -145,17 +145,17 @@ export function CallForPapers() {
               </p>
             </div>
             
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Standard IEEE 2-column format (PDF)</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Electronic submission portal</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Oral presentation in podium sessions</span>
               </div>
             </div>
@@ -175,15 +175,15 @@ export function CallForPapers() {
                   />
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="text-xs font-bold text-[#115eff] bg-blue-50 px-2.5 py-1 rounded-md">
+                  <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Special Sessions
                   </span>
-                  <span className="text-xs font-semibold px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
                     April 08, 2027
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                 Special Session Papers
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -191,17 +191,17 @@ export function CallForPapers() {
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Proposals deadline: Feb 15, 2027</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Organized by domain experts</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Rigorous IEEE peer review</span>
               </div>
             </div>
@@ -221,15 +221,15 @@ export function CallForPapers() {
                   />
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="text-xs font-bold text-[#115eff] bg-blue-50 px-2.5 py-1 rounded-md">
+                  <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Workshops & Tutorials
                   </span>
-                  <span className="text-xs font-semibold px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
                     Feb 15 / Apr 08
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                 Workshops & Tutorials
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -237,17 +237,17 @@ export function CallForPapers() {
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Proposal submission: Feb 15, 2027</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Acceptance notice: March 04, 2027</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-4 h-4 text-[#115eff] shrink-0" />
+                <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Workshop paper deadline: Apr 08, 2027</span>
               </div>
             </div>
@@ -256,13 +256,13 @@ export function CallForPapers() {
 
         {/* Official CFP Document Download Banner */}
         <div className="mt-8 p-6 sm:p-7 bg-slate-50 border border-slate-200/80 rounded-md flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <FileDown className="w-8 h-8 text-[#115eff] shrink-0" />
+          <div className="flex items-center gap-4">
+            <FileDown className="w-9 h-9 text-[#115eff] shrink-0" />
             <div>
-              <h4 className="text-base font-bold text-slate-900">
+              <h4 className="text-lg sm:text-xl font-bold text-slate-900">
                 Official Call for Papers (CFP) PDF Document
               </h4>
-              <p className="text-sm text-slate-600 mt-0.5">
+              <p className="text-sm sm:text-base text-slate-600 mt-1">
                 Official 2-page CFP brochure with complete track topics, submission dates, and committee directory.
               </p>
             </div>

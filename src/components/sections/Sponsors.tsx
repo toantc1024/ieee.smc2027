@@ -124,7 +124,7 @@ export function Sponsors() {
       <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {/* Official Society Co-Sponsorship Banner Lockup */}
         <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-xl flex flex-col items-center justify-center text-center">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-4">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
             Official Technical Co-Sponsorship & Society Society Affiliation
           </span>
           <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />
@@ -139,10 +139,10 @@ export function Sponsors() {
               <SponsorLogoBadge type={s.logoType} />
               
               <div className="w-full">
-                <div className="text-sm font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug">
+                <div className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug">
                   {s.shortName}
                 </div>
-                <div className="mt-1 text-xs text-slate-500 font-medium line-clamp-2">
+                <div className="mt-1 text-xs sm:text-sm text-slate-500 font-medium line-clamp-2">
                   {s.type}
                 </div>
               </div>

@@ -74,6 +74,12 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
   },
   navLinks: [
     {
+      id: "nav-home",
+      name: "Home",
+      href: "/",
+      type: "link",
+    },
+    {
       id: "nav-committees",
       name: "Committees",
       href: "/committees",

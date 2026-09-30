@@ -81,7 +81,7 @@ export function ConferenceVideo({
                   Experience IEEE SMC in Ho Chi Minh City
                 </h3>
 
-                <p className="text-sm sm:text-base font-normal text-slate-600 leading-relaxed text-justify sm:text-left">
+                <p className="text-base sm:text-lg font-normal text-slate-700 leading-relaxed text-justify sm:text-left">
                   A world-class gathering situated at the iconic Sheraton Saigon Grand Opera Hotel in downtown Ho Chi Minh City, neighboring cultural landmarks and Vietnam&apos;s dynamic technological hub — where systems science, human-machine interaction, and cybernetics meet vibrant innovation and global collaboration for insights and memorable moments.
                 </p>
               </div>
@@ -90,10 +90,10 @@ export function ConferenceVideo({
               <div className="relative z-10 w-full pt-6 mt-6 border-t border-slate-100">
                 <a
                   href={safeViewDetailsUrl}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-md transition-all shadow-xs group cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-md transition-all shadow-xs group cursor-pointer"
                 >
                   <span>Explore Venue &amp; City Details</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-0.5" />
                 </a>
               </div>
             </div>

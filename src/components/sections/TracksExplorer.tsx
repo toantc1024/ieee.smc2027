@@ -37,24 +37,24 @@ export function TracksExplorer() {
   const renderTopicCard = (topic: typeof filteredTopics[0], uniqueKey: string) => (
     <div
       key={uniqueKey}
-      className="p-5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-md transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
+      className="p-5 sm:p-6 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-xl transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-md">
+          <span className="text-xs sm:text-sm font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-md">
             {topic.code}
           </span>
-          <span className="text-xs px-2 py-0.5 bg-white/15 text-blue-100 rounded font-medium">
+          <span className="text-xs sm:text-sm px-2.5 py-0.5 bg-white/15 text-blue-100 rounded font-semibold">
             {topic.category}
           </span>
         </div>
 
-        <h4 className="text-base font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
+        <h4 className="text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
           {topic.name}
         </h4>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-blue-200">
+      <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs sm:text-sm text-blue-200">
         <span>IEEE SMC 2027 Scope</span>
         <span className="font-semibold text-white/90">Technical Track</span>
       </div>
@@ -82,14 +82,14 @@ export function TracksExplorer() {
         </div>
 
         {/* Search Bar */}
-        <div className="relative w-full sm:w-88 z-10">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200" />
+        <div className="relative w-full sm:w-96 z-10">
+          <Search className="w-4.5 h-4.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200" />
           <input
             type="text"
             placeholder="Search topics (e.g., Robotics, BCI, AI)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-3.5 py-2.5 text-sm bg-white/15 border border-white/30 rounded-md focus:outline-none focus:bg-white/25 focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-white placeholder:text-blue-200"
+            className="w-full pl-11 pr-4 py-3 text-sm sm:text-base bg-white/15 border border-white/30 rounded-xl focus:outline-none focus:bg-white/25 focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-white placeholder:text-blue-200"
           />
         </div>
       </div>
@@ -117,7 +117,7 @@ export function TracksExplorer() {
                 <div className="flex items-center gap-2">
                   {getPillarIcon(pillar.id)}
                   <span
-                    className={`text-xs font-bold px-2.5 py-0.5 rounded-md ${
+                    className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-md ${
                       isActive
                         ? "bg-white text-[#115eff] font-extrabold"
                         : "bg-white/20 text-white"
@@ -126,16 +126,16 @@ export function TracksExplorer() {
                     {pillar.code}
                   </span>
                 </div>
-                <span className="text-xs text-blue-200 font-medium">
+                <span className="text-xs sm:text-sm text-blue-200 font-medium">
                   {pillar.topics.length} Official Topics
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold tracking-tight text-white">
+              <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
                 {pillar.title}
               </h3>
 
-              <p className="mt-1.5 text-sm text-blue-100 line-clamp-2 leading-relaxed">
+              <p className="mt-1.5 text-sm sm:text-base text-blue-100 line-clamp-2 leading-relaxed">
                 {pillar.subtitle}
               </p>
             </button>

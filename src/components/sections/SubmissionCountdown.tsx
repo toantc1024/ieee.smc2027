@@ -59,30 +59,30 @@ export function SubmissionCountdown() {
                 </span>
               </h2>
 
-              <div className="flex flex-wrap items-center justify-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-slate-600 pt-0.5">
+              <div className="flex flex-wrap items-center justify-start gap-2.5 sm:gap-3 text-sm sm:text-base text-slate-600 pt-0.5">
                 <a
                   href={googleCalendarUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 font-semibold text-[#115eff] hover:text-blue-800 transition-colors"
                 >
-                  <GoogleCalendarIcon className="w-3.5 h-3.5" />
+                  <GoogleCalendarIcon className="w-4 h-4" />
                   <span>Add to Google Calendar</span>
                 </a>
                 <span className="text-slate-300">•</span>
                 <button
                   type="button"
                   onClick={handleCopyDeadline}
-                  className="inline-flex items-center gap-1 font-semibold text-slate-600 hover:text-[#115eff] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 font-semibold text-slate-600 hover:text-[#115eff] transition-colors cursor-pointer"
                 >
                   {copiedDeadline ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <Check className="w-4 h-4 text-emerald-600" />
                       <span className="text-emerald-600 font-bold">Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4" />
                       <span>Copy Info</span>
                     </>
                   )}
@@ -95,19 +95,19 @@ export function SubmissionCountdown() {
           <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-start lg:justify-end">
             <a
               href="#cfp"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] sm:min-h-[48px] px-5 sm:px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-[0.26rem] transition-all shadow-sm hover:shadow-md group whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md group whitespace-nowrap"
             >
               <span>Author Guidelines</span>
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
 
             <a
               href={CONFERENCE_INFO.cfpPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] sm:min-h-[48px] px-4 sm:px-5 py-2.5 bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200 font-bold text-xs sm:text-sm rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
             >
-              <FileDown className="w-3.5 h-3.5" />
+              <FileDown className="w-4 h-4" />
               <span>CFP (PDF)</span>
             </a>
           </div>

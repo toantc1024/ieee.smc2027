@@ -64,21 +64,21 @@ export function Venue() {
           <div className="relative z-10 flex flex-wrap items-center gap-3">
             <a
               href="/travel"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all"
+              className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all"
             >
-              <Compass className="w-4 h-4" />
+              <Compass className="w-4.5 h-4.5" />
               <span>Full Travel Guide</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <ArrowUpRight className="w-4 h-4" />
             </a>
             <a
               href={CONFERENCE_INFO.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-semibold text-xs sm:text-sm rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+              className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
             >
-              <MapPin className="w-4 h-4 text-[#115eff]" />
+              <MapPin className="w-4.5 h-4.5 text-[#115eff]" />
               <span>Open in Google Maps</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              <ExternalLink className="w-4 h-4 text-slate-400" />
             </a>
           </div>
         </div>
@@ -91,7 +91,7 @@ export function Venue() {
           {/* Left Column: Sheraton Saigon Grand Opera Hotel Narrative & Details */}
           <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50/60 border border-slate-200 rounded-2xl flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#115eff] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100">
                 <span>Official Conference Hotel & Headquarters</span>
               </div>
 
@@ -108,21 +108,21 @@ export function Venue() {
               </p>
 
               {/* Quick Venue Key Details */}
-              <div className="space-y-3 pt-3 border-t border-slate-200/80 text-sm text-slate-700">
+              <div className="space-y-3.5 pt-3 border-t border-slate-200/80 text-sm sm:text-base text-slate-700">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-[#115eff] mt-0.5 shrink-0" />
+                  <MapPin className="w-4.5 h-4.5 text-[#115eff] mt-0.5 shrink-0" />
                   <span>
                     <strong className="text-slate-900 font-semibold">Address:</strong> No. 88 Dong Khoi, Saigon Ward, District 1, Ho Chi Minh City, Vietnam.
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Building2 className="w-4 h-4 text-[#115eff] mt-0.5 shrink-0" />
+                  <Building2 className="w-4.5 h-4.5 text-[#115eff] mt-0.5 shrink-0" />
                   <span>
                     <strong className="text-slate-900 font-semibold">Host Institution:</strong> Ho Chi Minh City University of Technology and Engineering (HCM-UTE).
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Mail className="w-4 h-4 text-[#115eff] mt-0.5 shrink-0" />
+                  <Mail className="w-4.5 h-4.5 text-[#115eff] mt-0.5 shrink-0" />
                   <span>
                     <strong className="text-slate-900 font-semibold">Inquiries:</strong>{" "}
                     <a href={`mailto:${CONFERENCE_INFO.contactEmail}`} className="text-[#115eff] font-semibold hover:underline">
@@ -140,7 +140,7 @@ export function Venue() {
                 href="https://www.marriott.com/en-us/hotels/sgnsi-sheraton-saigon-grand-opera-hotel/overview/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-md shadow-xs transition-all"
+                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-md shadow-xs transition-all"
               >
                 <span>Explore Venue Details</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -150,10 +150,10 @@ export function Venue() {
                 href={CONFERENCE_INFO.visaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs sm:text-sm rounded-md transition-all shadow-2xs"
+                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm sm:text-base rounded-md transition-all shadow-2xs"
               >
                 <span>Vietnam e-Visa Portal</span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                <ExternalLink className="w-4 h-4 text-slate-500" />
               </a>
             </div>
           </div>
