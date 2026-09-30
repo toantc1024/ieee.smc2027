@@ -172,11 +172,8 @@ export default function AdminOAuthPage() {
         </div>
       </div>
 
-      {/* 2. AI-Powered Agent Notice Box (Prominently featured) */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-[#115eff] to-indigo-600 text-white p-6 sm:p-7 shadow-lg">
-        {/* Decorative Grid & Blurred Orbs */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-2xl pointer-events-none" />
+      {/* 2. AI-Powered Agent Notice Box (Clean shadcn style) */}
+      <div className="relative overflow-hidden rounded-xl bg-slate-900 text-white p-5 sm:p-6 shadow-xs border border-slate-800">
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2">

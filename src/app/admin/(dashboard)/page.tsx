@@ -6,11 +6,12 @@ import {
   PanelTop,
   Layers,
   ArrowRight,
-  Sparkles,
   ExternalLink,
   Database,
   Globe,
   SlidersHorizontal,
+  Shield,
+  KeyRound,
 } from "lucide-react";
 
 interface AdminPageSummary {
@@ -32,158 +33,163 @@ export default async function AdminDashboardPage() {
   const pages = pagesRaw as unknown as AdminPageSummary[];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900 via-[#115eff] to-blue-600 text-white p-7 sm:p-9 shadow-md">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 max-w-2xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-bold uppercase tracking-wider text-blue-100">
-            <Sparkles className="w-3.5 h-3.5" />
+    <div className="space-y-6 font-sans">
+      {/* Welcome Card (Clean shadcn style, zero loud gradients) */}
+      <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-7 shadow-xs">
+        <div className="max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
+            <Shield className="w-3.5 h-3.5 text-slate-500" />
             <span>Hệ Thống Quản Trị IEEE SMC 2027</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Xin chào, {user?.name || "Quản trị viên"}!
           </h1>
 
-          <p className="text-sm sm:text-base text-blue-100 leading-relaxed font-normal">
-            Chào mừng bạn đến với bảng điều khiển CMS. Bạn có thể chỉnh sửa thanh Header, tùy biến bố cục trang kéo thả (Drag & Drop) và cấu hình dữ liệu hội nghị trực tiếp với Neon Database.
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Hệ thống hỗ trợ quản lý cấu trúc cây trang web (Tree Pages), chỉnh sửa thanh Header, tùy biến khối giao diện kéo thả (Drag & Drop), quản lý tài khoản và cấu hình OAuth đa nền tảng.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-3">
+          <div className="pt-2 flex flex-wrap items-center gap-2.5">
             <Link
-              href="/admin/pages/home"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#115eff] hover:bg-blue-50 font-bold text-xs sm:text-sm rounded-md transition-colors shadow-xs"
+              href="/admin/pages"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 font-semibold text-xs sm:text-sm rounded-lg transition-colors shadow-2xs"
             >
               <Layers className="w-4 h-4" />
-              <span>Chỉnh sửa Trang Chủ (Drag & Drop)</span>
+              <span>Cấu trúc trang (Tree Pages)</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
               href="/admin/header"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 hover:bg-white/25 text-white font-semibold text-xs sm:text-sm rounded-md border border-white/20 transition-colors backdrop-blur-xs"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
             >
-              <PanelTop className="w-4 h-4" />
-              <span>Chỉnh sửa Header</span>
+              <PanelTop className="w-4 h-4 text-slate-500" />
+              <span>Cấu hình Header</span>
+            </Link>
+
+            <Link
+              href="/admin/oauth"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
+            >
+              <KeyRound className="w-4 h-4 text-slate-500" />
+              <span>OAuth & AI Agent</span>
             </Link>
           </div>
         </div>
       </div>
 
       {/* Quick Action Feature Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Card 1: Header Builder */}
-        <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-7 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
-          <div className="space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center border border-blue-100 group-hover:scale-105 transition-transform">
-              <PanelTop className="w-6 h-6" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Card 1: Tree Pages */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div className="space-y-2.5">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-200">
+              <Layers className="w-5 h-5" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Sửa Thanh Điều Hướng (Header)
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              Cây Phân Cấp Trang (Tree Pages)
             </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Tùy biến thanh thông báo tiện ích trên cùng, hotline, email liên hệ, danh sách menu điều hướng, nút Call-To-Action (Submit Paper) và xem trước trực tiếp (Live Preview).
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Tổ chức nội dung đa tầng vô hạn theo mô hình cha - con (Parent - Child). Mỗi trang đều hỗ trợ trình kéo thả linh kiện Page Builder.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Lưu vào Neon PostgreSQL</span>
+          <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+            <span className="text-xs text-slate-400 font-medium">{pages.length} trang đã tạo</span>
+            <Link
+              href="/admin/pages"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:underline"
+            >
+              <span>Xem cấu trúc cây</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Card 2: Header Builder */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div className="space-y-2.5">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-200">
+              <PanelTop className="w-5 h-5" />
+            </div>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              Thanh Header & Menu
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Tùy biến thanh tiện ích, hotline, email liên hệ, liên kết mạng xã hội, danh sách menu điều hướng đa cấp và nút Submit Paper.
+            </p>
+          </div>
+
+          <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+            <span className="text-xs text-slate-400 font-medium">Đồng bộ Neon DB</span>
             <Link
               href="/admin/header"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#115eff] hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:underline"
             >
               <span>Mở trình sửa Header</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
-
-        {/* Card 2: Drag & Drop Page Builder */}
-        <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-7 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
-          <div className="space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 group-hover:scale-105 transition-transform">
-              <Layers className="w-6 h-6" />
-            </div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Quản Lý Trang Kéo Thả (Page Builder)
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Kế thừa logic Drag & Drop và JSON Schema từ HCMUTE CMS: Thêm khối Hero Carousel, Call for Papers, Timeline, Tracks, FAQ, đổi thứ tự, sửa nội dung và lưu thời gian thực.
-            </p>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">{pages.length} trang đã tạo</span>
-            <Link
-              href="/admin/pages"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#115eff] hover:underline"
-            >
-              <span>Quản lý các trang</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-
       </div>
 
       {/* Pages Table Overview */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-2xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/60 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50/60 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Danh Sách Trang Web</h3>
-            <p className="text-xs text-slate-500">Các trang có thể chỉnh sửa trực tiếp bằng Drag & Drop</p>
+            <h3 className="text-sm font-bold text-slate-900">Danh Sách Trang Web</h3>
+            <p className="text-xs text-slate-400">Các trang hiện có trong hệ thống</p>
           </div>
           <Link
             href="/admin/pages"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#115eff] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-800 hover:underline"
           >
-            <span>Xem tất cả</span>
+            <span>Mở giao diện Tree</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="divide-y divide-slate-200">
+        <div className="divide-y divide-slate-100 text-xs">
           {pages.map((p: AdminPageSummary) => (
             <div
               key={p.id}
-              className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors"
+              className="px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/70 transition-colors"
             >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-bold text-slate-900 text-sm">{p.title}</span>
-                  <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-[#115eff] font-mono font-medium">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-slate-900">{p.title}</span>
+                  <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">
                     /{p.slug === "home" ? "" : p.slug}
                   </span>
                   {p.is_published && (
-                    <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold flex items-center gap-1">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-medium inline-flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      Công khai
+                      Xuất bản
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-slate-500">
-                  {p.block_count || 0} khối component • Cập nhật lần cuối: {p.updated_at ? new Date(p.updated_at).toLocaleDateString("vi-VN") : "Hôm nay"}
+                <div className="text-[11px] text-slate-400">
+                  {p.block_count || 0} component • Cập nhật: {p.updated_at ? new Date(p.updated_at).toLocaleDateString("vi-VN") : "Hôm nay"}
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Link
                   href={`/admin/pages/${p.id}`}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold rounded-md transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded transition-colors shadow-2xs text-[11px]"
                 >
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <span>Mở Trình Kéo Thả</span>
+                  <SlidersHorizontal className="w-3 h-3" />
+                  <span>Sửa Builder</span>
                 </Link>
 
                 <Link
                   href={p.slug === "home" ? "/" : `/${p.slug}`}
                   target="_blank"
-                  className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
+                  className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-slate-100 transition-colors"
                   title="Xem trang ngoài"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
@@ -192,20 +198,20 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* System Status Footprint */}
-      <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4 text-xs text-slate-600">
+      <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-emerald-600" />
-            <span>Neon Database: <strong>Đã kết nối</strong></span>
+          <div className="flex items-center gap-1.5">
+            <Database className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Neon PostgreSQL: <strong className="text-slate-800">Online</strong></span>
           </div>
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-[#115eff]" />
-            <span>Next.js 16 + React 19 App Router</span>
+          <div className="flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-slate-500" />
+            <span>Next.js 16 + React 19</span>
           </div>
         </div>
 
-        <div className="text-slate-400">
-          IEEE SMC 2027 • Human-AI Symbiosis
+        <div className="text-slate-400 text-[11px]">
+          IEEE SMC 2027 • Admin Portal
         </div>
       </div>
     </div>

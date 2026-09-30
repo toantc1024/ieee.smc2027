@@ -188,7 +188,12 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const id = body.id || `page_${Date.now()}`;
-    const slug = (body.slug || `page-${Date.now()}`).toLowerCase().replace(/[^a-z0-9-]/g, "-");
+    const rawSlug = (body.slug || `page-${Date.now()}`).toLowerCase().trim();
+    const slug = rawSlug
+      .split("/")
+      .map((part: string) => part.replace(/[^a-z0-9-]/g, "-").replace(/^-+|-+$/g, ""))
+      .filter(Boolean)
+      .join("/");
     const title = body.title || "Trang mới";
     const blocks = body.blocks || [];
 

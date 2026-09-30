@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, ShieldCheck, ChevronRight } from "lucide-react";
+import { ExternalLink, ChevronRight, Database } from "lucide-react";
 import type { SessionUser } from "@/lib/auth";
 
 interface AdminHeaderProps {
@@ -15,42 +15,44 @@ export function AdminHeader({ user }: AdminHeaderProps) {
 
   const getBreadcrumbTitle = () => {
     if (pathname === "/admin") return "Tổng quan hệ thống";
-    if (pathname.startsWith("/admin/pages")) return "Quản lý trang (Pages)";
-    if (pathname.startsWith("/admin/posts")) return "Quản lý bài viết (Posts)";
-    if (pathname.startsWith("/admin/users")) return "Quản trị người dùng (Users)";
+    if (pathname.startsWith("/admin/pages")) return "Cấu trúc trang (Tree Pages)";
+    if (pathname.startsWith("/admin/posts")) return "Quản lý bài viết";
+    if (pathname.startsWith("/admin/users")) return "Quản trị người dùng";
+    if (pathname.startsWith("/admin/oauth")) return "OAuth & AI Agent";
     if (pathname.startsWith("/admin/header")) return "Cấu hình Header & Menu";
     return "Quản trị";
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white border-b border-slate-200 shadow-2xs">
+    <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
       <div className="w-full px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Left: Breadcrumbs */}
-        <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+        {/* Breadcrumb Hierarchy */}
+        <div className="flex items-center gap-2 text-xs sm:text-sm">
           <Link
             href="/admin"
-            className="text-slate-500 hover:text-[#115eff] transition-colors"
+            className="text-slate-500 hover:text-slate-900 transition-colors font-medium"
           >
             Admin
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-[#004776] font-bold">{getBreadcrumbTitle()}</span>
+          <span className="text-slate-900 font-semibold">{getBreadcrumbTitle()}</span>
         </div>
 
-        {/* Right: Quick actions & User status */}
+        {/* Status Indicators & View Site */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>PostgreSQL Online</span>
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <Database className="w-3 h-3 text-slate-500" />
+            <span>Neon DB Connected</span>
           </div>
 
           <Link
             href="/"
             target="_blank"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#115eff] bg-slate-100 hover:bg-slate-200/80 rounded-md transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-md transition-colors shadow-2xs"
           >
             <span className="hidden sm:inline">Xem website</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
           </Link>
         </div>
       </div>
