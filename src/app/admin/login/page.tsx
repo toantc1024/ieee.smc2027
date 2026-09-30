@@ -10,28 +10,28 @@ import { GridPattern } from "@/components/ui/grid-pattern";
 const SLIDES = [
   {
     image: "/login/posters/hcmc-skyline.jpg",
-    title: "TP. HỒ CHÍ MINH",
-    subtitle: "Thành phố năng động, đổi mới sáng tạo & hiếu khách",
+    title: "HO CHI MINH CITY",
+    subtitle: "A dynamic, innovative, and hospitable metropolis welcoming the world",
   },
   {
     image: "/login/posters/1-sang-tao.jpg",
-    title: "SÁNG TẠO",
-    subtitle: "Human-Centric Intelligence: Shaping the Digital Future",
+    title: "INNOVATION",
+    subtitle: "Human-Centric Intelligence: Shaping the Digital & Autonomous Future",
   },
   {
     image: "/login/posters/hcmc-nguyen-hue.jpg",
-    title: "HỘI TỤ TOÀN CẦU",
-    subtitle: "Chào đón các nhà khoa học và học giả quốc tế đến với IEEE SMC 2027",
+    title: "GLOBAL GATHERING",
+    subtitle: "Welcoming leading scholars, engineers, and researchers to IEEE SMC 2027",
   },
   {
     image: "/login/posters/2-hien-dai.jpg",
-    title: "HIỆN ĐẠI",
-    subtitle: "Hội nghị quốc tế Cybernetics & Systems hàng đầu thế giới",
+    title: "CYBERNETICS & SYSTEMS",
+    subtitle: "The flagship international conference on Systems Science and Cybernetics",
   },
   {
     image: "/login/posters/hcmc-ben-thanh.jpg",
-    title: "BẢN SẮC & LỊCH SỬ",
-    subtitle: "Khám phá di sản văn hóa và ẩm thực đặc sắc Việt Nam",
+    title: "HERITAGE & CULTURE",
+    subtitle: "Discover the rich cultural tapestry and vibrant heritage of Vietnam",
   },
 ] as const;
 
@@ -291,13 +291,6 @@ function AdminLoginForm() {
                 </span>
               </div>
             </div>
-
-            <Link
-              href="/"
-              className="px-3.5 py-1.5 text-xs font-bold text-white bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur-md transition-all shadow-xs"
-            >
-              Về trang chủ
-            </Link>
           </div>
 
           {/* Bottom Typography: Subtitle + Signature Downward Gradient Mask Title */}
@@ -372,9 +365,6 @@ function AdminLoginForm() {
             
             {/* Header (No decorative icons) */}
             <div className="mb-5 text-center">
-              <div className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#115eff] border border-blue-200 text-[10px] font-bold uppercase tracking-wider mb-2">
-                Cổng Quản Trị Hệ Thống
-              </div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 IEEE SMC 2027 CMS
               </h1>
@@ -596,32 +586,6 @@ function AdminLoginForm() {
               </form>
             )}
 
-            {/* Footnote */}
-            <div className="mt-4 pt-3 border-t border-slate-100 text-center text-[11px] text-slate-400">
-              Bảo mật Neon PostgreSQL &amp; JWT Session
-            </div>
-
-          </div>
-        </div>
-
-        {/* ── BOTTOM SECTION: Promotional Card (Matching HCMUTE Keycloak 60/40 rounded-2xl) ── */}
-        <div className="relative z-10 w-full rounded-[20px] sm:rounded-[22px] lg:rounded-2xl bg-[#115eff] text-white border border-white/20 p-3.5 sm:p-4 lg:px-4 lg:py-2.5 xl:px-5 xl:py-3 shrink-0 flex items-center justify-between shadow-xs select-none">
-          <div className="min-w-0 flex-1 pr-2">
-            <h3 className="text-white font-bold text-xs xl:text-sm truncate">
-              Hội Nghị Quốc Tế IEEE SMC 2027
-            </h3>
-            <p className="text-blue-100 text-[11px] truncate">
-              Sheraton Saigon Grand Opera Hotel • 6–10 Tháng 10, 2027
-            </p>
-          </div>
-
-          <div className="shrink-0">
-            <Link
-              href="/"
-              className="inline-flex items-center py-1.5 px-3.5 rounded-xl bg-white hover:bg-white/95 text-[#115eff] font-bold text-xs shadow-xs transition-all active:scale-[0.99] cursor-pointer"
-            >
-              <span>Xem website</span>
-            </Link>
           </div>
         </div>
 
