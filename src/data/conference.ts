@@ -285,6 +285,16 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     ],
   },
   {
+    groupName: "Steering Committee",
+    members: [
+      { name: "Sam Kwong", role: "Steering Committee", country: "China" },
+      { name: "Imre Rudas", role: "Steering Committee", country: "Hungary" },
+      { name: "Adrian Stoica", role: "Steering Committee", country: "USA" },
+      { name: "Ljiljana Trajkovic", role: "Steering Committee", country: "Canada" },
+      { name: "Eddie Tunstel", role: "Steering Committee", country: "USA" },
+    ],
+  },
+  {
     groupName: "General Chairs & Co-Chairs",
     members: [
       {
@@ -302,16 +312,6 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
       { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
       { name: "Philip Chen", role: "General Co-Chair", country: "China" },
       { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
-    ],
-  },
-  {
-    groupName: "Steering Committee",
-    members: [
-      { name: "Sam Kwong", role: "Steering Committee", country: "China" },
-      { name: "Imre Rudas", role: "Steering Committee", country: "Hungary" },
-      { name: "Adrian Stoica", role: "Steering Committee", country: "USA" },
-      { name: "Ljiljana Trajkovic", role: "Steering Committee", country: "Canada" },
-      { name: "Eddie Tunstel", role: "Steering Committee", country: "USA" },
     ],
   },
   {

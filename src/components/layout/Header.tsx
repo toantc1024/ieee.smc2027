@@ -614,7 +614,7 @@ export function Header() {
           {/* Flush container matched exactly to site margins with comfortable height */}
           <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-18 md:h-18">
             {/* Desktop Navigation on Left, CTA on Right (No Header Logo) */}
-            <div className="hidden lg:flex items-center justify-between w-full">
+            <div className="hidden lg:flex items-center justify-between w-full gap-4 xl:gap-6 2xl:gap-8">
               <nav className="flex items-center gap-1 xl:gap-1.5 relative">
                 {navLinks.map((link, index) => {
                   const hasMegaMenu =
@@ -672,12 +672,12 @@ export function Header() {
                 })}
               </nav>
 
-              {/* Call-To-Action Button on Far Right */}
+              {/* Call-To-Action Button on Far Right with dedicated gap */}
               {showCta && (
                 <a
                   href={ctaHref}
                   onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-2 h-10 xl:h-11 px-5 xl:px-6 text-[14px] lg:text-[15px] xl:text-[16px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap"
+                  className="inline-flex items-center justify-center gap-2.5 h-10 xl:h-11 px-5 xl:px-6 text-[14px] lg:text-[15px] xl:text-[16px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap ml-3 xl:ml-6 shrink-0"
                 >
                   <FileText className="w-4 h-4 text-white shrink-0" />
                   <span>{ctaLabel}</span>
@@ -880,7 +880,7 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-lg shadow-sm transition-colors cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2.5 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-lg shadow-sm transition-colors cursor-pointer"
                   >
                     <FileText className="w-4.5 h-4.5 text-white" />
                     <span>{ctaLabel}</span>

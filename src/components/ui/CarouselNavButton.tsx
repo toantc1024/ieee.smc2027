@@ -36,12 +36,12 @@ export function CarouselNavButton({
   const variantClasses =
     variant === "glass"
       ? "bg-white/10 hover:bg-white/25 backdrop-blur-xl border-white/20 hover:border-white/40 shadow-lg hover:shadow-xl"
-      : "bg-white hover:bg-blue-50 border-slate-200 hover:border-blue-300 shadow-sm hover:shadow-lg hover:shadow-blue-500/15";
+      : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-slate-200/90 hover:border-[#115eff]/60 shadow-sm hover:shadow-lg hover:shadow-blue-500/15";
 
   const iconColor =
     variant === "glass"
       ? "text-white group-hover/nav:text-white"
-      : "text-slate-600 group-hover/nav:text-blue-600";
+      : "text-slate-700 group-hover/nav:text-[#115eff]";
 
   const flowerSrc = variant === "glass" ? FLOWER_WHITE : FLOWER_BLUE;
 
