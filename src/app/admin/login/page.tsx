@@ -10,28 +10,28 @@ import { GridPattern } from "@/components/ui/grid-pattern";
 const SLIDES = [
   {
     image: "/login/posters/hcmc-skyline.jpg",
-    title: "HO CHI MINH CITY",
-    subtitle: "A dynamic, innovative, and hospitable metropolis welcoming the world",
+    title: "SAI GON",
+    subtitle: "Dynamic Metropolis & Warm Hospitality",
   },
   {
     image: "/login/posters/1-sang-tao.jpg",
-    title: "INNOVATION",
-    subtitle: "Human-Centric Intelligence: Shaping the Digital & Autonomous Future",
+    title: "INNOVATE",
+    subtitle: "Human-Centric Intelligence & Systems",
   },
   {
     image: "/login/posters/hcmc-nguyen-hue.jpg",
-    title: "GLOBAL GATHERING",
-    subtitle: "Welcoming leading scholars, engineers, and researchers to IEEE SMC 2027",
+    title: "CONVERGE",
+    subtitle: "Uniting Global Pioneers at IEEE SMC 2027",
   },
   {
     image: "/login/posters/2-hien-dai.jpg",
-    title: "CYBERNETICS & SYSTEMS",
-    subtitle: "The flagship international conference on Systems Science and Cybernetics",
+    title: "SYNERGY",
+    subtitle: "Autonomous & Sustainable Future",
   },
   {
     image: "/login/posters/hcmc-ben-thanh.jpg",
-    title: "HERITAGE & CULTURE",
-    subtitle: "Discover the rich cultural tapestry and vibrant heritage of Vietnam",
+    title: "HERITAGE",
+    subtitle: "Rich Traditions & Welcoming Spirit",
   },
 ] as const;
 
@@ -267,11 +267,21 @@ function AdminLoginForm() {
               className="absolute -bottom-8 -left-8 w-88 h-88 opacity-30 text-white pointer-events-none z-10 hidden sm:block"
             />
 
+            {/* Metallic Noise Texture Shader Overlay (Hiệu ứng gradient nhiễu kim loại) */}
+            <div
+              className="absolute inset-0 opacity-[0.20] mix-blend-overlay pointer-events-none z-15"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: "repeat",
+              }}
+            />
+
             {/* Top Fresh Gradient */}
             <div className="absolute inset-x-0 top-0 h-28 sm:h-44 bg-gradient-to-b from-[#115eff]/80 via-[#0a4de6]/30 to-transparent pointer-events-none z-10" />
 
-            {/* Bottom Primary Blue Shadow Gradient */}
-            <div className="absolute inset-x-0 bottom-0 h-36 sm:h-52 lg:h-60 bg-gradient-to-t from-[#0a4de6]/95 via-[#115eff]/70 via-45% to-transparent pointer-events-none z-10" />
+            {/* Bottom Multi-Angle Metallic Shadow Gradient with Specular Sheen */}
+            <div className="absolute inset-x-0 bottom-0 h-44 sm:h-60 lg:h-72 bg-gradient-to-t from-[#05225c] via-[#0a4de6]/90 via-35% via-[#115eff]/55 via-65% to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-28 sm:h-40 bg-gradient-to-tr from-[#115eff]/30 via-white/10 to-transparent mix-blend-overlay pointer-events-none z-12" />
           </div>
 
           {/* Top Brand Bar: Logo + Home Link (Text Only, No Icons) */}
@@ -308,14 +318,14 @@ function AdminLoginForm() {
               </motion.p>
             </AnimatePresence>
 
-            {/* Signature Keycloak Downward Gradient Mask */}
+            {/* Signature Keycloak Downward Gradient Mask + Metallic Chrome Titanium Shader */}
             <div
               className="relative w-full max-w-full flex justify-center items-center py-1 overflow-visible"
               style={{
                 maskImage:
-                  "linear-gradient(to bottom, #000 0%, #000 25%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0.03) 90%, transparent 100%)",
+                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
                 WebkitMaskImage:
-                  "linear-gradient(to bottom, #000 0%, #000 25%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0.03) 90%, transparent 100%)",
+                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
               }}
             >
               <AnimatePresence mode="wait">
@@ -328,10 +338,14 @@ function AdminLoginForm() {
                   className="w-full max-w-full flex justify-center items-center select-none overflow-visible px-2"
                 >
                   <span
-                    className="font-extrabold uppercase text-white select-none leading-[1.1] pt-1 pb-2 whitespace-nowrap text-[32px] sm:text-[42px] lg:text-[clamp(2.2rem,5.8vw,84px)]"
+                    className="font-black uppercase select-none leading-[1.05] pt-1 pb-2 whitespace-nowrap text-[36px] sm:text-[50px] lg:text-[clamp(2.5rem,6.2vw,96px)] tracking-[-0.03em] font-sans"
                     style={{
-                      letterSpacing: "0.02em",
-                      filter: "drop-shadow(0 4px 24px rgba(0, 71, 118, 0.85))",
+                      background:
+                        "linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 22%, #CBD5E1 48%, #94A3B8 72%, #E2E8F0 88%, rgba(255,255,255,0.75) 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      filter:
+                        "drop-shadow(0 4px 20px rgba(0, 34, 68, 0.85)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4))",
                     }}
                   >
                     {currentSlide.title}
@@ -344,10 +358,10 @@ function AdminLoginForm() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          RIGHT COLUMN (40% on Desktop): Auth Card & Promotional Banner
+          RIGHT COLUMN (40% on Desktop): Auth Card
           Rounded value: EXACT SAME rounded-[22px] lg:rounded-3xl (matching left 60)
          ═══════════════════════════════════════════════════════════════════ */}
-      <div className="w-full lg:w-[calc(42%-0.5rem)] xl:w-[calc(40%-0.5rem)] flex flex-col h-auto lg:h-full min-h-0 min-w-0 shrink-0 gap-4 sm:gap-4 lg:gap-2.5 xl:gap-4 relative px-4 sm:px-6 lg:px-0 -mt-8 sm:-mt-10 lg:mt-0 z-20 pb-8 lg:pb-0">
+      <div className="w-full lg:w-[calc(42%-0.5rem)] xl:w-[calc(40%-0.5rem)] flex flex-col h-auto lg:h-full min-h-0 min-w-0 shrink-0 relative px-4 sm:px-6 lg:px-0 -mt-8 sm:-mt-10 lg:mt-0 z-20 pb-8 lg:pb-0">
         
         {/* ── TOP SECTION: Main Auth Card (Matching rounded-[22px] lg:rounded-3xl) ── */}
         <div className="relative z-10 flex flex-col justify-center items-center flex-1 min-h-0 rounded-[22px] lg:rounded-3xl border border-slate-200/90 bg-white shadow-md lg:shadow-[0_16px_50px_rgba(17,94,255,0.08)] p-5 sm:p-7 lg:p-6 xl:p-8 overflow-y-auto">
