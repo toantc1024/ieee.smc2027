@@ -66,6 +66,12 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   }
 }
 
+export async function getSession(): Promise<{ user: SessionUser } | null> {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  return { user };
+}
+
 export async function upsertUser(user: {
   id: string;
   email: string;

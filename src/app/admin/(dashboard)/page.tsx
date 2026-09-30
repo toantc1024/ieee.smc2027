@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { sql } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import {
   PanelTop,
@@ -12,6 +13,10 @@ import {
   SlidersHorizontal,
   Shield,
   KeyRound,
+  CreditCard,
+  QrCode,
+  Send,
+  Users,
 } from "lucide-react";
 
 interface AdminPageSummary {
@@ -32,6 +37,13 @@ export default async function AdminDashboardPage() {
   `;
   const pages = pagesRaw as unknown as AdminPageSummary[];
 
+  // Fetch registration stats
+  const [totalRegs, paidRegs, checkedInRegs] = await Promise.all([
+    prisma.registration.count().catch(() => 0),
+    prisma.registration.count({ where: { paymentStatus: "PAID" } }).catch(() => 0),
+    prisma.registration.count({ where: { checkInStatus: true } }).catch(() => 0),
+  ]);
+
   return (
     <div className="space-y-6 font-sans">
       {/* Welcome Card (Clean shadcn style, zero loud gradients) */}
@@ -47,34 +59,74 @@ export default async function AdminDashboardPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Hệ thống hỗ trợ quản lý cấu trúc cây trang web (Tree Pages), chỉnh sửa thanh Header, tùy biến khối giao diện kéo thả (Drag & Drop), quản lý tài khoản và cấu hình OAuth đa nền tảng.
+            Hệ thống hỗ trợ quản lý đại biểu & đối soát VietQR tự động, điểm danh QR tại hội trường, gửi email thông báo hàng loạt, cấu hình cây trang web (Tree Pages) và bảo mật OAuth.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-2.5">
             <Link
-              href="/admin/pages"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 font-semibold text-xs sm:text-sm rounded-lg transition-colors shadow-2xs"
+              href="/admin/registrations"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#115eff] text-white hover:bg-[#0a4de6] font-semibold text-xs sm:text-sm rounded-lg transition-colors shadow-2xs"
             >
-              <Layers className="w-4 h-4" />
-              <span>Cấu trúc trang (Tree Pages)</span>
+              <CreditCard className="w-4 h-4" />
+              <span>Đăng Ký & Đối Soát ({totalRegs})</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
-              href="/admin/header"
+              href="/admin/checkin"
               className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
             >
-              <PanelTop className="w-4 h-4 text-slate-500" />
-              <span>Cấu hình Header</span>
+              <QrCode className="w-4 h-4 text-slate-500" />
+              <span>Quét QR Điểm Danh ({checkedInRegs})</span>
             </Link>
 
             <Link
-              href="/admin/oauth"
+              href="/admin/pages"
               className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
             >
-              <KeyRound className="w-4 h-4 text-slate-500" />
-              <span>OAuth & AI Agent</span>
+              <Layers className="w-4 h-4 text-slate-500" />
+              <span>Tree Pages</span>
             </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Conference Registration Overview Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold uppercase text-slate-400">Đại Biểu Đăng Ký</span>
+            <div className="text-2xl font-black text-slate-900 mt-1">{totalRegs}</div>
+            <Link href="/admin/registrations" className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block">
+              Xem chi tiết đối soát →
+            </Link>
+          </div>
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#115eff] flex items-center justify-center">
+            <Users className="w-5 h-5" />
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold uppercase text-slate-400">Đã Thanh Toán (PAID)</span>
+            <div className="text-2xl font-black text-emerald-600 mt-1">{paidRegs}</div>
+            <span className="text-xs text-slate-400 mt-1 block">Tự động đối soát VietQR</span>
+          </div>
+          <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <CreditCard className="w-5 h-5" />
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold uppercase text-slate-400">Đã Điểm Danh Check-in</span>
+            <div className="text-2xl font-black text-purple-600 mt-1">{checkedInRegs}</div>
+            <Link href="/admin/checkin" className="text-xs text-purple-600 font-semibold hover:underline mt-1 block">
+              Mở máy quét QR →
+            </Link>
+          </div>
+          <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <QrCode className="w-5 h-5" />
           </div>
         </div>
       </div>

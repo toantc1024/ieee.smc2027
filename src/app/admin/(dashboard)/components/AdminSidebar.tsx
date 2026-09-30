@@ -19,6 +19,9 @@ import {
   X,
   Globe,
   Settings,
+  CreditCard,
+  QrCode,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SessionUser } from "@/lib/auth";
@@ -36,6 +39,30 @@ const NAV_GROUPS = [
         href: "/admin",
         icon: LayoutDashboard,
         exact: true,
+      },
+    ],
+  },
+  {
+    title: "ĐẠI BIỂU & ĐỐI SOÁT",
+    items: [
+      {
+        name: "Đăng ký & Đối soát",
+        href: "/admin/registrations",
+        icon: CreditCard,
+        exact: false,
+        badge: "VietQR",
+      },
+      {
+        name: "Quét QR Điểm danh",
+        href: "/admin/checkin",
+        icon: QrCode,
+        exact: false,
+      },
+      {
+        name: "Gửi Email hàng loạt",
+        href: "/admin/broadcast",
+        icon: Send,
+        exact: false,
       },
     ],
   },

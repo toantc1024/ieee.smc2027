@@ -74,3 +74,52 @@ model Setting {
 
   @@map("website_settings")
 }
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum ParticipantType {
+  AUTHOR
+  STUDENT
+  IEEE_MEMBER
+  REGULAR
+}
+
+model Registration {
+  id                  String          @id @default(uuid())
+  registrationCode    String          @unique @map("registration_code")
+  userId              String?         @map("user_id")
+  fullName            String          @map("full_name")
+  email               String
+  phone               String?
+  affiliation         String
+  country             String
+  participantType     ParticipantType @default(REGULAR) @map("participant_type")
+  paperId             String?         @map("paper_id")
+  paperTitle          String?         @map("paper_title")
+  passportNumber      String?         @map("passport_number")
+  needsVisaSupport    Boolean         @default(false) @map("needs_visa_support")
+  dietaryRequirement String?         @default("None") @map("dietary_requirement")
+  travelNotes         String?         @map("travel_notes")
+  avatarUrl           String?         @map("avatar_url")
+  feeAmount           Int             @map("fee_amount")
+  currency            String          @default("VND")
+  paymentStatus       PaymentStatus   @default(PENDING) @map("payment_status")
+  paymentMethod       String?         @default("VIETQR") @map("payment_method")
+  transactionRef      String?         @map("transaction_ref")
+  paidAt              DateTime?       @map("paid_at")
+  checkInStatus       Boolean         @default(false) @map("check_in_status")
+  checkedInAt         DateTime?       @map("checked_in_at")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  @@index([registrationCode])
+  @@index([email])
+  @@index([paymentStatus])
+  @@map("conference_registrations")
+}
+
