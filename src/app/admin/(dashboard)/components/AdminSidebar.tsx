@@ -17,6 +17,7 @@ import {
   CreditCard,
   Menu,
   X,
+  KeyRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SessionUser } from "@/lib/auth";
@@ -71,6 +72,13 @@ const SIDEBAR_ITEMS = [
         icon: Users,
         exact: false,
         badge: "Roles",
+      },
+      {
+        name: "OAuth & AI Agent",
+        href: "/admin/oauth",
+        icon: KeyRound,
+        exact: false,
+        badge: "Google",
       },
     ],
   },

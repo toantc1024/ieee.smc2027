@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { createSessionToken, upsertUser, SESSION_COOKIE_NAME } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+  const requestUrl = new URL(request.url);
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || requestUrl.host;
+  const proto = request.headers.get("x-forwarded-proto") || (requestUrl.protocol.replace(":", ""));
+  const currentOrigin = `${proto}://${host}`;
+  const appUrl = currentOrigin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  const { searchParams } = requestUrl;
   const code = searchParams.get("code");
   const error = searchParams.get("error");
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   if (error || !code) {
     return NextResponse.redirect(
@@ -13,9 +19,23 @@ export async function GET(request: Request) {
     );
   }
 
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = `${appUrl}/api/auth/callback/google`;
+  let clientId = process.env.GOOGLE_CLIENT_ID;
+  let clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    try {
+      const setting = await prisma.setting.findUnique({
+        where: { key: "oauth_google" },
+      });
+      const data = (setting?.data as Record<string, string>) || {};
+      clientId = clientId || data.clientId;
+      clientSecret = clientSecret || data.clientSecret;
+    } catch (e) {
+      console.error("Failed to read OAuth settings from DB in callback:", e);
+    }
+  }
+
+  const redirectUri = `${currentOrigin}/api/auth/callback/google`;
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(
@@ -43,7 +63,7 @@ export async function GET(request: Request) {
       console.error("Token exchange failed:", tokenData);
       return NextResponse.redirect(
         new URL(
-          `/admin/login?error=${encodeURIComponent(tokenData.error_description || "token_exchange_failed")}`,
+          `/admin/login?error=${encodeURIComponent(tokenData.error_description || tokenData.error || "token_exchange_failed")}`,
           appUrl
         )
       );
