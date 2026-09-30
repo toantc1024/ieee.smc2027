@@ -14,6 +14,8 @@ import {
   FileDown,
   FileText,
   ChevronDown,
+  User,
+  LogIn,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
 import {
@@ -298,6 +300,17 @@ export function Header() {
   const switchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [headerConfig, setHeaderConfig] = useState<HeaderConfig>(DEFAULT_HEADER_DATA);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      setIsLoggedIn(
+        document.cookie
+          .split(";")
+          .some((c) => c.trim().startsWith("admin_session="))
+      );
+    }
+  }, []);
 
   useEffect(() => {
     fetch("/api/admin/header")
@@ -589,6 +602,17 @@ export function Header() {
 
               <span className="text-white/30">•</span>
 
+              <Link
+                href={isLoggedIn ? "/admin" : "/admin/login"}
+                className="px-2.5 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5 font-medium text-sm"
+                title={isLoggedIn ? "Admin Dashboard" : "Sign In to Portal"}
+              >
+                <LogIn className="w-3.5 h-3.5 text-blue-200" />
+                <span>{isLoggedIn ? "Dashboard" : "Login"}</span>
+              </Link>
+
+              <span className="text-white/30">•</span>
+
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
@@ -672,18 +696,30 @@ export function Header() {
                 })}
               </nav>
 
-              {/* Call-To-Action Button on Far Right */}
-              {showCta && (
-                <a
-                  href={ctaHref}
+              {/* Actions on Far Right: Login + CTA Button */}
+              <div className="flex items-center gap-2 xl:gap-2.5 shrink-0">
+                <Link
+                  href={isLoggedIn ? "/admin" : "/admin/login"}
                   onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-3.5 text-[13px] xl:text-[14px] font-semibold text-[#004776] hover:text-[#115eff] bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-200 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                  title={isLoggedIn ? "Admin Dashboard" : "Portal Login"}
                 >
-                  <FileText className="w-3.5 h-3.5 text-white shrink-0" />
-                  <span>{ctaLabel}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
-                </a>
-              )}
+                  <User className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
+                  <span>{isLoggedIn ? "Dashboard" : "Login"}</span>
+                </Link>
+
+                {showCta && (
+                  <a
+                    href={ctaHref}
+                    onClick={closeMenu}
+                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-white shrink-0" />
+                    <span>{ctaLabel}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Mobile Header: Brand text on Left, Search + Hamburger on Right */}
@@ -875,7 +911,16 @@ export function Header() {
               </div>
 
               {/* Mobile CTA and Quick Contacts */}
-              <div className="p-4 space-y-3 bg-slate-50/60">
+              <div className="p-4 space-y-2.5 bg-slate-50/60">
+                <Link
+                  href={isLoggedIn ? "/admin" : "/admin/login"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-slate-100 text-[#004776] border border-slate-200 hover:border-slate-300 font-bold text-sm sm:text-base rounded-lg transition-colors shadow-2xs"
+                >
+                  <User className="w-4 h-4 text-[#115eff]" />
+                  <span>{isLoggedIn ? "Admin Dashboard" : "Sign In / Login"}</span>
+                </Link>
+
                 {showCta && (
                   <a
                     href={ctaHref}
