@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -158,6 +159,9 @@ export default function RootLayout({
 
         {/* Main Content */}
         <main className="grow w-full flex flex-col">{children}</main>
+
+        {/* Floating Move to Top button on scroll down */}
+        <ScrollToTop />
 
         {/* Full-width HCMUTE styled footer */}
         <Footer />

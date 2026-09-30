@@ -100,9 +100,12 @@ export const Carousel = React.forwardRef<
       onSelect(api);
       api.on("reInit", onSelect);
       api.on("select", onSelect);
+      api.on("scroll", onSelect);
 
       return () => {
+        api?.off("reInit", onSelect);
         api?.off("select", onSelect);
+        api?.off("scroll", onSelect);
       };
     }, [api, onSelect]);
 
@@ -143,7 +146,7 @@ export const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel();
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div ref={carouselRef} className="overflow-hidden touch-pan-y select-none">
       <div
         ref={ref}
         className={cn(

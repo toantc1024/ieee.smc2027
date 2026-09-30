@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
 import { COMMITTEE_GROUPS, type CommitteeMember } from "@/data/conference";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { cn } from "@/lib/utils";
 
 // High-resolution chair portraits mapping (normalized to 900x1200 3:4 canvas)
@@ -41,9 +42,22 @@ interface CommitteesSectionProps {
   showAllGroups?: boolean;
 }
 
-// Standardized responsive card dimensions shared across both carousel and non-carousel views
-const CARD_DIMENSION_CLASSES =
-  "w-[150px] sm:w-[180px] md:w-[200px] lg:w-[215px] xl:w-[225px] shrink-0 flex h-full";
+// Responsive card widths (content box width)
+// Sized so that 5 cards (5 * 220 + 4 * 16 = 1164px) fit comfortably within the 1232px site width without overflow
+const CARD_WIDTH_CLASSES =
+  "w-[150px] sm:w-[175px] md:w-[195px] lg:w-[210px] xl:w-[220px]";
+
+// Direct flex-basis for CarouselItem slides (matching CARD_WIDTH + CarouselItem pl-3/pl-4 gutter)
+// pl-3 is 12px (mobile), pl-4 is 16px (sm and above)
+// 150 + 12 = 162px; 175 + 16 = 191px; 195 + 16 = 211px; 210 + 16 = 226px; 220 + 16 = 236px
+const SLIDE_BASIS_CLASSES =
+  "basis-[162px] sm:basis-[191px] md:basis-[211px] lg:basis-[226px] xl:basis-[236px]";
+
+// Static card dimensions for non-overflowing views
+const CARD_STATIC_CLASSES = cn(
+  CARD_WIDTH_CLASSES,
+  "shrink-0 flex h-full"
+);
 
 /**
  * Single Committee Member Card
@@ -53,11 +67,11 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="group/card relative flex flex-col w-full h-full select-none">
+    <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
       {/* The Card Box */}
       <div className="relative rounded-2xl bg-white border border-slate-200 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
         {/* Top: Image Canvas with Slate/White Background (Hover: Solid Primary Blue #115eff) */}
-        <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0">
+        <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0 pointer-events-none select-none">
           {/* Clipped background elements (dots only) behind the cutout */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Blue Dot Pattern */}
@@ -84,18 +98,19 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
           </div>
 
           {/* Image strictly scaled, full width & anchored to bottom, with error fallback */}
-          <div className="relative w-full h-full flex items-end justify-center z-10 p-0">
+          <div className="relative w-full h-full flex items-end justify-center z-10 p-0 pointer-events-none select-none">
             {photo && !imgError ? (
               <Image
                 src={photo}
                 alt={member.name}
                 fill
-                className="object-cover object-bottom transition-transform duration-300 ease-out group-hover/card:scale-105"
-                sizes="(max-width: 640px) 150px, (max-width: 768px) 180px, (max-width: 1024px) 200px, 225px"
+                draggable={false}
+                className="object-cover object-bottom transition-transform duration-300 ease-out group-hover/card:scale-105 pointer-events-none select-none"
+                sizes="(max-width: 640px) 150px, (max-width: 768px) 175px, (max-width: 1024px) 195px, (max-width: 1280px) 210px, 220px"
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5">
+              <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5 pointer-events-none select-none">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-white/90 border border-blue-200/80 group-hover/card:border-white/40 flex items-center justify-center text-[#115eff] group-hover/card:text-white group-hover/card:bg-white/20 font-bold text-sm sm:text-lg md:text-2xl shadow-xs transition-all duration-300">
                   {member.name
                     .split(" ")
@@ -144,20 +159,25 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
  */
 function CommitteeCarouselControls({
   isHovered,
+  hoveredSide,
   groupName,
 }: {
   isHovered: boolean;
+  hoveredSide: "left" | "right" | null;
   groupName: string;
 }) {
   const { scrollPrev, scrollNext, canScrollPrev, canScrollNext } = useCarousel();
 
+  const showLeftFade = isHovered && canScrollPrev && hoveredSide === "left";
+  const showRightFade = isHovered && canScrollNext && hoveredSide === "right";
+
   return (
     <>
-      {/* Left Progressive Gradient Fade & Backdrop Blur Overlay — ONLY ON HOVER */}
+      {/* Left Progressive Gradient Fade & Backdrop Blur Overlay — ONLY ON HOVER OF LEFT SIDE */}
       <div
         className={cn(
           "pointer-events-none absolute inset-y-0 left-0 z-10 w-12 sm:w-20 lg:w-28 transition-opacity duration-300 select-none",
-          isHovered && canScrollPrev ? "opacity-100" : "opacity-0"
+          showLeftFade ? "opacity-100" : "opacity-0"
         )}
       >
         {/* Natural gradient fade to white */}
@@ -176,7 +196,7 @@ function CommitteeCarouselControls({
       {/* Left Chevron Button: Slides in on hover, floats cleanly above the fade */}
       <div
         className={cn(
-          "pointer-events-none absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 transition-all duration-300",
+          "pointer-events-none absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300",
           isHovered && canScrollPrev
             ? "pointer-events-auto translate-x-0 opacity-100"
             : "-translate-x-4 opacity-0"
@@ -192,11 +212,11 @@ function CommitteeCarouselControls({
         />
       </div>
 
-      {/* Right Progressive Gradient Fade & Backdrop Blur Overlay — ONLY ON HOVER */}
+      {/* Right Progressive Gradient Fade & Backdrop Blur Overlay — ONLY ON HOVER OF RIGHT SIDE */}
       <div
         className={cn(
           "pointer-events-none absolute inset-y-0 right-0 z-10 w-12 sm:w-20 lg:w-28 transition-opacity duration-300 select-none",
-          isHovered && canScrollNext ? "opacity-100" : "opacity-0"
+          showRightFade ? "opacity-100" : "opacity-0"
         )}
       >
         {/* Natural gradient fade to white */}
@@ -215,7 +235,7 @@ function CommitteeCarouselControls({
       {/* Right Chevron Button: Slides in on hover, floats cleanly above the fade */}
       <div
         className={cn(
-          "pointer-events-none absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 transition-all duration-300",
+          "pointer-events-none absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300",
           isHovered && canScrollNext
             ? "pointer-events-auto translate-x-0 opacity-100"
             : "translate-x-4 opacity-0"
@@ -237,8 +257,8 @@ function CommitteeCarouselControls({
 /**
  * Single Committee Group Row
  * - If items do not overflow: Centered, exact same card size, no chevrons, no fade blur
- * - If items overflow: Carousel with exact same card size, no duplicates, loop: false
- * - Chevrons & natural HCMUTE fade blur visible ONLY on hover when scrolling is available
+ * - If items overflow: Infinite circular carousel (loop: true) with exact same card size, no duplicates
+ * - Chevrons & single-side fade blur visible ONLY on hover
  */
 function CommitteeGroupCarousel({
   group,
@@ -247,16 +267,17 @@ function CommitteeGroupCarousel({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
+  const [isOverflowing, setIsOverflowing] = useState(() => group.members.length > 5);
 
-  // Dynamically check if items overflow container width based on screen width and card width
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const checkOverflow = () => {
       const w = window.innerWidth;
-      const cardWidth = w < 640 ? 150 : w < 768 ? 180 : w < 1024 ? 200 : w < 1280 ? 215 : 225;
+      const cardWidth =
+        w < 640 ? 150 : w < 768 ? 175 : w < 1024 ? 195 : w < 1280 ? 210 : 220;
       const gap = w < 640 ? 12 : 16;
       const totalRequiredWidth =
         group.members.length * cardWidth + (group.members.length - 1) * gap;
@@ -273,6 +294,22 @@ function CommitteeGroupCarousel({
       window.removeEventListener("resize", checkOverflow);
     };
   }, [group.members.length]);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHovered(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setHoveredSide(e.clientX - rect.left < rect.width / 2 ? "left" : "right");
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setHoveredSide(e.clientX - rect.left < rect.width / 2 ? "left" : "right");
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setHoveredSide(null);
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -297,34 +334,36 @@ function CommitteeGroupCarousel({
             {group.members.map((member, idx) => (
               <div
                 key={`${member.name}-${idx}`}
-                className={CARD_DIMENSION_CLASSES}
+                className={CARD_STATIC_CLASSES}
               >
                 <CommitteeCard member={member} />
               </div>
             ))}
           </div>
         ) : (
-          /* Overflowing items: Carousel with exact same card size, NO duplicates, loop: false */
+          /* Overflowing items: Infinite Circular Carousel (loop: true) with hover-only fade blur & chevrons */
           <div
-            className="group/carousel relative -mx-4 sm:-mx-6 px-4 sm:px-6"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className="group/carousel relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
+            onMouseEnter={handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
             <Carousel
               opts={{
                 align: "start",
-                loop: false,
+                loop: true,
                 dragFree: true,
               }}
+              plugins={[WheelGesturesPlugin()]}
               className="w-full"
             >
-              <CarouselContent className="-ml-3 sm:-ml-4 py-2 items-stretch">
+              <CarouselContent className="py-2 items-stretch cursor-grab active:cursor-grabbing">
                 {group.members.map((member, idx) => (
                   <CarouselItem
                     key={`${member.name}-${idx}`}
-                    className="pl-3 sm:pl-4 flex shrink-0"
+                    className={cn(SLIDE_BASIS_CLASSES, "shrink-0 flex")}
                   >
-                    <div className={CARD_DIMENSION_CLASSES}>
+                    <div className="w-full h-full flex">
                       <CommitteeCard member={member} />
                     </div>
                   </CarouselItem>
@@ -332,6 +371,7 @@ function CommitteeGroupCarousel({
               </CarouselContent>
               <CommitteeCarouselControls
                 isHovered={isHovered}
+                hoveredSide={hoveredSide}
                 groupName={group.groupName}
               />
             </Carousel>

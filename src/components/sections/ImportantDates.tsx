@@ -126,12 +126,12 @@ export function ImportantDates({
       <div className="px-4 sm:px-6 pb-12 sm:pb-16 w-full">
         <div className="w-full bg-white border border-slate-300 rounded-[var(--radius)] overflow-hidden shadow-2xs">
           {/* Table Header: Ensures deadlines align in one dedicated column */}
-          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-3.5 bg-slate-100 font-bold text-xs sm:text-sm uppercase tracking-wider text-[#004776] border-b border-slate-200">
-            <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2">
+          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 bg-slate-100/90 font-extrabold text-base sm:text-lg lg:text-xl uppercase tracking-wider text-[#004776] border-b-2 border-slate-300">
+            <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2.5">
               <span>Milestone / Event</span>
             </div>
-            <div className="sm:col-span-5 lg:col-span-4 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#115eff]" />
+            <div className="sm:col-span-5 lg:col-span-4 flex items-center gap-2.5">
+              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#115eff]" />
               <span>Deadline</span>
             </div>
           </div>
@@ -170,7 +170,7 @@ export function ImportantDates({
                     {/* Deadline Column: Perfectly aligned into one single column */}
                     <div className="sm:col-span-5 lg:col-span-4 flex flex-wrap items-center gap-2 sm:gap-3">
                       <span
-                        className={`text-xs sm:hidden font-semibold uppercase tracking-wider ${
+                        className={`text-sm sm:text-base font-bold uppercase tracking-wider ${
                           isPrimaryRow ? "text-blue-100" : "text-slate-500"
                         }`}
                       >
