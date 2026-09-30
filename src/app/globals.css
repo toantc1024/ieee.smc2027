@@ -474,6 +474,16 @@ button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11p
   pointer-events: none;
 }
 
+/* Explicitly disable fixed side borders on login and admin routes */
+body:has(.no-page-borders)::before,
+body:has(.no-page-borders)::after,
+body:has(.admin-page-root)::before,
+body:has(.admin-page-root)::after,
+body.no-page-borders::before,
+body.no-page-borders::after {
+  display: none !important;
+}
+
 .page-border-x::before {
   left: max(0px, calc((100% - var(--site-width)) / 2));
 }

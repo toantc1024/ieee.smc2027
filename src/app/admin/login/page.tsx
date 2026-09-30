@@ -85,6 +85,20 @@ function AdminLoginForm() {
     return () => clearInterval(timer);
   }, []);
 
+  // Explicitly remove fixed two-side borders on login page
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.body.classList.remove("page-border-x");
+      document.body.classList.add("no-page-borders");
+    }
+    return () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.remove("no-page-borders");
+        document.body.classList.add("page-border-x");
+      }
+    };
+  }, []);
+
   const currentSlide = SLIDES[slideIdx];
 
   // Auth Modes & State
@@ -214,7 +228,10 @@ function AdminLoginForm() {
   };
 
   return (
-    <div className="min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-0 sm:p-4 lg:p-4 gap-0 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border select-none">
+    <div
+      data-no-page-borders="true"
+      className="admin-page-root no-page-borders min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-0 sm:p-4 lg:p-4 gap-0 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border select-none"
+    >
       
       {/* ═══════════════════════════════════════════════════════════════════
           LEFT COLUMN (60% on Desktop): Ho Chi Minh City & HCMUTE Hero Card
