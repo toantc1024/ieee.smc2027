@@ -14,12 +14,40 @@ export interface ConferenceVideoProps {
   location?: string;
 }
 
+function formatYouTubeEmbedUrl(url?: string): string {
+  if (!url) return "https://www.youtube.com/embed/vTwRHpRNtls";
+
+  // Replace legacy placeholder video IDs
+  if (url.includes("jkNA1OPUhQk") || url.includes("I1UGApHrQKo")) {
+    return "https://www.youtube.com/embed/vTwRHpRNtls";
+  }
+
+  // Already embed URL
+  if (url.includes("youtube.com/embed/")) {
+    return url;
+  }
+
+  // youtu.be/<id>
+  const youtuBeMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (youtuBeMatch) {
+    return `https://www.youtube.com/embed/${youtuBeMatch[1]}`;
+  }
+
+  // youtube.com/watch?v=<id>
+  const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (watchMatch) {
+    return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  }
+
+  return url;
+}
+
 export function ConferenceVideo({
   badge = "IEEE SMC 2027",
   title = "IEEE SMC 2027 Comes to Ho Chi Minh City",
   subtitle = "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments.",
   viewDetailsUrl = "#venue",
-  videoUrl = "https://www.youtube.com/embed/jkNA1OPUhQk",
+  videoUrl = "https://www.youtube.com/embed/vTwRHpRNtls",
   venueName = "Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City",
   location = "Ho Chi Minh City, Vietnam",
 }: ConferenceVideoProps) {
@@ -30,9 +58,7 @@ export function ConferenceVideo({
     ? "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments."
     : (subtitle || "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors — a hub for insights and memorable moments.");
   const safeViewDetailsUrl = (viewDetailsUrl?.includes("2026") || !viewDetailsUrl) ? "#venue" : viewDetailsUrl;
-  const safeVideoUrl = (!videoUrl || videoUrl.includes("I1UGApHrQKo"))
-    ? "https://www.youtube.com/embed/jkNA1OPUhQk"
-    : videoUrl;
+  const safeVideoUrl = formatYouTubeEmbedUrl(videoUrl);
 
   return (
     <SectionContainer id="video" fullWidthBg="bg-slate-50/50" className="relative overflow-hidden">

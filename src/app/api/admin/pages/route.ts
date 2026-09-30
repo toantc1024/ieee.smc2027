@@ -87,7 +87,7 @@ export async function GET() {
           props: {
             title: "IEEE SMC 2027 Comes to Ho Chi Minh City",
             subtitle: "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors",
-            videoUrl: "https://www.youtube.com/embed/jkNA1OPUhQk",
+            videoUrl: "https://www.youtube.com/embed/vTwRHpRNtls",
             venueName: "Sheraton Saigon Grand Opera Hotel",
           },
           hidden: false,
