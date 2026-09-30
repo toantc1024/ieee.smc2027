@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function ScrollToTop() {
@@ -53,27 +52,17 @@ export function ScrollToTop() {
         className={cn(
           "group/scrolltop relative flex items-center justify-center",
           "w-11 h-11 sm:w-12 sm:h-12 rounded-full",
-          "bg-[#115eff] hover:bg-[#004776] text-white",
+          "bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white",
           "border border-white/30 hover:border-white/60",
-          "shadow-lg shadow-[#115eff]/35 hover:shadow-xl hover:shadow-[#004776]/45",
-          "cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 overflow-hidden"
+          "shadow-lg shadow-[#115eff]/30 hover:shadow-xl hover:shadow-[#115eff]/50",
+          "cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 overflow-hidden"
         )}
       >
-        {/* Subtle white flower watermark rotating on hover (HCMUTE style) */}
-        <span className="absolute -right-2 -bottom-2 w-10 h-10 opacity-0 group-hover/scrolltop:opacity-20 transition-all duration-500 ease-out group-hover/scrolltop:rotate-45 pointer-events-none brightness-200">
-          <Image
-            src="/assets/flower-blue-gradient.png"
-            alt=""
-            fill
-            className="object-contain"
-          />
-        </span>
-
         {/* Upward Arrow Icon in crisp white */}
-        <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10 transition-transform duration-300 group-hover/scrolltop:-translate-y-0.5 group-hover/scrolltop:scale-110" />
+        <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10 transition-transform duration-200 group-hover/scrolltop:-translate-y-0.5 group-hover/scrolltop:scale-110" />
 
         {/* Tooltip on hover for desktop */}
-        <span className="absolute right-full mr-3.5 px-2.5 py-1 rounded-md bg-[#004776] text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover/scrolltop:opacity-100 transition-opacity duration-200 pointer-events-none shadow-md hidden sm:block border border-white/20">
+        <span className="absolute right-full mr-3 px-2.5 py-1 rounded-md bg-[#0a4de6] text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover/scrolltop:opacity-100 transition-opacity duration-200 pointer-events-none shadow-md hidden sm:block border border-white/20">
           Move to top
         </span>
       </button>
