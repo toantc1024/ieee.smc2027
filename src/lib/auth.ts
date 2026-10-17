@@ -283,14 +283,3 @@ export async function verifyOtp(email: string, inputCode: string): Promise<{ val
   return { valid: false, reason: `Mã OTP không chính xác (còn ${5 - record.attempts} lần thử).` };
 }
 
-// ============================================================
-// WECHAT OPEN PLATFORM AUTHENTICATION
-// ============================================================
-
-export function getWeChatAuthUrl(origin: string): string {
-  const appId = process.env.WECHAT_APP_ID || "wx_smc2027_dev";
-  const redirectUri = encodeURIComponent(`${origin}/api/auth/callback/wechat`);
-  const state = crypto.randomBytes(16).toString("hex");
-
-  return `https://open.weixin.qq.com/connect/qrconnect?appid=${appId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_login&state=${state}#wechat_redirect`;
-}

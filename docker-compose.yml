@@ -10,17 +10,62 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET:-ieee-smc-2027-production-jwt-secret-key-32chars}
       - NODE_ENV=production
+      - APP_ENV=production
       - PORT=3000
       - HOSTNAME=0.0.0.0
-    volumes:
-      # Persistent local storage for user/admin uploaded files (no MinIO needed)
-      - ./public/uploads:/app/public/uploads
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://ieee-smc2027.org}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-minio}
+      - MINIO_PORT=${MINIO_PORT:-9000}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin123}
+      - MINIO_BUCKET=${MINIO_BUCKET:-ieee-smc-2027}
+      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:-https://storage.ieee-smc2027.org/ieee-smc-2027}
+    depends_on:
+      minio:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 15s
+
+  minio:
+    image: minio/minio:latest
+    container_name: ieee_smc_2027_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-minioadmin123}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: ieee_smc_2027_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ACCESS_KEY:-minioadmin} $${MINIO_SECRET_KEY:-minioadmin123};
+      mc mb --ignore-existing local/$${MINIO_BUCKET:-ieee-smc-2027};
+      mc anonymous set download local/$${MINIO_BUCKET:-ieee-smc-2027}/public;
+      exit 0;
+      "
+
+volumes:
+  minio_data:

@@ -35,15 +35,6 @@ const SLIDES = [
   },
 ] as const;
 
-/* ── Official WeChat SVG Logo ── */
-function WeChatLogo({ className }: { className?: string }) {
-  return (
-    <svg className={className || "w-5 h-5"} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.538 1.98c-.045.163.125.303.268.22l2.333-1.353a.62.62 0 0 1 .533-.047c.92.31 1.91.478 2.94.478.22 0 .44-.008.658-.024a5.36 5.36 0 0 1-.16-1.306c0-3.57 3.393-6.467 7.58-6.467.432 0 .852.032 1.26.094C17.307 5.253 13.344 2.188 8.691 2.188zm-2.61 4.14a1.144 1.144 0 1 1 0 2.288 1.144 1.144 0 0 1 0-2.288zm5.222 0a1.144 1.144 0 1 1 0 2.288 1.144 1.144 0 0 1 0-2.288zm4.723 4.184c-3.663 0-6.634 2.474-6.634 5.526 0 3.05 2.97 5.525 6.634 5.525.792 0 1.554-.117 2.26-.33a.47.47 0 0 1 .41.036l1.796 1.042c.11.063.24-.044.205-.17l-.414-1.523a.454.454 0 0 1 .164-.512c1.41-1.036 2.308-2.568 2.308-4.268 0-3.052-2.97-5.526-6.634-5.526zm-2.073 3.158a.88.88 0 1 1 0 1.76.88.88 0 0 1 0-1.76zm4.146 0a.88.88 0 1 1 0 1.76.88.88 0 0 1 0-1.76z" />
-    </svg>
-  );
-}
-
 /* ── Official Google 4-Color SVG Logo ── */
 function GoogleLogo({ className }: { className?: string }) {
   return (
@@ -121,8 +112,6 @@ function AdminLoginForm() {
   const derivedError =
     errorParam === "missing_google_credentials"
       ? "Chưa cấu hình Google Client Secret. Bạn có thể sử dụng Email OTP hoặc Mật khẩu bên dưới để truy cập ngay!"
-      : errorParam === "wechat_access_denied"
-      ? "Bạn đã hủy xác thực WeChat. Vui lòng thử lại."
       : errorParam
       ? `Lỗi xác thực: ${errorParam}`
       : null;
@@ -134,13 +123,6 @@ function AdminLoginForm() {
     setLoading(true);
     setCustomError(null);
     window.location.assign("/api/auth/google");
-  };
-
-  // WeChat Login
-  const handleWeChatLogin = () => {
-    setLoading(true);
-    setCustomError(null);
-    window.location.assign("/api/auth/wechat");
   };
 
   // Email OTP Send
@@ -400,9 +382,8 @@ function AdminLoginForm() {
               </div>
             )}
 
-            {/* ── Social Login: Full-Width Google & WeChat Buttons ── */}
+            {/* ── Social Login: Google OAuth Button ── */}
             <div className="space-y-2.5 w-full">
-              {/* Google OAuth (Full-Width Button) */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
@@ -411,17 +392,6 @@ function AdminLoginForm() {
               >
                 <GoogleLogo className="w-4 h-4 shrink-0" />
                 <span>{loading ? "Đang kết nối Google..." : "Đăng nhập với Google OAuth"}</span>
-              </button>
-
-              {/* WeChat Open Platform (Full-Width Button in WeChat Green) */}
-              <button
-                type="button"
-                onClick={handleWeChatLogin}
-                disabled={loading}
-                className="w-full h-11 flex items-center justify-center gap-2.5 px-4 bg-[#07c160] hover:bg-[#06ad56] active:bg-[#059b4c] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-sm transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
-              >
-                <WeChatLogo className="w-4.5 h-4.5 shrink-0" />
-                <span>{loading ? "Đang xác thực WeChat..." : "Đăng nhập với WeChat (微信登录)"}</span>
               </button>
             </div>
 
