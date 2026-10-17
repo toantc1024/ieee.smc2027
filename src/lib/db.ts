@@ -1,10 +1,7 @@
 import { neon } from "@neondatabase/serverless";
+import env from "@/config/env";
 
-const databaseUrl =
-  process.env.DATABASE_URL ||
-  "postgresql://neondb_owner:npg_FL0MulNRm6xJ@ep-noisy-fog-b3e9u0a7-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
-
-export const sql = neon(databaseUrl);
+export const sql = neon(env.database.url);
 
 export interface UserRecord {
   id: string;
