@@ -1,14 +1,27 @@
+# Version control & IDE
 .git
 .gitignore
-.next
-node_modules
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
-.env.local
-.env.*.local
 .DS_Store
-*.md
 .agents
-.github/skills
+.github
 .gemini
+.vscode
+
+# Dependencies & Build outputs
+node_modules
+.next
+out
+coverage
+*.log
+
+# Environment secrets (Never bake into Docker image)
+.env
+.env.*
+!.env.example
+!.env.development.example
+!.env.production.example
+
+# Documentation & local uploads
+docs
+*.md
+public/uploads/*
