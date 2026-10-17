@@ -1,0 +1,73 @@
+/**
+ * Badge QR Code & Hall Check-In Service Template (Fullstack Prisma)
+ */
+
+import prisma from "@/lib/prisma";
+import { generateQrDataUrl } from "@/lib/conference-registration";
+
+export class CheckInService {
+  public async generateBadgeQr(registration: {
+    registrationCode: string;
+    fullName: string;
+    participantType: string;
+    affiliation: string;
+  }): Promise<string> {
+    return generateQrDataUrl(
+      JSON.stringify({
+        code: registration.registrationCode,
+        name: registration.fullName,
+        type: registration.participantType,
+        org: registration.affiliation,
+      })
+    );
+  }
+
+  public parseScannedPayload(rawCode: string): string {
+    const trimmed = rawCode.trim();
+    if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+      try {
+        const parsed = JSON.parse(trimmed) as { code?: string };
+        if (parsed.code) return String(parsed.code).trim().toUpperCase();
+      } catch {
+        // treat as raw code string
+      }
+    }
+    return trimmed.toUpperCase();
+  }
+
+  public async verifyAndCheckIn(rawCode: string) {
+    const registrationCode = this.parseScannedPayload(rawCode);
+    const reg = await prisma.registration.findUnique({
+      where: { registrationCode },
+    });
+
+    if (!reg) {
+      return {
+        found: false,
+        registrationCode,
+        error: `Không tìm thấy đại biểu với mã "${registrationCode}".`,
+      };
+    }
+
+    const alreadyCheckedIn = reg.checkInStatus;
+    const updated = await prisma.registration.update({
+      where: { id: reg.id },
+      data: {
+        checkInStatus: true,
+        checkedInAt: reg.checkedInAt || new Date(),
+      },
+    });
+
+    return {
+      found: true,
+      alreadyCheckedIn,
+      registration: updated,
+      message: alreadyCheckedIn
+        ? `Đại biểu ${updated.fullName} đã điểm danh trước đó lúc ${new Date(updated.checkedInAt!).toLocaleTimeString("vi-VN")}.`
+        : `Điểm danh thành công cho đại biểu ${updated.fullName}!`,
+    };
+  }
+}
+
+export const checkInService = new CheckInService();
+export default checkInService;

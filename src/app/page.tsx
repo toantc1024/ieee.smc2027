@@ -1,5 +1,5 @@
 import React from "react";
-import { sql } from "@/lib/db";
+import { cmsService } from "@/services";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
 import { NewsList } from "@/components/sections/NewsList";
@@ -92,14 +92,12 @@ export default async function Home() {
   let blocks: PageBlockItem[] = [];
 
   try {
-    const rows = await sql`
-      SELECT blocks, is_published FROM website_pages WHERE id = 'home' OR slug = 'home' LIMIT 1
-    `;
-    if (rows.length > 0 && Array.isArray(rows[0].blocks)) {
-      blocks = rows[0].blocks as PageBlockItem[];
+    const homePage = await cmsService.getPageByIdOrSlug("home");
+    if (homePage && Array.isArray(homePage.blocks)) {
+      blocks = homePage.blocks as unknown as PageBlockItem[];
     }
   } catch (err) {
-    console.error("Failed to fetch home page blocks from Neon DB, using fallback", err);
+    console.error("Failed to fetch home page blocks via Prisma, using fallback", err);
   }
 
   // Fallback in case of DB disconnect or empty blocks

@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { sql } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { authService, cmsService } from "@/services";
 import {
   PanelTop,
   Layers,
@@ -29,13 +28,8 @@ interface AdminPageSummary {
 }
 
 export default async function AdminDashboardPage() {
-  const user = await getCurrentUser();
-  const pagesRaw = await sql`
-    SELECT id, slug, title, is_published, jsonb_array_length(blocks) as block_count, updated_at
-    FROM website_pages
-    ORDER BY created_at ASC
-  `;
-  const pages = pagesRaw as unknown as AdminPageSummary[];
+  const user = await authService.getCurrentUser();
+  const pages = (await cmsService.getAllPages().catch(() => [])) as AdminPageSummary[];
 
   // Fetch registration stats
   const [totalRegs, paidRegs, checkedInRegs] = await Promise.all([

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
-import { getCurrentUser } from "@/lib/auth";
+import { authService, cmsService } from "@/services";
+import prisma from "@/lib/prisma";
 
 export async function GET(
   request: Request,
@@ -8,18 +8,13 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const rows = await sql`
-      SELECT id, slug, title, blocks, is_published, meta_title, meta_description, created_at, updated_at
-      FROM website_pages
-      WHERE id = ${id} OR slug = ${id}
-      LIMIT 1
-    `;
+    const page = await cmsService.getPageByIdOrSlug(id);
 
-    if (rows.length === 0) {
+    if (!page) {
       return NextResponse.json({ error: "Page not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ page: rows[0] });
+    return NextResponse.json({ page });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error fetching page:", error);
@@ -31,7 +26,7 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getCurrentUser();
+  const user = await authService.getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -40,25 +35,22 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const rows = await sql`
-      UPDATE website_pages
-      SET
-        title = COALESCE(${body.title}, title),
-        slug = COALESCE(${body.slug}, slug),
-        blocks = COALESCE(${JSON.stringify(body.blocks)}, blocks),
-        is_published = COALESCE(${body.is_published}, is_published),
-        meta_title = COALESCE(${body.meta_title}, meta_title),
-        meta_description = COALESCE(${body.meta_description}, meta_description),
-        updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id}
-      RETURNING id, slug, title, blocks, is_published, meta_title, meta_description, created_at, updated_at;
-    `;
-
-    if (rows.length === 0) {
+    const existing = await prisma.page.findUnique({ where: { id } });
+    if (!existing) {
       return NextResponse.json({ error: "Page not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, page: rows[0] });
+    const updated = await cmsService.upsertPage({
+      id,
+      slug: body.slug ?? existing.slug,
+      title: body.title ?? existing.title,
+      blocks: body.blocks ?? (existing.blocks as never),
+      isPublished: body.is_published ?? existing.isPublished,
+      metaTitle: body.meta_title ?? existing.metaTitle,
+      metaDescription: body.meta_description ?? existing.metaDescription,
+    });
+
+    return NextResponse.json({ success: true, page: updated });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error updating page:", error);
@@ -70,7 +62,7 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getCurrentUser();
+  const user = await authService.getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -79,15 +71,12 @@ export async function DELETE(
     const { id } = await params;
     if (id === "home") {
       return NextResponse.json(
-        { error: "Không thể xóa trang chủ mặc định (home)" },
+        { error: "Không thể xóa trang chủ mặc định" },
         { status: 400 }
       );
     }
 
-    await sql`
-      DELETE FROM website_pages WHERE id = ${id}
-    `;
-
+    await cmsService.deletePage(id);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal Server Error";
