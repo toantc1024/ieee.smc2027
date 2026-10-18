@@ -94,18 +94,17 @@ function AdminLoginForm() {
   const [customError, setCustomError] = useState<string | null>(null);
   const [customSuccess, setCustomSuccess] = useState<string | null>(null);
 
-  const [otpEmail, setOtpEmail] = useState("admin@hcmute.edu.vn");
+  const [email, setEmail] = useState("admin@hcmute.edu.vn");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
 
-  const [pwdEmail, setPwdEmail] = useState("admin@hcmute.edu.vn");
   const [pwdPassword, setPwdPassword] = useState("Admin@Smc2027Secure!");
   const [showPassword, setShowPassword] = useState(false);
 
   const derivedError =
     errorParam === "missing_google_credentials"
-      ? "Google Client Secret is not configured yet. Please sign in with Email OTP or Password below."
+      ? "Google Client Secret is not configured yet. Please sign in with Email above."
       : errorParam
       ? `Authentication error: ${errorParam}`
       : null;
@@ -120,7 +119,7 @@ function AdminLoginForm() {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!otpEmail) return;
+    if (!email) return;
     setLoading(true);
     setCustomError(null);
     setCustomSuccess(null);
@@ -129,7 +128,7 @@ function AdminLoginForm() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: otpEmail }),
+        body: JSON.stringify({ email }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -149,9 +148,8 @@ function AdminLoginForm() {
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!otpEmail || !otpCode) return;
+  const verifyOtpCode = async (codeToVerify: string) => {
+    if (!email || codeToVerify.length !== 6 || loading) return;
     setLoading(true);
     setCustomError(null);
 
@@ -159,7 +157,7 @@ function AdminLoginForm() {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: otpEmail, code: otpCode }),
+        body: JSON.stringify({ email, code: codeToVerify }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -174,9 +172,14 @@ function AdminLoginForm() {
     }
   };
 
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await verifyOtpCode(otpCode);
+  };
+
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pwdEmail || !pwdPassword) return;
+    if (!email || !pwdPassword) return;
     setLoading(true);
     setCustomError(null);
 
@@ -184,7 +187,7 @@ function AdminLoginForm() {
       const res = await fetch("/api/auth/login-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: pwdEmail, password: pwdPassword }),
+        body: JSON.stringify({ email, password: pwdPassword }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -352,61 +355,7 @@ function AdminLoginForm() {
               </div>
             )}
 
-            {/* ── Social Login: Borderless Theme-Synced Google OAuth Button ── */}
-            <div className="space-y-2.5 w-full">
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-slate-100 hover:bg-slate-200/80 text-slate-900 font-bold text-xs sm:text-sm rounded-md border-0 transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
-              >
-                <GoogleLogo className="w-4 h-4 shrink-0" />
-                <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="relative flex py-4 items-center">
-              <div className="flex-grow border-t border-slate-200"></div>
-              <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                or sign in with email
-              </span>
-              <div className="flex-grow border-t border-slate-200"></div>
-            </div>
-
-            {/* Segmented Mode Switcher */}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-lg mb-3.5 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailMode("otp");
-                  setCustomError(null);
-                }}
-                className={`py-2 px-2 rounded-md text-center transition-all cursor-pointer ${
-                  emailMode === "otp"
-                    ? "bg-[#115eff] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Email OTP
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailMode("password");
-                  setCustomError(null);
-                }}
-                className={`py-2 px-2 rounded-md text-center transition-all cursor-pointer ${
-                  emailMode === "password"
-                    ? "bg-[#115eff] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Password
-              </button>
-            </div>
-
-            {/* ── Option 1: Email OTP ── */}
+            {/* ── Step 1 & 2: Progressive Email-First OTP Flow ── */}
             {emailMode === "otp" && (
               <div className="space-y-3">
                 {!otpSent ? (
@@ -418,8 +367,9 @@ function AdminLoginForm() {
                       <input
                         type="email"
                         required
-                        value={otpEmail}
-                        onChange={(e) => setOtpEmail(e.target.value)}
+                        autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="admin@hcmute.edu.vn"
                         className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
                       />
@@ -430,18 +380,36 @@ function AdminLoginForm() {
                       disabled={loading}
                       className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                     >
-                      {loading ? "Sending code..." : "Send Verification Code"}
+                      {loading ? "Sending code..." : "Continue with Email"}
                     </button>
+
+                    <div className="text-center pt-0.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmailMode("password");
+                          setCustomError(null);
+                          setCustomSuccess(null);
+                        }}
+                        className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
+                      >
+                        Use password instead
+                      </button>
+                    </div>
                   </form>
                 ) : (
                   <form onSubmit={handleVerifyOtp} className="space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-600">
                       <span>
-                        Sent to: <strong className="text-slate-900">{otpEmail}</strong>
+                        Sent to: <strong className="text-slate-900">{email}</strong>
                       </span>
                       <button
                         type="button"
-                        onClick={() => setOtpSent(false)}
+                        onClick={() => {
+                          setOtpSent(false);
+                          setCustomError(null);
+                          setCustomSuccess(null);
+                        }}
                         className="text-[#115eff] hover:underline cursor-pointer font-bold"
                       >
                         Change email
@@ -460,10 +428,18 @@ function AdminLoginForm() {
                       </label>
                       <input
                         type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
                         required
                         maxLength={6}
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                          setOtpCode(digits);
+                          if (digits.length === 6) {
+                            void verifyOtpCode(digits);
+                          }
+                        }}
                         placeholder="123456"
                         className="w-full tracking-widest text-center font-mono font-black text-lg h-11 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900"
                       />
@@ -477,14 +453,25 @@ function AdminLoginForm() {
                       {loading ? "Verifying..." : "Verify & Sign In"}
                     </button>
 
-                    <div className="text-center">
+                    <div className="flex items-center justify-between pt-0.5 text-xs">
                       <button
                         type="button"
                         onClick={handleSendOtp}
                         disabled={loading}
-                        className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-medium"
+                        className="text-slate-500 hover:text-[#115eff] cursor-pointer font-medium transition-colors"
                       >
-                        Resend verification code
+                        Resend code
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmailMode("password");
+                          setCustomError(null);
+                          setCustomSuccess(null);
+                        }}
+                        className="text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
+                      >
+                        Use password instead
                       </button>
                     </div>
                   </form>
@@ -492,7 +479,7 @@ function AdminLoginForm() {
               </div>
             )}
 
-            {/* ── Option 2: Email Password ── */}
+            {/* ── Fallback: Email & Password ── */}
             {emailMode === "password" && (
               <form onSubmit={handlePasswordLogin} className="space-y-3">
                 <div>
@@ -502,8 +489,9 @@ function AdminLoginForm() {
                   <input
                     type="email"
                     required
-                    value={pwdEmail}
-                    onChange={(e) => setPwdEmail(e.target.value)}
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@hcmute.edu.vn"
                     className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
                   />
@@ -525,6 +513,7 @@ function AdminLoginForm() {
                   <input
                     type={showPassword ? "text" : "password"}
                     required
+                    autoComplete="current-password"
                     value={pwdPassword}
                     onChange={(e) => setPwdPassword(e.target.value)}
                     placeholder="••••••••"
@@ -539,8 +528,43 @@ function AdminLoginForm() {
                 >
                   {loading ? "Signing in..." : "Sign In with Password"}
                 </button>
+
+                <div className="text-center pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmailMode("otp");
+                      setCustomError(null);
+                    }}
+                    className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
+                  >
+                    Use verification code instead
+                  </button>
+                </div>
               </form>
             )}
+
+            {/* Divider */}
+            <div className="relative flex py-4 items-center">
+              <div className="flex-grow border-t border-slate-200"></div>
+              <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                or
+              </span>
+              <div className="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            {/* ── Social Login: Borderless Theme-Synced Google OAuth Button ── */}
+            <div className="space-y-2.5 w-full">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-slate-100 hover:bg-slate-200/80 text-slate-900 font-bold text-xs sm:text-sm rounded-md border-0 transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
+              >
+                <GoogleLogo className="w-4 h-4 shrink-0" />
+                <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
