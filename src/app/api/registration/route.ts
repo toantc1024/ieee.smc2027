@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import {
   authService,
   registrationService,
@@ -6,6 +6,7 @@ import {
   checkInService,
   emailService,
 } from "@/services";
+import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { ParticipantType, PaymentStatus } from "@/types";
 
 export async function POST(req: NextRequest) {
@@ -30,9 +31,9 @@ export async function POST(req: NextRequest) {
     } = body;
 
     if (!fullName || !email || !affiliation || !country || !participantType) {
-      return NextResponse.json(
-        { error: "Vui lòng điền đầy đủ Họ tên, Email, Đơn vị, Quốc gia và Loại đại biểu." },
-        { status: 400 }
+      return apiError(
+        "Vui lòng điền đầy đủ Họ tên, Email, Đơn vị, Quốc gia và Loại đại biểu.",
+        400
       );
     }
 
@@ -72,17 +73,14 @@ export async function POST(req: NextRequest) {
       currency: registration.currency,
     });
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       registration,
       payment,
       badgeQrUrl,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Đã xảy ra lỗi khi tạo đơn đăng ký hội nghị.";
     console.error("Registration error:", error);
-    return NextResponse.json({ error: message }, { status: 400 });
+    return apiError(error, 400, "Đã xảy ra lỗi khi tạo đơn đăng ký hội nghị.");
   }
 }
 
@@ -95,10 +93,7 @@ export async function GET(req: NextRequest) {
     if (code) {
       const reg = await registrationService.getByCode(code);
       if (!reg) {
-        return NextResponse.json(
-          { error: "Không tìm thấy hồ sơ đăng ký với mã này." },
-          { status: 404 }
-        );
+        return apiError("Không tìm thấy hồ sơ đăng ký với mã này.", 404);
       }
 
       const payment = paymentService.buildVietQrPaymentInfo(
@@ -108,8 +103,7 @@ export async function GET(req: NextRequest) {
       );
       const badgeQrUrl = await checkInService.generateBadgeQr(reg);
 
-      return NextResponse.json({
-        success: true,
+      return apiSuccess({
         registration: reg,
         payment,
         badgeQrUrl,
@@ -118,13 +112,11 @@ export async function GET(req: NextRequest) {
 
     if (email) {
       const registrations = await registrationService.getByEmail(email);
-      return NextResponse.json({ success: true, registrations });
+      return apiSuccess({ registrations });
     }
 
-    const session = await authService.getSession();
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Yêu cầu quyền Quản trị viên." }, { status: 403 });
-    }
+    const { errorResponse } = await requireAdminRequest("Yêu cầu quyền Quản trị viên.");
+    if (errorResponse) return errorResponse;
 
     const search = searchParams.get("q") || "";
     const status = (searchParams.get("status") || "ALL") as PaymentStatus | "ALL";
@@ -136,10 +128,9 @@ export async function GET(req: NextRequest) {
       participantType: type,
     });
 
-    return NextResponse.json({ success: true, registrations });
+    return apiSuccess({ registrations });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Lỗi hệ thống.";
     console.error("Error retrieving registrations:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500, "Lỗi hệ thống.");
   }
 }

@@ -1,14 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { authService, emailService } from "@/services";
+import { NextRequest } from "next/server";
+import { emailService } from "@/services";
+import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { BroadcastCampaignInput } from "@/types";
 
 export async function POST(req: NextRequest) {
-  try {
-    const session = await authService.getSession();
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Yêu cầu quyền Quản trị viên." }, { status: 403 });
-    }
+  const { errorResponse } = await requireAdminRequest("Yêu cầu quyền Quản trị viên.");
+  if (errorResponse) return errorResponse;
 
+  try {
     const body = await req.json();
     const {
       targetGroup = "ALL",
@@ -18,10 +17,7 @@ export async function POST(req: NextRequest) {
     } = body as BroadcastCampaignInput;
 
     if (!subject || !message) {
-      return NextResponse.json(
-        { error: "Vui lòng nhập đầy đủ tiêu đề và nội dung email thông báo." },
-        { status: 400 }
-      );
+      return apiError("Vui lòng nhập đầy đủ tiêu đề và nội dung email thông báo.", 400);
     }
 
     const result = await emailService.sendBroadcastCampaign({
@@ -31,13 +27,9 @@ export async function POST(req: NextRequest) {
       message,
     });
 
-    return NextResponse.json({
-      success: true,
-      ...result,
-    });
+    return apiSuccess(result);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Lỗi gửi email hàng loạt.";
     console.error("Broadcast error:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500, "Lỗi gửi email hàng loạt.");
   }
 }

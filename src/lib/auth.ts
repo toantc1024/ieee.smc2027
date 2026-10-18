@@ -1,18 +1,18 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import crypto from "crypto";
+import env from "@/config/env";
 import prisma from "./prisma";
+import { normalizeEmail } from "./utils";
 import { Role } from "@prisma/client";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ieee_smc_2027_ultra_secure_jwt_secret_key_92837482"
-);
+const JWT_SECRET = new TextEncoder().encode(env.auth.jwtSecret);
 
-export const SESSION_COOKIE_NAME = "admin_session";
+export const SESSION_COOKIE_NAME = env.auth.sessionCookieName;
 
 export const ADMIN_EMAILS = [
   "tctoan1024@gmail.com",
-  "admin@hcmute.edu.vn",
+  env.auth.adminInitialEmail.toLowerCase(),
 ];
 
 export interface SessionUser {
@@ -72,6 +72,10 @@ export async function getSession(): Promise<{ user: SessionUser } | null> {
   return { user };
 }
 
+export function isSuperAdminEmail(email: string): boolean {
+  return ADMIN_EMAILS.includes(normalizeEmail(email));
+}
+
 export async function upsertUser(user: {
   id: string;
   email: string;
@@ -80,10 +84,11 @@ export async function upsertUser(user: {
   role?: string;
   provider?: string;
 }) {
-  const isSuperAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
-  
+  const cleanEmail = normalizeEmail(user.email);
+  const isSuperAdmin = isSuperAdminEmail(cleanEmail);
+
   const existing = await prisma.user.findUnique({
-    where: { email: user.email },
+    where: { email: cleanEmail },
   });
 
   const finalRole: Role = isSuperAdmin
@@ -95,7 +100,7 @@ export async function upsertUser(user: {
     : Role.USER;
 
   const result = await prisma.user.upsert({
-    where: { email: user.email },
+    where: { email: cleanEmail },
     update: {
       name: user.name,
       avatar: user.avatar !== undefined ? user.avatar : existing?.avatar || null,
@@ -105,7 +110,7 @@ export async function upsertUser(user: {
     },
     create: {
       id: user.id,
-      email: user.email,
+      email: cleanEmail,
       name: user.name,
       avatar: user.avatar || null,
       role: finalRole,
@@ -122,6 +127,34 @@ export async function upsertUser(user: {
     provider: result.provider,
     created_at: result.createdAt.toISOString(),
     updated_at: result.updatedAt.toISOString(),
+  };
+}
+
+// ============================================================
+// GOOGLE OAUTH CONFIGURATION LOADER (DB + ENV FALLBACK)
+// ============================================================
+
+export async function getGoogleOAuthConfig(): Promise<{
+  clientId: string;
+  clientSecret: string;
+  appUrl: string;
+}> {
+  let dbData: Record<string, string> = {};
+  try {
+    const setting = await prisma.setting.findUnique({
+      where: { key: "oauth_google" },
+    });
+    if (setting?.data && typeof setting.data === "object") {
+      dbData = setting.data as Record<string, string>;
+    }
+  } catch (err) {
+    console.error("Failed to read OAuth settings from DB:", err);
+  }
+
+  return {
+    clientId: (dbData.clientId || env.auth.googleClientId || "").trim(),
+    clientSecret: (dbData.clientSecret || env.auth.googleClientSecret || "").trim(),
+    appUrl: (dbData.appUrl || env.app.url).trim(),
   };
 }
 
@@ -153,34 +186,30 @@ export function verifyPassword(password: string, storedHash: string): boolean {
 }
 
 export async function getUserPasswordHash(email: string): Promise<string | null> {
-  const normalizedEmail = email.toLowerCase().trim();
+  const normalized = normalizeEmail(email);
   try {
     const setting = await prisma.setting.findUnique({
       where: { key: "auth_passwords" },
     });
     if (setting && setting.data && typeof setting.data === "object") {
       const passwords = setting.data as Record<string, string>;
-      if (passwords[normalizedEmail]) {
-        return passwords[normalizedEmail];
+      if (passwords[normalized]) {
+        return passwords[normalized];
       }
     }
   } catch (err) {
     console.error("Error fetching password hash:", err);
   }
 
-  // Fallback to ADMIN_INITIAL_PASSWORD for configured admin emails
-  if (
-    ADMIN_EMAILS.includes(normalizedEmail) &&
-    process.env.ADMIN_INITIAL_PASSWORD
-  ) {
-    return hashPassword(process.env.ADMIN_INITIAL_PASSWORD, "static_admin_seed_salt");
+  if (isSuperAdminEmail(normalized) && env.auth.adminInitialPassword) {
+    return hashPassword(env.auth.adminInitialPassword, "static_admin_seed_salt");
   }
 
   return null;
 }
 
 export async function setUserPassword(email: string, plainText: string): Promise<void> {
-  const normalizedEmail = email.toLowerCase().trim();
+  const normalized = normalizeEmail(email);
   const newHash = hashPassword(plainText);
 
   const existing = await prisma.setting.findUnique({
@@ -192,7 +221,7 @@ export async function setUserPassword(email: string, plainText: string): Promise
       ? (existing.data as Record<string, string>)
       : {};
 
-  currentData[normalizedEmail] = newHash;
+  currentData[normalized] = newHash;
 
   await prisma.setting.upsert({
     where: { key: "auth_passwords" },
@@ -211,41 +240,26 @@ interface OtpRecord {
   attempts: number;
 }
 
-// In-memory OTP storage cache with auto-expiry
 const otpCache = new Map<string, OtpRecord>();
 
 export async function generateOtp(email: string): Promise<{ code: string; devMode: boolean }> {
-  const normalizedEmail = email.toLowerCase().trim();
-  
-  // 6-digit random number
+  const normalized = normalizeEmail(email);
   const numericCode = crypto.randomInt(100000, 1000000).toString();
   const codeHash = crypto.createHash("sha256").update(numericCode).digest("hex");
-  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes TTL
+  const expiresAt = Date.now() + 5 * 60 * 1000;
 
-  otpCache.set(normalizedEmail, {
+  otpCache.set(normalized, {
     codeHash,
     expiresAt,
     attempts: 0,
   });
 
-  const isDevMode =
-    process.env.EMAIL_DEV_MODE === "true" ||
-    process.env.NODE_ENV !== "production" ||
-    !process.env.EMAIL_SERVER_HOST;
+  const isDevMode = env.email.devMode;
 
-  // In production, dispatch SMTP/Transactional email
-  if (!isDevMode && process.env.EMAIL_SERVER_HOST) {
-    try {
-      // SMTP integration or transactional mailer
-      console.log(`[SMTP] Dispatched OTP ${numericCode} to ${normalizedEmail}`);
-    } catch (err) {
-      console.error("Failed to send OTP via SMTP:", err);
-    }
+  if (!isDevMode && env.email.host) {
+    console.log(`[SMTP] Dispatched OTP ${numericCode} to ${normalized}`);
   } else {
-    console.log(`\n========================================`);
-    console.log(`[DEV OTP AUTH] Email: ${normalizedEmail}`);
-    console.log(`[DEV OTP AUTH] Code:  ${numericCode} (valid 5 min)`);
-    console.log(`========================================\n`);
+    console.log(`[DEV OTP AUTH] Email: ${normalized} | Code: ${numericCode}`);
   }
 
   return {
@@ -254,32 +268,46 @@ export async function generateOtp(email: string): Promise<{ code: string; devMod
   };
 }
 
-export async function verifyOtp(email: string, inputCode: string): Promise<{ valid: boolean; reason?: string }> {
-  const normalizedEmail = email.toLowerCase().trim();
-  const record = otpCache.get(normalizedEmail);
+export async function verifyOtp(
+  email: string,
+  inputCode: string
+): Promise<{ valid: boolean; reason?: string }> {
+  const normalized = normalizeEmail(email);
+  const record = otpCache.get(normalized);
 
   if (!record) {
-    return { valid: false, reason: "Mã OTP đã hết hạn hoặc chưa được tạo. Vui lòng yêu cầu mã mới." };
+    return {
+      valid: false,
+      reason: "Mã OTP đã hết hạn hoặc chưa được tạo. Vui lòng yêu cầu mã mới.",
+    };
   }
 
   if (Date.now() > record.expiresAt) {
-    otpCache.delete(normalizedEmail);
-    return { valid: false, reason: "Mã OTP đã quá hạn (5 phút). Vui lòng yêu cầu mã mới." };
+    otpCache.delete(normalized);
+    return {
+      valid: false,
+      reason: "Mã OTP đã quá hạn. Vui lòng yêu cầu mã mới.",
+    };
   }
 
   if (record.attempts >= 5) {
-    otpCache.delete(normalizedEmail);
-    return { valid: false, reason: "Đã vượt quá số lần thử OTP cho phép. Vui lòng yêu cầu mã mới." };
+    otpCache.delete(normalized);
+    return {
+      valid: false,
+      reason: "Đã vượt quá số lần thử OTP cho phép. Vui lòng yêu cầu mã mới.",
+    };
   }
 
   record.attempts += 1;
   const inputHash = crypto.createHash("sha256").update(inputCode.trim()).digest("hex");
 
   if (crypto.timingSafeEqual(Buffer.from(record.codeHash), Buffer.from(inputHash))) {
-    otpCache.delete(normalizedEmail); // Invalidate on success
+    otpCache.delete(normalized);
     return { valid: true };
   }
 
-  return { valid: false, reason: `Mã OTP không chính xác (còn ${5 - record.attempts} lần thử).` };
+  return {
+    valid: false,
+    reason: `Mã OTP không chính xác, còn ${5 - record.attempts} lần thử.`,
+  };
 }
-

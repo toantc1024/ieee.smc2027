@@ -9,20 +9,11 @@ import path from "path";
 import sharp from "sharp";
 import env from "@/config/env";
 import minioClient from "@/lib/minio";
+import { sanitizeFilename } from "@/lib/utils";
 import type { StorageFolder, UploadFileInput, UploadFileResult } from "@/types";
 
 export class StorageService {
   private bucketInitialized = false;
-
-  private sanitizeFilename(filename: string): { stem: string; ext: string } {
-    const ext = path.extname(filename).toLowerCase() || ".bin";
-    const base = path.basename(filename, path.extname(filename));
-    const safeBase = base.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 64) || "file";
-    return {
-      stem: `${Date.now()}-${safeBase}`,
-      ext,
-    };
-  }
 
   private async extractImageMetadata(buffer: Buffer): Promise<{
     width?: number;
@@ -48,8 +39,7 @@ export class StorageService {
 
   public async uploadFile(input: UploadFileInput): Promise<UploadFileResult> {
     const folder: StorageFolder = input.folder || "public/uploads";
-    const { stem, ext } = this.sanitizeFilename(input.filename);
-    const filename = `${stem}${ext}`;
+    const { fullName: filename } = sanitizeFilename(input.filename);
     const objectKey = `${folder}/${filename}`;
 
     const imageMeta =

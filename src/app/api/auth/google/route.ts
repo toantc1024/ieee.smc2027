@@ -1,32 +1,16 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getGoogleOAuthConfig, getRequestOrigin } from "@/lib";
 
 export async function GET(request: Request) {
-  let clientId = process.env.GOOGLE_CLIENT_ID;
+  const { clientId } = await getGoogleOAuthConfig();
 
-  if (!clientId || clientId.trim() === "") {
-    try {
-      const setting = await prisma.setting.findUnique({
-        where: { key: "oauth_google" },
-      });
-      const data = (setting?.data as Record<string, string>) || {};
-      clientId = data.clientId;
-    } catch (e) {
-      console.error("Failed to read OAuth settings from DB:", e);
-    }
-  }
-
-  if (!clientId || clientId.trim() === "") {
+  if (!clientId) {
     return NextResponse.redirect(
       new URL("/admin/login?error=missing_google_credentials", request.url)
     );
   }
 
-  // Determine current origin from request URL or configured environment
-  const requestUrl = new URL(request.url);
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || requestUrl.host;
-  const proto = request.headers.get("x-forwarded-proto") || (requestUrl.protocol.replace(":", ""));
-  const currentOrigin = `${proto}://${host}`;
+  const currentOrigin = getRequestOrigin(request);
   const redirectUri = `${currentOrigin}/api/auth/callback/google`;
 
   const state = Math.random().toString(36).substring(2);

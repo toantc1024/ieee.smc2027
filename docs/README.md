@@ -23,9 +23,12 @@ ieee-smc-2027/
 │   ├── types/
 │   │   └── index.ts                      # Kiểu dữ liệu dùng chung toàn hệ thống
 │   ├── lib/
+│   │   ├── index.ts                      # Điểm xuất tập trung toàn bộ tiện ích @/lib
+│   │   ├── utils.ts                      # Tiện ích xử lý chuỗi, slug, tiền tệ, ngày giờ
+│   │   ├── api-helper.ts                 # Tiện ích chuẩn hóa phản hồi API, Cookie và quyền Admin
 │   │   ├── prisma.ts                     # Singleton kết nối Prisma ORM
 │   │   ├── minio.ts                      # Client kết nối MinIO chuẩn AWS Signature V4
-│   │   ├── auth.ts                       # Tiện ích mã hóa JWT, PBKDF2, OTP
+│   │   ├── auth.ts                       # Tiện ích mã hóa JWT, PBKDF2, OTP, Google OAuth
 │   │   └── conference-registration.ts    # Cấu hình bảng phí và mã VietQR
 │   ├── services/                         # Tầng nghiệp vụ tách biệt
 │   │   ├── index.ts                      # Điểm xuất tập trung tất cả dịch vụ

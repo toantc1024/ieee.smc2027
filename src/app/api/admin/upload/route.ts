@@ -1,12 +1,10 @@
-import { NextResponse } from "next/server";
-import { authService, storageService } from "@/services";
+import { storageService } from "@/services";
+import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { StorageFolder } from "@/types";
 
 export async function POST(request: Request) {
-  const user = await authService.getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const formData = await request.formData();
@@ -14,7 +12,7 @@ export async function POST(request: Request) {
     const folder = (formData.get("folder") as StorageFolder | null) || "public/uploads";
 
     if (!file) {
-      return NextResponse.json({ error: "Không tìm thấy file" }, { status: 400 });
+      return apiError("Không tìm thấy file", 400);
     }
 
     const bytes = await file.arrayBuffer();
@@ -28,8 +26,7 @@ export async function POST(request: Request) {
       generateBlur: true,
     });
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       key: result.key,
       bucket: result.bucket,
       url: result.url,
@@ -41,8 +38,7 @@ export async function POST(request: Request) {
       storageDriver: result.storageDriver,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Upload failed";
     console.error("MinIO Upload error:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500, "Upload failed");
   }
 }

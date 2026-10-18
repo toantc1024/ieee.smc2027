@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser, ADMIN_EMAILS } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import {
+  prisma,
+  normalizeEmail,
+  isSuperAdminEmail,
+  requireAdminRequest,
+  apiSuccess,
+  apiError,
+} from "@/lib";
 
 export async function GET() {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const users = await prisma.user.findMany({
@@ -29,41 +33,32 @@ export async function GET() {
 
     return NextResponse.json({ users });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error fetching users:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
 export async function POST(request: Request) {
-  const currentUser = await getCurrentUser();
-  if (!currentUser || currentUser.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
     const { email, name, role = "USER" } = body;
 
     if (!email || !name) {
-      return NextResponse.json(
-        { error: "Email và tên người dùng là bắt buộc" },
-        { status: 400 }
-      );
+      return apiError("Email và tên người dùng là bắt buộc", 400);
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = normalizeEmail(email);
     const targetRole =
-      cleanEmail === "tctoan1024@gmail.com" || role === "ADMIN"
-        ? Role.ADMIN
-        : Role.USER;
+      isSuperAdminEmail(cleanEmail) || role === "ADMIN" ? Role.ADMIN : Role.USER;
 
     const newUser = await prisma.user.upsert({
       where: { email: cleanEmail },
       update: {
         name: name.trim(),
         role: targetRole,
-        updatedAt: new Date(),
       },
       create: {
         id: `usr_${Date.now()}`,
@@ -75,10 +70,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, user: newUser });
+    return apiSuccess({ user: newUser });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error creating user:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

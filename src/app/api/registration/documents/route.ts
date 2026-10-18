@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { documentService } from "@/services";
+import { apiSuccess, apiError } from "@/lib";
 
 export async function GET(req: NextRequest) {
   try {
@@ -8,23 +9,16 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type") || "RECEIPT_INVOICE";
 
     if (!code) {
-      return NextResponse.json(
-        { error: "Thiếu mã đăng ký đại biểu." },
-        { status: 400 }
-      );
+      return apiError("Thiếu mã đăng ký đại biểu.", 400);
     }
 
-    const doc =
+    const document =
       type === "VISA_SUPPORT_LETTER"
         ? await documentService.generateVisaSupportLetter(code)
         : await documentService.generatePaymentReceipt(code);
 
-    return NextResponse.json({
-      success: true,
-      document: doc,
-    });
+    return apiSuccess({ document });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Không thể tạo tài liệu.";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return apiError(error, 400, "Không thể tạo tài liệu.");
   }
 }

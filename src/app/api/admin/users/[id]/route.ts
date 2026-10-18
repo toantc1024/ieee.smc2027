@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import {
+  prisma,
+  isSuperAdminEmail,
+  requireAdminRequest,
+  apiSuccess,
+  apiError,
+} from "@/lib";
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const currentUser = await getCurrentUser();
-  if (!currentUser || currentUser.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   const { id } = await params;
 
@@ -18,24 +20,13 @@ export async function PATCH(
     const body = await request.json();
     const { role, name } = body;
 
-    const targetUser = await prisma.user.findUnique({
-      where: { id },
-    });
-
+    const targetUser = await prisma.user.findUnique({ where: { id } });
     if (!targetUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return apiError("User not found", 404);
     }
 
-    // Protection rule: tctoan1024@gmail.com must always remain ADMIN
-    if (
-      targetUser.email.toLowerCase() === "tctoan1024@gmail.com" &&
-      role &&
-      role !== "ADMIN"
-    ) {
-      return NextResponse.json(
-        { error: "Không thể hạ quyền Admin của tài khoản chính (tctoan1024@gmail.com)" },
-        { status: 400 }
-      );
+    if (isSuperAdminEmail(targetUser.email) && role && role !== "ADMIN") {
+      return apiError("Không thể hạ quyền Admin của tài khoản quản trị chính", 400);
     }
 
     const updated = await prisma.user.update({
@@ -43,15 +34,13 @@ export async function PATCH(
       data: {
         ...(role ? { role: role === "ADMIN" ? Role.ADMIN : Role.USER } : {}),
         ...(name ? { name: name.trim() } : {}),
-        updatedAt: new Date(),
       },
     });
 
-    return NextResponse.json({ success: true, user: updated });
+    return apiSuccess({ user: updated });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error updating user:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
@@ -59,37 +48,25 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const currentUser = await getCurrentUser();
-  if (!currentUser || currentUser.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   const { id } = await params;
 
   try {
-    const targetUser = await prisma.user.findUnique({
-      where: { id },
-    });
-
+    const targetUser = await prisma.user.findUnique({ where: { id } });
     if (!targetUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return apiError("User not found", 404);
     }
 
-    if (targetUser.email.toLowerCase() === "tctoan1024@gmail.com") {
-      return NextResponse.json(
-        { error: "Không thể xóa tài khoản Admin chính (tctoan1024@gmail.com)" },
-        { status: 400 }
-      );
+    if (isSuperAdminEmail(targetUser.email)) {
+      return apiError("Không thể xóa tài khoản Admin chính", 400);
     }
 
-    await prisma.user.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
+    await prisma.user.delete({ where: { id } });
+    return apiSuccess({});
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error deleting user:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

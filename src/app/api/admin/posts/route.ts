@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { PostStatus } from "@prisma/client";
+import {
+  prisma,
+  slugify,
+  requireAdminRequest,
+  apiSuccess,
+  apiError,
+} from "@/lib";
 
 export async function GET() {
   try {
@@ -21,17 +26,14 @@ export async function GET() {
 
     return NextResponse.json({ posts });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error fetching posts:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
 export async function POST(request: Request) {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { user, errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
@@ -46,17 +48,10 @@ export async function POST(request: Request) {
     } = body;
 
     if (!title || !content) {
-      return NextResponse.json(
-        { error: "Tiêu đề và nội dung bài viết không được để trống" },
-        { status: 400 }
-      );
+      return apiError("Tiêu đề và nội dung bài viết không được để trống", 400);
     }
 
-    const finalSlug = (slug || title)
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const finalSlug = slugify(slug || title);
 
     const newPost = await prisma.post.create({
       data: {
@@ -72,10 +67,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, post: newPost });
+    return apiSuccess({ post: newPost });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error creating post:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

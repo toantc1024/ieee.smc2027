@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { authService, cmsService } from "@/services";
+import { cmsService } from "@/services";
 import { DEFAULT_HEADER_DATA } from "@/lib/header-config";
+import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 
 export async function GET() {
   try {
@@ -13,18 +14,15 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await authService.getCurrentUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
     await cmsService.saveHeaderSetting(body);
-    return NextResponse.json({ success: true, header: body });
+    return apiSuccess({ header: body });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error saving header settings:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

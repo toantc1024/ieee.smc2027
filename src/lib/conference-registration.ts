@@ -87,26 +87,7 @@ export const REGISTRATION_FEES: Record<FeeTier["id"], FeeTier> = {
   },
 };
 
-/**
- * Format currency VND nicely
- */
-export function formatVND(amount: number): string {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-/**
- * Format currency USD nicely
- */
-export function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
+export { formatVND, formatUSD } from "./utils";
 
 /**
  * Generates an official unique registration code like: SMC27-K8F291

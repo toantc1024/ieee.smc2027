@@ -4,6 +4,7 @@
 
 import prisma from "@/lib/prisma";
 import { generateQrDataUrl } from "@/lib/conference-registration";
+import { normalizeRegistrationCode, formatTimeVi } from "@/lib/utils";
 
 export class CheckInService {
   public async generateBadgeQr(registration: {
@@ -27,12 +28,12 @@ export class CheckInService {
     if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
       try {
         const parsed = JSON.parse(trimmed) as { code?: string };
-        if (parsed.code) return String(parsed.code).trim().toUpperCase();
+        if (parsed.code) return normalizeRegistrationCode(String(parsed.code));
       } catch {
         // treat as raw code string
       }
     }
-    return trimmed.toUpperCase();
+    return normalizeRegistrationCode(trimmed);
   }
 
   public async verifyAndCheckIn(rawCode: string) {
@@ -63,7 +64,7 @@ export class CheckInService {
       alreadyCheckedIn,
       registration: updated,
       message: alreadyCheckedIn
-        ? `Đại biểu ${updated.fullName} đã điểm danh trước đó lúc ${new Date(updated.checkedInAt!).toLocaleTimeString("vi-VN")}.`
+        ? `Đại biểu ${updated.fullName} đã điểm danh trước đó lúc ${formatTimeVi(updated.checkedInAt)}.`
         : `Điểm danh thành công cho đại biểu ${updated.fullName}!`,
     };
   }

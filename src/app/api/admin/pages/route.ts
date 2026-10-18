@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { authService, cmsService } from "@/services";
+import { cmsService } from "@/services";
+import {
+  normalizeSlugPath,
+  requireAdminRequest,
+  apiSuccess,
+  apiError,
+} from "@/lib";
 
 const DEFAULT_HOME_BLOCKS = [
   {
@@ -115,27 +121,19 @@ export async function GET() {
 
     return NextResponse.json({ pages });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error fetching website pages:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
 export async function POST(request: Request) {
-  const user = await authService.getCurrentUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
     const id = body.id || `page_${Date.now()}`;
-    const rawSlug = (body.slug || `page-${Date.now()}`).toLowerCase().trim();
-    const slug = rawSlug
-      .split("/")
-      .map((part: string) => part.replace(/[^a-z0-9-]/g, "-").replace(/^-+|-+$/g, ""))
-      .filter(Boolean)
-      .join("/");
+    const slug = normalizeSlugPath(body.slug || `page-${Date.now()}`);
     const title = body.title || "Trang mới";
     const blocks = body.blocks || [];
 
@@ -149,10 +147,9 @@ export async function POST(request: Request) {
       metaDescription: body.meta_description || "",
     });
 
-    return NextResponse.json({ success: true, page });
+    return apiSuccess({ page });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error creating page:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

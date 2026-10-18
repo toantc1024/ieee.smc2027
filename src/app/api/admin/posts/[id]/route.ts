@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { PostStatus } from "@prisma/client";
+import {
+  prisma,
+  requireAdminRequest,
+  apiSuccess,
+  apiError,
+} from "@/lib";
 
 export async function GET(
   request: Request,
@@ -24,13 +28,12 @@ export async function GET(
     });
 
     if (!post) {
-      return NextResponse.json({ error: "Bài viết không tồn tại" }, { status: 404 });
+      return apiError("Bài viết không tồn tại", 404);
     }
 
     return NextResponse.json({ post });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
@@ -38,10 +41,8 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   const { id } = await params;
 
@@ -68,11 +69,10 @@ export async function PATCH(
       data,
     });
 
-    return NextResponse.json({ success: true, post: updated });
+    return apiSuccess({ post: updated });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error updating post:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }
 
@@ -80,22 +80,16 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
 
   const { id } = await params;
 
   try {
-    await prisma.post.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
+    await prisma.post.delete({ where: { id } });
+    return apiSuccess({});
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Error deleting post:", error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(error, 500);
   }
 }

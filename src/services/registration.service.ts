@@ -8,6 +8,7 @@ import {
   REGISTRATION_FEES,
   generateRegistrationCode,
 } from "@/lib/conference-registration";
+import { normalizeEmail, normalizeRegistrationCode } from "@/lib/utils";
 import type { CreateRegistrationInput, ParticipantType, PaymentStatus } from "@/types";
 
 export class RegistrationService {
@@ -45,7 +46,7 @@ export class RegistrationService {
         registrationCode,
         userId: input.userId || null,
         fullName: input.fullName.trim(),
-        email: input.email.trim().toLowerCase(),
+        email: normalizeEmail(input.email),
         phone: input.phone ? input.phone.trim() : null,
         affiliation: input.affiliation.trim(),
         country: input.country.trim(),
@@ -67,13 +68,13 @@ export class RegistrationService {
 
   public async getByCode(code: string) {
     return prisma.registration.findUnique({
-      where: { registrationCode: code.trim().toUpperCase() },
+      where: { registrationCode: normalizeRegistrationCode(code) },
     });
   }
 
   public async getByEmail(email: string) {
     return prisma.registration.findMany({
-      where: { email: email.trim().toLowerCase() },
+      where: { email: normalizeEmail(email) },
       orderBy: { createdAt: "desc" },
     });
   }
