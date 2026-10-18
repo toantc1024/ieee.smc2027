@@ -34,7 +34,7 @@ export const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [
     title: "IEEE SMC 2027",
     highlight: "Human-AI Symbiosis",
     subtitle: "2027 IEEE International Conference on Systems, Man, and Cybernetics • October 6–10, 2027",
-    image: "/carousel/Bìa Web IEEE SMC 2027.png",
+    image: "/carousel/hero-desktop-smc2027.png",
     mobileImage: "/carousel/hero-mobile-smc2027.jpg",
     primaryAction: {
       label: "Call for Papers",

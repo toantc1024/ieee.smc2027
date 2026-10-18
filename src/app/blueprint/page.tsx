@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   ArrowLeft,
   ExternalLink,
-  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +29,7 @@ export default function BlueprintPage() {
 
   return (
     <div className="min-h-screen bg-[#071329] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
-      {/* ── 1. HEADER BẢN VẼ BLUEPRINT ── */}
+      {/* ── 1. BLUEPRINT HEADER ── */}
       <header className="sticky top-0 z-50 bg-[#040c1a]/95 backdrop-blur-md border-b border-cyan-500/20 px-4 sm:px-8 py-3 shadow-lg">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -39,18 +38,17 @@ export default function BlueprintPage() {
               className="text-xs font-bold text-cyan-400 hover:text-white transition-colors flex items-center gap-1.5 bg-cyan-950/40 border border-cyan-800/60 px-3 py-1.5 rounded-lg"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Trang chủ</span>
+              <span>Home</span>
             </Link>
             <span className="text-slate-700">|</span>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
               <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-white flex items-center gap-2">
-                <span>2 BẢN VẼ KỸ THUẬT (DESKTOP &amp; MOBILE BLUEPRINT)</span>
+                <span>BANNER TECHNICAL BLUEPRINTS</span>
               </h1>
             </div>
           </div>
 
-          {/* Chuyển chế độ xem */}
           <div className="flex items-center gap-2">
             <div className="inline-flex rounded-lg bg-[#0a1b38] p-1 border border-cyan-900/50 text-xs font-semibold">
               <button
@@ -63,7 +61,7 @@ export default function BlueprintPage() {
                     : "text-slate-300 hover:text-white"
                 )}
               >
-                Cả 2 Bản Vẽ
+                Both Blueprints
               </button>
               <button
                 type="button"
@@ -76,7 +74,7 @@ export default function BlueprintPage() {
                 )}
               >
                 <Monitor className="w-3.5 h-3.5" />
-                <span>Chỉ Desktop</span>
+                <span>Desktop Only</span>
               </button>
               <button
                 type="button"
@@ -89,35 +87,34 @@ export default function BlueprintPage() {
                 )}
               >
                 <Smartphone className="w-3.5 h-3.5" />
-                <span>Chỉ Mobile</span>
+                <span>Mobile Only</span>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* ── 2. BẢNG THÔNG SỐ RÚT GỌN (CHỈ METRICS, KHÔNG CHỮ THỪA) ── */}
+      {/* ── 2. METRICS SUMMARY ── */}
       <section className="bg-[#051024] border-b border-cyan-900/40 px-4 sm:px-8 py-5">
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-xs sm:text-sm font-bold tracking-wider text-cyan-400 uppercase flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>QUY CHUẨN THÔNG SỐ 2 TẤM ẢNH (EXACT METRICS ONLY)</span>
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                <span>EXACT PIXEL SPECIFICATIONS</span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Hai tấm ảnh template chuẩn pixel độc lập — Dùng để gửi trực tiếp cho Designer hoặc đưa vào Figma / Photoshop.
+                Pixel-accurate banner templates for designers in Figma, Photoshop, or Illustrator.
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 font-mono font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Chuẩn 1:1 Pixel Template
+                1:1 Pixel Template
               </span>
             </div>
           </div>
 
-          {/* Cards thông số Desktop & Mobile */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Card 1: Desktop */}
             <div className="bg-[#091a38] border border-cyan-500/40 rounded-xl p-4 sm:p-5 relative shadow-lg">
@@ -127,8 +124,8 @@ export default function BlueprintPage() {
                     <Monitor className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-white">ẢNH 1: BANNER DESKTOP</h3>
-                    <span className="text-[11px] font-mono text-cyan-400">Tỉ lệ 2.4 : 1</span>
+                    <h3 className="text-sm font-black text-white">IMAGE 1: DESKTOP BANNER</h3>
+                    <span className="text-[11px] font-mono text-cyan-400">Aspect Ratio 2.4 : 1</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -143,7 +140,7 @@ export default function BlueprintPage() {
                     className="px-2.5 py-1 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 text-[11px] font-mono border border-cyan-700/60 flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     {copiedKey === "desktop" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    <span>{copiedKey === "desktop" ? "Đã chép" : "Chép số"}</span>
+                    <span>{copiedKey === "desktop" ? "Copied" : "Copy Specs"}</span>
                   </button>
                   <a
                     href="/carousel/safe-area/desktop-blueprint.png"
@@ -151,27 +148,27 @@ export default function BlueprintPage() {
                     className="px-2.5 py-1 rounded bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold flex items-center gap-1 transition-colors shadow"
                   >
                     <Download className="w-3 h-3" />
-                    <span>Tải ảnh</span>
+                    <span>Download</span>
                   </a>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
                 <div className="bg-[#051126] p-2 rounded-lg border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">Kích thước Canvas:</span>
+                  <span className="text-slate-400 block text-[11px]">Canvas Size:</span>
                   <span className="font-bold text-white text-sm">2400 × 1000 px</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-emerald-900/50">
-                  <span className="text-emerald-400 block text-[11px]">Vùng An Toàn:</span>
+                  <span className="text-emerald-400 block text-[11px]">Safe Area:</span>
                   <span className="font-bold text-emerald-300 text-sm">1880 × 720 px</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-amber-900/40">
-                  <span className="text-amber-400 block text-[11px]">Lề trên &amp; dưới:</span>
-                  <span className="font-bold text-amber-200">140 px mỗi mép</span>
+                  <span className="text-amber-400 block text-[11px]">Top &amp; Bottom Bleed:</span>
+                  <span className="font-bold text-amber-200">140 px each</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-amber-900/40">
-                  <span className="text-amber-400 block text-[11px]">Lề 2 bên:</span>
-                  <span className="font-bold text-amber-200">260 px mỗi bên</span>
+                  <span className="text-amber-400 block text-[11px]">Left &amp; Right Bleed:</span>
+                  <span className="font-bold text-amber-200">260 px each</span>
                 </div>
               </div>
             </div>
@@ -184,8 +181,8 @@ export default function BlueprintPage() {
                     <Smartphone className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-white">ẢNH 2: BANNER MOBILE</h3>
-                    <span className="text-[11px] font-mono text-emerald-400">Tỉ lệ 3 : 4</span>
+                    <h3 className="text-sm font-black text-white">IMAGE 2: MOBILE BANNER</h3>
+                    <span className="text-[11px] font-mono text-emerald-400">Aspect Ratio 3 : 4</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -200,7 +197,7 @@ export default function BlueprintPage() {
                     className="px-2.5 py-1 rounded bg-emerald-950 hover:bg-emerald-900 text-emerald-300 text-[11px] font-mono border border-emerald-700/60 flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     {copiedKey === "mobile" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    <span>{copiedKey === "mobile" ? "Đã chép" : "Chép số"}</span>
+                    <span>{copiedKey === "mobile" ? "Copied" : "Copy Specs"}</span>
                   </button>
                   <a
                     href="/carousel/safe-area/mobile-blueprint.png"
@@ -208,27 +205,27 @@ export default function BlueprintPage() {
                     className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center gap-1 transition-colors shadow"
                   >
                     <Download className="w-3 h-3" />
-                    <span>Tải ảnh</span>
+                    <span>Download</span>
                   </a>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
                 <div className="bg-[#051126] p-2 rounded-lg border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">Kích thước Canvas:</span>
+                  <span className="text-slate-400 block text-[11px]">Canvas Size:</span>
                   <span className="font-bold text-white text-sm">896 × 1200 px</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-emerald-900/50">
-                  <span className="text-emerald-400 block text-[11px]">Vùng An Toàn:</span>
+                  <span className="text-emerald-400 block text-[11px]">Safe Area:</span>
                   <span className="font-bold text-emerald-300 text-sm">800 × 1050 px</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-amber-900/40">
-                  <span className="text-amber-400 block text-[11px]">Lề trên / dưới:</span>
-                  <span className="font-bold text-amber-200">70px trên / 80px dưới</span>
+                  <span className="text-amber-400 block text-[11px]">Top / Bottom Bleed:</span>
+                  <span className="font-bold text-amber-200">70px top / 80px bottom</span>
                 </div>
                 <div className="bg-[#051126] p-2 rounded-lg border border-amber-900/40">
-                  <span className="text-amber-400 block text-[11px]">Lề 2 bên:</span>
-                  <span className="font-bold text-amber-200">48 px mỗi bên</span>
+                  <span className="text-amber-400 block text-[11px]">Left &amp; Right Bleed:</span>
+                  <span className="font-bold text-amber-200">48 px each</span>
                 </div>
               </div>
             </div>
@@ -236,18 +233,15 @@ export default function BlueprintPage() {
         </div>
       </section>
 
-      {/* ── 3. KHU VỰC HIỂN THỊ 2 TẤM ẢNH THẬT ── */}
+      {/* ── 3. BLUEPRINT PREVIEWS ── */}
       <main className="max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-12">
-        {/* ========================================================
-            TẤM ẢNH 1: DESKTOP BLUEPRINT (2400 × 1000 px)
-           ======================================================== */}
         {(viewTab === "all" || viewTab === "desktop") && (
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-800/40 pb-2">
               <div className="flex items-center gap-2.5">
                 <span className="w-3 h-3 rounded-full bg-cyan-400" />
                 <h2 className="text-base sm:text-lg font-black text-white">
-                  TẤM ẢNH 1: DESKTOP BLUEPRINT — 2400 × 1000 PX (TỈ LỆ 2.4 : 1)
+                  IMAGE 1: DESKTOP BLUEPRINT — 2400 × 1000 PX (2.4 : 1)
                 </h2>
               </div>
               <div className="flex items-center gap-2">
@@ -258,7 +252,7 @@ export default function BlueprintPage() {
                   className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition-all border border-cyan-900/60 inline-flex items-center gap-1.5"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Mở ảnh gốc</span>
+                  <span>Open Original</span>
                 </a>
                 <a
                   href="/carousel/safe-area/desktop-blueprint.png"
@@ -266,12 +260,11 @@ export default function BlueprintPage() {
                   className="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black transition-all shadow inline-flex items-center gap-1.5"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Tải ảnh PNG (2400×1000)</span>
+                  <span>Download PNG</span>
                 </a>
               </div>
             </div>
 
-            {/* Khung xem ảnh Desktop */}
             <div className="bg-[#050f21] border border-cyan-500/30 rounded-2xl p-2 sm:p-4 shadow-2xl relative overflow-hidden">
               <div className="relative w-full aspect-[2.4/1] rounded-xl overflow-hidden border border-slate-800 bg-[#071329]">
                 <Image
@@ -284,22 +277,19 @@ export default function BlueprintPage() {
               </div>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-400 px-2">
                 <span>File: <code>public/carousel/safe-area/desktop-blueprint.png</code></span>
-                <span className="text-cyan-400 font-bold">Kích thước chuẩn: 2400 × 1000 px | Vùng an toàn: 1880 × 720 px</span>
+                <span className="text-cyan-400 font-bold">Canvas: 2400 × 1000 px | Safe Area: 1880 × 720 px</span>
               </div>
             </div>
           </section>
         )}
 
-        {/* ========================================================
-            TẤM ẢNH 2: MOBILE BLUEPRINT (896 × 1200 px)
-           ======================================================== */}
         {(viewTab === "all" || viewTab === "mobile") && (
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-800/40 pb-2">
               <div className="flex items-center gap-2.5">
                 <span className="w-3 h-3 rounded-full bg-emerald-400" />
                 <h2 className="text-base sm:text-lg font-black text-white">
-                  TẤM ẢNH 2: MOBILE BLUEPRINT — 896 × 1200 PX (TỈ LỆ 3 : 4)
+                  IMAGE 2: MOBILE BLUEPRINT — 896 × 1200 PX (3 : 4)
                 </h2>
               </div>
               <div className="flex items-center gap-2">
@@ -310,7 +300,7 @@ export default function BlueprintPage() {
                   className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs font-bold transition-all border border-emerald-900/60 inline-flex items-center gap-1.5"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Mở ảnh gốc</span>
+                  <span>Open Original</span>
                 </a>
                 <a
                   href="/carousel/safe-area/mobile-blueprint.png"
@@ -318,12 +308,11 @@ export default function BlueprintPage() {
                   className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition-all shadow inline-flex items-center gap-1.5"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Tải ảnh PNG (896×1200)</span>
+                  <span>Download PNG</span>
                 </a>
               </div>
             </div>
 
-            {/* Khung xem ảnh Mobile */}
             <div className="bg-[#050f21] border border-emerald-500/30 rounded-2xl p-2 sm:p-4 shadow-2xl relative overflow-hidden flex flex-col items-center">
               <div className="relative w-full max-w-[560px] aspect-[3/4] rounded-xl overflow-hidden border border-slate-800 bg-[#071329]">
                 <Image
@@ -336,7 +325,7 @@ export default function BlueprintPage() {
               </div>
               <div className="mt-3 w-full max-w-[560px] flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-400 px-2">
                 <span>File: <code>public/carousel/safe-area/mobile-blueprint.png</code></span>
-                <span className="text-emerald-400 font-bold">Kích thước chuẩn: 896 × 1200 px | Vùng an toàn: 800 × 1050 px</span>
+                <span className="text-emerald-400 font-bold">Canvas: 896 × 1200 px | Safe Area: 800 × 1050 px</span>
               </div>
             </div>
           </section>

@@ -18,8 +18,6 @@ import {
   Redo2,
   ImageIcon,
   Upload,
-  Link as LinkIcon,
-  Code,
 } from "lucide-react";
 
 interface TiptapEditorProps {
@@ -31,7 +29,7 @@ interface TiptapEditorProps {
 export function TiptapEditor({
   content,
   onChange,
-  placeholder = "Viết nội dung bài viết ở đây...",
+  placeholder = "Write article content here...",
 }: TiptapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -66,7 +64,7 @@ export function TiptapEditor({
   if (!editor) {
     return (
       <div className="min-h-[300px] bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-sm">
-        Đang khởi động trình soạn thảo Tiptap...
+        Initializing rich text editor...
       </div>
     );
   }
@@ -90,11 +88,11 @@ export function TiptapEditor({
       if (data.url) {
         editor.chain().focus().setImage({ src: data.url }).run();
       } else {
-        alert(data.error || "Lỗi tải ảnh lên");
+        alert(data.error || "Image upload failed");
       }
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Không thể tải ảnh lên máy chủ");
+      alert("Unable to upload image to server");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -127,7 +125,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("bold") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="In đậm (Bold)"
+          title="Bold"
         >
           <Bold className="w-4 h-4" />
         </button>
@@ -138,7 +136,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("italic") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="In nghiêng (Italic)"
+          title="Italic"
         >
           <Italic className="w-4 h-4" />
         </button>
@@ -149,7 +147,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("strike") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="Gạch ngang (Strikethrough)"
+          title="Strikethrough"
         >
           <Strikethrough className="w-4 h-4" />
         </button>
@@ -164,7 +162,7 @@ export function TiptapEditor({
               ? "bg-[#115eff] text-white hover:bg-[#115eff]"
               : ""
           }`}
-          title="Tiêu đề H2"
+          title="Heading 2"
         >
           <Heading2 className="w-4 h-4" />
         </button>
@@ -177,7 +175,7 @@ export function TiptapEditor({
               ? "bg-[#115eff] text-white hover:bg-[#115eff]"
               : ""
           }`}
-          title="Tiêu đề H3"
+          title="Heading 3"
         >
           <Heading3 className="w-4 h-4" />
         </button>
@@ -190,7 +188,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("bulletList") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="Danh sách dấu chấm"
+          title="Bullet List"
         >
           <List className="w-4 h-4" />
         </button>
@@ -201,7 +199,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("orderedList") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="Danh sách số"
+          title="Ordered List"
         >
           <ListOrdered className="w-4 h-4" />
         </button>
@@ -212,7 +210,7 @@ export function TiptapEditor({
           className={`p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer ${
             editor.isActive("blockquote") ? "bg-[#115eff] text-white hover:bg-[#115eff]" : ""
           }`}
-          title="Trích dẫn"
+          title="Blockquote"
         >
           <Quote className="w-4 h-4" />
         </button>
@@ -221,7 +219,7 @@ export function TiptapEditor({
           type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           className="p-1.5 rounded hover:bg-slate-200/80 transition-colors cursor-pointer"
-          title="Đường kẻ ngang"
+          title="Horizontal Divider"
         >
           <Minus className="w-4 h-4" />
         </button>
@@ -234,10 +232,10 @@ export function TiptapEditor({
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-blue-50 text-[#115eff] hover:bg-blue-100 transition-colors text-xs font-bold cursor-pointer"
-          title="Tải ảnh từ máy tính"
+          title="Upload image from computer"
         >
           <Upload className="w-3.5 h-3.5" />
-          <span>{uploading ? "Đang tải..." : "Tải ảnh lên"}</span>
+          <span>{uploading ? "Uploading..." : "Upload Image"}</span>
         </button>
 
         {/* Image URL Button */}
@@ -245,7 +243,7 @@ export function TiptapEditor({
           type="button"
           onClick={() => setImageUrlModal(true)}
           className="p-1.5 rounded hover:bg-slate-200/80 text-slate-600 transition-colors cursor-pointer"
-          title="Chèn ảnh từ link URL"
+          title="Insert image from URL"
         >
           <ImageIcon className="w-4 h-4" />
         </button>
@@ -257,7 +255,7 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
           className="p-1.5 rounded hover:bg-slate-200/80 disabled:opacity-40 transition-colors cursor-pointer"
-          title="Hoàn tác (Undo)"
+          title="Undo"
         >
           <Undo2 className="w-4 h-4" />
         </button>
@@ -267,7 +265,7 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
           className="p-1.5 rounded hover:bg-slate-200/80 disabled:opacity-40 transition-colors cursor-pointer"
-          title="Làm lại (Redo)"
+          title="Redo"
         >
           <Redo2 className="w-4 h-4" />
         </button>
@@ -276,11 +274,11 @@ export function TiptapEditor({
       {/* Editor Content Area */}
       <EditorContent editor={editor} />
 
-      {/* Modal Chèn Ảnh Từ URL */}
+      {/* Insert Image by URL Modal */}
       {imageUrlModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-5 w-full max-w-sm space-y-4">
-            <h4 className="font-bold text-[#004776] text-sm">Chèn Ảnh từ Đường Dẫn (URL)</h4>
+            <h4 className="font-bold text-[#004776] text-sm">Insert Image from URL</h4>
             <input
               type="url"
               placeholder="https://example.com/image.jpg"
@@ -294,14 +292,14 @@ export function TiptapEditor({
                 onClick={() => setImageUrlModal(false)}
                 className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded cursor-pointer"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 type="button"
                 onClick={handleAddImageUrl}
                 className="px-3 py-1.5 text-xs bg-[#115eff] text-white font-bold rounded hover:bg-[#0a4de6] cursor-pointer"
               >
-                Chèn Ảnh
+                Insert Image
               </button>
             </div>
           </div>

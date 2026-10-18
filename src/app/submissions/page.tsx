@@ -1,19 +1,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import {
-  FileText,
   ExternalLink,
   Download,
   Calendar,
   CheckCircle2,
-  AlertCircle,
   BookOpen,
-  ArrowRight,
-  Shield,
-  Layers,
-  Sparkles,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
@@ -22,27 +15,30 @@ export default function SubmissionsPage() {
     {
       name: "PaperCept Conference Portal",
       system: "PaperCept",
-      status: "Khuyên dùng (Official IEEE SMC)",
+      status: "Official IEEE SMC",
       badge: "Primary Portal",
-      description: "Hệ thống nộp bài tiêu chuẩn của IEEE SMC Society. Tự động kiểm tra định dạng PDF eXpress, quản lý tác giả và phân bổ phản biện ẩn danh.",
+      description:
+        "Standard manuscript submission system of the IEEE SMC Society. Includes automated PDF eXpress verification, author management, and peer-review tracking.",
       url: "https://ras.papercept.net",
       primary: true,
     },
     {
       name: "EDAS Conference Management",
       system: "EDAS",
-      status: "Dự phòng",
+      status: "Mirror Portal",
       badge: "Mirror Portal",
-      description: "Cổng nộp bài quốc tế tích hợp phân ban chuyên môn và theo dõi trạng thái phản biện của ban biên tập.",
+      description:
+        "International conference submission portal supporting technical track selection and editorial review status tracking.",
       url: "https://edas.info",
       primary: false,
     },
     {
       name: "Microsoft CMT / B-Young System",
       system: "CMT / B-Young",
-      status: "Hỗ trợ đại biểu khu vực",
+      status: "Regional Support",
       badge: "Regional Access",
-      description: "Hệ thống hỗ trợ nộp bài và tương tác chuyên đề dành cho các phiên đặc biệt (Special Sessions) và đại biểu khu vực châu Á.",
+      description:
+        "Dedicated submission and review coordination portal for organized Special Sessions and regional symposium tracks.",
       url: "https://cmt3.research.microsoft.com",
       primary: false,
     },
@@ -51,22 +47,22 @@ export default function SubmissionsPage() {
   const milestones = [
     {
       date: "April 08, 2027",
-      event: "Hạn chót Nộp Bản thảo Toàn văn (Regular & Special Sessions)",
+      event: "Full Manuscript Submission Deadline for Regular, Special Sessions & Workshops",
       status: "Upcoming",
     },
     {
-      date: "June 15, 2027",
-      event: "Thông báo Kết quả Phản biện (Acceptance Notification)",
+      date: "May 30, 2027",
+      event: "Notification of Paper Acceptance",
       status: "Upcoming",
     },
     {
-      date: "July 20, 2027",
-      event: "Hạn chót Nộp Bản in Sẵn sàng (Camera-ready Submission)",
+      date: "July 15, 2027",
+      event: "Final Camera-Ready Paper Submission Deadline",
       status: "Upcoming",
     },
     {
-      date: "August 10, 2027",
-      event: "Hạn chót Đăng ký Tác giả (Author Registration Deadline)",
+      date: "August 05, 2027",
+      event: "Author Registration Deadline",
       status: "Upcoming",
     },
   ];
@@ -82,10 +78,10 @@ export default function SubmissionsPage() {
               <span>Call For Papers & Submission Portals</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Cổng Nộp Bài & <span className="text-[#115eff]">Hướng Dẫn Tác Giả</span>
+              Submission Portals & <span className="text-[#115eff]">Author Guidelines</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-medium">
-              Hướng dẫn quy chuẩn định dạng bài báo IEEE 2 cột, tài liệu biểu mẫu LaTeX/Word và các liên kết chuyển hướng nộp bài trực tuyến qua PaperCept, EDAS và B-Young.
+              Official IEEE double-column formatting instructions, LaTeX and Word templates, and direct links to PaperCept, EDAS, and CMT submission systems.
             </p>
           </div>
         </SectionContainer>
@@ -96,10 +92,10 @@ export default function SubmissionsPage() {
           {/* 1. Portals Grid */}
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              1. Cổng Nộp Bài Trực Tuyến
+              1. Online Submission Portals
             </h2>
             <p className="text-sm text-slate-500 mb-6">
-              Các bài báo nộp vào IEEE SMC 2027 phải là công trình nghiên cứu nguyên bản, chưa từng xuất bản ở bất kỳ hội nghị hoặc tạp chí nào khác.
+              All manuscripts submitted to IEEE SMC 2027 must be original research not previously published or currently under review elsewhere.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -144,7 +140,7 @@ export default function SubmissionsPage() {
                         : "bg-slate-100 text-slate-800 hover:bg-slate-200"
                     }`}
                   >
-                    <span>Truy Cập Cổng {portal.system}</span>
+                    <span>Open {portal.system} Portal</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -155,10 +151,10 @@ export default function SubmissionsPage() {
           {/* 2. Manuscript Templates & Requirements */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xs">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              2. Định Dạng Bản Thảo & Biểu Mẫu (Templates)
+              2. Manuscript Formatting & Templates
             </h2>
             <p className="text-sm text-slate-500 mb-6">
-              Tất cả các bài báo gửi đến hội nghị phải tuân thủ nghiêm ngặt định dạng chuẩn của IEEE (Letter format, 2 cột).
+              All papers must strictly adhere to the standard IEEE two-column US Letter conference format.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -177,7 +173,7 @@ export default function SubmissionsPage() {
                     </div>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                    Gói mẫu định dạng chuẩn LaTeX bao gồm cấu trúc file mẫu, thư mục style và hướng dẫn biên dịch với BibTeX.
+                    Standard LaTeX archive containing document class files, bibliography styles, and sample BibTeX instructions.
                   </p>
                 </div>
 
@@ -188,7 +184,7 @@ export default function SubmissionsPage() {
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] hover:underline"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Tải gói mẫu LaTeX (ZIP từ IEEE)</span>
+                  <span>Download IEEE LaTeX Package</span>
                 </a>
               </div>
 
@@ -203,11 +199,11 @@ export default function SubmissionsPage() {
                       <h4 className="text-base font-bold text-slate-900">
                         Microsoft Word Template
                       </h4>
-                      <span className="text-xs text-slate-500">.DOCX (US Letter)</span>
+                      <span className="text-xs text-slate-500">.DOCX US Letter</span>
                     </div>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                    Tệp mẫu Microsoft Word 2 cột chuẩn hóa tiêu chuẩn font, lề, tiêu đề và trích dẫn theo đúng hướng dẫn của IEEE.
+                    Pre-configured two-column Microsoft Word template with official IEEE typography, margins, headings, and citation styles.
                   </p>
                 </div>
 
@@ -218,7 +214,7 @@ export default function SubmissionsPage() {
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] hover:underline"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Tải tệp mẫu Word (.docx)</span>
+                  <span>Download Word Template (.docx)</span>
                 </a>
               </div>
             </div>
@@ -226,24 +222,24 @@ export default function SubmissionsPage() {
             {/* Checklist */}
             <div className="mt-8 pt-6 border-t border-slate-100">
               <h4 className="text-sm font-bold text-slate-900 mb-3">
-                Checklist kiểm tra trước khi nộp bài:
+                Pre-Submission Checklist:
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Độ dài tối đa 6 trang (bao gồm hình ảnh, bảng biểu và tài liệu tham khảo).</span>
+                  <span>Standard length up to 6 pages including figures, tables, and references.</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Quy trình phản biện ẩn danh (Double-blind hoặc Single-blind theo từng track).</span>
+                  <span>Peer-reviewed according to official IEEE SMC Society quality standards.</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Tất cả file PDF phải vượt qua kiểm tra chuẩn IEEE PDF eXpress trước khi nộp bản cuối.</span>
+                  <span>Final camera-ready PDFs must pass IEEE PDF eXpress compliance checks.</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Ít nhất 1 tác giả phải đăng ký tham dự (Author Registration) để bài báo được đưa vào Kỷ yếu.</span>
+                  <span>At least one author must complete Author Registration for proceedings publication.</span>
                 </div>
               </div>
             </div>
@@ -252,7 +248,7 @@ export default function SubmissionsPage() {
           {/* 3. Important Dates */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xs">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              3. Mốc Thời Gian Quan Trọng
+              3. Important Submission Deadlines
             </h2>
             <div className="mt-6 space-y-3">
               {milestones.map((m, idx) => (

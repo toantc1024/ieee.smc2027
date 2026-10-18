@@ -3,36 +3,23 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   User,
   QrCode,
   FileText,
   Printer,
-  Download,
-  CheckCircle2,
-  Clock,
-  Building,
-  Globe,
-  Mail,
-  Phone,
   Search,
   AlertCircle,
-  ExternalLink,
-  ShieldCheck,
   Award,
-  Sparkles,
   ChevronRight,
   Plane,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import {
   REGISTRATION_FEES,
-  CONFERENCE_BANK_INFO,
   formatVND,
   formatUSD,
   getVietQrUrl,
-  getTransferSyntax,
 } from "@/lib/conference-registration";
 import QRCode from "qrcode";
 
@@ -56,12 +43,11 @@ function PortalContent() {
       const res = await fetch(`/api/registration?code=${encodeURIComponent(codeToFetch.trim())}`);
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Không tìm thấy hồ sơ với mã đăng ký này.");
+        throw new Error(data.error || "No delegate profile found with this registration code.");
       }
 
       setRegData(data.registration);
 
-      // Generate local QR Code for check-in badge (Firewall safe, zero CDN)
       const qrSvg = await QRCode.toDataURL(
         JSON.stringify({
           code: data.registration.registrationCode,
@@ -72,7 +58,7 @@ function PortalContent() {
       );
       setQrBadgeDataUrl(qrSvg);
     } catch (err: any) {
-      setErrorMsg(err.message || "Lỗi tra cứu thông tin.");
+      setErrorMsg(err.message || "Error looking up registration record.");
       setRegData(null);
     } finally {
       setLoading(false);
@@ -105,13 +91,13 @@ function PortalContent() {
           <div className="max-w-4xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-[#115eff] border border-blue-100">
               <User className="w-3.5 h-3.5" />
-              <span>Hồ Sơ & Thẻ Đại Biểu Hội Nghị</span>
+              <span>Delegate Portal & Conference Badge</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              Tra Cứu Hồ Sơ & <span className="text-[#115eff]">Thẻ Đại Biểu SMC 2027</span>
+              Delegate Profile & <span className="text-[#115eff]">Digital Badge Portal</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-600 font-medium">
-              Quản lý mã định danh tham dự, xem trạng thái đối soát lệ phí, tải Phiếu thu điện tử (e-Invoice) và Thư hỗ trợ Visa (Visa Support Letter).
+              Look up your registration code, track payment status, print your conference badge, and download your Official Receipt or Visa Support Letter.
             </p>
 
             {/* Quick search input */}
@@ -120,7 +106,7 @@ function PortalContent() {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
-                  placeholder="Nhập mã đăng ký (Ví dụ: SMC27-A8B9C2)..."
+                  placeholder="Enter registration code (e.g., SMC27-A8B9C2)..."
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -131,7 +117,7 @@ function PortalContent() {
                 disabled={loading}
                 className="px-6 py-2.5 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold shadow-xs cursor-pointer transition-colors disabled:opacity-50"
               >
-                {loading ? "Đang tra cứu..." : "Tra Cứu"}
+                {loading ? "Searching..." : "Look Up"}
               </button>
             </form>
           </div>
@@ -152,17 +138,17 @@ function PortalContent() {
               <QrCode className="w-8 h-8" />
             </div>
             <h3 className="text-xl font-bold text-slate-900">
-              Nhập mã đăng ký để xem thẻ hội nghị
+              Enter your registration code to view your badge
             </h3>
             <p className="text-sm text-slate-500">
-              Mã đăng ký được cấp ngay sau khi bạn hoàn tất biểu mẫu đăng ký (cú pháp: SMC27-XXXXXX). Nếu chưa đăng ký, vui lòng truy cập Cổng đăng ký.
+              Your unique registration code (format: SMC27-XXXXXX) is issued immediately upon completing the registration form.
             </p>
             <div className="pt-2">
               <Link
                 href="/registration"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#115eff] text-white text-xs sm:text-sm font-bold hover:bg-[#0a4de6] transition-colors"
               >
-                <span>Đăng ký tham dự ngay</span>
+                <span>Register Now</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -189,9 +175,7 @@ function PortalContent() {
                           : "bg-amber-100 text-amber-700"
                       }`}
                     >
-                      {regData.paymentStatus === "PAID"
-                        ? "ĐÃ THANH TOÁN (PAID)"
-                        : "CHỜ ĐỐI SOÁT (PENDING)"}
+                      {regData.paymentStatus === "PAID" ? "PAID" : "PENDING"}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -208,7 +192,7 @@ function PortalContent() {
                   className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
                 >
                   <Printer className="w-3.5 h-3.5" />
-                  <span>In Thẻ Đại Biểu (Badge)</span>
+                  <span>Print Badge</span>
                 </button>
 
                 <button
@@ -217,7 +201,7 @@ function PortalContent() {
                   className="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#115eff] border border-blue-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Phiếu Thu Điện Tử (Receipt)</span>
+                  <span>Official Receipt</span>
                 </button>
 
                 {regData.needsVisaSupport && (
@@ -227,7 +211,7 @@ function PortalContent() {
                     className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <Plane className="w-3.5 h-3.5" />
-                    <span>Thư Hỗ Trợ Visa (Letter)</span>
+                    <span>Visa Support Letter</span>
                   </button>
                 )}
               </div>
@@ -240,7 +224,6 @@ function PortalContent() {
                 <div className="bg-gradient-to-b from-white to-blue-50/40 border-2 border-slate-200 rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center shadow-md relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-3 bg-[#115eff]" />
 
-                  {/* Header Badge */}
                   <div className="mt-2 mb-4 text-center">
                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#004776] block">
                       IEEE SMC SOCIETY • HCM-UTE
@@ -250,12 +233,10 @@ function PortalContent() {
                     </span>
                   </div>
 
-                  {/* Avatar or Placeholder */}
                   <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-md border-4 border-white my-2">
                     {regData.fullName.charAt(0)}
                   </div>
 
-                  {/* Delegate Name */}
                   <h3 className="text-xl font-black text-slate-900 mt-2 mb-1">
                     {regData.fullName}
                   </h3>
@@ -263,13 +244,11 @@ function PortalContent() {
                     {regData.affiliation}
                   </p>
 
-                  {/* Type Badge */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-[#115eff] text-white uppercase tracking-wider mb-5">
                     <Award className="w-3.5 h-3.5" />
                     <span>{regData.participantType} DELEGATE</span>
                   </div>
 
-                  {/* Badge QR Code for fast venue checkin */}
                   <div className="p-3 bg-white border-2 border-slate-200 rounded-2xl shadow-xs">
                     {qrBadgeDataUrl ? (
                       <img
@@ -279,12 +258,11 @@ function PortalContent() {
                       />
                     ) : (
                       <div className="w-44 h-44 bg-slate-100 flex items-center justify-center text-xs text-slate-400">
-                        Đang nạp mã...
+                        Loading QR...
                       </div>
                     )}
                   </div>
 
-                  {/* Checkin Status Indicator */}
                   <div className="mt-4 flex items-center gap-2">
                     <span
                       className={`inline-block w-2.5 h-2.5 rounded-full ${
@@ -293,8 +271,8 @@ function PortalContent() {
                     />
                     <span className="text-xs font-bold text-slate-700">
                       {regData.checkInStatus
-                        ? `Đã điểm danh (${new Date(regData.checkedInAt).toLocaleTimeString("vi-VN")})`
-                        : "Sẵn sàng quét điểm danh tại hội trường"}
+                        ? `Checked in at ${new Date(regData.checkedInAt).toLocaleTimeString("en-US")}`
+                        : "Ready for venue check-in"}
                     </span>
                   </div>
 
@@ -306,22 +284,21 @@ function PortalContent() {
 
               {/* Right Column: Detailed Info & Financial Statement */}
               <div className="lg:col-span-7 space-y-6">
-                {/* Registration Details Card */}
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
                   <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
-                    Chi Tiết Hồ Sơ Đăng Ký
+                    Registration Profile Details
                   </h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
                     <div>
-                      <span className="text-slate-400 block text-xs">Mã hồ sơ (Registration Code):</span>
+                      <span className="text-slate-400 block text-xs">Registration Code:</span>
                       <span className="font-mono font-bold text-slate-800 text-sm">
                         {regData.registrationCode}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Phân loại đại biểu:</span>
+                      <span className="text-slate-400 block text-xs">Delegate Category:</span>
                       <span className="font-bold text-[#115eff]">
                         {REGISTRATION_FEES[regData.participantType as keyof typeof REGISTRATION_FEES]?.label ||
                           regData.participantType}
@@ -329,62 +306,61 @@ function PortalContent() {
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Email liên lạc:</span>
+                      <span className="text-slate-400 block text-xs">Email Address:</span>
                       <span className="font-medium text-slate-800">{regData.email}</span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Số điện thoại:</span>
+                      <span className="text-slate-400 block text-xs">Phone Number:</span>
                       <span className="font-medium text-slate-800">
-                        {regData.phone || "Chưa cập nhật"}
+                        {regData.phone || "Not provided"}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Quốc gia:</span>
+                      <span className="text-slate-400 block text-xs">Country / Region:</span>
                       <span className="font-medium text-slate-800">{regData.country}</span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Số Hộ chiếu / CCCD:</span>
+                      <span className="text-slate-400 block text-xs">Passport / National ID:</span>
                       <span className="font-mono font-medium text-slate-800">
-                        {regData.passportNumber || "Không yêu cầu"}
+                        {regData.passportNumber || "Not required"}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Chế độ ăn uống (Dietary):</span>
+                      <span className="text-slate-400 block text-xs">Dietary Preference:</span>
                       <span className="font-medium text-slate-800">
-                        {regData.dietaryRequirement || "Bình thường"}
+                        {regData.dietaryRequirement || "Standard"}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-xs">Hỗ trợ Visa:</span>
+                      <span className="text-slate-400 block text-xs">Visa Support Letter:</span>
                       <span className="font-medium text-slate-800">
-                        {regData.needsVisaSupport ? "Có đăng ký Thư hỗ trợ Visa" : "Không yêu cầu"}
+                        {regData.needsVisaSupport ? "Requested" : "Not requested"}
                       </span>
                     </div>
                   </div>
 
-                  {/* Paper info if Author */}
                   {regData.paperId && (
                     <div className="mt-4 p-4 rounded-2xl bg-blue-50/60 border border-blue-200">
                       <span className="text-xs font-bold text-blue-900 block uppercase tracking-wider mb-1">
-                        Thông Tin Bài Báo Khoa Học
+                        Accepted Manuscript Information
                       </span>
                       <div className="text-xs space-y-1">
                         <div>
-                          <span className="text-slate-500 font-medium">Mã bài báo (Paper ID): </span>
+                          <span className="text-slate-500 font-medium">Paper ID: </span>
                           <span className="font-mono font-bold text-blue-700">
                             {regData.paperId}
                           </span>
                         </div>
                         {regData.paperTitle && (
                           <div>
-                            <span className="text-slate-500 font-medium">Tiêu đề (Paper Title): </span>
+                            <span className="text-slate-500 font-medium">Paper Title: </span>
                             <span className="font-medium text-slate-800 italic">
-                              "{regData.paperTitle}"
+                              &ldquo;{regData.paperTitle}&rdquo;
                             </span>
                           </div>
                         )}
@@ -392,15 +368,14 @@ function PortalContent() {
                     </div>
                   )}
 
-                  {/* Financial & Payment Status */}
                   <div className="mt-6 pt-6 border-t border-slate-100">
                     <h4 className="text-sm font-bold text-slate-900 mb-3">
-                      Tình Trạng Lệ Phí Tham Dự
+                      Registration Fee & Payment Status
                     </h4>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <span className="text-xs text-slate-500 block">Số tiền cần thanh toán:</span>
+                        <span className="text-xs text-slate-500 block">Total Registration Fee:</span>
                         <span className="text-xl font-black text-[#115eff]">
                           {regData.currency === "VND"
                             ? formatVND(regData.feeAmount)
@@ -408,7 +383,7 @@ function PortalContent() {
                         </span>
                         {regData.paidAt && (
                           <span className="text-xs text-emerald-600 block mt-0.5">
-                            Đã xác nhận thanh toán lúc: {new Date(regData.paidAt).toLocaleString("vi-VN")}
+                            Payment verified at: {new Date(regData.paidAt).toLocaleString("en-US")}
                           </span>
                         )}
                       </div>
@@ -422,7 +397,7 @@ function PortalContent() {
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#115eff] text-white text-xs font-bold hover:bg-[#0a4de6] transition-colors"
                           >
                             <QrCode className="w-3.5 h-3.5" />
-                            <span>Mở VietQR Thanh Toán</span>
+                            <span>Open Payment QR</span>
                           </a>
                         </div>
                       )}
@@ -432,12 +407,8 @@ function PortalContent() {
               </div>
             </div>
 
-            {/* ════════════════════════════════════════════════════════════
-                PRINTABLE DOCUMENTS (OFFICIAL RECEIPT & VISA LETTER)
-                Hidden on screen when not printing, optimized via @media print
-            ════════════════════════════════════════════════════════════ */}
+            {/* PRINTABLE DOCUMENTS */}
             <div id="print-area" className="hidden print:block print:w-full print:bg-white print:text-black">
-              {/* DOCUMENT 1: OFFICIAL RECEIPT */}
               {printDocument === "RECEIPT" && (
                 <div className="p-8 max-w-3xl mx-auto border-2 border-slate-800 font-sans">
                   <div className="flex justify-between items-start border-b-2 border-slate-800 pb-4 mb-6">
@@ -447,12 +418,12 @@ function PortalContent() {
                       </h1>
                       <p className="text-xs">Ho Chi Minh City University of Technology and Engineering (HCM-UTE)</p>
                       <p className="text-xs">01 Vo Van Ngan Street, Linh Chieu Ward, Thu Duc City, HCMC, Vietnam</p>
-                      <p className="text-xs">Tax ID / MST: 0302587900</p>
+                      <p className="text-xs">Tax ID: 0302587900</p>
                     </div>
                     <div className="text-right">
                       <h2 className="text-lg font-black uppercase text-blue-900">OFFICIAL RECEIPT</h2>
                       <p className="text-xs font-mono">No: {regData.registrationCode}</p>
-                      <p className="text-xs">Date: {new Date().toLocaleDateString("vi-VN")}</p>
+                      <p className="text-xs">Date: {new Date().toLocaleDateString("en-US")}</p>
                     </div>
                   </div>
 
@@ -506,7 +477,6 @@ function PortalContent() {
                 </div>
               )}
 
-              {/* DOCUMENT 2: VISA SUPPORT LETTER */}
               {printDocument === "VISA" && (
                 <div className="p-10 max-w-3xl mx-auto font-serif text-slate-900 leading-relaxed text-sm">
                   <div className="text-center border-b pb-4 mb-8">
@@ -546,7 +516,7 @@ function PortalContent() {
                     <p><strong>Country of Citizenship/Residence:</strong> {regData.country}</p>
                     <p><strong>Passport Number:</strong> {regData.passportNumber || "[Verified in Portal]"}</p>
                     <p><strong>Participation Category:</strong> {regData.participantType} Delegate</p>
-                    {regData.paperId && <p><strong>Accepted Paper:</strong> #{regData.paperId} - "{regData.paperTitle}"</p>}
+                    {regData.paperId && <p><strong>Accepted Paper:</strong> #{regData.paperId} - &ldquo;{regData.paperTitle}&rdquo;</p>}
                   </div>
 
                   <p className="mb-4">
@@ -575,7 +545,6 @@ function PortalContent() {
                 </div>
               )}
 
-              {/* DOCUMENT 3: BADGE PRINT */}
               {printDocument === "BADGE" && (
                 <div className="p-8 max-w-sm mx-auto border-2 border-slate-900 rounded-xl text-center font-sans">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
@@ -611,7 +580,7 @@ export default function PortalPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
-          <div className="text-sm font-bold text-slate-500">Đang nạp hồ sơ đại biểu...</div>
+          <div className="text-sm font-bold text-slate-500">Loading delegate portal...</div>
         </div>
       }
     >

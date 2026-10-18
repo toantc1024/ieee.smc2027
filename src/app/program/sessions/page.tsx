@@ -12,7 +12,6 @@ import {
   BookOpen,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Layers,
   ArrowRight,
   ExternalLink,
@@ -357,10 +356,10 @@ export default function TechnicalSessionsPage() {
               <span>Technical Program & Parallel Tracks</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Lịch Trình Báo Cáo <span className="text-[#115eff]">Các Phiên Song Song</span>
+              Technical Program & <span className="text-[#115eff]">Parallel Sessions</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-medium">
-              Chương trình chi tiết các phiên báo cáo khoa học theo 3 trụ cột (Systems Science, Cybernetics, Human-Machine Systems) và các phiên chuyên đề đặc biệt tại Hội nghị IEEE SMC 2027.
+              Detailed schedule of parallel technical sessions across Systems Science & Engineering, Cybernetics, Human-Machine Systems, Special Sessions, and Workshops at IEEE SMC 2027.
             </p>
           </div>
         </SectionContainer>
@@ -375,7 +374,7 @@ export default function TechnicalSessionsPage() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
                 type="text"
-                placeholder="Tìm theo Mã bài (SMC27-...), tên bài báo, tác giả..."
+                placeholder="Search by Paper ID (SMC27-...), title, author, or chair..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-3.5 py-2.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -389,7 +388,7 @@ export default function TechnicalSessionsPage() {
                 onChange={(e) => setSelectedTrack(e.target.value)}
                 className="w-full px-3 py-2.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff] font-medium text-slate-800"
               >
-                <option value="ALL">Tất cả Phân ban (All Tracks)</option>
+                <option value="ALL">All Technical Tracks</option>
                 <option value="SSE">Systems Science & Eng (SSE)</option>
                 <option value="CYB">Cybernetics (CYB)</option>
                 <option value="HMS">Human-Machine Systems (HMS)</option>
@@ -405,11 +404,11 @@ export default function TechnicalSessionsPage() {
                 onChange={(e) => setSelectedDay(e.target.value)}
                 className="w-full px-3 py-2.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff] font-medium text-slate-800"
               >
-                <option value="ALL">Tất cả các ngày (All Days)</option>
-                <option value="2027-10-07">Ngày 1 (Thứ 5, 07/10/2027)</option>
-                <option value="2027-10-08">Ngày 2 (Thứ 6, 08/10/2027)</option>
-                <option value="2027-10-09">Ngày 3 (Thứ 7, 09/10/2027)</option>
-                <option value="2027-10-10">Ngày 4 (Chủ nhật, 10/10/2027)</option>
+                <option value="ALL">All Conference Days</option>
+                <option value="2027-10-07">Day 1 — Thu, Oct 7, 2027</option>
+                <option value="2027-10-08">Day 2 — Fri, Oct 8, 2027</option>
+                <option value="2027-10-09">Day 3 — Sat, Oct 9, 2027</option>
+                <option value="2027-10-10">Day 4 — Sun, Oct 10, 2027</option>
               </select>
             </div>
 
@@ -420,7 +419,7 @@ export default function TechnicalSessionsPage() {
                 onChange={(e) => setSelectedRoom(e.target.value)}
                 className="w-full px-3 py-2.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff] font-medium text-slate-800"
               >
-                <option value="ALL">Mọi Phòng họp</option>
+                <option value="ALL">All Halls</option>
                 <option value="Grand Ballroom A">Ballroom A</option>
                 <option value="Ballroom B">Ballroom B</option>
                 <option value="Saigon Suite 1">Saigon Suite 1</option>
@@ -432,7 +431,7 @@ export default function TechnicalSessionsPage() {
 
           <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>
-              Tìm thấy <strong>{filteredSessions.length}</strong> phiên báo cáo song song phù hợp
+              Showing <strong>{filteredSessions.length}</strong> matching parallel technical session(s)
             </span>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
@@ -455,7 +454,7 @@ export default function TechnicalSessionsPage() {
         <div className="space-y-4">
           {filteredSessions.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500">
-              Không tìm thấy phiên báo cáo nào phù hợp với bộ lọc đã chọn.
+              No technical sessions match your selected filters.
             </div>
           ) : (
             filteredSessions.map((session) => {
@@ -518,7 +517,7 @@ export default function TechnicalSessionsPage() {
 
                     <div className="flex items-center gap-3 self-end md:self-center shrink-0">
                       <span className="text-xs font-bold text-[#115eff] bg-blue-50 px-2.5 py-1 rounded-lg">
-                        {session.papers.length} bài báo
+                        {session.papers.length} papers
                       </span>
                       {isExpanded ? (
                         <ChevronUp className="w-5 h-5 text-slate-400" />
@@ -532,11 +531,11 @@ export default function TechnicalSessionsPage() {
                   {isExpanded && (
                     <div className="border-t border-slate-100 bg-slate-50/70 p-5 sm:p-6 rounded-b-2xl space-y-3">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                        Danh sách bài báo trình bày trong phiên ({session.timeSlot})
+                        Scheduled Presentations ({session.timeSlot})
                       </h4>
 
                       <div className="space-y-3">
-                        {session.papers.map((paper, pIdx) => (
+                        {session.papers.map((paper) => (
                           <div
                             key={paper.id}
                             className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
@@ -554,7 +553,7 @@ export default function TechnicalSessionsPage() {
                                 {paper.title}
                               </h5>
                               <p className="text-xs text-slate-500">
-                                <strong>Tác giả:</strong> {paper.authors}
+                                <strong>Authors:</strong> {paper.authors}
                               </p>
                             </div>
 
@@ -563,7 +562,7 @@ export default function TechnicalSessionsPage() {
                                 href={`/registration?type=AUTHOR`}
                                 className="text-xs font-bold text-[#115eff] hover:underline inline-flex items-center gap-1"
                               >
-                                <span>Đăng ký tham dự</span>
+                                <span>Register</span>
                                 <ArrowRight className="w-3 h-3" />
                               </Link>
                             </div>

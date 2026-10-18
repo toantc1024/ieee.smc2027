@@ -2,9 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
-  CreditCard,
   QrCode,
   CheckCircle2,
   Copy,
@@ -21,10 +19,6 @@ import {
   Download,
   AlertCircle,
   ExternalLink,
-  Sparkles,
-  Plane,
-  Utensils,
-  BookOpen,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import {
@@ -33,8 +27,6 @@ import {
   FeeTier,
   formatVND,
   formatUSD,
-  getVietQrUrl,
-  getTransferSyntax,
 } from "@/lib/conference-registration";
 
 type Step = "TIER" | "INFO" | "PAYMENT" | "SUCCESS";
@@ -83,30 +75,24 @@ export default function RegistrationPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleBackToInfo = () => {
-    setCurrentStep("INFO");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
 
-    // Validate
     if (!formData.fullName.trim()) {
-      setErrorMsg("Vui lòng nhập họ và tên đại biểu.");
+      setErrorMsg("Please enter the delegate's full name.");
       return;
     }
     if (!formData.email.trim() || !formData.email.includes("@")) {
-      setErrorMsg("Vui lòng nhập địa chỉ email hợp lệ.");
+      setErrorMsg("Please enter a valid email address.");
       return;
     }
     if (!formData.affiliation.trim()) {
-      setErrorMsg("Vui lòng nhập đơn vị công tác / trường đại học.");
+      setErrorMsg("Please enter your organization or university affiliation.");
       return;
     }
     if (selectedTier === "AUTHOR" && !formData.paperId.trim()) {
-      setErrorMsg("Đại biểu Tác giả bắt buộc phải nhập Mã bài báo (Paper ID).");
+      setErrorMsg("Author delegates must provide an accepted Paper ID.");
       return;
     }
 
@@ -124,14 +110,14 @@ export default function RegistrationPage() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Không thể đăng ký. Vui lòng thử lại.");
+        throw new Error(data.error || "Unable to complete registration. Please try again.");
       }
 
       setRegisteredData(data);
       setCurrentStep("PAYMENT");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
-      setErrorMsg(err.message || "Đã xảy ra lỗi kết nối máy chủ.");
+      setErrorMsg(err.message || "A server connection error occurred.");
     } finally {
       setLoading(false);
     }
@@ -144,14 +130,14 @@ export default function RegistrationPage() {
         <SectionContainer id="reg-header" fullWidthBg="bg-white" className="py-10 sm:py-14">
           <div className="max-w-4xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-[#115eff] border border-blue-100">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Cổng Đăng Ký Đại Biểu Chính Thức</span>
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Official Delegate Registration</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Đăng Ký Tham Dự <span className="text-[#115eff]">IEEE SMC 2027</span>
+              Conference Registration <span className="text-[#115eff]">IEEE SMC 2027</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-medium">
-              Ho Chi Minh City, Vietnam • October 6–10, 2027. Vui lòng chọn phân loại đại biểu và hoàn tất biểu mẫu để nhận mã định danh, VietQR thanh toán tự động và thư hỗ trợ Visa.
+              Ho Chi Minh City, Vietnam • October 6–10, 2027. Select your delegate category and complete the registration form to receive your registration code, instant payment QR, and Visa Support Letter.
             </p>
 
             {/* Stepper Bar */}
@@ -167,7 +153,7 @@ export default function RegistrationPage() {
                   <span className="w-6 h-6 rounded-full flex items-center justify-center bg-current text-white text-xs font-bold shrink-0">
                     1
                   </span>
-                  <span className="truncate">Phân loại & Lệ phí</span>
+                  <span className="truncate">Category & Fee</span>
                 </div>
 
                 <div
@@ -180,7 +166,7 @@ export default function RegistrationPage() {
                   <span className="w-6 h-6 rounded-full flex items-center justify-center bg-current text-white text-xs font-bold shrink-0">
                     2
                   </span>
-                  <span className="truncate">Hồ sơ Đại biểu</span>
+                  <span className="truncate">Delegate Details</span>
                 </div>
 
                 <div
@@ -193,7 +179,7 @@ export default function RegistrationPage() {
                   <span className="w-6 h-6 rounded-full flex items-center justify-center bg-current text-white text-xs font-bold shrink-0">
                     3
                   </span>
-                  <span className="truncate">VietQR Thanh toán</span>
+                  <span className="truncate">Payment & Badge</span>
                 </div>
               </div>
             </div>
@@ -202,7 +188,6 @@ export default function RegistrationPage() {
       </div>
 
       <SectionContainer id="reg-content" fullWidthBg="transparent" className="pt-8">
-        {/* Error notification banner */}
         {errorMsg && (
           <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
@@ -218,10 +203,10 @@ export default function RegistrationPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  1. Chọn Hạng mục Đại biểu
+                  1. Select Delegate Category
                 </h2>
                 <p className="text-sm text-slate-500">
-                  Lệ phí bao gồm toàn bộ quyền lợi tham dự khoa học, kỷ yếu, tài liệu và tiệc ngoại giao.
+                  Registration fees include technical sessions, conference proceedings, delegate kit, and gala banquet.
                 </p>
               </div>
 
@@ -236,7 +221,7 @@ export default function RegistrationPage() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  VNĐ (Napas 24/7)
+                  VND
                 </button>
                 <button
                   type="button"
@@ -247,7 +232,7 @@ export default function RegistrationPage() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  USD (International)
+                  USD
                 </button>
               </div>
             </div>
@@ -302,8 +287,8 @@ export default function RegistrationPage() {
                         </div>
                         <div className="text-[11px] text-slate-400 font-medium">
                           {currency === "VND"
-                            ? `Tương đương ${formatUSD(tier.usd)}`
-                            : `Tương đương ${formatVND(tier.vnd)}`}
+                            ? `Approx. ${formatUSD(tier.usd)}`
+                            : `Approx. ${formatVND(tier.vnd)}`}
                         </div>
                       </div>
 
@@ -327,7 +312,7 @@ export default function RegistrationPage() {
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                         }`}
                       >
-                        <span>{isSelected ? "Tiếp tục điền hồ sơ" : "Chọn gói này"}</span>
+                        <span>{isSelected ? "Continue to Form" : "Select Category"}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -346,14 +331,14 @@ export default function RegistrationPage() {
             <div className="flex items-center justify-between pb-6 border-b border-slate-100">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Bước 2/3
+                  Step 2 of 3
                 </span>
                 <h2 className="text-2xl font-black text-slate-900 mt-1">
-                  Thông Tin Đại Biểu & Nhu Cầu Tham Dự
+                  Delegate Information & Attendance Preferences
                 </h2>
               </div>
               <div className="text-right">
-                <span className="text-xs text-slate-500 block">Đang chọn:</span>
+                <span className="text-xs text-slate-500 block">Selected Category:</span>
                 <span className="font-bold text-[#115eff] text-sm">
                   {activeTier.label}
                 </span>
@@ -361,23 +346,22 @@ export default function RegistrationPage() {
             </div>
 
             <form onSubmit={handleSubmitRegistration} className="mt-8 space-y-6">
-              {/* If AUTHOR tier, prompt for Paper ID & Title */}
               {selectedTier === "AUTHOR" && (
                 <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-[#004776]">
                     <FileText className="w-4 h-4 text-[#115eff]" />
-                    <span>Thông tin Bài Báo (Dành cho Tác giả)</span>
+                    <span>Accepted Manuscript Information</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Mã Bài Báo (Paper ID) <span className="text-red-500">*</span>
+                        Paper ID <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="Ví dụ: SMC2027-142"
+                        placeholder="e.g., SMC2027-142"
                         value={formData.paperId}
                         onChange={(e) => setFormData({ ...formData, paperId: e.target.value })}
                         className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -386,11 +370,11 @@ export default function RegistrationPage() {
 
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Tiêu Đề Bài Báo (Paper Title)
+                        Paper Title
                       </label>
                       <input
                         type="text"
-                        placeholder="Ví dụ: Deep Reinforcement Learning for Cyber-Physical Systems..."
+                        placeholder="e.g., Deep Reinforcement Learning for Cyber-Physical Systems..."
                         value={formData.paperTitle}
                         onChange={(e) => setFormData({ ...formData, paperTitle: e.target.value })}
                         className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -404,47 +388,47 @@ export default function RegistrationPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Họ và Tên (Full Name) <span className="text-red-500">*</span>
+                    Full Name <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       required
-                      placeholder="Ví dụ: Nguyen Van A"
+                      placeholder="e.g., John Doe"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       className="w-full pl-10 pr-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
                     />
                   </div>
                   <span className="text-[11px] text-slate-400 mt-1 block">
-                    Tên sẽ được in trực tiếp lên Thẻ đại biểu & Giấy chứng nhận
+                    Printed directly on your Conference Badge & Certificate
                   </span>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Địa chỉ Email <span className="text-red-500">*</span>
+                    Email Address <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                     <input
                       type="email"
                       required
-                      placeholder="email@organization.edu.vn"
+                      placeholder="delegate@university.edu"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full pl-10 pr-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
                     />
                   </div>
                   <span className="text-[11px] text-slate-400 mt-1 block">
-                    Nhận mã tham dự, biên lai điện tử & thông báo khẩn
+                    Receives registration code, e-Receipt, and official updates
                   </span>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Số Điện Thoại Liên Hệ
+                    Phone Number
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
@@ -460,7 +444,7 @@ export default function RegistrationPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Quốc Gia (Country / Region) <span className="text-red-500">*</span>
+                    Country / Region <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Globe className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
@@ -477,14 +461,14 @@ export default function RegistrationPage() {
 
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Cơ quan / Trường Đại học / Viện nghiên cứu (Affiliation) <span className="text-red-500">*</span>
+                    University / Institution / Affiliation <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Building className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       required
-                      placeholder="Ví dụ: Ho Chi Minh City University of Technology and Engineering (HCMUTE)"
+                      placeholder="e.g., Ho Chi Minh City University of Technology and Engineering"
                       value={formData.affiliation}
                       onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
                       className="w-full pl-10 pr-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -494,11 +478,11 @@ export default function RegistrationPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Số Hộ Chiếu / CCCD (Passport / National ID)
+                    Passport / National ID Number
                   </label>
                   <input
                     type="text"
-                    placeholder="Bắt buộc nếu cần Thư hỗ trợ Visa"
+                    placeholder="Required if requesting a Visa Support Letter"
                     value={formData.passportNumber}
                     onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })}
                     className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -507,18 +491,18 @@ export default function RegistrationPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Yêu Cầu Chế Độ Ăn Uống (Dietary Requirements)
+                    Dietary Requirements
                   </label>
                   <select
                     value={formData.dietaryRequirement}
                     onChange={(e) => setFormData({ ...formData, dietaryRequirement: e.target.value })}
                     className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
                   >
-                    <option value="None">Bình thường (Standard)</option>
-                    <option value="Vegetarian">Ăn chay (Vegetarian)</option>
-                    <option value="Halal">Chuẩn Halal (Hồi giáo)</option>
-                    <option value="GlutenFree">Không chứa Gluten (Gluten-free)</option>
-                    <option value="Allergy">Dị ứng hải sản / Đậu phộng</option>
+                    <option value="None">Standard</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Halal">Halal</option>
+                    <option value="GlutenFree">Gluten-Free</option>
+                    <option value="Allergy">Food Allergy</option>
                   </select>
                 </div>
               </div>
@@ -534,10 +518,10 @@ export default function RegistrationPage() {
                   />
                   <div className="text-xs">
                     <span className="font-bold text-slate-900 block">
-                      Yêu cầu Ban tổ chức cấp Thư hỗ trợ Visa (Visa Support Letter)
+                      Request an Official Visa Support Letter
                     </span>
                     <span className="text-slate-500">
-                      Hệ thống sẽ tự động xuất file PDF thư mời chính thức có chữ ký số của Ban tổ chức sau khi hoàn tất lệ phí.
+                      An official signed Visa Support Letter will be generated automatically once registration payment is verified.
                     </span>
                   </div>
                 </label>
@@ -546,11 +530,11 @@ export default function RegistrationPage() {
               {/* Travel Notes */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Ghi chú lịch trình di chuyển & lưu trú (Tùy chọn)
+                  Travel & Accommodation Notes
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Ví dụ: Dự kiến đến sân bay Tân Sơn Nhất ngày 05/10, lưu trú tại khách sạn Sheraton..."
+                  placeholder="e.g., Expected arrival at Tan Son Nhat Airport on Oct 5, staying at Sheraton Saigon..."
                   value={formData.travelNotes}
                   onChange={(e) => setFormData({ ...formData, travelNotes: e.target.value })}
                   className="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:border-[#115eff]"
@@ -565,7 +549,7 @@ export default function RegistrationPage() {
                   className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 cursor-pointer flex items-center gap-1.5 transition-colors"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Quay lại</span>
+                  <span>Back</span>
                 </button>
 
                 <button
@@ -574,10 +558,10 @@ export default function RegistrationPage() {
                   className="px-7 py-3 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
                 >
                   {loading ? (
-                    <span>Đang xử lý khởi tạo đơn...</span>
+                    <span>Submitting Registration...</span>
                   ) : (
                     <>
-                      <span>Xác nhận & Chuyển sang Thanh toán VietQR</span>
+                      <span>Confirm & Proceed to Payment</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -592,7 +576,6 @@ export default function RegistrationPage() {
         ════════════════════════════════════════════════════════════════ */}
         {currentStep === "PAYMENT" && registeredData && (
           <div className="max-w-4xl mx-auto space-y-8">
-            {/* Success Message Card */}
             <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 sm:p-8 text-emerald-900 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
@@ -600,10 +583,10 @@ export default function RegistrationPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-extrabold text-emerald-950">
-                    Đăng Ký Thành Công!
+                    Registration Submitted!
                   </h3>
                   <p className="text-xs sm:text-sm text-emerald-800 mt-0.5">
-                    Mã hồ sơ đại biểu của bạn:{" "}
+                    Your Delegate Registration Code:{" "}
                     <span className="font-mono font-black text-emerald-950 bg-emerald-100 px-2 py-0.5 rounded">
                       {registeredData.registration.registrationCode}
                     </span>
@@ -615,31 +598,28 @@ export default function RegistrationPage() {
                 href={`/portal?code=${registeredData.registration.registrationCode}`}
                 className="shrink-0 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5"
               >
-                <span>Vào Hồ sơ Đại biểu</span>
+                <span>Open Delegate Portal</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            {/* Split Grid: Left = VietQR Code, Right = Transfer Details */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* VietQR Scanner Card */}
               <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center shadow-xs">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-[#115eff] mb-4">
                   <QrCode className="w-3.5 h-3.5" />
-                  <span>VietQR Napas 24/7 Tự Động</span>
+                  <span>Instant VietQR Napas 24/7</span>
                 </div>
 
                 <div className="relative p-3 bg-white border-2 border-slate-200 rounded-2xl shadow-xs hover:border-[#115eff] transition-colors">
-                  {/* Real-time VietQR Image generated according to NAPAS spec */}
                   <img
                     src={registeredData.payment.vietQrUrl}
-                    alt="VietQR Chuyển khoản"
+                    alt="VietQR Payment"
                     className="w-64 h-64 object-contain rounded-lg"
                   />
                 </div>
 
                 <p className="text-xs text-slate-500 mt-4 leading-relaxed max-w-xs">
-                  Mở ứng dụng ngân hàng bất kỳ (Vietcombank, MB, Techcombank, VPBank...) và quét mã để tự động điền số tiền và cú pháp đối soát.
+                  Scan with any mobile banking app to pre-fill the exact fee amount and automated reconciliation reference.
                 </p>
 
                 <a
@@ -650,26 +630,24 @@ export default function RegistrationPage() {
                   className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-[#115eff] hover:underline"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Tải ảnh mã QR về điện thoại</span>
+                  <span>Download QR Code Image</span>
                 </a>
               </div>
 
-              {/* Transfer Details Card */}
               <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xs">
                 <div>
                   <h3 className="text-xl font-black text-slate-900 mb-1">
-                    Thông Tin Chuyển Khoản Ngân Hàng
+                    Bank Wire & Transfer Instructions
                   </h3>
                   <p className="text-xs text-slate-500 mb-6">
-                    Hệ thống sẽ tự động đối soát tài chính khi giao dịch hoàn tất.
+                    Your registration status will be automatically verified once the transfer is completed.
                   </p>
 
                   <div className="space-y-3.5">
-                    {/* Bank Name */}
                     <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                       <div>
                         <span className="text-[11px] text-slate-400 font-bold uppercase block">
-                          Ngân Hàng Thụ Hưởng
+                          Beneficiary Bank
                         </span>
                         <span className="text-xs sm:text-sm font-bold text-slate-900">
                           {CONFERENCE_BANK_INFO.bankName}
@@ -677,11 +655,10 @@ export default function RegistrationPage() {
                       </div>
                     </div>
 
-                    {/* Account Number */}
                     <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                       <div>
                         <span className="text-[11px] text-slate-400 font-bold uppercase block">
-                          Số Tài Khoản (Account Number)
+                          Account Number
                         </span>
                         <span className="font-mono text-base sm:text-lg font-black text-[#115eff]">
                           {CONFERENCE_BANK_INFO.accountNo}
@@ -691,7 +668,7 @@ export default function RegistrationPage() {
                         type="button"
                         onClick={() => handleCopy("acc", CONFERENCE_BANK_INFO.accountNo)}
                         className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 transition-colors cursor-pointer"
-                        title="Sao chép số tài khoản"
+                        title="Copy account number"
                       >
                         {copiedKey === "acc" ? (
                           <Check className="w-4 h-4 text-emerald-600" />
@@ -701,11 +678,10 @@ export default function RegistrationPage() {
                       </button>
                     </div>
 
-                    {/* Account Name */}
                     <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                       <div>
                         <span className="text-[11px] text-slate-400 font-bold uppercase block">
-                          Tên Chủ Tài Khoản (Beneficiary)
+                          Beneficiary Name
                         </span>
                         <span className="text-xs sm:text-sm font-bold text-slate-900">
                           {CONFERENCE_BANK_INFO.accountName}
@@ -713,11 +689,10 @@ export default function RegistrationPage() {
                       </div>
                     </div>
 
-                    {/* Transfer Amount */}
                     <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between">
                       <div>
                         <span className="text-[11px] text-blue-600 font-bold uppercase block">
-                          Số Tiền Thanh Toán (Amount)
+                          Total Fee Amount
                         </span>
                         <span className="text-lg sm:text-2xl font-black text-[#115eff]">
                           {registeredData.registration.currency === "VND"
@@ -729,7 +704,7 @@ export default function RegistrationPage() {
                         type="button"
                         onClick={() => handleCopy("amount", String(registeredData.registration.feeAmount))}
                         className="p-2 rounded-lg bg-white border border-blue-200 hover:bg-blue-100 text-[#115eff] transition-colors cursor-pointer"
-                        title="Sao chép số tiền"
+                        title="Copy amount"
                       >
                         {copiedKey === "amount" ? (
                           <Check className="w-4 h-4 text-emerald-600" />
@@ -739,11 +714,10 @@ export default function RegistrationPage() {
                       </button>
                     </div>
 
-                    {/* Syntax Content */}
                     <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between">
                       <div>
                         <span className="text-[11px] text-amber-700 font-bold uppercase block">
-                          Nội Dung Chuyển Khoản (Bắt buộc chính xác để tự động đối soát)
+                          Transfer Reference / Description
                         </span>
                         <span className="font-mono text-xs sm:text-sm font-black text-amber-950">
                           {registeredData.payment.transferSyntax}
@@ -753,7 +727,7 @@ export default function RegistrationPage() {
                         type="button"
                         onClick={() => handleCopy("syntax", registeredData.payment.transferSyntax)}
                         className="p-2 rounded-lg bg-white border border-amber-200 hover:bg-amber-100 text-amber-800 transition-colors cursor-pointer"
-                        title="Sao chép nội dung"
+                        title="Copy transfer reference"
                       >
                         {copiedKey === "syntax" ? (
                           <Check className="w-4 h-4 text-emerald-600" />
@@ -768,14 +742,14 @@ export default function RegistrationPage() {
                 <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500">
                     <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                    <span>Hóa đơn điện tử VAT & Thư mời tự động cấp</span>
+                    <span>Official e-Receipt & Visa Support Letter included</span>
                   </div>
 
                   <Link
                     href={`/portal?code=${registeredData.registration.registrationCode}`}
                     className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
-                    <span>Trang Hồ Sơ & Thẻ Đại Biểu Số</span>
+                    <span>Delegate Portal & Digital Badge</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>

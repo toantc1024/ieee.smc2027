@@ -215,7 +215,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                   <div className="w-72 xl:w-84 shrink-0 py-7 pl-6 pr-2 flex flex-col justify-start self-stretch">
                     <div className="relative pb-2.5 mb-3.5">
                       <h3 className="text-[17px] xl:text-[18.5px] font-black text-[#004776] tracking-tight whitespace-nowrap">
-                        {activeItem.promoCard.badge || "Tiêu điểm"}
+                        {activeItem.promoCard.badge || "Featured"}
                       </h3>
                       <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
                       <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full" />
@@ -261,7 +261,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                           </p>
                         )}
                         <span className="promo-card-cta text-base font-bold text-[#115eff] transition-colors duration-200 inline-flex items-center gap-1.5 mt-1.5 group-hover/promo:gap-2">
-                          {activeItem.promoCard.ctaText || "Khám phá ngay"}
+                          {activeItem.promoCard.ctaText || "Explore Now"}
                           <span aria-hidden="true">›</span>
                         </span>
                       </div>

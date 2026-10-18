@@ -52,7 +52,7 @@ export function WelcomeLetter({
 }: WelcomeLetterProps) {
   return (
     <SectionContainer id="welcome" fullWidthBg="bg-white">
-      {/* Section Header matching HCMUTE Tin tức & Sự kiện nổi bật text style without bottom divider */}
+      {/* Section Header matching HCMUTE signature text style without bottom divider */}
       <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
         {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
