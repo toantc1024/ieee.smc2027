@@ -21,7 +21,7 @@
   --radius: 0.35rem; /* Exact HCMUTE base radius: ~5.6px */
   --radius-btn: 0.26rem; /* 25% reduced radius specifically for all buttons: ~4.1px */
   
-  /* HCMUTE Xanh Đen (blue-black) tokens */
+  /* HCMUTE Blue-Black tokens */
   --hcmute-blue-black: rgb(0, 71, 118);
   --hcmute-blue-black-hex: #004776;
   --xanh-den-dam: rgb(0, 71, 118);
@@ -52,13 +52,15 @@
   --color-neutral-900: rgb(0, 71, 118);
   --color-zinc-900: rgb(0, 71, 118);
   
-  /* Global radius tokens */
-  --radius-xs: calc(var(--radius) - 3px);
+  /* Global synchronized radius tokens */
+  --radius-xs: calc(var(--radius) - 2px);
   --radius-sm: var(--radius-btn);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 3px);
   --radius-2xl: calc(var(--radius) + 4px);
+  --radius-3xl: calc(var(--radius) + 4px);
+  --radius-4xl: calc(var(--radius) + 4px);
   
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -259,13 +261,23 @@ h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emera
   border-top: 1px solid #e2e8f0;
 }
 
-/* Reduced button radius: exactly 25% smaller (0.26rem / ~4px) */
+/* Unified Frame & Control Radius System:
+   - All buttons, inputs, selects, textareas use --radius-btn (0.26rem)
+   - All frames, cards, modals, and containers stay locked to the unified --radius scale */
 button:not([class*="rounded-full"]),
 a.inline-flex:not([class*="rounded-full"])[class*="px-"][class*="py-"],
 input:not([class*="rounded-full"]),
 select:not([class*="rounded-full"]),
 textarea:not([class*="rounded-full"]) {
   border-radius: var(--radius-btn) !important;
+}
+
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl,
+[class*="rounded-["]:not([class*="rounded-full"]) {
+  border-radius: var(--radius-lg) !important;
 }
 
 /* Hero Carousel Responsive Aspect Ratio — Exact 1:1 Safe-Area Contract from HCMUTE */

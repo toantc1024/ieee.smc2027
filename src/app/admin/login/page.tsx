@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { GridPattern } from "@/components/ui/grid-pattern";
 
@@ -66,7 +65,6 @@ function AdminLoginForm() {
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error");
 
-  // Slideshow cycle (every 4.5s)
   const [slideIdx, setSlideIdx] = useState(0);
 
   useEffect(() => {
@@ -76,7 +74,6 @@ function AdminLoginForm() {
     return () => clearInterval(timer);
   }, []);
 
-  // Explicitly remove fixed two-side borders on login page
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.body.classList.remove("page-border-x");
@@ -92,40 +89,35 @@ function AdminLoginForm() {
 
   const currentSlide = SLIDES[slideIdx];
 
-  // Auth Modes & State
   const [emailMode, setEmailMode] = useState<EmailAuthMode>("otp");
   const [loading, setLoading] = useState(false);
   const [customError, setCustomError] = useState<string | null>(null);
   const [customSuccess, setCustomSuccess] = useState<string | null>(null);
 
-  // Email OTP state
   const [otpEmail, setOtpEmail] = useState("admin@hcmute.edu.vn");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
 
-  // Password state
   const [pwdEmail, setPwdEmail] = useState("admin@hcmute.edu.vn");
   const [pwdPassword, setPwdPassword] = useState("Admin@Smc2027Secure!");
   const [showPassword, setShowPassword] = useState(false);
 
   const derivedError =
     errorParam === "missing_google_credentials"
-      ? "Chưa cấu hình Google Client Secret. Bạn có thể sử dụng Email OTP hoặc Mật khẩu bên dưới để truy cập ngay!"
+      ? "Google Client Secret is not configured yet. Please sign in with Email OTP or Password below."
       : errorParam
-      ? `Lỗi xác thực: ${errorParam}`
+      ? `Authentication error: ${errorParam}`
       : null;
 
   const errorMessage = customError || derivedError;
 
-  // Google Login
   const handleGoogleLogin = () => {
     setLoading(true);
     setCustomError(null);
     window.location.assign("/api/auth/google");
   };
 
-  // Email OTP Send
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpEmail) return;
@@ -142,22 +134,21 @@ function AdminLoginForm() {
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
-        setCustomSuccess(data.message || "Mã OTP đã được gửi đến email.");
+        setCustomSuccess(data.message || "Verification code sent to your email.");
         if (data.devCode) {
           setDevOtpHint(data.devCode);
           setOtpCode(data.devCode);
         }
       } else {
-        setCustomError(data.error || "Không thể tạo mã OTP.");
+        setCustomError(data.error || "Failed to generate verification code.");
       }
     } catch {
-      setCustomError("Lỗi kết nối máy chủ gửi OTP.");
+      setCustomError("Unable to connect to authentication server.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Email OTP Verify
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpEmail || !otpCode) return;
@@ -174,16 +165,15 @@ function AdminLoginForm() {
       if (res.ok) {
         router.push("/admin");
       } else {
-        setCustomError(data.error || "Mã OTP không chính xác.");
+        setCustomError(data.error || "Invalid verification code.");
       }
     } catch {
-      setCustomError("Lỗi kết nối máy chủ xác thực.");
+      setCustomError("Unable to connect to verification server.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Password Login
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pwdEmail || !pwdPassword) return;
@@ -200,10 +190,10 @@ function AdminLoginForm() {
       if (res.ok) {
         router.push("/admin");
       } else {
-        setCustomError(data.error || "Mật khẩu không chính xác.");
+        setCustomError(data.error || "Incorrect email or password.");
       }
     } catch {
-      setCustomError("Lỗi kết nối hệ thống.");
+      setCustomError("Unable to connect to authentication server.");
     } finally {
       setLoading(false);
     }
@@ -214,15 +204,11 @@ function AdminLoginForm() {
       data-no-page-borders="true"
       className="admin-page-root no-page-borders min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-0 sm:p-4 lg:p-4 gap-0 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border select-none"
     >
-      
       {/* ═══════════════════════════════════════════════════════════════════
           LEFT COLUMN (60% on Desktop): Ho Chi Minh City & HCMUTE Hero Card
-          Rounded value: rounded-b-[20px] sm:rounded-b-[26px] lg:rounded-3xl
-          Theme: Vibrant Primary Blue (#115eff)
          ═══════════════════════════════════════════════════════════════════ */}
       <div className="w-full lg:w-[calc(58%-0.5rem)] xl:w-[calc(60%-0.5rem)] flex flex-col h-[320px] sm:h-[370px] lg:h-full min-h-0 min-w-0 shrink-0">
-        <div className="relative w-full h-full rounded-b-[20px] sm:rounded-b-[26px] lg:rounded-3xl overflow-hidden shadow-md lg:shadow-[0_16px_48px_-12px_rgba(17,94,255,0.20)] border-b lg:border border-[#115eff]/20 flex flex-col justify-between select-none">
-          
+        <div className="relative w-full h-full rounded-lg overflow-hidden shadow-md lg:shadow-[0_16px_48px_-12px_rgba(17,94,255,0.20)] border-b lg:border border-[#115eff]/20 flex flex-col justify-between select-none">
           {/* Background Slideshow with Smooth Crossfade */}
           <div className="absolute inset-0 bg-[#115eff] overflow-hidden">
             <AnimatePresence initial={false}>
@@ -238,10 +224,8 @@ function AdminLoginForm() {
               />
             </AnimatePresence>
 
-            {/* Vibrant Primary Blue Overlays (#115eff) */}
             <div className="absolute inset-0 bg-gradient-to-tr from-[#0a4de6]/30 via-transparent to-[#115eff]/20 mix-blend-multiply pointer-events-none" />
 
-            {/* Grid Pattern Accent in Bottom Left of 60 Card */}
             <GridPattern
               width={28}
               height={28}
@@ -249,7 +233,6 @@ function AdminLoginForm() {
               className="absolute -bottom-8 -left-8 w-88 h-88 opacity-30 text-white pointer-events-none z-10 hidden sm:block"
             />
 
-            {/* Metallic Noise Texture Shader Overlay (Hiệu ứng gradient nhiễu kim loại) */}
             <div
               className="absolute inset-0 opacity-[0.20] mix-blend-overlay pointer-events-none z-15"
               style={{
@@ -258,15 +241,12 @@ function AdminLoginForm() {
               }}
             />
 
-            {/* Top Fresh Gradient */}
             <div className="absolute inset-x-0 top-0 h-28 sm:h-44 bg-gradient-to-b from-[#115eff]/80 via-[#0a4de6]/30 to-transparent pointer-events-none z-10" />
-
-            {/* Bottom Multi-Angle Metallic Shadow Gradient with Specular Sheen */}
             <div className="absolute inset-x-0 bottom-0 h-44 sm:h-60 lg:h-72 bg-gradient-to-t from-[#05225c] via-[#0a4de6]/90 via-35% via-[#115eff]/55 via-65% to-transparent pointer-events-none z-10" />
             <div className="absolute inset-x-0 bottom-0 h-28 sm:h-40 bg-gradient-to-tr from-[#115eff]/30 via-white/10 to-transparent mix-blend-overlay pointer-events-none z-12" />
           </div>
 
-          {/* Top Brand Bar: Logo + Home Link (Text Only, No Icons) */}
+          {/* Top Brand Bar */}
           <div className="relative z-20 p-4 sm:p-6 lg:p-7 flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <img
@@ -285,7 +265,7 @@ function AdminLoginForm() {
             </div>
           </div>
 
-          {/* Bottom Typography: Subtitle + Signature Downward Gradient Mask Title */}
+          {/* Bottom Typography */}
           <div className="relative z-20 px-4 sm:px-6 pb-9 sm:pb-10 lg:pb-3 flex flex-col items-center text-center w-full max-w-full mt-auto overflow-visible">
             <AnimatePresence mode="wait">
               <motion.p
@@ -300,7 +280,6 @@ function AdminLoginForm() {
               </motion.p>
             </AnimatePresence>
 
-            {/* Signature Keycloak Downward Gradient Mask + Metallic Chrome Titanium Shader */}
             <div
               className="relative w-full max-w-full flex justify-center items-center py-1 overflow-visible"
               style={{
@@ -341,14 +320,9 @@ function AdminLoginForm() {
 
       {/* ═══════════════════════════════════════════════════════════════════
           RIGHT COLUMN (40% on Desktop): Auth Card
-          Rounded value: EXACT SAME rounded-[22px] lg:rounded-3xl (matching left 60)
          ═══════════════════════════════════════════════════════════════════ */}
       <div className="w-full lg:w-[calc(42%-0.5rem)] xl:w-[calc(40%-0.5rem)] flex flex-col h-auto lg:h-full min-h-0 min-w-0 shrink-0 relative px-4 sm:px-6 lg:px-0 -mt-8 sm:-mt-10 lg:mt-0 z-20 pb-8 lg:pb-0">
-        
-        {/* ── TOP SECTION: Main Auth Card (Matching rounded-[22px] lg:rounded-3xl) ── */}
-        <div className="relative z-10 flex flex-col justify-center items-center flex-1 min-h-0 rounded-[22px] lg:rounded-3xl border border-slate-200/90 bg-white shadow-md lg:shadow-[0_16px_50px_rgba(17,94,255,0.08)] p-5 sm:p-7 lg:p-6 xl:p-8 overflow-y-auto">
-          
-          {/* Background Grid Pattern with Radial Mask */}
+        <div className="relative z-10 flex flex-col justify-center items-center flex-1 min-h-0 rounded-lg border border-slate-200/90 bg-white shadow-md lg:shadow-[0_16px_50px_rgba(17,94,255,0.08)] p-5 sm:p-7 lg:p-6 xl:p-8 overflow-y-auto">
           <GridPattern
             width={32}
             height={32}
@@ -356,42 +330,38 @@ function AdminLoginForm() {
             className="absolute inset-0 w-full h-full stroke-[#115eff]/10 fill-none opacity-40 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)] pointer-events-none"
           />
 
-          {/* Centered Auth Content */}
           <div className="relative z-20 w-full max-w-[400px] mx-auto my-auto flex flex-col justify-center">
-            
-            {/* Header (No decorative icons) */}
             <div className="mb-5 text-center">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 IEEE SMC 2027 CMS
               </h1>
               <p className="text-xs text-slate-500 mt-1">
-                Đăng nhập quản trị nội dung hội nghị và các phân hệ website.
+                Sign in to manage conference content, registrations, and system modules.
               </p>
             </div>
 
-            {/* Error / Success Notifications (Text only, no icons) */}
             {errorMessage && (
-              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs text-center leading-relaxed">
+              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs text-center leading-relaxed">
                 {errorMessage}
               </div>
             )}
 
             {customSuccess && (
-              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs text-center leading-relaxed">
+              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs text-center leading-relaxed">
                 {customSuccess}
               </div>
             )}
 
-            {/* ── Social Login: Google OAuth Button ── */}
+            {/* ── Social Login: Borderless Theme-Synced Google OAuth Button ── */}
             <div className="space-y-2.5 w-full">
               <button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm rounded-xl border border-slate-300 hover:border-slate-400 shadow-xs transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
+                className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-slate-100 hover:bg-slate-200/80 text-slate-900 font-bold text-xs sm:text-sm rounded-md border-0 transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
               >
                 <GoogleLogo className="w-4 h-4 shrink-0" />
-                <span>{loading ? "Đang kết nối Google..." : "Đăng nhập với Google OAuth"}</span>
+                <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
               </button>
             </div>
 
@@ -399,26 +369,26 @@ function AdminLoginForm() {
             <div className="relative flex py-4 items-center">
               <div className="flex-grow border-t border-slate-200"></div>
               <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                hoặc xác thực qua email
+                or sign in with email
               </span>
               <div className="flex-grow border-t border-slate-200"></div>
             </div>
 
-            {/* Segmented Mode Switcher (Primary Blue #115eff) */}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 mb-3.5 text-xs font-bold">
+            {/* Segmented Mode Switcher */}
+            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-lg mb-3.5 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => {
                   setEmailMode("otp");
                   setCustomError(null);
                 }}
-                className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer ${
+                className={`py-2 px-2 rounded-md text-center transition-all cursor-pointer ${
                   emailMode === "otp"
                     ? "bg-[#115eff] text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                Mã OTP Email
+                Email OTP
               </button>
               <button
                 type="button"
@@ -426,24 +396,24 @@ function AdminLoginForm() {
                   setEmailMode("password");
                   setCustomError(null);
                 }}
-                className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer ${
+                className={`py-2 px-2 rounded-md text-center transition-all cursor-pointer ${
                   emailMode === "password"
                     ? "bg-[#115eff] text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                Mật Khẩu
+                Password
               </button>
             </div>
 
-            {/* ── Option 1: Email OTP (Clean inputs, no icons) ── */}
+            {/* ── Option 1: Email OTP ── */}
             {emailMode === "otp" && (
               <div className="space-y-3">
                 {!otpSent ? (
                   <form onSubmit={handleSendOtp} className="space-y-3">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Địa chỉ Email
+                        Email Address
                       </label>
                       <input
                         type="email"
@@ -451,40 +421,42 @@ function AdminLoginForm() {
                         value={otpEmail}
                         onChange={(e) => setOtpEmail(e.target.value)}
                         placeholder="admin@hcmute.edu.vn"
-                        className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                        className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                     >
-                      {loading ? "Đang gửi mã..." : "Nhận Mã Xác Thực (Send OTP)"}
+                      {loading ? "Sending code..." : "Send Verification Code"}
                     </button>
                   </form>
                 ) : (
                   <form onSubmit={handleVerifyOtp} className="space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-600">
-                      <span>Mã gửi tới: <strong className="text-slate-900">{otpEmail}</strong></span>
+                      <span>
+                        Sent to: <strong className="text-slate-900">{otpEmail}</strong>
+                      </span>
                       <button
                         type="button"
                         onClick={() => setOtpSent(false)}
                         className="text-[#115eff] hover:underline cursor-pointer font-bold"
                       >
-                        Đổi email
+                        Change email
                       </button>
                     </div>
 
                     {devOtpHint && (
-                      <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[#115eff] text-xs text-center font-bold">
-                        Mã Dev Test: {devOtpHint} (Đã tự động điền)
+                      <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#115eff] text-xs text-center font-bold">
+                        Dev Verification Code: {devOtpHint}
                       </div>
                     )}
 
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1 text-center">
-                        Nhập mã xác thực 6 chữ số
+                        Enter 6-digit verification code
                       </label>
                       <input
                         type="text"
@@ -493,16 +465,16 @@ function AdminLoginForm() {
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
                         placeholder="123456"
-                        className="w-full tracking-widest text-center font-mono font-black text-lg h-11 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900"
+                        className="w-full tracking-widest text-center font-mono font-black text-lg h-11 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={loading || otpCode.length !== 6}
-                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                     >
-                      {loading ? "Đang xác thực..." : "Xác Nhận & Đăng Nhập"}
+                      {loading ? "Verifying..." : "Verify & Sign In"}
                     </button>
 
                     <div className="text-center">
@@ -512,7 +484,7 @@ function AdminLoginForm() {
                         disabled={loading}
                         className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-medium"
                       >
-                        Gửi lại mã OTP mới
+                        Resend verification code
                       </button>
                     </div>
                   </form>
@@ -520,12 +492,12 @@ function AdminLoginForm() {
               </div>
             )}
 
-            {/* ── Option 2: Email Password (Clean inputs, text toggle) ── */}
+            {/* ── Option 2: Email Password ── */}
             {emailMode === "password" && (
               <form onSubmit={handlePasswordLogin} className="space-y-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Địa chỉ Email
+                    Email Address
                   </label>
                   <input
                     type="email"
@@ -533,21 +505,21 @@ function AdminLoginForm() {
                     value={pwdEmail}
                     onChange={(e) => setPwdEmail(e.target.value)}
                     placeholder="admin@hcmute.edu.vn"
-                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-xs font-bold text-slate-700">
-                      Mật khẩu
+                      Password
                     </label>
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="text-[11px] font-bold text-[#115eff] hover:underline cursor-pointer"
                     >
-                      {showPassword ? "Ẩn" : "Hiện"}
+                      {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
                   <input
@@ -556,25 +528,22 @@ function AdminLoginForm() {
                     value={pwdPassword}
                     onChange={(e) => setPwdPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                 >
-                  {loading ? "Đang xác thực..." : "Đăng Nhập Với Mật Khẩu"}
+                  {loading ? "Signing in..." : "Sign In with Password"}
                 </button>
               </form>
             )}
-
           </div>
         </div>
-
       </div>
-
     </div>
   );
 }
