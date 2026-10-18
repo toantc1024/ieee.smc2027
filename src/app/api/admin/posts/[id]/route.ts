@@ -28,7 +28,7 @@ export async function GET(
     });
 
     if (!post) {
-      return apiError("Bài viết không tồn tại", 404);
+      return apiError("Post not found", 404);
     }
 
     return NextResponse.json({ post });

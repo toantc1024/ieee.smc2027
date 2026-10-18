@@ -69,7 +69,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     if (id === "home") {
-      return apiError("Không thể xóa trang chủ mặc định", 400);
+      return apiError("Cannot delete default home page", 400);
     }
 
     await cmsService.deletePage(id);

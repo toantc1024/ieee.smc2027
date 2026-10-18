@@ -17,11 +17,11 @@ export class DocumentService {
     });
 
     if (!reg) {
-      throw new Error("Không tìm thấy hồ sơ đại biểu.");
+      throw new Error("Delegate registration record not found.");
     }
 
     if (reg.paymentStatus !== "PAID") {
-      throw new Error("Phiếu thu chỉ được cấp sau khi hoàn tất thanh toán lệ phí.");
+      throw new Error("Payment receipt is only issued after registration fee payment is completed.");
     }
 
     const issuedAt = new Date().toISOString();
@@ -69,11 +69,11 @@ export class DocumentService {
     });
 
     if (!reg) {
-      throw new Error("Không tìm thấy hồ sơ đại biểu.");
+      throw new Error("Delegate registration record not found.");
     }
 
     if (reg.paymentStatus !== "PAID") {
-      throw new Error("Thư hỗ trợ Visa chỉ được cấp sau khi đại biểu hoàn tất thanh toán.");
+      throw new Error("Visa Support Letter is only issued after registration fee payment is completed.");
     }
 
     const issuedAt = new Date().toISOString();

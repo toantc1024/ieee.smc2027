@@ -57,7 +57,7 @@ export class PaymentService {
     if (!extractedCode) {
       return {
         matched: false,
-        reason: "Không tìm thấy mã đăng ký hợp lệ trong nội dung chuyển khoản.",
+        reason: "No valid registration code found in the transfer description.",
       };
     }
 
@@ -69,7 +69,7 @@ export class PaymentService {
       return {
         matched: false,
         registrationCode: extractedCode,
-        reason: "Không tìm thấy hồ sơ đại biểu khớp với mã chuyển khoản.",
+        reason: "No delegate registration record found matching the transfer code.",
       };
     }
 
@@ -85,7 +85,7 @@ export class PaymentService {
       return {
         matched: false,
         registrationCode: extractedCode,
-        reason: `Số tiền chuyển khoản (${payload.amount}) thấp hơn lệ phí yêu cầu (${registration.feeAmount}).`,
+        reason: `Transfer amount (${payload.amount}) is less than required fee (${registration.feeAmount}).`,
       };
     }
 

@@ -3,7 +3,7 @@ import { checkInService } from "@/services";
 import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 
 export async function POST(req: NextRequest) {
-  const { errorResponse } = await requireAdminRequest("Yêu cầu quyền Quản trị viên.");
+  const { errorResponse } = await requireAdminRequest("Administrator privileges required.");
   if (errorResponse) return errorResponse;
 
   try {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const { code } = body;
 
     if (!code) {
-      return apiError("Vui lòng cung cấp mã QR hoặc mã đăng ký.", 400);
+      return apiError("Please provide a valid QR code or registration code.", 400);
     }
 
     const result = await checkInService.verifyAndCheckIn(String(code));
@@ -27,6 +27,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Check-in error:", error);
-    return apiError(error, 500, "Lỗi xử lý điểm danh.");
+    return apiError(error, 500, "Failed to process check-in.");
   }
 }

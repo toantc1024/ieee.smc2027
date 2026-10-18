@@ -110,7 +110,7 @@ export async function GET() {
       const seededHome = await cmsService.upsertPage({
         id: "home",
         slug: "home",
-        title: "Trang chủ",
+        title: "Home",
         blocks: DEFAULT_HOME_BLOCKS,
         isPublished: true,
         metaTitle: "IEEE SMC 2027 | Home",
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const id = body.id || `page_${Date.now()}`;
     const slug = normalizeSlugPath(body.slug || `page-${Date.now()}`);
-    const title = body.title || "Trang mới";
+    const title = body.title || "New Page";
     const blocks = body.blocks || [];
 
     const page = await cmsService.upsertPage({

@@ -64,7 +64,7 @@ export const env = {
     bankId: process.env.VIETQR_BANK_ID || "VCB",
     bankName:
       process.env.VIETQR_BANK_NAME ||
-      "Vietcombank - Chi nhánh Thủ Đức, TP. Hồ Chí Minh",
+      "Vietcombank - Thu Duc Branch, Ho Chi Minh City",
     accountNo: process.env.VIETQR_ACCOUNT_NO || "0381000385642",
     accountName:
       process.env.VIETQR_ACCOUNT_NAME || "TRUONG DH SU PHAM KY THUAT TPHCM",

@@ -4,7 +4,7 @@ import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { BroadcastCampaignInput } from "@/types";
 
 export async function POST(req: NextRequest) {
-  const { errorResponse } = await requireAdminRequest("Yêu cầu quyền Quản trị viên.");
+  const { errorResponse } = await requireAdminRequest("Administrator privileges required.");
   if (errorResponse) return errorResponse;
 
   try {
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     } = body as BroadcastCampaignInput;
 
     if (!subject || !message) {
-      return apiError("Vui lòng nhập đầy đủ tiêu đề và nội dung email thông báo.", 400);
+      return apiError("Please provide both an email subject and message body.", 400);
     }
 
     const result = await emailService.sendBroadcastCampaign({
@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
     return apiSuccess(result);
   } catch (error: unknown) {
     console.error("Broadcast error:", error);
-    return apiError(error, 500, "Lỗi gửi email hàng loạt.");
+    return apiError(error, 500, "Failed to dispatch bulk email broadcast.");
   }
 }

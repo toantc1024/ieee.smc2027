@@ -26,7 +26,7 @@ export async function PATCH(
     }
 
     if (isSuperAdminEmail(targetUser.email) && role && role !== "ADMIN") {
-      return apiError("Không thể hạ quyền Admin của tài khoản quản trị chính", 400);
+      return apiError("Cannot downgrade administrator role of primary super-admin account", 400);
     }
 
     const updated = await prisma.user.update({
@@ -60,7 +60,7 @@ export async function DELETE(
     }
 
     if (isSuperAdminEmail(targetUser.email)) {
-      return apiError("Không thể xóa tài khoản Admin chính", 400);
+      return apiError("Cannot delete primary super-admin account", 400);
     }
 
     await prisma.user.delete({ where: { id } });

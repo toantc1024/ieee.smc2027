@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
     const code = body?.code?.trim();
 
     if (!email || !code) {
-      return apiError("Email và mã OTP là bắt buộc", 400);
+      return apiError("Email and OTP verification code are required", 400);
     }
 
     const result = await verifyOtp(email, code);
     if (!result.valid) {
-      return apiError(result.reason || "Mã OTP không hợp lệ", 400);
+      return apiError(result.reason || "Invalid OTP code", 400);
     }
 
     const name = email.split("@")[0].toUpperCase();
@@ -35,13 +35,13 @@ export async function POST(req: NextRequest) {
 
     const token = await createSessionToken(user);
     const response = apiSuccess({
-      message: "Đăng nhập thành công",
+      message: "Signed in successfully",
       user,
     });
 
     return attachSessionCookie(response, token);
   } catch (err) {
     console.error("OTP verification error:", err);
-    return apiError(err, 500, "Lỗi xác thực OTP trên hệ thống");
+    return apiError(err, 500, "Error verifying OTP code");
   }
 }

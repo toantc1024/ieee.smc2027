@@ -89,7 +89,7 @@ export class EmailService {
       return {
         sentCount: 0,
         sampleRecipients: [],
-        message: "Không có đại biểu nào trong nhóm mục tiêu đã chọn.",
+        message: "No delegates found in the selected target group.",
       };
     }
 
@@ -103,7 +103,7 @@ export class EmailService {
     return {
       sentCount: delegates.length,
       sampleRecipients: delegates.slice(0, 5).map((r) => `${r.fullName} <${r.email}>`),
-      message: `Đã gửi email thành công tới ${delegates.length} đại biểu (${input.targetGroup}).`,
+      message: `Successfully dispatched email broadcast to ${delegates.length} delegate(s) in group ${input.targetGroup}.`,
     };
   }
 }

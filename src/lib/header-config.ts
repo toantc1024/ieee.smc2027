@@ -197,9 +197,9 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
           links: [
             {
               id: "sub-prog-parallel",
-              title: "Technical Sessions Schedule (Song Song)",
+              title: "Technical Sessions Schedule",
               href: "/program/sessions",
-              description: "Lịch trình chi tiết các phiên báo cáo song song theo phòng và khung giờ",
+              description: "Detailed schedule of parallel technical sessions by hall and time slot",
               icon: "Layers",
               badge: "Parallel",
             },
@@ -212,7 +212,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
             },
             {
               id: "sub-prog-dates",
-              title: "5-Day Technical Program (Oct 6–10)",
+              title: "5-Day Technical Program",
               href: "/#dates",
               description: "Master conference schedule, opening ceremony, and gala banquet",
               icon: "Calendar",
@@ -241,17 +241,17 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
           links: [
             {
               id: "sub-reg-online",
-              title: "Cổng Đăng Ký Đại Biểu (Online Registration)",
+              title: "Online Delegate Registration",
               href: "/registration",
-              description: "Biểu mẫu thu thập dữ liệu, phân loại lệ phí và tạo mã VietQR tức thì",
+              description: "Registration form, fee categories, and instant QR / card payment",
               icon: "CreditCard",
-              badge: "Mở Đăng Ký",
+              badge: "Open",
             },
             {
               id: "sub-reg-portal",
-              title: "Hồ Sơ Đại Biểu & Thẻ Hội Nghị (Portal)",
+              title: "Delegate Portal & Digital Badge",
               href: "/portal",
-              description: "Tra cứu hồ sơ, quét mã QR điểm danh, tải e-Invoice & Thư hỗ trợ Visa",
+              description: "View registration status, badge QR code, e-Receipt & Visa Support Letter",
               icon: "User",
               badge: "Portal",
             },
@@ -280,12 +280,12 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
         },
       ],
       promoCard: {
-        title: "Cổng Đăng Ký Đại Biểu",
-        description: "Đăng ký tham dự và thanh toán tự động qua mã VietQR chuẩn NAPAS 24/7.",
+        title: "Online Registration Portal",
+        description: "Register for IEEE SMC 2027 with automated VietQR and international payment options.",
         image: "/assets/cta-background.webp",
         href: "/registration",
-        badge: "Đăng Ký Ngay",
-        ctaText: "Đăng Ký",
+        badge: "Register Now",
+        ctaText: "Register",
       },
     },
     {
@@ -314,7 +314,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
             },
             {
               id: "sub-venue-transport",
-              title: "Airport (SGN) & Local Transit",
+              title: "Airport & Local Transit",
               href: "/travel",
               description: "Airport pickup, taxi advice, Metro Line 1, and city transit",
               icon: "MapPin",
@@ -345,7 +345,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
               title: "Explore Ho Chi Minh City",
               href: "/travel",
               description: "Dynamic economic, cultural, and innovation hub of Vietnam",
-              icon: "Sparkles",
+              icon: "Globe",
             },
           ],
         },

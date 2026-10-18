@@ -7,20 +7,20 @@ export async function POST(req: NextRequest) {
     const email = body?.email?.toLowerCase()?.trim();
 
     if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Email không hợp lệ" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
     const { code, devMode } = await generateOtp(email);
 
     return NextResponse.json({
       success: true,
-      message: `Mã OTP xác thực 6 chữ số đã được tạo thành công cho ${email}.`,
+      message: `A 6-digit verification code has been sent to ${email}.`,
       devMode,
       // If dev mode is enabled, supply devCode so user can test effortlessly in local dev
       devCode: devMode ? code : undefined,
     });
   } catch (err) {
     console.error("OTP send error:", err);
-    return NextResponse.json({ error: "Không thể tạo mã OTP. Vui lòng thử lại sau." }, { status: 500 });
+    return NextResponse.json({ error: "Unable to generate OTP code. Please try again later." }, { status: 500 });
   }
 }

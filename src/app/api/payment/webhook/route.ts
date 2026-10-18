@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     if (!transferContent || amount <= 0) {
       return NextResponse.json(
-        { error: "Thiếu nội dung chuyển khoản hoặc số tiền không hợp lệ." },
+        { error: "Missing transfer description or invalid payment amount." },
         { status: 400 }
       );
     }

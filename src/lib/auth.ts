@@ -278,7 +278,7 @@ export async function verifyOtp(
   if (!record) {
     return {
       valid: false,
-      reason: "Mã OTP đã hết hạn hoặc chưa được tạo. Vui lòng yêu cầu mã mới.",
+      reason: "Verification code has expired or has not been requested. Please request a new code.",
     };
   }
 
@@ -286,7 +286,7 @@ export async function verifyOtp(
     otpCache.delete(normalized);
     return {
       valid: false,
-      reason: "Mã OTP đã quá hạn. Vui lòng yêu cầu mã mới.",
+      reason: "Verification code has expired. Please request a new code.",
     };
   }
 
@@ -294,7 +294,7 @@ export async function verifyOtp(
     otpCache.delete(normalized);
     return {
       valid: false,
-      reason: "Đã vượt quá số lần thử OTP cho phép. Vui lòng yêu cầu mã mới.",
+      reason: "Maximum OTP verification attempts exceeded. Please request a new code.",
     };
   }
 
@@ -308,6 +308,6 @@ export async function verifyOtp(
 
   return {
     valid: false,
-    reason: `Mã OTP không chính xác, còn ${5 - record.attempts} lần thử.`,
+    reason: `Invalid verification code. ${5 - record.attempts} attempt(s) remaining.`,
   };
 }

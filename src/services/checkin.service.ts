@@ -46,7 +46,7 @@ export class CheckInService {
       return {
         found: false,
         registrationCode,
-        error: `Không tìm thấy đại biểu với mã "${registrationCode}".`,
+        error: `No delegate found with registration code "${registrationCode}".`,
       };
     }
 
@@ -64,8 +64,8 @@ export class CheckInService {
       alreadyCheckedIn,
       registration: updated,
       message: alreadyCheckedIn
-        ? `Đại biểu ${updated.fullName} đã điểm danh trước đó lúc ${formatTimeVi(updated.checkedInAt)}.`
-        : `Điểm danh thành công cho đại biểu ${updated.fullName}!`,
+        ? `Delegate ${updated.fullName} was already checked in at ${formatTimeVi(updated.checkedInAt)}.`
+        : `Successfully checked in delegate ${updated.fullName}!`,
     };
   }
 }

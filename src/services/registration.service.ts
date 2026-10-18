@@ -27,14 +27,14 @@ export class RegistrationService {
   public calculateFee(participantType: ParticipantType, currency: "VND" | "USD" = "VND"): number {
     const tier = REGISTRATION_FEES[participantType];
     if (!tier) {
-      throw new Error("Loại hình đại biểu không hợp lệ.");
+      throw new Error("Invalid delegate registration category.");
     }
     return currency === "USD" ? tier.usd : tier.vnd;
   }
 
   public async createRegistration(input: CreateRegistrationInput) {
     if (input.participantType === "AUTHOR" && !input.paperId) {
-      throw new Error("Đại biểu Tác giả bắt buộc phải nhập Mã bài báo.");
+      throw new Error("Author delegates must provide an accepted Paper ID.");
     }
 
     const currency = input.currency || "VND";

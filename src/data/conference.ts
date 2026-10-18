@@ -429,10 +429,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "ben-thanh",
     name: "Ben Thanh Market",
-    vietnameseName: "Chợ Bến Thành",
+    vietnameseName: "Central Heritage Market",
     location: "Ben Thanh Ward, District 1, Ho Chi Minh City",
-    openingHours: "7:00 AM – 7:00 PM (Night market outside until 10:00 PM)",
-    distanceFromVenue: "~1.0 km (12 mins walk / 4 mins taxi)",
+    openingHours: "7:00 AM – 7:00 PM",
+    distanceFromVenue: "~1.0 km • 12 mins walk",
     badge: "Iconic Landmark",
     description:
       "One of Saigon's earliest surviving historic structures and a vibrant symbol of the city. Delegates can browse authentic handicrafts, lacquerware, textiles, Vietnamese coffee, and experience local street gastronomy.",
@@ -442,10 +442,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "post-office",
     name: "Saigon Central Post Office",
-    vietnameseName: "Bưu điện Trung tâm Sài Gòn",
+    vietnameseName: "19th-Century Colonial Post Office",
     location: "02 Paris Commune, Ben Nghe Ward, District 1, Ho Chi Minh City",
-    openingHours: "7:30 AM – 6:00 PM (Mon–Sat) • 8:00 AM – 5:00 PM (Sun)",
-    distanceFromVenue: "~650 m (8 mins walk)",
+    openingHours: "7:30 AM – 6:00 PM",
+    distanceFromVenue: "~650 m • 8 mins walk",
     badge: "French Heritage",
     description:
       "Designed in the late 19th century with striking French colonial architecture and vaulted iron beams. Still a fully functioning post office where visitors can send vintage postcards worldwide.",
@@ -455,10 +455,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "notre-dame",
     name: "Saigon Notre Dame Cathedral",
-    vietnameseName: "Nhà thờ Đức Bà Sài Gòn",
+    vietnameseName: "Historic Neo-Romanesque Basilica",
     location: "01 Paris Commune, Ben Nghe Ward, District 1, Ho Chi Minh City",
-    openingHours: "8:00 AM – 10:30 AM & 2:30 PM – 3:30 PM (Mon–Fri)",
-    distanceFromVenue: "~650 m (8 mins walk)",
+    openingHours: "8:00 AM – 4:30 PM",
+    distanceFromVenue: "~650 m • 8 mins walk",
     badge: "Architectural Marvel",
     description:
       "Established between 1863 and 1880, this neo-Romanesque cathedral features twin 58-meter bell towers built entirely from imported French red bricks that have retained their warm color for over a century.",
@@ -468,10 +468,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "fine-arts",
     name: "Ho Chi Minh City Museum of Fine Arts",
-    vietnameseName: "Bảo tàng Mỹ thuật TP. Hồ Chí Minh",
+    vietnameseName: "Art Deco Heritage Gallery",
     location: "97A Pho Duc Chinh Street, Nguyen Thai Binh Ward, District 1",
-    openingHours: "8:00 AM – 5:00 PM (Open daily)",
-    distanceFromVenue: "~1.2 km (15 mins walk / 5 mins taxi)",
+    openingHours: "8:00 AM – 5:00 PM",
+    distanceFromVenue: "~1.2 km • 15 mins walk",
     badge: "Art & Culture",
     description:
       "Housed in a gorgeous yellow French-Chinese Art Deco colonial mansion, showcasing masterpieces of Vietnamese painting, historic silk paintings, contemporary sculptures, and lacquer art.",
@@ -481,10 +481,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "independence-palace",
     name: "Independence Palace",
-    vietnameseName: "Dinh Độc Lập / Hội trường Thống Nhất",
+    vietnameseName: "Reunification Hall",
     location: "135 Nam Ky Khoi Nghia Street, Ben Thanh Ward, District 1",
-    openingHours: "8:30 AM – 4:30 PM (Open daily)",
-    distanceFromVenue: "~1.1 km (14 mins walk / 4 mins taxi)",
+    openingHours: "8:30 AM – 4:30 PM",
+    distanceFromVenue: "~1.1 km • 14 mins walk",
     badge: "National Monument",
     description:
       "A landmark of Vietnamese modern history with 1960s modernist architecture designed by Ngo Viet Thu. Features expansive reception chambers, presidential offices, and historic underground telecommunication bunkers.",
@@ -494,10 +494,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "war-museum",
     name: "War Remnants Museum",
-    vietnameseName: "Bảo tàng Chứng tích Chiến tranh",
+    vietnameseName: "Modern History & Peace Museum",
     location: "28 Vo Van Tan Street, Vo Thi Sau Ward, District 3",
-    openingHours: "7:30 AM – 5:30 PM (Open daily)",
-    distanceFromVenue: "~2.0 km (8 mins taxi / Grab)",
+    openingHours: "7:30 AM – 5:30 PM",
+    distanceFromVenue: "~2.0 km • 8 mins taxi",
     badge: "Historical Insight",
     description:
       "One of Vietnam's most visited museums, offering deep insights into the nation's wartime past, international peace movements, historic military aircraft displays, and Pulitzer-winning photojournalism collections.",
@@ -507,10 +507,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "nguyen-hue",
     name: "Nguyen Hue Walking Street",
-    vietnameseName: "Phố đi bộ Nguyễn Huệ",
+    vietnameseName: "Downtown Pedestrian Promenade",
     location: "Nguyen Hue Boulevard, Ben Nghe Ward, District 1",
-    openingHours: "Open 24/7 (Most vibrant in evenings from 6:00 PM)",
-    distanceFromVenue: "150 m (2 mins walk from Sheraton)",
+    openingHours: "Open 24/7",
+    distanceFromVenue: "150 m • 2 mins walk",
     badge: "Steps from Venue",
     description:
       "A grand 64-meter-wide pedestrian promenade stretching from Saigon City Hall to Bach Dang Riverfront. Filled with live street performances, ambient lighting, coffee shops, and panoramic skyline vistas.",
@@ -520,10 +520,10 @@ export const MUST_VISIT_ATTRACTIONS: TouristAttraction[] = [
   {
     id: "cu-chi",
     name: "Cu Chi Tunnels",
-    vietnameseName: "Địa đạo Củ Chi",
+    vietnameseName: "Historic Underground Network",
     location: "TL15, Phu Hiep, Cu Chi District, Ho Chi Minh City",
-    openingHours: "8:00 AM – 5:00 PM (7 days a week)",
-    distanceFromVenue: "~55 km (Recommended half-day tour)",
+    openingHours: "8:00 AM – 5:00 PM",
+    distanceFromVenue: "~55 km • Half-day tour",
     badge: "Subterranean Legend",
     description:
       "An immense 250-km interconnected underground tunnel network demonstrating legendary human ingenuity and resilience. A world-famous excursion accessible via guided bus or scenic Saigon River speedboat.",

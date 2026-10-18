@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type") || "RECEIPT_INVOICE";
 
     if (!code) {
-      return apiError("Thiếu mã đăng ký đại biểu.", 400);
+      return apiError("Missing delegate registration code.", 400);
     }
 
     const document =
@@ -19,6 +19,6 @@ export async function GET(req: NextRequest) {
 
     return apiSuccess({ document });
   } catch (error: unknown) {
-    return apiError(error, 400, "Không thể tạo tài liệu.");
+    return apiError(error, 400, "Unable to generate document.");
   }
 }

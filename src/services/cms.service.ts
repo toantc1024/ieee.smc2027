@@ -94,7 +94,7 @@ export class CmsService {
 
   public async deletePage(id: string) {
     if (id === "home") {
-      throw new Error("Không thể xóa trang chủ mặc định.");
+      throw new Error("Cannot delete the default home page.");
     }
     return prisma.page.delete({ where: { id } });
   }

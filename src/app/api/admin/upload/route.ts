@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const folder = (formData.get("folder") as StorageFolder | null) || "public/uploads";
 
     if (!file) {
-      return apiError("Không tìm thấy file", 400);
+      return apiError("No file provided", 400);
     }
 
     const bytes = await file.arrayBuffer();

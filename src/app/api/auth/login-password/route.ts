@@ -17,16 +17,16 @@ export async function POST(req: NextRequest) {
     const password = body?.password;
 
     if (!email || !password) {
-      return apiError("Vui lòng nhập đầy đủ Email và Mật khẩu", 400);
+      return apiError("Please enter both Email and Password", 400);
     }
 
     const storedHash = await getUserPasswordHash(email);
     if (!storedHash) {
-      return apiError("Tài khoản không tồn tại hoặc chưa được thiết lập mật khẩu", 401);
+      return apiError("Account does not exist or password has not been configured", 401);
     }
 
     if (!verifyPassword(password, storedHash)) {
-      return apiError("Mật khẩu không chính xác", 401);
+      return apiError("Incorrect password", 401);
     }
 
     const name = email.split("@")[0].toUpperCase();
@@ -40,13 +40,13 @@ export async function POST(req: NextRequest) {
 
     const token = await createSessionToken(user);
     const response = apiSuccess({
-      message: "Đăng nhập mật khẩu thành công",
+      message: "Signed in with password successfully",
       user,
     });
 
     return attachSessionCookie(response, token);
   } catch (err) {
     console.error("Password login error:", err);
-    return apiError(err, 500, "Lỗi xử lý đăng nhập mật khẩu");
+    return apiError(err, 500, "Error processing password sign-in");
   }
 }

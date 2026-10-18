@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const { email, name, role = "USER" } = body;
 
     if (!email || !name) {
-      return apiError("Email và tên người dùng là bắt buộc", 400);
+      return apiError("Email and user name are required", 400);
     }
 
     const cleanEmail = normalizeEmail(email);

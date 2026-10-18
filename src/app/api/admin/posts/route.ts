@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     } = body;
 
     if (!title || !content) {
-      return apiError("Tiêu đề và nội dung bài viết không được để trống", 400);
+      return apiError("Post title and content cannot be empty", 400);
     }
 
     const finalSlug = slugify(slug || title);

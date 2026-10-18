@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     if (!fullName || !email || !affiliation || !country || !participantType) {
       return apiError(
-        "Vui lòng điền đầy đủ Họ tên, Email, Đơn vị, Quốc gia và Loại đại biểu.",
+        "Please provide Full Name, Email, Affiliation, Country, and Delegate Category.",
         400
       );
     }
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Registration error:", error);
-    return apiError(error, 400, "Đã xảy ra lỗi khi tạo đơn đăng ký hội nghị.");
+    return apiError(error, 400, "Failed to create conference registration.");
   }
 }
 
@@ -93,7 +93,7 @@ export async function GET(req: NextRequest) {
     if (code) {
       const reg = await registrationService.getByCode(code);
       if (!reg) {
-        return apiError("Không tìm thấy hồ sơ đăng ký với mã này.", 404);
+        return apiError("No registration record found with this code.", 404);
       }
 
       const payment = paymentService.buildVietQrPaymentInfo(
@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
       return apiSuccess({ registrations });
     }
 
-    const { errorResponse } = await requireAdminRequest("Yêu cầu quyền Quản trị viên.");
+    const { errorResponse } = await requireAdminRequest("Administrator privileges required.");
     if (errorResponse) return errorResponse;
 
     const search = searchParams.get("q") || "";
@@ -131,6 +131,6 @@ export async function GET(req: NextRequest) {
     return apiSuccess({ registrations });
   } catch (error: unknown) {
     console.error("Error retrieving registrations:", error);
-    return apiError(error, 500, "Lỗi hệ thống.");
+    return apiError(error, 500, "Internal server error.");
   }
 }

@@ -104,19 +104,27 @@ export function formatUSD(amount: number): string {
 }
 
 /**
- * Format Date in Vietnamese locale (dd/mm/yyyy)
+ * Format Date in English locale
  */
 export function formatDateVi(date?: Date | string | null): string {
   if (!date) return "";
-  return new Date(date).toLocaleDateString("vi-VN");
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 }
 
 /**
- * Format Time in Vietnamese locale (HH:mm:ss)
+ * Format Time in English locale
  */
 export function formatTimeVi(date?: Date | string | null): string {
   if (!date) return "";
-  return new Date(date).toLocaleTimeString("vi-VN");
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 /**
