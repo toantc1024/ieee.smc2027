@@ -51,7 +51,7 @@ export default function PostsManagementPage() {
         setPosts(data.posts);
       }
     } catch {
-      setStatusMessage({ type: "error", text: "Không thể tải danh sách bài viết" });
+      setStatusMessage({ type: "error", text: "Unable to load posts" });
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export default function PostsManagementPage() {
   }, []);
 
   const handleDeletePost = async (id: string, title: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa bài viết "${title}"?`)) return;
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
     setActionLoading(true);
     try {
@@ -70,11 +70,11 @@ export default function PostsManagementPage() {
         method: "DELETE",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Lỗi xóa bài viết");
-      setStatusMessage({ type: "success", text: "Đã xóa bài viết thành công!" });
+      if (!res.ok) throw new Error(data.error || "Failed to delete post");
+      setStatusMessage({ type: "success", text: "Post deleted successfully!" });
       fetchPosts();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi khi xóa bài viết";
+      const message = err instanceof Error ? err.message : "Failed to delete post";
       setStatusMessage({ type: "error", text: message });
     } finally {
       setActionLoading(false);
@@ -91,14 +91,14 @@ export default function PostsManagementPage() {
         body: JSON.stringify({ status: nextStatus }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Lỗi cập nhật trạng thái");
+      if (!res.ok) throw new Error(data.error || "Failed to update status");
       setStatusMessage({
         type: "success",
-        text: `Đã chuyển trạng thái sang ${nextStatus}!`,
+        text: `Status updated to ${nextStatus}!`,
       });
       fetchPosts();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi khi cập nhật";
+      const message = err instanceof Error ? err.message : "Failed to update post";
       setStatusMessage({ type: "error", text: message });
     } finally {
       setActionLoading(false);
@@ -120,10 +120,10 @@ export default function PostsManagementPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#004776] flex items-center gap-2.5">
             <FileText className="w-6 h-6 text-[#115eff]" />
-            <span>Quản Lý Bài Viết & Thông Báo (Posts)</span>
+            <span>Posts &amp; Announcements</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Soạn thảo và đăng thông báo hội nghị với trình biên tập Tiptap và hỗ trợ tải ảnh trực tiếp
+            Compose and publish conference news and announcements with rich text and direct image uploads
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function PostsManagementPage() {
             onClick={fetchPosts}
             disabled={loading}
             className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors cursor-pointer"
-            title="Làm mới"
+            title="Refresh"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -142,7 +142,7 @@ export default function PostsManagementPage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-[0.26rem] shadow-xs transition-colors"
           >
             <Plus className="w-4 h-4" />
-            <span>Viết Bài Mới (Tiptap)</span>
+            <span>New Post</span>
           </Link>
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function PostsManagementPage() {
             onClick={() => setStatusMessage(null)}
             className="text-xs font-bold hover:underline cursor-pointer"
           >
-            Đóng
+            Close
           </button>
         </div>
       )}
@@ -179,7 +179,7 @@ export default function PostsManagementPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Tìm theo tiêu đề bài viết hoặc slug..."
+            placeholder="Search by post title or slug..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white transition-colors"
@@ -188,19 +188,19 @@ export default function PostsManagementPage() {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
-            Trạng thái:
+            Status:
           </span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] text-[#004776]"
           >
-            <option value="ALL">Tất cả ({posts.length})</option>
+            <option value="ALL">All ({posts.length})</option>
             <option value="PUBLISHED">
-              Đã xuất bản ({posts.filter((p) => p.status === "PUBLISHED").length})
+              Published ({posts.filter((p) => p.status === "PUBLISHED").length})
             </option>
             <option value="DRAFT">
-              Bản nháp ({posts.filter((p) => p.status === "DRAFT").length})
+              Draft ({posts.filter((p) => p.status === "DRAFT").length})
             </option>
           </select>
         </div>
@@ -212,12 +212,12 @@ export default function PostsManagementPage() {
           <table className="w-full text-left text-sm text-slate-700">
             <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-[#004776] border-b border-slate-200">
               <tr>
-                <th className="py-3.5 px-4 sm:px-6">Tiêu đề bài viết</th>
-                <th className="py-3.5 px-4">Chuyên mục</th>
-                <th className="py-3.5 px-4">Trạng thái</th>
-                <th className="py-3.5 px-4">Lượt xem</th>
-                <th className="py-3.5 px-4">Ngày tạo</th>
-                <th className="py-3.5 px-4 sm:px-6 text-right">Thao tác</th>
+                <th className="py-3.5 px-4 sm:px-6">Title</th>
+                <th className="py-3.5 px-4">Category</th>
+                <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Views</th>
+                <th className="py-3.5 px-4">Created</th>
+                <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -226,14 +226,14 @@ export default function PostsManagementPage() {
                   <td colSpan={6} className="py-12 text-center text-slate-400">
                     <div className="flex items-center justify-center gap-2">
                       <RefreshCw className="w-5 h-5 animate-spin text-[#115eff]" />
-                      <span>Đang tải danh sách bài viết...</span>
+                      <span>Loading posts...</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredPosts.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-500">
-                    Chưa có bài viết nào. Hãy bấm &ldquo;Viết Bài Mới&rdquo; để thêm!
+                    No posts found. Click &ldquo;New Post&rdquo; to create one.
                   </td>
                 </tr>
               ) : (
@@ -271,9 +271,9 @@ export default function PostsManagementPage() {
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
                             : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                         }`}
-                        title="Bấm để đổi trạng thái"
+                        title="Click to toggle status"
                       >
-                        {post.status === "PUBLISHED" ? "Đã đăng" : "Bản nháp"}
+                        {post.status === "PUBLISHED" ? "Published" : "Draft"}
                       </button>
                     </td>
 
@@ -285,7 +285,7 @@ export default function PostsManagementPage() {
                     </td>
 
                     <td className="py-3.5 px-4 text-xs text-slate-500 whitespace-nowrap">
-                      {new Date(post.createdAt).toLocaleDateString("vi-VN")}
+                      {new Date(post.createdAt).toLocaleDateString("en-US")}
                     </td>
 
                     <td className="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">
@@ -293,7 +293,7 @@ export default function PostsManagementPage() {
                         <Link
                           href={`/admin/posts/${post.id}`}
                           className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded transition-colors"
-                          title="Chỉnh sửa bài viết"
+                          title="Edit post"
                         >
                           <Edit className="w-4 h-4" />
                         </Link>
@@ -302,7 +302,7 @@ export default function PostsManagementPage() {
                           onClick={() => handleDeletePost(post.id, post.title)}
                           disabled={actionLoading}
                           className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
-                          title="Xóa bài viết"
+                          title="Delete post"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

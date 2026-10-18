@@ -14,13 +14,16 @@ export function AdminHeader({ user }: AdminHeaderProps) {
   const pathname = usePathname();
 
   const getBreadcrumbTitle = () => {
-    if (pathname === "/admin") return "Tổng quan hệ thống";
-    if (pathname.startsWith("/admin/pages")) return "Cấu trúc trang (Tree Pages)";
-    if (pathname.startsWith("/admin/posts")) return "Quản lý bài viết";
-    if (pathname.startsWith("/admin/users")) return "Quản trị người dùng";
+    if (pathname === "/admin") return "System Overview";
+    if (pathname.startsWith("/admin/pages")) return "Page Hierarchy";
+    if (pathname.startsWith("/admin/posts")) return "Posts & Announcements";
+    if (pathname.startsWith("/admin/users")) return "User Management";
     if (pathname.startsWith("/admin/oauth")) return "OAuth & AI Agent";
-    if (pathname.startsWith("/admin/header")) return "Cấu hình Header & Menu";
-    return "Quản trị";
+    if (pathname.startsWith("/admin/header")) return "Header & Menu";
+    if (pathname.startsWith("/admin/registrations")) return "Registrations & Payments";
+    if (pathname.startsWith("/admin/checkin")) return "QR Check-in";
+    if (pathname.startsWith("/admin/broadcast")) return "Email Broadcast";
+    return "Administration";
   };
 
   return (
@@ -51,7 +54,7 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             target="_blank"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-md transition-colors shadow-2xs"
           >
-            <span className="hidden sm:inline">Xem website</span>
+            <span className="hidden sm:inline">View Website</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
           </Link>
         </div>

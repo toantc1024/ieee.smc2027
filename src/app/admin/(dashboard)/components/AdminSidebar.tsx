@@ -32,7 +32,7 @@ interface AdminSidebarProps {
 
 const NAV_GROUPS = [
   {
-    title: "TỔNG QUAN",
+    title: "OVERVIEW",
     items: [
       {
         name: "Dashboard",
@@ -43,23 +43,23 @@ const NAV_GROUPS = [
     ],
   },
   {
-    title: "ĐẠI BIỂU & ĐỐI SOÁT",
+    title: "DELEGATES & RECONCILIATION",
     items: [
       {
-        name: "Đăng ký & Đối soát",
+        name: "Registrations & Payments",
         href: "/admin/registrations",
         icon: CreditCard,
         exact: false,
         badge: "VietQR",
       },
       {
-        name: "Quét QR Điểm danh",
+        name: "QR Check-in",
         href: "/admin/checkin",
         icon: QrCode,
         exact: false,
       },
       {
-        name: "Gửi Email hàng loạt",
+        name: "Email Broadcast",
         href: "/admin/broadcast",
         icon: Send,
         exact: false,
@@ -67,23 +67,23 @@ const NAV_GROUPS = [
     ],
   },
   {
-    title: "NỘI DUNG & CẤU TRÚC",
+    title: "CONTENT & STRUCTURE",
     items: [
       {
-        name: "Cấu trúc trang (Tree Pages)",
+        name: "Page Hierarchy",
         href: "/admin/pages",
         icon: Layers,
         exact: false,
         badge: "Tree",
       },
       {
-        name: "Bài viết & Tin tức",
+        name: "Posts & News",
         href: "/admin/posts",
         icon: FileText,
         exact: false,
       },
       {
-        name: "Cấu hình Header & Menu",
+        name: "Header & Navigation",
         href: "/admin/header",
         icon: PanelTop,
         exact: false,
@@ -91,10 +91,10 @@ const NAV_GROUPS = [
     ],
   },
   {
-    title: "BẢO MẬT & CÀI ĐẶT",
+    title: "SECURITY & SETTINGS",
     items: [
       {
-        name: "Quản trị người dùng",
+        name: "User Management",
         href: "/admin/users",
         icon: Users,
         exact: false,
@@ -185,7 +185,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             type="button"
             onClick={toggleCollapsed}
             className="hidden lg:flex p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-md transition-colors cursor-pointer"
-            title={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
               <ChevronRight className="w-4 h-4" />
@@ -263,7 +263,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           {!collapsed && (
             <div className="pt-3 border-t border-slate-200/80 space-y-1">
               <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                TRANG NGOÀI
+                EXTERNAL LINKS
               </div>
               <Link
                 href="/"
@@ -272,7 +272,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               >
                 <div className="flex items-center gap-2">
                   <Globe className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Xem trang chủ</span>
+                  <span>View Homepage</span>
                 </div>
                 <ExternalLink className="w-3 h-3 text-slate-400" />
               </Link>
@@ -322,7 +322,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  title="Đăng xuất"
+                  title="Sign Out"
                   className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
                   aria-label="Logout"
                 >

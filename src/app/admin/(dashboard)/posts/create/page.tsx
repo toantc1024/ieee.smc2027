@@ -62,10 +62,10 @@ export default function CreatePostPage() {
       if (data.url) {
         setCoverImage(data.url);
       } else {
-        alert(data.error || "Lỗi tải ảnh bìa");
+        alert(data.error || "Failed to upload cover image");
       }
     } catch {
-      alert("Không thể tải ảnh bìa lên");
+      alert("Unable to upload cover image");
     } finally {
       setUploadingCover(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -74,11 +74,11 @@ export default function CreatePostPage() {
 
   const handleSubmit = async (submitStatus: "DRAFT" | "PUBLISHED") => {
     if (!title.trim()) {
-      setError("Vui lòng nhập tiêu đề bài viết");
+      setError("Please enter a post title");
       return;
     }
     if (!content.trim() || content === "<p></p>") {
-      setError("Vui lòng nhập nội dung bài viết trong trình soạn thảo");
+      setError("Please enter post content in the editor");
       return;
     }
 
@@ -102,12 +102,12 @@ export default function CreatePostPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Lỗi tạo bài viết");
+        throw new Error(data.error || "Failed to create post");
       }
 
       router.push("/admin/posts");
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi lưu bài viết";
+      const message = err instanceof Error ? err.message : "Failed to save post";
       setError(message);
     } finally {
       setLoading(false);
@@ -127,10 +127,10 @@ export default function CreatePostPage() {
           </Link>
           <div>
             <h1 className="text-xl font-extrabold text-[#004776]">
-              Viết Bài Mới (Tiptap Rich Editor)
+              Create New Post
             </h1>
             <p className="text-xs text-slate-500">
-              Đăng tin tức, hướng dẫn nộp bài, hoặc thông báo chính thức của IEEE SMC 2027
+              Publish news, submission guidelines, or official announcements for IEEE SMC 2027
             </p>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function CreatePostPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[0.26rem] bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>Lưu Nháp</span>
+            <span>Save Draft</span>
           </button>
 
           <button
@@ -153,7 +153,7 @@ export default function CreatePostPage() {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[0.26rem] bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>{loading ? "Đang xuất bản..." : "Xuất Bản Bài Viết"}</span>
+            <span>{loading ? "Publishing..." : "Publish Post"}</span>
           </button>
         </div>
       </div>
@@ -172,12 +172,12 @@ export default function CreatePostPage() {
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Tiêu đề bài viết *
+                Post Title *
               </label>
               <input
                 type="text"
                 required
-                placeholder="Nhập tiêu đề thông báo hội nghị..."
+                placeholder="Enter conference announcement title..."
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-base font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white"
@@ -186,13 +186,13 @@ export default function CreatePostPage() {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Đường dẫn slug
+                URL Slug
               </label>
               <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-3 text-xs text-slate-500 font-mono">
                 <span>/posts/</span>
                 <input
                   type="text"
-                  placeholder="duong-dan-bai-viet"
+                  placeholder="post-url-slug"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   className="w-full py-2 pl-1 bg-transparent focus:outline-none text-slate-800 font-bold"
@@ -202,11 +202,11 @@ export default function CreatePostPage() {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Tóm tắt ngắn (Excerpt)
+                Summary
               </label>
               <textarea
                 rows={3}
-                placeholder="Tóm tắt ngắn gọn hiển thị trên trang chủ và danh sách tin tức..."
+                placeholder="Short excerpt displayed on the homepage and news list..."
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white leading-relaxed"
@@ -218,17 +218,17 @@ export default function CreatePostPage() {
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-2">
             <div className="flex items-center justify-between mb-1">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                Nội dung chi tiết (Tiptap Editor & Image Upload) *
+                Post Content *
               </label>
               <span className="text-[11px] text-slate-400">
-                Hỗ trợ tải ảnh trực tiếp, định dạng tiêu đề, danh sách, trích dẫn
+                Supports image uploads, headings, lists, and quotes
               </span>
             </div>
 
             <TiptapEditor
               content={content}
               onChange={setContent}
-              placeholder="Bắt đầu soạn thảo nội dung..."
+              placeholder="Start writing your post..."
             />
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function CreatePostPage() {
           {/* Cover Image Upload Card */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-              Ảnh bìa bài viết (Cover Image)
+              Cover Image
             </label>
 
             {coverImage ? (
@@ -254,14 +254,14 @@ export default function CreatePostPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="px-2.5 py-1.5 bg-white text-xs font-bold rounded shadow-xs cursor-pointer"
                   >
-                    Đổi ảnh
+                    Change Image
                   </button>
                   <button
                     type="button"
                     onClick={() => setCoverImage("")}
                     className="px-2.5 py-1.5 bg-rose-600 text-white text-xs font-bold rounded shadow-xs cursor-pointer"
                   >
-                    Xóa
+                    Remove
                   </button>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function CreatePostPage() {
               >
                 <Upload className="w-6 h-6 text-slate-400" />
                 <span className="text-xs font-bold text-[#115eff]">
-                  {uploadingCover ? "Đang tải lên..." : "Tải ảnh từ máy tính"}
+                  {uploadingCover ? "Uploading..." : "Upload from computer"}
                 </span>
                 <span className="text-[11px] text-slate-400">PNG, JPG, WebP</span>
               </div>
@@ -288,7 +288,7 @@ export default function CreatePostPage() {
 
             <div>
               <span className="text-[11px] text-slate-500 block mb-1">
-                Hoặc dán URL ảnh trực tiếp:
+                Or paste direct image URL:
               </span>
               <input
                 type="url"
@@ -304,25 +304,25 @@ export default function CreatePostPage() {
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Chuyên mục (Category)
+                Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 text-xs sm:text-sm font-semibold text-[#004776] bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
               >
-                <option value="Announcements">Announcements (Thông báo)</option>
-                <option value="CFP">Call for Papers (Kêu gọi bài viết)</option>
-                <option value="Venue">Venue & Travel (Địa điểm & Lưu trú)</option>
-                <option value="Keynotes">Keynotes & Speakers (Diễn giả)</option>
-                <option value="Workshops">Workshops & Tutorials</option>
-                <option value="General">General (Tin tức chung)</option>
+                <option value="Announcements">Announcements</option>
+                <option value="CFP">Call for Papers</option>
+                <option value="Venue">Venue &amp; Travel</option>
+                <option value="Keynotes">Keynotes &amp; Speakers</option>
+                <option value="Workshops">Workshops &amp; Tutorials</option>
+                <option value="General">General News</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Trạng thái xuất bản
+                Publication Status
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -334,7 +334,7 @@ export default function CreatePostPage() {
                       : "border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  Bản nháp (Draft)
+                  Draft
                 </button>
                 <button
                   type="button"
@@ -345,7 +345,7 @@ export default function CreatePostPage() {
                       : "border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  Xuất bản (Public)
+                  Published
                 </button>
               </div>
             </div>

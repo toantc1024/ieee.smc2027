@@ -8,19 +8,19 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   {
-    name: "Tổng quan",
+    name: "Overview",
     href: "/admin",
     icon: LayoutDashboard,
     exact: true,
   },
   {
-    name: "Quản lý trang (Drag & Drop)",
+    name: "Pages",
     href: "/admin/pages",
     icon: Layers,
     exact: false,
   },
   {
-    name: "Sửa Header",
+    name: "Header",
     href: "/admin/header",
     icon: PanelTop,
     exact: false,

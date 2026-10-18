@@ -53,11 +53,11 @@ export default function EditPostPage({
           setCategory(data.post.category || "Announcements");
           setStatus(data.post.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT");
         } else {
-          setError(data.error || "Không tìm thấy bài viết");
+          setError(data.error || "Post not found");
         }
       })
       .catch((err) => {
-        setError(err.message || "Lỗi tải dữ liệu bài viết");
+        setError(err.message || "Failed to load post data");
       })
       .finally(() => setPageLoading(false));
   }, [id]);
@@ -80,10 +80,10 @@ export default function EditPostPage({
       if (data.url) {
         setCoverImage(data.url);
       } else {
-        alert(data.error || "Lỗi tải ảnh bìa");
+        alert(data.error || "Failed to upload cover image");
       }
     } catch {
-      alert("Không thể tải ảnh bìa lên");
+      alert("Unable to upload cover image");
     } finally {
       setUploadingCover(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -92,11 +92,11 @@ export default function EditPostPage({
 
   const handleUpdate = async (newStatus?: "DRAFT" | "PUBLISHED") => {
     if (!title.trim()) {
-      setError("Vui lòng nhập tiêu đề bài viết");
+      setError("Please enter a post title");
       return;
     }
     if (!content.trim() || content === "<p></p>") {
-      setError("Vui lòng nhập nội dung bài viết");
+      setError("Please enter post content");
       return;
     }
 
@@ -123,14 +123,14 @@ export default function EditPostPage({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Lỗi cập nhật bài viết");
+        throw new Error(data.error || "Failed to update post");
       }
 
       setStatus(submitStatus);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi lưu bài viết";
+      const message = err instanceof Error ? err.message : "Failed to save post";
       setError(message);
     } finally {
       setLoading(false);
@@ -138,7 +138,7 @@ export default function EditPostPage({
   };
 
   const handleDelete = async () => {
-    if (!confirm("Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.")) {
+    if (!confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
       return;
     }
 
@@ -149,10 +149,10 @@ export default function EditPostPage({
       if (res.ok) {
         router.push("/admin/posts");
       } else {
-        alert("Lỗi khi xóa bài viết");
+        alert("Failed to delete post");
       }
     } catch {
-      alert("Không thể kết nối đến máy chủ");
+      alert("Unable to connect to server");
     }
   };
 
@@ -160,7 +160,7 @@ export default function EditPostPage({
     return (
       <div className="py-24 text-center text-slate-500 text-sm flex flex-col items-center gap-3">
         <RefreshCw className="w-6 h-6 animate-spin text-[#115eff]" />
-        <span>Đang tải thông tin bài viết...</span>
+        <span>Loading post details...</span>
       </div>
     );
   }
@@ -179,7 +179,7 @@ export default function EditPostPage({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-[#004776]">
-                Chỉnh Sửa Bài Viết
+                Edit Post
               </h1>
               <span
                 className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
@@ -188,11 +188,11 @@ export default function EditPostPage({
                     : "bg-slate-100 text-slate-600"
                 }`}
               >
-                {status === "PUBLISHED" ? "Đã Xuất Bản" : "Bản Nháp"}
+                {status === "PUBLISHED" ? "Published" : "Draft"}
               </span>
             </div>
             <p className="text-xs text-slate-500">
-              Cập nhật nội dung, hình ảnh và phân loại cho bài viết hội nghị
+              Update content, cover image, and category for this conference post
             </p>
           </div>
         </div>
@@ -202,10 +202,10 @@ export default function EditPostPage({
             type="button"
             onClick={handleDelete}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[0.26rem] bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors cursor-pointer"
-            title="Xóa bài viết"
+            title="Delete post"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Xóa</span>
+            <span className="hidden sm:inline">Delete</span>
           </button>
 
           {status === "PUBLISHED" ? (
@@ -215,7 +215,7 @@ export default function EditPostPage({
               disabled={loading}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[0.26rem] bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
-              <span>Chuyển Nháp</span>
+              <span>Move to Draft</span>
             </button>
           ) : (
             <button
@@ -225,7 +225,7 @@ export default function EditPostPage({
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[0.26rem] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>Xuất Bản Ngay</span>
+              <span>Publish Now</span>
             </button>
           )}
 
@@ -238,12 +238,12 @@ export default function EditPostPage({
             {savedSuccess ? (
               <>
                 <Check className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Đã lưu!</span>
+                <span>Saved!</span>
               </>
             ) : (
               <>
                 <Save className="w-3.5 h-3.5" />
-                <span>{loading ? "Đang lưu..." : "Cập Nhật"}</span>
+                <span>{loading ? "Saving..." : "Update"}</span>
               </>
             )}
           </button>
@@ -264,12 +264,12 @@ export default function EditPostPage({
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Tiêu đề bài viết *
+                Post Title *
               </label>
               <input
                 type="text"
                 required
-                placeholder="Nhập tiêu đề thông báo hội nghị..."
+                placeholder="Enter conference announcement title..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-base font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white"
@@ -278,13 +278,13 @@ export default function EditPostPage({
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Đường dẫn slug
+                URL Slug
               </label>
               <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-3 text-xs text-slate-500 font-mono">
                 <span>/posts/</span>
                 <input
                   type="text"
-                  placeholder="duong-dan-bai-viet"
+                  placeholder="post-url-slug"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   className="w-full py-2 pl-1 bg-transparent focus:outline-none text-slate-800 font-bold"
@@ -294,11 +294,11 @@ export default function EditPostPage({
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Tóm tắt ngắn (Summary)
+                Summary
               </label>
               <textarea
                 rows={2}
-                placeholder="Tóm tắt 1-2 câu hiển thị ở danh sách bài viết..."
+                placeholder="Short 1-2 sentence excerpt displayed on the posts list..."
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white resize-none"
@@ -309,12 +309,12 @@ export default function EditPostPage({
           {/* Tiptap Rich Text Editor */}
           <div className="space-y-1.5">
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Nội dung bài viết (Tiptap Rich Text Editor) *
+              Post Content *
             </label>
             <TiptapEditor
               content={content}
               onChange={setContent}
-              placeholder="Bắt đầu nhập nội dung bài viết, chèn ảnh, đề mục..."
+              placeholder="Start writing your post content, insert images, headings..."
             />
           </div>
         </div>
@@ -324,38 +324,38 @@ export default function EditPostPage({
           {/* Post Settings */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 pb-2 border-b border-slate-100">
-              Cài đặt bài viết
+              Post Settings
             </h3>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Danh mục (Category)
+                Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
               >
-                <option value="Announcements">Thông Báo Hội Nghị (Announcements)</option>
-                <option value="Call for Papers">Kêu Gọi Nộp Bài (Call for Papers)</option>
-                <option value="Keynote Speakers">Diễn Giả Chính (Keynote Speakers)</option>
-                <option value="Workshops">Phiên Hội Thảo (Workshops)</option>
-                <option value="Venue & Travel">Địa Điểm & Visa (Venue & Travel)</option>
-                <option value="Registration">Đăng Ký & Học Phí (Registration)</option>
+                <option value="Announcements">Announcements</option>
+                <option value="Call for Papers">Call for Papers</option>
+                <option value="Keynote Speakers">Keynote Speakers</option>
+                <option value="Workshops">Workshops</option>
+                <option value="Venue & Travel">Venue &amp; Travel</option>
+                <option value="Registration">Registration</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Trạng thái (Status)
+                Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as "DRAFT" | "PUBLISHED")}
                 className="w-full px-3 py-2 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
               >
-                <option value="PUBLISHED">Xuất bản công khai (PUBLISHED)</option>
-                <option value="DRAFT">Lưu nháp nội bộ (DRAFT)</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="DRAFT">Draft</option>
               </select>
             </div>
           </div>
@@ -363,7 +363,7 @@ export default function EditPostPage({
           {/* Featured Image */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 pb-2 border-b border-slate-100">
-              Ảnh bìa bài viết (Cover Image)
+              Cover Image
             </h3>
 
             {coverImage ? (
@@ -381,13 +381,13 @@ export default function EditPostPage({
                       onClick={() => setCoverImage("")}
                       className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-xs font-bold"
                     >
-                      Gỡ ảnh
+                      Remove Image
                     </button>
                   </div>
                 </div>
                 <input
                   type="text"
-                  placeholder="Hoặc dán URL ảnh trực tiếp..."
+                  placeholder="Or paste direct image URL..."
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
                   className="w-full px-3 py-1.5 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
@@ -403,10 +403,10 @@ export default function EditPostPage({
                     <ImageIcon className="w-5 h-5" />
                   </div>
                   <p className="text-xs font-bold text-slate-700">
-                    {uploadingCover ? "Đang tải ảnh lên..." : "Tải ảnh từ máy tính"}
+                    {uploadingCover ? "Uploading image..." : "Upload from computer"}
                   </p>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    PNG, JPG, WebP tối đa 5MB
+                    PNG, JPG, WebP up to 5MB
                   </p>
                 </div>
 
@@ -423,13 +423,13 @@ export default function EditPostPage({
                     <div className="w-full border-t border-slate-200" />
                   </div>
                   <div className="relative flex justify-center text-[10px] uppercase">
-                    <span className="bg-white px-2 text-slate-400 font-bold">Hoặc</span>
+                    <span className="bg-white px-2 text-slate-400 font-bold">Or</span>
                   </div>
                 </div>
 
                 <input
                   type="text"
-                  placeholder="Dán liên kết ảnh URL..."
+                  placeholder="Paste image URL..."
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
                   className="w-full px-3 py-2 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
