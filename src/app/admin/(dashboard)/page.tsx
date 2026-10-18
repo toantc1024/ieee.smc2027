@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { prisma, withTimeout } from "@/lib";
 import { authService, cmsService } from "@/services";
 import {
   PanelTop,
@@ -29,13 +29,17 @@ interface AdminPageSummary {
 
 export default async function AdminDashboardPage() {
   const user = await authService.getCurrentUser();
-  const pages = (await cmsService.getAllPages().catch(() => [])) as AdminPageSummary[];
+  const pages = (await withTimeout(
+    cmsService.getAllPages().catch(() => []),
+    2500,
+    []
+  )) as AdminPageSummary[];
 
   // Fetch registration stats
   const [totalRegs, paidRegs, checkedInRegs] = await Promise.all([
-    prisma.registration.count().catch(() => 0),
-    prisma.registration.count({ where: { paymentStatus: "PAID" } }).catch(() => 0),
-    prisma.registration.count({ where: { checkInStatus: true } }).catch(() => 0),
+    withTimeout(prisma.registration.count().catch(() => 0), 2500, 0),
+    withTimeout(prisma.registration.count({ where: { paymentStatus: "PAID" } }).catch(() => 0), 2500, 0),
+    withTimeout(prisma.registration.count({ where: { checkInStatus: true } }).catch(() => 0), 2500, 0),
   ]);
 
   return (

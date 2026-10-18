@@ -118,3 +118,25 @@ export function formatTimeVi(date?: Date | string | null): string {
   if (!date) return "";
   return new Date(date).toLocaleTimeString("vi-VN");
 }
+
+/**
+ * Execute a promise with a strict timeout fallback so slow network/DB calls never hang SSR
+ */
+export async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs = 2500,
+  fallbackValue: T
+): Promise<T> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => resolve(fallbackValue), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+

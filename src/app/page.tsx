@@ -1,5 +1,6 @@
 import React from "react";
 import { cmsService } from "@/services";
+import { withTimeout } from "@/lib";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
 import { NewsList } from "@/components/sections/NewsList";
@@ -92,7 +93,11 @@ export default async function Home() {
   let blocks: PageBlockItem[] = [];
 
   try {
-    const homePage = await cmsService.getPageByIdOrSlug("home");
+    const homePage = await withTimeout(
+      cmsService.getPageByIdOrSlug("home"),
+      2500,
+      null
+    );
     if (homePage && Array.isArray(homePage.blocks)) {
       blocks = homePage.blocks as unknown as PageBlockItem[];
     }
