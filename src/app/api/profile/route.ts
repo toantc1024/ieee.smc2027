@@ -9,8 +9,13 @@ export async function GET() {
       return apiError("Authentication required", 401);
     }
 
-    const dbUser = await prisma.user.findUnique({
-      where: { id: sessionUser.id },
+    const dbUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: sessionUser.id },
+          { email: sessionUser.email },
+        ],
+      },
       select: {
         id: true,
         email: true,
@@ -49,8 +54,13 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const { name, avatar, profileData } = body;
 
-    const current = await prisma.user.findUnique({
-      where: { id: sessionUser.id },
+    const current = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: sessionUser.id },
+          { email: sessionUser.email },
+        ],
+      },
     });
     if (!current) {
       return apiError("User account not found", 404);

@@ -29,9 +29,20 @@ function createPrismaClient(): PrismaClient {
   return client;
 }
 
+function isClientValid(client: unknown): boolean {
+  if (!client || typeof client !== "object") return false;
+  const c = client as Record<string, unknown> & {
+    _runtimeDataModel?: { models?: { User?: { fields?: Array<{ name: string }> } } };
+  };
+  const hasModels = Boolean(c.registration && c.mediaFile && c.emailTemplate);
+  const userFields = c._runtimeDataModel?.models?.User?.fields;
+  const hasProfileData = Array.isArray(userFields) && userFields.some((f) => f.name === "profileData");
+  return hasModels && hasProfileData;
+}
+
 export const prisma =
-  globalForPrisma.prisma && (globalForPrisma.prisma as unknown as Record<string, unknown>).registration
-    ? globalForPrisma.prisma
+  isClientValid(globalForPrisma.prisma)
+    ? (globalForPrisma.prisma as PrismaClient)
     : createPrismaClient();
 
 if (env.isDev) {
