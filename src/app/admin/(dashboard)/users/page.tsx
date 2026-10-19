@@ -52,7 +52,7 @@ export default function UsersManagementPage() {
         setUsers(data.users);
       }
     } catch {
-      setStatusMessage({ type: "error", text: "Không thể tải danh sách người dùng" });
+      setStatusMessage({ type: "error", text: "Unable to load users list" });
     } finally {
       setLoading(false);
     }
@@ -73,15 +73,15 @@ export default function UsersManagementPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Lỗi cập nhật vai trò");
+        throw new Error(data.error || "Failed to update role");
       }
       setStatusMessage({
         type: "success",
-        text: `Đã cập nhật vai trò thành công sang ${targetRole}!`,
+        text: `Role updated to ${targetRole} successfully!`,
       });
       fetchUsers();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi khi cập nhật";
+      const message = err instanceof Error ? err.message : "Error updating role";
       setStatusMessage({ type: "error", text: message });
     } finally {
       setActionLoading(false);
@@ -89,7 +89,7 @@ export default function UsersManagementPage() {
   };
 
   const handleDeleteUser = async (userId: string, email: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa tài khoản "${email}"?`)) return;
+    if (!confirm(`Are you sure you want to delete account "${email}"?`)) return;
 
     setActionLoading(true);
     setStatusMessage(null);
@@ -99,12 +99,12 @@ export default function UsersManagementPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Lỗi khi xóa người dùng");
+        throw new Error(data.error || "Failed to delete user");
       }
-      setStatusMessage({ type: "success", text: "Đã xóa người dùng thành công!" });
+      setStatusMessage({ type: "success", text: "User deleted successfully!" });
       fetchUsers();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi khi xóa";
+      const message = err instanceof Error ? err.message : "Error deleting user";
       setStatusMessage({ type: "error", text: message });
     } finally {
       setActionLoading(false);
@@ -125,18 +125,18 @@ export default function UsersManagementPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Lỗi tạo người dùng");
+        throw new Error(data.error || "Failed to create user");
       }
       setStatusMessage({
         type: "success",
-        text: `Đã thêm người dùng "${newEmail}" (${newRole}) thành công!`,
+        text: `Added user "${newEmail}" as ${newRole} successfully!`,
       });
       setShowAddModal(false);
       setNewEmail("");
       setNewName("");
       fetchUsers();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lỗi khi tạo người dùng";
+      const message = err instanceof Error ? err.message : "Error creating user";
       setStatusMessage({ type: "error", text: message });
     } finally {
       setActionLoading(false);
@@ -158,10 +158,10 @@ export default function UsersManagementPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#004776] flex items-center gap-2.5">
             <Users className="w-6 h-6 text-[#115eff]" />
-            <span>Quản Lý Người Dùng & Phân Quyền</span>
+            <span>Users & Permissions</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Quản trị tài khoản hội nghị, phân quyền vai trò (chỉ gồm <strong>ADMIN</strong> và <strong>USER</strong>)
+            Manage conference accounts and assign access roles across <strong>ADMIN</strong> and <strong>USER</strong> levels.
           </p>
         </div>
 
@@ -170,7 +170,7 @@ export default function UsersManagementPage() {
             onClick={fetchUsers}
             disabled={loading}
             className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors cursor-pointer"
-            title="Làm mới danh sách"
+            title="Refresh list"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -180,7 +180,7 @@ export default function UsersManagementPage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-[0.26rem] shadow-xs transition-colors cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            <span>Thêm Người Dùng</span>
+            <span>Add User</span>
           </button>
         </div>
       </div>
@@ -206,7 +206,7 @@ export default function UsersManagementPage() {
             onClick={() => setStatusMessage(null)}
             className="text-xs font-bold hover:underline cursor-pointer"
           >
-            Đóng
+            Dismiss
           </button>
         </div>
       )}
@@ -217,7 +217,7 @@ export default function UsersManagementPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Tìm theo email hoặc họ tên..."
+            placeholder="Search by email or full name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white transition-colors"
@@ -226,16 +226,16 @@ export default function UsersManagementPage() {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
-            Lọc vai trò:
+            Filter Role:
           </span>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] text-[#004776]"
           >
-            <option value="ALL">Tất cả ({users.length})</option>
-            <option value="ADMIN">ADMIN ({users.filter((u) => u.role === "ADMIN").length})</option>
-            <option value="USER">USER ({users.filter((u) => u.role === "USER").length})</option>
+            <option value="ALL">All Roles</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="USER">USER</option>
           </select>
         </div>
       </div>
@@ -246,12 +246,12 @@ export default function UsersManagementPage() {
           <table className="w-full text-left text-sm text-slate-700">
             <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-[#004776] border-b border-slate-200">
               <tr>
-                <th className="py-3.5 px-4 sm:px-6">Người dùng</th>
+                <th className="py-3.5 px-4 sm:px-6">User</th>
                 <th className="py-3.5 px-4">Email</th>
-                <th className="py-3.5 px-4">Vai trò (Role)</th>
-                <th className="py-3.5 px-4">Phương thức</th>
-                <th className="py-3.5 px-4">Ngày tham gia</th>
-                <th className="py-3.5 px-4 sm:px-6 text-right">Thao tác</th>
+                <th className="py-3.5 px-4">Role</th>
+                <th className="py-3.5 px-4">Provider</th>
+                <th className="py-3.5 px-4">Joined</th>
+                <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -260,14 +260,14 @@ export default function UsersManagementPage() {
                   <td colSpan={6} className="py-12 text-center text-slate-400">
                     <div className="flex items-center justify-center gap-2">
                       <RefreshCw className="w-5 h-5 animate-spin text-[#115eff]" />
-                      <span>Đang tải danh sách người dùng...</span>
+                      <span>Loading users...</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-500">
-                    Không tìm thấy người dùng phù hợp.
+                    No matching users found.
                   </td>
                 </tr>
               ) : (
@@ -347,7 +347,7 @@ export default function UsersManagementPage() {
                       </td>
 
                       <td className="py-3.5 px-4 text-xs text-slate-500">
-                        {new Date(item.createdAt).toLocaleDateString("vi-VN")}
+                        {new Date(item.createdAt).toLocaleDateString("en-US")}
                       </td>
 
                       <td className="py-3.5 px-4 sm:px-6 text-right">
@@ -356,7 +356,7 @@ export default function UsersManagementPage() {
                             onClick={() => handleDeleteUser(item.id, item.email)}
                             disabled={actionLoading}
                             className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
-                            title="Xóa người dùng"
+                            title="Delete user"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -378,7 +378,7 @@ export default function UsersManagementPage() {
             <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
               <h3 className="font-bold text-base text-[#004776] flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-[#115eff]" />
-                <span>Thêm Người Dùng Mới</span>
+                <span>Add New User</span>
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -405,12 +405,12 @@ export default function UsersManagementPage() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                  Họ và tên
+                  Full Name
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Nguyễn Văn A"
+                  placeholder="Dr. Jane Doe"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white"
@@ -419,7 +419,7 @@ export default function UsersManagementPage() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                  Vai trò (Role)
+                  Role
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -433,7 +433,7 @@ export default function UsersManagementPage() {
                   >
                     <div className="text-xs uppercase">USER</div>
                     <div className="text-[11px] text-slate-500 font-normal mt-0.5">
-                      Thành viên thông thường
+                      Standard conference member
                     </div>
                   </button>
 
@@ -451,7 +451,7 @@ export default function UsersManagementPage() {
                       <span>ADMIN</span>
                     </div>
                     <div className="text-[11px] text-slate-500 font-normal mt-0.5">
-                      Toàn quyền quản trị CMS
+                      Full CMS administrator access
                     </div>
                   </button>
                 </div>
@@ -463,14 +463,14 @@ export default function UsersManagementPage() {
                   onClick={() => setShowAddModal(false)}
                   className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
                   className="px-4 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs rounded-md shadow-xs transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {actionLoading ? "Đang xử lý..." : "Lưu Người Dùng"}
+                  {actionLoading ? "Saving..." : "Save User"}
                 </button>
               </div>
             </form>

@@ -21,7 +21,6 @@ import {
   X,
   ArrowLeft,
   Loader2,
-  Sparkles,
   Link2,
   Layers,
   ArrowUpRight,
@@ -47,7 +46,7 @@ function uid() {
 function emptySubLink(): NavSubItem {
   return {
     id: uid(),
-    title: "Liên kết mới",
+    title: "New Link",
     href: "/#",
     description: "",
     icon: "Layers",
@@ -58,7 +57,7 @@ function emptySubLink(): NavSubItem {
 function emptyColumn(): NavColumnItem {
   return {
     id: uid(),
-    title: "Cột mới",
+    title: "New Column",
     links: [emptySubLink()],
   };
 }
@@ -97,7 +96,7 @@ function LinkEditor({
             className="text-slate-400 hover:text-slate-700 p-0.5 transition-colors disabled:opacity-20 cursor-pointer"
             onClick={onMoveUp}
             disabled={isFirst}
-            title="Di chuyển lên"
+            title="Move up"
           >
             <ChevronUp className="size-3" />
           </button>
@@ -106,7 +105,7 @@ function LinkEditor({
             className="text-slate-400 hover:text-slate-700 p-0.5 transition-colors disabled:opacity-20 cursor-pointer"
             onClick={onMoveDown}
             disabled={isLast}
-            title="Di chuyển xuống"
+            title="Move down"
           >
             <ChevronDown className="size-3" />
           </button>
@@ -126,7 +125,7 @@ function LinkEditor({
             <input
               className="h-7 text-xs rounded-md border border-slate-200 bg-white px-2.5 flex-1 min-w-0 font-semibold text-slate-800 focus:outline-none focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]/20"
               value={link.title}
-              placeholder="Tiêu đề liên kết"
+              placeholder="Link title"
               onChange={(e) => update({ title: e.target.value })}
             />
           </div>
@@ -136,7 +135,7 @@ function LinkEditor({
             <input
               className="h-7 text-xs rounded-md border border-slate-200 bg-white px-2.5 font-mono flex-1 min-w-0 text-slate-700 focus:outline-none focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]/20"
               value={link.href}
-              placeholder="/đường-dẫn hoặc https://..."
+              placeholder="/path or https://..."
               onChange={(e) => update({ href: e.target.value })}
             />
             <select
@@ -156,7 +155,7 @@ function LinkEditor({
           <input
             className="h-7 text-[11px] rounded-md border border-slate-200 bg-white px-2.5 w-full text-slate-600 focus:outline-none focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]/20"
             value={link.description || ""}
-            placeholder="Mô tả ngắn (tùy chọn)"
+            placeholder="Short description"
             onChange={(e) => update({ description: e.target.value })}
           />
         </div>
@@ -172,7 +171,7 @@ function LinkEditor({
                 : "bg-slate-100 text-slate-400 hover:text-slate-600"
             )}
             onClick={() => update({ isExternal: !link.isExternal })}
-            title={link.isExternal ? "Mở tab mới (External: Đang bật)" : "Cùng tab (Click để mở tab mới)"}
+            title={link.isExternal ? "Opens in new tab" : "Opens in same tab"}
           >
             <ExternalLink className="size-3" />
           </button>
@@ -180,7 +179,7 @@ function LinkEditor({
             type="button"
             className="size-6 rounded-md flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             onClick={onDelete}
-            title="Xóa liên kết"
+            title="Remove link"
           >
             <Trash2 className="size-3" />
           </button>
@@ -251,20 +250,20 @@ function ColumnEditor({
           <input
             className="h-7 text-xs font-bold rounded-lg border border-slate-200 bg-white px-2.5 flex-1 min-w-0 text-slate-900 focus:outline-none focus:border-[#115eff]"
             value={column.title}
-            placeholder="Tên cột (Ví dụ: Overview & Vision)"
+            placeholder="Column title"
             onChange={(e) => onChange({ ...column, title: e.target.value })}
           />
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-            {column.links.length} liên kết
+            {column.links.length} links
           </span>
           <button
             type="button"
             className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             onClick={onDelete}
-            title="Xóa cột này"
+            title="Delete column"
           >
             <Trash2 className="size-3.5" />
           </button>
@@ -294,7 +293,7 @@ function ColumnEditor({
           onClick={addLink}
         >
           <Plus className="size-3" />
-          <span>Thêm liên kết vào cột này</span>
+          <span>Add link to column</span>
         </button>
       </div>
     </div>
@@ -319,12 +318,12 @@ function PromoCardEditor({
       onChange(undefined);
     } else {
       onChange({
-        title: "Tiêu điểm nổi bật",
-        description: "Mô tả ngắn gọn về chương trình, địa điểm hoặc thông tin quan trọng.",
+        title: "Featured Highlight",
+        description: "Brief summary of the program, venue, or key conference announcement.",
         image: "/assets/cta-background.webp",
         href: "/#venue",
-        badge: "Tiêu điểm",
-        ctaText: "Khám phá ngay",
+        badge: "Featured",
+        ctaText: "Explore Now",
       });
     }
   };
@@ -338,11 +337,11 @@ function PromoCardEditor({
     <div className="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-2xs">
       <div className="flex items-center justify-between px-4 py-3 bg-slate-50/80 border-b border-slate-200">
         <div className="flex items-center gap-2">
-          <Sparkles className="size-4 text-amber-500" />
-          <span className="text-xs font-bold text-slate-800">Thẻ Tiêu Điểm (Right Featured Promo Card)</span>
+          <ImageIcon className="size-4 text-[#115eff]" />
+          <span className="text-xs font-bold text-slate-800">Featured Promo Card</span>
         </div>
         <label className="flex items-center gap-2 cursor-pointer">
-          <span className="text-xs text-slate-500">{enabled ? "Bật" : "Tắt"}</span>
+          <span className="text-xs text-slate-500">{enabled ? "Enabled" : "Disabled"}</span>
           <input
             type="checkbox"
             checked={enabled}
@@ -357,45 +356,45 @@ function PromoCardEditor({
           {/* Card Preview */}
           <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-3 space-y-1.5 shadow-xs">
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#115eff] uppercase">
-              {promoCard.badge || "Tiêu điểm"}
+              {promoCard.badge || "Featured"}
             </span>
-            <p className="text-xs font-bold text-slate-900 leading-snug">{promoCard.title || "Tiêu đề thẻ"}</p>
+            <p className="text-xs font-bold text-slate-900 leading-snug">{promoCard.title || "Card Title"}</p>
             <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-              {promoCard.description || "Nội dung mô tả ngắn gọn..."}
+              {promoCard.description || "Short description..."}
             </p>
           </div>
 
           <div className="grid gap-2.5">
             <div>
-              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Huy hiệu (Badge)</label>
+              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Badge</label>
               <input
                 className="w-full h-7 text-xs rounded-lg border border-slate-200 bg-white px-2.5 text-slate-800 focus:outline-none focus:border-[#115eff]"
                 value={promoCard.badge || ""}
                 onChange={(e) => update({ badge: e.target.value })}
-                placeholder="Ví dụ: Host Venue, Submission Portal..."
+                placeholder="Host Venue, Submission Portal..."
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Tiêu đề (Title)</label>
+              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Title</label>
               <input
                 className="w-full h-7 text-xs rounded-lg border border-slate-200 bg-white px-2.5 text-slate-800 focus:outline-none focus:border-[#115eff]"
                 value={promoCard.title}
                 onChange={(e) => update({ title: e.target.value })}
-                placeholder="Tiêu đề thẻ"
+                placeholder="Card title"
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Mô tả (Description)</label>
+              <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Description</label>
               <textarea
                 className="w-full text-xs rounded-lg border border-slate-200 bg-white p-2 text-slate-800 min-h-[50px] resize-none focus:outline-none focus:border-[#115eff]"
                 value={promoCard.description}
                 onChange={(e) => update({ description: e.target.value })}
-                placeholder="Nội dung mô tả ngắn gọn..."
+                placeholder="Short description..."
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">URL Hình ảnh</label>
+                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Image URL</label>
                 <input
                   className="w-full h-7 text-xs rounded-lg border border-slate-200 bg-white px-2.5 font-mono text-slate-700 focus:outline-none focus:border-[#115eff]"
                   value={promoCard.image}
@@ -404,12 +403,12 @@ function PromoCardEditor({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Đường dẫn click</label>
+                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Target URL</label>
                 <input
                   className="w-full h-7 text-xs rounded-lg border border-slate-200 bg-white px-2.5 font-mono text-slate-700 focus:outline-none focus:border-[#115eff]"
                   value={promoCard.href}
                   onChange={(e) => update({ href: e.target.value })}
-                  placeholder="/#venue hoặc https://..."
+                  placeholder="/#venue or https://..."
                 />
               </div>
             </div>
@@ -455,10 +454,10 @@ function MegaMenuEditor({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Columns3 className="size-4 text-[#115eff]" />
-          <h3 className="text-sm font-semibold text-slate-900">Các cột nội dung (Full-Width Columns)</h3>
+          <h3 className="text-sm font-semibold text-slate-900">Full-Width Columns</h3>
         </div>
         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-          {columns.length} cột
+          {columns.length} columns
         </span>
       </div>
 
@@ -486,7 +485,7 @@ function MegaMenuEditor({
         onClick={addColumn}
       >
         <Plus className="size-3.5" />
-        <span>Thêm cột nội dung mới</span>
+        <span>Add New Column</span>
       </button>
 
       <div className="border-t border-slate-200" />
@@ -545,12 +544,12 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
         type: "mega",
         columns: initialCols,
         promoCard: item.promoCard || {
-          title: "Tiêu điểm nổi bật",
-          description: "Mô tả tiêu điểm cho mục " + item.name,
+          title: "Featured Highlight",
+          description: "Featured highlight for " + item.name,
           image: "/assets/cta-background.webp",
           href: item.href || "/#",
-          badge: "Tiêu điểm",
-          ctaText: "Khám phá ngay",
+          badge: "Featured",
+          ctaText: "Explore Now",
         },
       });
     } else if (newType === "dropdown") {
@@ -588,7 +587,7 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition-colors cursor-pointer"
-            title="Đóng panel"
+            title="Close panel"
           >
             <ArrowLeft className="size-4" />
           </button>
@@ -616,7 +615,7 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <Check className="size-3.5" />
-            <span>Áp dụng</span>
+            <span>Apply</span>
           </button>
           <button
             type="button"
@@ -634,37 +633,37 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
             <Settings2 className="size-4 text-[#115eff]" />
-            <span>Thông tin cơ bản</span>
+            <span>Basic Settings</span>
           </div>
 
           <div className="space-y-3">
             <div>
               <label className="text-[11px] font-semibold text-slate-500 mb-1 block">
-                Tên hiển thị trên Navbar
+                Navbar Display Label
               </label>
               <input
                 className="w-full h-8 text-sm rounded-lg border border-slate-200 bg-white px-3 font-semibold text-slate-800 focus:outline-none focus:border-[#115eff]"
                 value={item.name}
                 onChange={(e) => setItem({ ...item, name: e.target.value })}
-                placeholder="Ví dụ: About, Committees..."
+                placeholder="About, Committees..."
               />
             </div>
 
             <div>
               <label className="text-[11px] font-semibold text-slate-500 mb-1 block">
-                Đường dẫn liên kết chính (Href)
+                Primary Link URL
               </label>
               <input
                 className="w-full h-8 text-sm rounded-lg border border-slate-200 bg-white px-3 font-mono text-slate-700 focus:outline-none focus:border-[#115eff]"
                 value={item.href}
                 onChange={(e) => setItem({ ...item, href: e.target.value })}
-                placeholder="/#about hoặc https://..."
+                placeholder="/#about or https://..."
               />
             </div>
 
             <div>
               <label className="text-[11px] font-semibold text-slate-500 mb-1 block">
-                Loại Menu (Menu Type)
+                Menu Type
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -681,7 +680,7 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
                     <Columns3 className="size-3.5" />
                     <span>Mega Menu</span>
                   </div>
-                  <span className="text-[10px] font-normal text-slate-400">Full-width nhiều cột</span>
+                  <span className="text-[10px] font-normal text-slate-400">Multi-column full-width</span>
                 </button>
 
                 <button
@@ -698,7 +697,7 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
                     <ListTree className="size-3.5" />
                     <span>Dropdown</span>
                   </div>
-                  <span className="text-[10px] font-normal text-slate-400">1 danh sách liên kết</span>
+                  <span className="text-[10px] font-normal text-slate-400">Single link list</span>
                 </button>
 
                 <button
@@ -713,9 +712,9 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
                 >
                   <div className="flex items-center gap-1.5">
                     <Link2 className="size-3.5" />
-                    <span>Link Thường</span>
+                    <span>Direct Link</span>
                   </div>
-                  <span className="text-[10px] font-normal text-slate-400">Chuyển trang trực tiếp</span>
+                  <span className="text-[10px] font-normal text-slate-400">Direct page navigation</span>
                 </button>
               </div>
             </div>
@@ -732,10 +731,10 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ListTree className="size-4 text-[#115eff]" />
-                <h3 className="text-sm font-semibold text-slate-900">Danh sách liên kết con</h3>
+                <h3 className="text-sm font-semibold text-slate-900">Child Links</h3>
               </div>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                {(item.children || []).length} mục
+                {(item.children || []).length} items
               </span>
             </div>
 
@@ -767,15 +766,15 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
               }}
             >
               <Plus className="size-3.5" />
-              <span>Thêm liên kết con</span>
+              <span>Add Child Link</span>
             </button>
           </div>
         ) : (
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-1.5">
             <Link2 className="size-5 text-slate-400 mx-auto" />
-            <p className="text-xs font-semibold text-slate-700">Mục liên kết trực tiếp</p>
+            <p className="text-xs font-semibold text-slate-700">Direct Navigation Item</p>
             <p className="text-[11px] text-slate-500">
-              Mục này sẽ chuyển hướng trực tiếp đến đường dẫn {item.href || "/"} khi người dùng click vào trên Navbar.
+              Clicking this item on the navbar navigates directly to {item.href || "/"}.
             </p>
           </div>
         )}
@@ -831,10 +830,10 @@ export default function HeaderEditorPage() {
         setSavedSuccess(true);
         setTimeout(() => setSavedSuccess(false), 3000);
       } else {
-        alert("Lỗi khi lưu Header. Vui lòng thử lại!");
+        alert("Failed to save Header configuration. Please try again.");
       }
     } catch {
-      alert("Lỗi kết nối khi lưu Header!");
+      alert("Connection error while saving Header configuration.");
     } finally {
       setSaving(false);
     }
@@ -843,7 +842,7 @@ export default function HeaderEditorPage() {
   const addNavItem = () => {
     const newItem: NavLinkItem = {
       id: uid(),
-      name: "Mục Menu Mới",
+      name: "New Menu Item",
       href: "/#",
       type: "mega",
       columns: [emptyColumn()],
@@ -861,7 +860,7 @@ export default function HeaderEditorPage() {
   };
 
   const deleteNavItem = (id: string) => {
-    if (confirm("Bạn có chắc muốn xóa mục menu này?")) {
+    if (confirm("Are you sure you want to delete this menu item?")) {
       setData({
         ...data,
         navLinks: data.navLinks.filter((item) => item.id !== id),
@@ -898,7 +897,7 @@ export default function HeaderEditorPage() {
     return (
       <div className="py-24 flex flex-col items-center justify-center text-slate-500 gap-3">
         <RefreshCw className="size-6 animate-spin text-[#115eff]" />
-        <span className="text-sm font-medium">Đang tải dữ liệu cấu hình Header...</span>
+        <span className="text-sm font-medium">Loading Header configuration...</span>
       </div>
     );
   }
@@ -913,10 +912,10 @@ export default function HeaderEditorPage() {
             <span>HCMUTE Full-Width Mega Navigation Editor</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Quản Lý Thanh Điều Hướng (Header)
+            Header &amp; Navigation Manager
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Chỉnh sửa các mục menu, các cột full-width, thẻ tiêu điểm, topbar và nút CTA cùng phong cách chuẩn HCMUTE.
+            Configure navigation items, full-width columns, promo cards, topbar details, and call-to-action buttons.
           </p>
         </div>
 
@@ -927,7 +926,7 @@ export default function HeaderEditorPage() {
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
           >
             <Eye className="size-3.5 text-slate-500" />
-            <span>Xem trang chủ</span>
+            <span>View Live Site</span>
           </Link>
 
           <button
@@ -939,17 +938,17 @@ export default function HeaderEditorPage() {
             {saving ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                <span>Đang lưu...</span>
+                <span>Saving...</span>
               </>
             ) : savedSuccess ? (
               <>
                 <Check className="size-4 text-emerald-300" />
-                <span>Đã lưu thành công!</span>
+                <span>Saved!</span>
               </>
             ) : (
               <>
                 <Save className="size-4" />
-                <span>Lưu thay đổi</span>
+                <span>Save Changes</span>
               </>
             )}
           </button>
@@ -961,10 +960,10 @@ export default function HeaderEditorPage() {
         <div className="px-5 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
             <Eye className="size-3.5 text-[#115eff]" />
-            <span>Xem trước trực tiếp — Full-Width Mega Dropdown</span>
+            <span>Live Interactive Preview — Full-Width Mega Dropdown</span>
           </div>
           <span className="text-[11px] text-slate-500">
-            Rê chuột vào các mục để kiểm tra mega menu full-width
+            Hover over navigation items to preview full-width mega menus
           </span>
         </div>
 
@@ -1122,7 +1121,7 @@ export default function HeaderEditorPage() {
                     <div className="w-64 shrink-0 p-5 bg-slate-50/50 flex flex-col justify-start">
                       <div className="relative pb-2 mb-3">
                         <h4 className="text-xs font-bold text-slate-700">
-                          {previewItem.promoCard.badge || "Tiêu điểm"}
+                          {previewItem.promoCard.badge || "Featured"}
                         </h4>
                         <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200 rounded-full" />
                       </div>
@@ -1166,7 +1165,7 @@ export default function HeaderEditorPage() {
           )}
         >
           <ListTree className="size-3.5" />
-          <span>Menu Điều Hướng ({data.navLinks.length})</span>
+          <span>Navigation Links</span>
         </button>
 
         <button
@@ -1180,7 +1179,7 @@ export default function HeaderEditorPage() {
           )}
         >
           <Phone className="size-3.5" />
-          <span>Thanh Tiện Ích (Topbar)</span>
+          <span>Top Utility Bar</span>
         </button>
 
         <button
@@ -1193,8 +1192,8 @@ export default function HeaderEditorPage() {
               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
           )}
         >
-          <Sparkles className="size-3.5" />
-          <span>Nút Kêu Gọi (CTA)</span>
+          <ExternalLink className="size-3.5" />
+          <span>Call-to-Action Button</span>
         </button>
       </div>
 
@@ -1204,10 +1203,10 @@ export default function HeaderEditorPage() {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Các mục trên thanh điều hướng chính
+                Primary Navigation Items
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Nhấp &quot;Cấu hình Layout&quot; để thiết lập các cột full-width, thêm liên kết con và thẻ tiêu điểm.
+                Click &quot;Configure Layout&quot; on any item to edit full-width columns, child links, and promo cards.
               </p>
             </div>
             <button
@@ -1216,7 +1215,7 @@ export default function HeaderEditorPage() {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-[#115eff] bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer"
             >
               <Plus className="size-3.5" />
-              <span>Thêm mục menu mới</span>
+              <span>Add Menu Item</span>
             </button>
           </div>
 
@@ -1245,7 +1244,7 @@ export default function HeaderEditorPage() {
                         className="text-slate-400 hover:text-slate-700 p-0.5 transition-colors disabled:opacity-20 cursor-pointer"
                         onClick={() => moveNavItem(index, -1)}
                         disabled={index === 0}
-                        title="Di chuyển lên"
+                        title="Move up"
                       >
                         <ChevronUp className="size-3" />
                       </button>
@@ -1254,7 +1253,7 @@ export default function HeaderEditorPage() {
                         className="text-slate-400 hover:text-slate-700 p-0.5 transition-colors disabled:opacity-20 cursor-pointer"
                         onClick={() => moveNavItem(index, 1)}
                         disabled={index === data.navLinks.length - 1}
-                        title="Di chuyển xuống"
+                        title="Move down"
                       >
                         <ChevronDown className="size-3" />
                       </button>
@@ -1285,13 +1284,13 @@ export default function HeaderEditorPage() {
                         </span>
                         {isMega && (
                           <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">
-                            • {columnCount} cột ({linkCount} liên kết)
-                            {item.promoCard && " + Thẻ tiêu điểm"}
+                            • {columnCount} columns • {linkCount} links
+                            {item.promoCard && " + Promo Card"}
                           </span>
                         )}
                         {!isMega && isDropdown && (
                           <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">
-                            • {linkCount} liên kết
+                            • {linkCount} links
                           </span>
                         )}
                       </div>
@@ -1309,14 +1308,14 @@ export default function HeaderEditorPage() {
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:text-[#115eff] hover:border-[#115eff]/30 transition-colors cursor-pointer"
                     >
                       <Settings2 className="size-3.5" />
-                      <span>Cấu hình Layout</span>
+                      <span>Configure Layout</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => deleteNavItem(item.id)}
                       className="size-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                      title="Xóa mục"
+                      title="Delete item"
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -1332,7 +1331,7 @@ export default function HeaderEditorPage() {
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border-2 border-dashed border-slate-200 text-xs font-bold text-slate-500 hover:text-[#115eff] hover:border-[#115eff]/40 hover:bg-blue-50/20 transition-all cursor-pointer"
           >
             <Plus className="size-4" />
-            <span>Thêm mục menu mới</span>
+            <span>Add Menu Item</span>
           </button>
         </div>
       )}
@@ -1343,14 +1342,14 @@ export default function HeaderEditorPage() {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Thanh Tiện Ích Trên Cùng (Topbar)
+                Top Utility Bar
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Thông tin đường dây nóng, email liên hệ chính thức và các huy hiệu đơn vị chủ trì.
+                Configure hotline phone number, secretariat email, and host organization badges.
               </p>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
-              <span className="text-xs font-bold text-slate-700">Hiển thị Topbar:</span>
+              <span className="text-xs font-bold text-slate-700">Show Topbar:</span>
               <input
                 type="checkbox"
                 checked={data.topbar.enabled}
@@ -1368,7 +1367,7 @@ export default function HeaderEditorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Số điện thoại Hotline
+                Hotline Number
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 text-slate-800 focus:outline-none focus:border-[#115eff]"
@@ -1385,7 +1384,7 @@ export default function HeaderEditorPage() {
 
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Email Thư ký hội nghị
+                Secretariat Email
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 text-slate-800 focus:outline-none focus:border-[#115eff]"
@@ -1402,7 +1401,7 @@ export default function HeaderEditorPage() {
 
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Huy hiệu Trường Chủ Trì
+                Host University Badge
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 text-slate-800 focus:outline-none focus:border-[#115eff]"
@@ -1413,13 +1412,13 @@ export default function HeaderEditorPage() {
                     topbar: { ...data.topbar, hostBadgeText: e.target.value },
                   })
                 }
-                placeholder="Host: HCM-UTE (Vietnam)"
+                placeholder="Host: HCM-UTE"
               />
             </div>
 
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Huy hiệu Hội IEEE SMC
+                IEEE SMC Society Badge
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 text-slate-800 focus:outline-none focus:border-[#115eff]"
@@ -1430,7 +1429,7 @@ export default function HeaderEditorPage() {
                     topbar: { ...data.topbar, societyBadgeText: e.target.value },
                   })
                 }
-                placeholder="IEEE SMC Society (Global)"
+                placeholder="IEEE SMC Society"
               />
             </div>
           </div>
@@ -1443,14 +1442,14 @@ export default function HeaderEditorPage() {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Nút Kêu Gọi Hành Động (CTA Button)
+                Call-to-Action Button
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Nút màu xanh nổi bật ở góc phải Navbar (Ví dụ: Nộp bài qua Submit Paper).
+                Configure the primary action button on the right side of the navigation bar.
               </p>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
-              <span className="text-xs font-bold text-slate-700">Bật nút CTA:</span>
+              <span className="text-xs font-bold text-slate-700">Enable CTA Button:</span>
               <input
                 type="checkbox"
                 checked={data.ctaButton.enabled}
@@ -1468,7 +1467,7 @@ export default function HeaderEditorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Nội dung nhãn nút (Label)
+                Button Label
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 font-semibold text-slate-800 focus:outline-none focus:border-[#115eff]"
@@ -1485,7 +1484,7 @@ export default function HeaderEditorPage() {
 
             <div>
               <label className="text-xs font-semibold text-slate-600 mb-1 block">
-                Đường dẫn liên kết (Href)
+                Target URL
               </label>
               <input
                 className="w-full h-9 text-xs rounded-xl border border-slate-200 bg-white px-3 font-mono text-slate-700 focus:outline-none focus:border-[#115eff]"
@@ -1503,7 +1502,7 @@ export default function HeaderEditorPage() {
         </div>
       )}
 
-      {/* ── Slide-over Side Panel Editor (HeaderSidePanel) ── */}
+      {/* ── Slide-over Side Panel Editor ── */}
       {editingItem && (
         <HeaderSidePanel
           item={editingItem}

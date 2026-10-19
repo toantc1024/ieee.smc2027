@@ -1,0 +1,1 @@
+- Oauth login: Try to use QQ, due to we chat

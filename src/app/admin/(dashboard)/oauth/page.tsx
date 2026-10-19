@@ -8,7 +8,6 @@ import {
   Check,
   ExternalLink,
   Bot,
-  Sparkles,
   AlertCircle,
   Save,
   Eye,
@@ -67,7 +66,7 @@ export default function AdminOAuthPage() {
       }
     } catch (err) {
       console.error("Failed to load OAuth settings:", err);
-      setErrorMessage("Không thể tải cấu hình OAuth hiện tại.");
+      setErrorMessage("Unable to load current OAuth configuration.");
     } finally {
       setLoading(false);
     }
@@ -115,10 +114,10 @@ export default function AdminOAuthPage() {
         }
         setTimeout(() => setSaveSuccess(false), 4000);
       } else {
-        setErrorMessage(data.error || "Lỗi khi lưu cấu hình.");
+        setErrorMessage(data.error || "Failed to save OAuth configuration.");
       }
     } catch {
-      setErrorMessage("Lỗi kết nối máy chủ khi lưu cấu hình.");
+      setErrorMessage("Server connection error while saving configuration.");
     } finally {
       setSaving(false);
     }
@@ -152,7 +151,7 @@ export default function AdminOAuthPage() {
             </h1>
           </div>
           <p className="text-sm text-slate-600 max-w-2xl">
-            Cấu hình xác thực Google OAuth 2.0 Client IDs cho trình duyệt, máy chủ và AI-powered Agent.
+            Configure Google OAuth 2.0 Client IDs for browser clients, web servers, and automated agents.
           </p>
         </div>
 
@@ -161,40 +160,39 @@ export default function AdminOAuthPage() {
           {isConfigured ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>Google OAuth: Hoạt động</span>
+              <span>Google OAuth: Active</span>
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold">
               <AlertCircle className="w-4 h-4 text-amber-500" />
-              <span>Chưa hoàn tất cài đặt</span>
+              <span>Setup Incomplete</span>
             </span>
           )}
         </div>
       </div>
 
-      {/* 2. AI-Powered Agent Notice Box (Clean shadcn style) */}
+      {/* 2. AI-Powered Agent Notice Box */}
       <div className="relative overflow-hidden rounded-xl bg-slate-900 text-white p-5 sm:p-6 shadow-xs border border-slate-800">
-
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-bold tracking-wide uppercase">
               <Bot className="w-4 h-4 text-amber-300" />
-              <span>This client will be used by an AI-powered agent</span>
+              <span>Autonomous Agent Ready</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-              Tích hợp xác thực thông minh cho Autonomous Agent
+              Authentication Integration for Autonomous Agents
             </h2>
             <p className="text-sm text-white/90 max-w-2xl leading-relaxed">
-              Các thiết lập Authorized Origins và Redirect URIs bên dưới được tối ưu hóa để AI Agent có thể truy cập, quản lý nội dung và thực hiện các tác vụ tự động hóa an toàn.
+              The Authorized Origins and Redirect URIs below are pre-configured so authorized administrators and automated workflows can securely authenticate across environments.
             </p>
           </div>
 
           <div className="shrink-0 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-black/20 backdrop-blur-md border border-white/15 text-xs text-white/95">
             <Clock className="w-5 h-5 text-amber-300 shrink-0" />
             <div>
-              <p className="font-bold">Thời gian có hiệu lực:</p>
+              <p className="font-bold">Propagation Time:</p>
               <p className="text-white/80">
-                Note: It may take 5 minutes to a few hours for settings to take effect.
+                It may take 5 minutes to a few hours for Google Cloud changes to take effect.
               </p>
             </div>
           </div>
@@ -210,7 +208,7 @@ export default function AdminOAuthPage() {
               <div className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-[#115eff]" />
                 <h3 className="font-extrabold text-[#004776] text-base sm:text-lg">
-                  Authorized JavaScript origins
+                  Authorized JavaScript Origins
                 </h3>
               </div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
@@ -219,7 +217,7 @@ export default function AdminOAuthPage() {
             </div>
 
             <p className="text-xs text-slate-500 mb-4 font-medium">
-              For use with requests from a browser. Thêm vào mục <strong>URIs</strong> trong Google Cloud Console:
+              For use with requests from a browser. Add these under <strong>URIs</strong> in Google Cloud Console:
             </p>
 
             <div className="space-y-2.5">
@@ -242,7 +240,7 @@ export default function AdminOAuthPage() {
                     type="button"
                     onClick={() => copyToClipboard(origin, `origin-${idx}`)}
                     className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-white rounded-md border border-transparent hover:border-slate-200 transition-all cursor-pointer shrink-0"
-                    title="Sao chép URI"
+                    title="Copy URI"
                   >
                     {copiedKey === `origin-${idx}` ? (
                       <Check className="w-4 h-4 text-emerald-600" />
@@ -256,7 +254,7 @@ export default function AdminOAuthPage() {
           </div>
 
           <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium">Sao chép tất cả origins:</span>
+            <span className="text-slate-500 font-medium">Copy all origins:</span>
             <button
               type="button"
               onClick={() => copyToClipboard(origins.join("\n"), "all-origins")}
@@ -265,12 +263,12 @@ export default function AdminOAuthPage() {
               {copiedKey === "all-origins" ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Đã sao chép!</span>
+                  <span>Copied!</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" />
-                  <span>Copy tất cả</span>
+                  <span>Copy All</span>
                 </>
               )}
             </button>
@@ -284,7 +282,7 @@ export default function AdminOAuthPage() {
               <div className="flex items-center gap-2">
                 <Server className="w-5 h-5 text-indigo-600" />
                 <h3 className="font-extrabold text-[#004776] text-base sm:text-lg">
-                  Authorized redirect URIs
+                  Authorized Redirect URIs
                 </h3>
               </div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
@@ -293,7 +291,7 @@ export default function AdminOAuthPage() {
             </div>
 
             <p className="text-xs text-slate-500 mb-4 font-medium">
-              For use with requests from a web server. Google sẽ chuyển hướng người dùng về các endpoint này sau khi đăng nhập:
+              For use with requests from a web server. Google redirects users to these callback endpoints after sign-in:
             </p>
 
             <div className="space-y-2.5">
@@ -316,7 +314,7 @@ export default function AdminOAuthPage() {
                     type="button"
                     onClick={() => copyToClipboard(uri, `uri-${idx}`)}
                     className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md border border-transparent hover:border-slate-200 transition-all cursor-pointer shrink-0"
-                    title="Sao chép Redirect URI"
+                    title="Copy Redirect URI"
                   >
                     {copiedKey === `uri-${idx}` ? (
                       <Check className="w-4 h-4 text-emerald-600" />
@@ -330,7 +328,7 @@ export default function AdminOAuthPage() {
           </div>
 
           <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium">Sao chép tất cả redirect URIs:</span>
+            <span className="text-slate-500 font-medium">Copy all redirect URIs:</span>
             <button
               type="button"
               onClick={() => copyToClipboard(redirectUris.join("\n"), "all-uris")}
@@ -339,12 +337,12 @@ export default function AdminOAuthPage() {
               {copiedKey === "all-uris" ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Đã sao chép!</span>
+                  <span>Copied!</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" />
-                  <span>Copy tất cả</span>
+                  <span>Copy All</span>
                 </>
               )}
             </button>
@@ -360,7 +358,7 @@ export default function AdminOAuthPage() {
               Google OAuth 2.0 Credentials
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
-              Nhập Client ID và Client Secret từ Google Cloud Console để kích hoạt đăng nhập tài khoản.
+              Enter your Client ID and Client Secret from Google Cloud Console to enable Google Sign-In.
             </p>
           </div>
 
@@ -379,7 +377,7 @@ export default function AdminOAuthPage() {
           <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-2.5 animate-in fade-in duration-200">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span className="font-semibold">
-              Cấu hình OAuth đã được lưu thành công vào cơ sở dữ liệu và đồng bộ vào file cấu hình hệ thống!
+              OAuth configuration saved to database and synchronized with system environment settings!
             </span>
           </div>
         )}
@@ -402,7 +400,7 @@ export default function AdminOAuthPage() {
                 type="text"
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
-                placeholder="Ví dụ: 1234567890-abcdefg12345.apps.googleusercontent.com"
+                placeholder="e.g. 1234567890-abcdefg12345.apps.googleusercontent.com"
                 className="w-full px-4 py-2.5 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
               />
               {clientId && (
@@ -421,7 +419,7 @@ export default function AdminOAuthPage() {
               )}
             </div>
             <p className="text-[11px] text-slate-500">
-              Lấy từ mục <strong>Client ID</strong> trong Google Cloud Console sau khi tạo OAuth client.
+              Retrieved from the <strong>Client ID</strong> field in Google Cloud Console after creating your OAuth client.
             </p>
           </div>
 
@@ -434,7 +432,7 @@ export default function AdminOAuthPage() {
               {hasSecret && (
                 <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" />
-                  <span>Đã lưu Secret bảo mật trong hệ thống</span>
+                  <span>Secret securely stored in system</span>
                 </span>
               )}
             </div>
@@ -443,7 +441,7 @@ export default function AdminOAuthPage() {
                 type={showSecret ? "text" : "password"}
                 value={clientSecret}
                 onChange={(e) => setClientSecret(e.target.value)}
-                placeholder={hasSecret ? "•••••••••••••••••••• (Nhập nếu muốn đổi mới)" : "Ví dụ: GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx"}
+                placeholder={hasSecret ? "••••••••••••••••••••" : "e.g. GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx"}
                 className="w-full px-4 py-2.5 pr-20 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -451,31 +449,31 @@ export default function AdminOAuthPage() {
                   type="button"
                   onClick={() => setShowSecret((s) => !s)}
                   className="p-1.5 text-slate-400 hover:text-slate-700 rounded-md cursor-pointer"
-                  title={showSecret ? "Ẩn" : "Hiện"}
+                  title={showSecret ? "Hide" : "Show"}
                 >
                   {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <p className="text-[11px] text-slate-500">
-              Khóa bí mật được mã hóa và lưu trữ an toàn. Không bao giờ để lộ Client Secret công khai.
+              Leave blank to keep the existing secret. Never expose your Client Secret publicly.
             </p>
           </div>
 
           {/* App URL */}
           <div className="space-y-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Application Public URL (NEXT_PUBLIC_APP_URL)
+              Application Public URL
             </label>
             <input
               type="text"
               value={appUrl}
               onChange={(e) => setAppUrl(e.target.value)}
-              placeholder="http://localhost:3000 hoặc https://your-domain.org"
+              placeholder="https://smc2027.hcmute.edu.vn"
               className="w-full px-4 py-2.5 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
             />
             <p className="text-[11px] text-slate-500">
-              Địa chỉ gốc của trang web, dùng làm cơ sở để Google chuyển hướng sau khi đăng nhập thành công.
+              Base URL of the website used by Google to redirect users after authentication.
             </p>
           </div>
 
@@ -483,7 +481,7 @@ export default function AdminOAuthPage() {
           <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs text-slate-500 flex items-center gap-1.5">
               <Lock className="w-4 h-4 text-slate-400 shrink-0" />
-              <span>Chỉ quản trị viên cấp cao (ADMIN) mới có quyền truy cập trang này.</span>
+              <span>Only administrators have permission to modify these settings.</span>
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -494,7 +492,7 @@ export default function AdminOAuthPage() {
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm transition-all shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <ExternalLink className="w-4 h-4 text-[#115eff]" />
                   <span>Test Google Login</span>
                 </a>
               )}
@@ -507,12 +505,12 @@ export default function AdminOAuthPage() {
                 {saving ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Đang lưu...</span>
+                    <span>Saving...</span>
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    <span>Lưu Cấu Hình</span>
+                    <span>Save Configuration</span>
                   </>
                 )}
               </button>
@@ -525,35 +523,35 @@ export default function AdminOAuthPage() {
       <div className="bg-slate-50/70 border border-slate-200 rounded-2xl p-6 sm:p-7 space-y-4">
         <h3 className="font-extrabold text-[#004776] text-base sm:text-lg flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-[#115eff]" />
-          <span>Hướng dẫn 5 bước lấy Credentials trên Google Cloud Console</span>
+          <span>Setup Guide for Google Cloud Console Credentials</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
           <div className="p-3.5 bg-white border border-slate-200 rounded-xl space-y-1">
-            <span className="font-bold text-[#115eff]">Bước 1: Mở Google Cloud Console</span>
+            <span className="font-bold text-[#115eff]">Step 1: Open Google Cloud Console</span>
             <p className="text-slate-500">
-              Truy cập <strong>APIs &amp; Services</strong> &gt; <strong>Credentials</strong> và chọn dự án của bạn (hoặc tạo dự án mới).
+              Navigate to <strong>APIs &amp; Services</strong> &gt; <strong>Credentials</strong> and select or create your project.
             </p>
           </div>
 
           <div className="p-3.5 bg-white border border-slate-200 rounded-xl space-y-1">
-            <span className="font-bold text-[#115eff]">Bước 2: Tạo OAuth Client ID</span>
+            <span className="font-bold text-[#115eff]">Step 2: Create OAuth Client ID</span>
             <p className="text-slate-500">
-              Nhấn <strong>+ Create Credentials</strong> &gt; chọn <strong>OAuth client ID</strong>.
+              Click <strong>+ Create Credentials</strong> and select <strong>OAuth client ID</strong>.
             </p>
           </div>
 
           <div className="p-3.5 bg-white border border-slate-200 rounded-xl space-y-1">
-            <span className="font-bold text-[#115eff]">Bước 3: Chọn Application Type</span>
+            <span className="font-bold text-[#115eff]">Step 3: Select Application Type</span>
             <p className="text-slate-500">
-              Chọn <strong>Web application</strong> và đặt tên client (ví dụ: <em>IEEE SMC 2027 Portal</em>).
+              Choose <strong>Web application</strong> and enter a client name such as <em>IEEE SMC 2027 Portal</em>.
             </p>
           </div>
 
           <div className="p-3.5 bg-white border border-slate-200 rounded-xl space-y-1">
-            <span className="font-bold text-[#115eff]">Bước 4: Dán Origins &amp; Redirect URIs</span>
+            <span className="font-bold text-[#115eff]">Step 4: Add Origins &amp; Redirect URIs</span>
             <p className="text-slate-500">
-              Copy các giá trị ở 2 bảng bên trên và dán vào <strong>Authorized JavaScript origins</strong> và <strong>Authorized redirect URIs</strong>.
+              Copy the values from the two panels above into <strong>Authorized JavaScript origins</strong> and <strong>Authorized redirect URIs</strong>.
             </p>
           </div>
         </div>

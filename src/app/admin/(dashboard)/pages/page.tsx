@@ -177,17 +177,17 @@ export default function PagesManagementPage() {
         fetchPages();
       } else {
         const err = await res.json();
-        alert(err.error || "Lỗi tạo trang");
+        alert(err.error || "Failed to create page");
       }
     } catch {
-      alert("Lỗi kết nối máy chủ");
+      alert("Server connection error");
     } finally {
       setCreating(false);
     }
   };
 
   const handleDeletePage = async (id: string, title: string) => {
-    if (!confirm(`Bạn có chắc muốn xóa trang "${title}"?`)) return;
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
     try {
       const res = await fetch(`/api/admin/pages/${id}`, {
@@ -197,10 +197,10 @@ export default function PagesManagementPage() {
         fetchPages();
       } else {
         const err = await res.json();
-        alert(err.error || "Không thể xóa trang");
+        alert(err.error || "Unable to delete page");
       }
     } catch {
-      alert("Lỗi xóa trang");
+      alert("Failed to delete page");
     }
   };
 
@@ -246,7 +246,7 @@ export default function PagesManagementPage() {
                 type="button"
                 onClick={() => toggleNodeCollapse(page.slug)}
                 className="p-1 hover:bg-slate-200 rounded text-slate-500 cursor-pointer"
-                title={isCollapsed ? "Mở rộng" : "Thu gọn"}
+                title={isCollapsed ? "Expand" : "Collapse"}
               >
                 {isCollapsed ? (
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -281,23 +281,23 @@ export default function PagesManagementPage() {
 
               {isRoot && page.slug === "home" && (
                 <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-blue-50 text-[#115eff]">
-                  Trang chủ
+                  Homepage
                 </span>
               )}
 
               {page.is_published ? (
                 <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-medium inline-flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Xuất bản
+                  Published
                 </span>
               ) : (
                 <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-500">
-                  Bản nháp
+                  Draft
                 </span>
               )}
 
               <span className="text-[11px] text-slate-400 hidden md:inline">
-                {page.block_count || 0} component
+                {page.block_count || 0} components
               </span>
             </div>
           </div>
@@ -309,20 +309,20 @@ export default function PagesManagementPage() {
               type="button"
               onClick={() => openCreateSubPage(page.slug)}
               className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded transition-colors cursor-pointer shadow-2xs"
-              title="Thêm trang con dưới cấp này"
+              title="Add sub-page under this level"
             >
               <FolderPlus className="w-3 h-3 text-slate-500" />
-              <span className="hidden sm:inline">Thêm trang con</span>
+              <span className="hidden sm:inline">Add Sub-page</span>
             </button>
 
             {/* Visual Builder */}
             <Link
               href={`/admin/pages/${page.id}`}
               className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded transition-colors shadow-2xs"
-              title="Mở trình kéo thả linh kiện giao diện"
+              title="Open visual page builder"
             >
               <SlidersHorizontal className="w-3 h-3" />
-              <span className="hidden sm:inline">Sửa Builder</span>
+              <span className="hidden sm:inline">Edit Builder</span>
             </Link>
 
             {/* Live Preview */}
@@ -330,7 +330,7 @@ export default function PagesManagementPage() {
               href={page.slug === "home" ? "/" : `/${page.slug}`}
               target="_blank"
               className="p-1.5 text-slate-400 hover:text-slate-800 rounded hover:bg-slate-200/50 transition-colors"
-              title="Xem trang thực tế"
+              title="Preview live page"
             >
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>
@@ -341,7 +341,7 @@ export default function PagesManagementPage() {
                 type="button"
                 onClick={() => handleDeletePage(page.id, page.title)}
                 className="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors cursor-pointer"
-                title="Xóa trang"
+                title="Delete page"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -366,13 +366,13 @@ export default function PagesManagementPage() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-1 border border-slate-200">
             <Layers className="w-3 h-3 text-slate-500" />
-            <span>Cây Phân Cấp Trang Web</span>
+            <span>Website Page Tree</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            Quản Lý Trang Theo Cấu Trúc Cây (Tree Hierarchy)
+            Page Hierarchy Management
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Tổ chức các trang theo quan hệ cha - con (Parent - Child) với đường dẫn phân cấp và trình kéo thả Builder.
+            Organize pages in a parent-child hierarchy with nested routes and drag-and-drop page builder blocks.
           </p>
         </div>
 
@@ -387,7 +387,7 @@ export default function PagesManagementPage() {
           className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition-all active:scale-[0.99] cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Tạo trang cấp gốc (Root Page)</span>
+          <span>New Root Page</span>
         </button>
       </div>
 
@@ -402,7 +402,7 @@ export default function PagesManagementPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm theo tiêu đề hoặc đường dẫn (slug)..."
+              placeholder="Search by page title or URL slug..."
               className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800"
             />
           </div>
@@ -414,20 +414,20 @@ export default function PagesManagementPage() {
               onClick={expandAll}
               className="px-2.5 py-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded border border-slate-200 bg-white transition-colors cursor-pointer"
             >
-              Mở rộng tất cả
+              Expand All
             </button>
             <button
               type="button"
               onClick={collapseAll}
               className="px-2.5 py-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded border border-slate-200 bg-white transition-colors cursor-pointer"
             >
-              Thu gọn tất cả
+              Collapse All
             </button>
             <button
               type="button"
               onClick={fetchPages}
               className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 rounded border border-slate-200 bg-white transition-colors cursor-pointer"
-              title="Làm mới"
+              title="Refresh"
             >
               <RefreshCw className="w-3.5 h-3.5" />
             </button>
@@ -439,11 +439,11 @@ export default function PagesManagementPage() {
           {loading ? (
             <div className="py-16 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
               <RefreshCw className="w-5 h-5 animate-spin text-slate-400" />
-              <span>Đang tải cấu trúc cây trang từ Neon DB...</span>
+              <span>Loading page hierarchy from database...</span>
             </div>
           ) : treeData.length === 0 ? (
             <div className="py-12 text-center text-slate-500 text-xs">
-              Chưa có trang nào được khởi tạo. Bấm &quot;Tạo trang cấp gốc&quot; ở trên để bắt đầu.
+              No pages initialized yet. Click &quot;New Root Page&quot; above to begin.
             </div>
           ) : (
             <div className="space-y-1">
@@ -454,36 +454,36 @@ export default function PagesManagementPage() {
 
         {/* Tree Footer Info */}
         <div className="px-5 py-3 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between text-xs text-slate-500">
-          <span>Tổng số trang: <strong className="text-slate-800">{pages.length}</strong></span>
-          <span className="text-[11px] text-slate-400">Hỗ trợ đa tầng vô hạn (Parent / Child)</span>
+          <span>Total pages: <strong className="text-slate-800">{pages.length}</strong></span>
+          <span className="text-[11px] text-slate-400">Supports multi-level nested hierarchy</span>
         </div>
       </div>
 
-      {/* Modal Tạo Trang Mới (Root hoặc Sub-Page) */}
+      {/* Create Page Modal */}
       {createModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200 animate-in fade-in duration-150">
             <h3 className="text-base font-bold text-slate-900 mb-1">
-              {parentSlug ? `Tạo Trang Con Dưới "/${parentSlug}"` : "Tạo Trang Cấp Gốc Mới"}
+              {parentSlug ? `Create Sub-Page Under "/${parentSlug}"` : "Create New Root Page"}
             </h3>
             <p className="text-xs text-slate-500 mb-4">
               {parentSlug
-                ? "Trang mới sẽ kế thừa đường dẫn URL từ thư mục cha."
-                : "Trang cấp gốc sẽ xuất hiện trực tiếp sau tên miền."}
+                ? "The new page will inherit its URL path from the parent directory."
+                : "Root pages appear directly under the primary domain."}
             </p>
 
             <form onSubmit={handleCreatePage} className="space-y-4 text-xs">
               {/* Parent Selector */}
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
-                  Trang cha (Parent Node)
+                  Parent Page
                 </label>
                 <select
                   value={parentSlug}
                   onChange={(e) => setParentSlug(e.target.value)}
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:border-slate-800 text-xs text-slate-800"
                 >
-                  <option value="">[Không có - Trang Cấp Gốc / Root]</option>
+                  <option value="">[None - Root Page]</option>
                   {pages.map((p) => (
                     <option key={p.id} value={p.slug}>
                       {p.title} (/{p.slug})
@@ -495,7 +495,7 @@ export default function PagesManagementPage() {
               {/* Title */}
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
-                  Tiêu đề trang <span className="text-rose-500">*</span>
+                  Page Title <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -514,7 +514,7 @@ export default function PagesManagementPage() {
                       );
                     }
                   }}
-                  placeholder="Ví dụ: Special Sessions"
+                  placeholder="e.g., Special Sessions"
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:border-slate-800 text-xs text-slate-900"
                 />
               </div>
@@ -522,7 +522,7 @@ export default function PagesManagementPage() {
               {/* Slug Path */}
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
-                  Đường dẫn (URL Slug)
+                  URL Slug
                 </label>
                 <div className="flex items-center">
                   <span className="bg-slate-100 border border-r-0 border-slate-300 px-2.5 py-2 rounded-l-md text-slate-500 font-mono text-xs">
@@ -541,7 +541,7 @@ export default function PagesManagementPage() {
 
               {/* URL Preview */}
               <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-md text-[11px] text-slate-600">
-                <span className="text-slate-400">Đường dẫn thực tế: </span>
+                <span className="text-slate-400">Live URL: </span>
                 <span className="font-mono text-slate-800 font-semibold">
                   https://ieee-smc2027.org/{parentSlug ? `${parentSlug}/` : ""}{newSlugPart || "slug"}
                 </span>
@@ -554,14 +554,14 @@ export default function PagesManagementPage() {
                   onClick={() => setCreateModalOpen(false)}
                   className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-md transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
                   className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-md transition-colors shadow-2xs disabled:opacity-50"
                 >
-                  {creating ? "Đang tạo..." : "Xác nhận tạo trang"}
+                  {creating ? "Creating..." : "Create Page"}
                 </button>
               </div>
             </form>

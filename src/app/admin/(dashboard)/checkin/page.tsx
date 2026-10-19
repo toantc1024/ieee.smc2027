@@ -10,7 +10,6 @@ import {
   Check,
   User,
   Clock,
-  Sparkles,
   Camera,
   RotateCcw,
 } from "lucide-react";
@@ -50,7 +49,7 @@ export default function AdminCheckInPage() {
       if (!res.ok || !data.success) {
         setFeedback({
           type: "ERROR",
-          message: data.error || "Mã đại biểu không hợp lệ hoặc chưa đăng ký.",
+          message: data.error || "Invalid or unregistered delegate code.",
         });
         return;
       }
@@ -67,7 +66,7 @@ export default function AdminCheckInPage() {
     } catch (e: any) {
       setFeedback({
         type: "ERROR",
-        message: e.message || "Lỗi kết nối máy chủ điểm danh.",
+        message: e.message || "Unable to connect to the check-in server.",
       });
     } finally {
       setLoading(false);
@@ -90,16 +89,16 @@ export default function AdminCheckInPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Quét Mã QR & Điểm Danh Hội Trường
+            QR Check-In & Venue Attendance
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Hỗ trợ máy quét mã vạch Barcode/QR Gun, Camera hoặc nhập mã tham dự SMC27-XXXXXX.
+            Supports barcode/QR scanner guns, camera scanning, or manual SMC27-XXXXXX code entry.
           </p>
         </div>
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Hệ thống Check-in Sẵn sàng</span>
+          <span>Check-In Terminal Ready</span>
         </div>
       </div>
 
@@ -111,10 +110,10 @@ export default function AdminCheckInPage() {
           </div>
           <div>
             <h3 className="text-base font-bold text-slate-900">
-              Quét Mã Thẻ Đại Biểu (Badge QR Code)
+              Scan Delegate Badge QR Code
             </h3>
             <p className="text-xs text-slate-500">
-              Đặt con trỏ vào ô nhập bên dưới và quét mã QR trên thẻ đại biểu.
+              Keep the cursor focused in the field below and scan the QR code on the delegate badge.
             </p>
           </div>
         </div>
@@ -123,7 +122,7 @@ export default function AdminCheckInPage() {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Chờ quét mã hoặc nhập mã thủ công..."
+            placeholder="Scan QR code or enter registration code manually..."
             value={inputCode}
             onChange={(e) => setInputCode(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -137,7 +136,7 @@ export default function AdminCheckInPage() {
             disabled={loading || !inputCode.trim()}
             className="absolute right-2.5 top-2.5 bottom-2.5 px-5 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold cursor-pointer transition-colors disabled:opacity-50 flex items-center gap-1.5"
           >
-            {loading ? "Đang xử lý..." : "Xác Nhận"}
+            {loading ? "Processing..." : "Verify"}
           </button>
         </div>
 
@@ -172,36 +171,36 @@ export default function AdminCheckInPage() {
               <div className="space-y-1 grow">
                 <h4 className="text-base font-black">
                   {feedback.type === "SUCCESS"
-                    ? "ĐIỂM DANH THÀNH CÔNG!"
+                    ? "CHECK-IN SUCCESSFUL"
                     : feedback.type === "ALREADY"
-                    ? "ĐẠI BIỂU ĐÃ ĐIỂM DANH TRƯỚC ĐÓ"
-                    : "LỖI ĐIỂM DANH"}
+                    ? "DELEGATE ALREADY CHECKED IN"
+                    : "CHECK-IN ERROR"}
                 </h4>
                 <p className="text-xs sm:text-sm font-medium">{feedback.message}</p>
 
                 {feedback.delegate && (
                   <div className="mt-4 pt-3 border-t border-current/20 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
-                      <span className="opacity-70 block">Họ và tên:</span>
+                      <span className="opacity-70 block">Full Name:</span>
                       <strong className="text-sm">{feedback.delegate.fullName}</strong>
                     </div>
                     <div>
-                      <span className="opacity-70 block">Mã hồ sơ:</span>
+                      <span className="opacity-70 block">Registration Code:</span>
                       <strong className="font-mono">{feedback.delegate.registrationCode}</strong>
                     </div>
                     <div>
-                      <span className="opacity-70 block">Đơn vị:</span>
+                      <span className="opacity-70 block">Affiliation:</span>
                       <strong>{feedback.delegate.affiliation}</strong>
                     </div>
                     <div>
-                      <span className="opacity-70 block">Phân loại & Lệ phí:</span>
+                      <span className="opacity-70 block">Category & Status:</span>
                       <strong>
-                        {feedback.delegate.participantType} ({feedback.delegate.paymentStatus})
+                        {feedback.delegate.participantType} • {feedback.delegate.paymentStatus}
                       </strong>
                     </div>
                     {feedback.delegate.paperId && (
                       <div className="sm:col-span-2">
-                        <span className="opacity-70 block">Mã bài báo khoa học:</span>
+                        <span className="opacity-70 block">Paper ID:</span>
                         <strong>Paper #{feedback.delegate.paperId}</strong>
                       </div>
                     )}
@@ -217,16 +216,16 @@ export default function AdminCheckInPage() {
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b pb-3">
           <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-            Đại Biểu Vừa Điểm Danh Gần Nhất
+            Recent Check-Ins
           </h3>
           <span className="text-xs text-slate-400">
-            {recentCheckIns.length} lượt vừa ghi nhận
+            {recentCheckIns.length} recorded in this session
           </span>
         </div>
 
         {recentCheckIns.length === 0 ? (
           <p className="text-xs text-slate-400 text-center py-6">
-            Chưa có lượt điểm danh nào trong phiên hiện tại.
+            No delegates checked in during the current session yet.
           </p>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -252,7 +251,7 @@ export default function AdminCheckInPage() {
                     {item.registrationCode}
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    {item.checkedInAt ? new Date(item.checkedInAt).toLocaleTimeString("vi-VN") : "Vừa xong"}
+                    {item.checkedInAt ? new Date(item.checkedInAt).toLocaleTimeString("en-US") : "Just now"}
                   </span>
                 </div>
               </div>

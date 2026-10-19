@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
-  Sparkles,
   Clock,
   ShieldAlert,
 } from "lucide-react";
@@ -27,19 +26,19 @@ export default function AdminBroadcastPage() {
 
   const TEMPLATES = [
     {
-      title: "Nhắc nộp bài Camera-ready",
+      title: "Camera-Ready Submission Reminder",
       target: "AUTHOR",
       subject: "[IEEE SMC 2027] Reminder: Camera-ready Submission Deadline Approaching",
-      body: `Dear Authors,\n\nThis is a cordial reminder from the IEEE SMC 2027 Organizing Committee regarding the final camera-ready manuscript submission deadline.\n\nPlease ensure your final PDF passes IEEE PDF eXpress verification and your IEEE Electronic Copyright Form (eCF) is signed before the deadline.\n\nWarm regards,\nIEEE SMC 2027 Publication Committee\nHo Chi Minh City, Vietnam`,
+      body: `Dear Authors,\n\nThis is a cordial reminder from the IEEE SMC 2027 Organizing Committee regarding the final camera-ready manuscript submission deadline.\n\nPlease ensure your final PDF passes IEEE PDF eXpress verification and your IEEE Electronic Copyright Form is signed before the deadline.\n\nWarm regards,\nIEEE SMC 2027 Publication Committee\nHo Chi Minh City, Vietnam`,
     },
     {
-      title: "Xác nhận đối soát & Thẻ đại biểu",
+      title: "Payment Confirmation & Digital Badge",
       target: "PAID",
       subject: "[IEEE SMC 2027] Registration Confirmed - Access Your Digital Conference Badge",
       body: `Dear Delegate,\n\nWe are pleased to confirm that your conference registration fee for IEEE SMC 2027 has been successfully reconciled.\n\nYou can now log in to the Delegate Portal to download your Official e-Receipt, Visa Support Letter, and Digital Badge with Scannable QR Code.\n\nVenue: Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam.\n\nWarm regards,\nIEEE SMC 2027 Secretariat`,
     },
     {
-      title: "Nhắc thanh toán lệ phí hội nghị",
+      title: "Pending Registration Fee Reminder",
       target: "PENDING",
       subject: "[IEEE SMC 2027] Payment Reminder for Pending Conference Registration",
       body: `Dear Delegate,\n\nThank you for registering for IEEE SMC 2027. We noticed that your registration invoice is currently pending payment.\n\nPlease complete your bank transfer via VietQR Napas 24/7 or international bank wire using the syntax provided in your portal to secure your conference pass and inclusion in the proceedings.\n\nWarm regards,\nIEEE SMC 2027 Finance Committee`,
@@ -73,7 +72,7 @@ export default function AdminBroadcastPage() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Không thể gửi email.");
+        throw new Error(data.error || "Unable to send broadcast emails.");
       }
 
       setResult({
@@ -85,7 +84,7 @@ export default function AdminBroadcastPage() {
     } catch (e: any) {
       setResult({
         success: false,
-        message: e.message || "Lỗi gửi thông báo.",
+        message: e.message || "Error sending broadcast notification.",
       });
     } finally {
       setLoading(false);
@@ -98,23 +97,23 @@ export default function AdminBroadcastPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Gửi Email Thông Báo Hàng Loạt (Email Broadcast)
+            Email Broadcast
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Gửi email nhắc lịch nộp bài, thông báo khẩn & hướng dẫn nhận thẻ đại biểu theo từng nhóm đối tượng.
+            Send submission reminders, announcements, and badge instructions to targeted delegate groups.
           </p>
         </div>
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-blue-50 text-[#115eff] border border-blue-200">
           <Mail className="w-3.5 h-3.5" />
-          <span>Hệ Thống Gửi Tin IEEE SMC 2027</span>
+          <span>IEEE SMC 2027 Mailer</span>
         </div>
       </div>
 
       {/* ── Quick Templates ── */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Mẫu Email Soạn Sẵn (Quick Templates)
+          Quick Templates
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TEMPLATES.map((tmpl, idx) => (
@@ -128,7 +127,7 @@ export default function AdminBroadcastPage() {
                 {tmpl.title}
               </div>
               <div className="text-[11px] text-slate-400 mt-1 line-clamp-1">
-                Nhóm: {tmpl.target}
+                Audience: {tmpl.target}
               </div>
             </button>
           ))}
@@ -141,30 +140,30 @@ export default function AdminBroadcastPage() {
           {/* Target Audience */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Nhóm Đại Biểu Mục Tiêu (Target Audience)
+              Target Audience
             </label>
             <select
               value={targetGroup}
               onChange={(e) => setTargetGroup(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-semibold"
             >
-              <option value="ALL">Tất cả Đại biểu đã đăng ký (All Delegates)</option>
-              <option value="PAID">Chỉ Đại biểu ĐÃ THANH TOÁN (Paid Delegates)</option>
-              <option value="PENDING">Chỉ Đại biểu CHỜ THANH TOÁN (Pending Payment)</option>
-              <option value="AUTHOR">Chỉ Đại biểu TÁC GIẢ BÀI BÁO (Authors)</option>
-              <option value="STUDENT">Chỉ Đại biểu SINH VIÊN (Students)</option>
+              <option value="ALL">All Registered Delegates</option>
+              <option value="PAID">Paid Delegates Only</option>
+              <option value="PENDING">Pending Payment Delegates Only</option>
+              <option value="AUTHOR">Paper Authors Only</option>
+              <option value="STUDENT">Student Delegates Only</option>
             </select>
           </div>
 
           {/* Subject */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Tiêu Đề Email (Email Subject) <span className="text-red-500">*</span>
+              Email Subject <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               required
-              placeholder="[IEEE SMC 2027] Tiêu đề thông báo..."
+              placeholder="[IEEE SMC 2027] Announcement subject..."
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-semibold"
@@ -174,12 +173,12 @@ export default function AdminBroadcastPage() {
           {/* Message Body */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Nội Dung Thông Báo (Email Message Body) <span className="text-red-500">*</span>
+              Email Message Body <span className="text-red-500">*</span>
             </label>
             <textarea
               rows={8}
               required
-              placeholder="Nhập nội dung chi tiết thông báo gửi đến đại biểu..."
+              placeholder="Enter the announcement message to send to delegates..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-sans leading-relaxed"
@@ -204,7 +203,7 @@ export default function AdminBroadcastPage() {
                 <span className="font-bold">{result.message}</span>
                 {result.sampleRecipients && result.sampleRecipients.length > 0 && (
                   <div className="text-[11px] opacity-80 pt-1">
-                    Danh sách đại biểu nhận mẫu: {result.sampleRecipients.join(", ")}
+                    Sample recipients: {result.sampleRecipients.join(", ")}
                   </div>
                 )}
               </div>
@@ -214,7 +213,7 @@ export default function AdminBroadcastPage() {
           {/* Submit */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
             <span className="text-xs text-slate-400">
-              * Email sẽ được ký phát chính thức từ ieeesmc2027@hcmute.edu.vn
+              * Sent officially from ieeesmc2027@hcmute.edu.vn
             </span>
 
             <button
@@ -223,7 +222,7 @@ export default function AdminBroadcastPage() {
               className="px-6 py-2.5 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
-              <span>{loading ? "Đang gửi email hàng loạt..." : "Gửi Email Hàng Loạt"}</span>
+              <span>{loading ? "Sending Broadcast..." : "Send Broadcast"}</span>
             </button>
           </div>
         </form>

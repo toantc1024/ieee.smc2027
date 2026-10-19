@@ -178,25 +178,25 @@ export default function AdminRegistrationsPage() {
   // Export to CSV with UTF-8 BOM for Excel compatibility
   const handleExportCSV = () => {
     const headers = [
-      "Mã đăng ký",
-      "Họ và tên",
+      "Registration Code",
+      "Full Name",
       "Email",
-      "Số điện thoại",
-      "Đơn vị",
-      "Quốc gia",
-      "Loại đại biểu",
-      "Mã bài báo",
-      "Tiêu đề bài báo",
-      "Số hộ chiếu",
-      "Hỗ trợ Visa",
-      "Ăn uống",
-      "Lệ phí",
-      "Tiền tệ",
-      "Trạng thái thanh toán",
-      "Mã giao dịch",
-      "Ngày thanh toán",
-      "Điểm danh",
-      "Ngày đăng ký",
+      "Phone",
+      "Affiliation",
+      "Country",
+      "Participant Type",
+      "Paper ID",
+      "Paper Title",
+      "Passport Number",
+      "Visa Support",
+      "Dietary Requirement",
+      "Fee Amount",
+      "Currency",
+      "Payment Status",
+      "Transaction Ref",
+      "Paid Date",
+      "Check-In Status",
+      "Registration Date",
     ];
 
     const rows = filtered.map((r) => [
@@ -210,15 +210,15 @@ export default function AdminRegistrationsPage() {
       `"${r.paperId || ""}"`,
       `"${(r.paperTitle || "").replace(/"/g, '""')}"`,
       `"${r.passportNumber || ""}"`,
-      r.needsVisaSupport ? "Có" : "Không",
+      r.needsVisaSupport ? "Yes" : "No",
       `"${r.dietaryRequirement || "None"}"`,
       r.feeAmount,
       r.currency,
       r.paymentStatus,
       `"${r.transactionRef || ""}"`,
-      r.paidAt ? new Date(r.paidAt).toLocaleDateString("vi-VN") : "",
-      r.checkInStatus ? "Đã check-in" : "Chưa",
-      new Date(r.createdAt).toLocaleDateString("vi-VN"),
+      r.paidAt ? new Date(r.paidAt).toLocaleDateString("en-US") : "",
+      r.checkInStatus ? "Checked In" : "Pending",
+      new Date(r.createdAt).toLocaleDateString("en-US"),
     ]);
 
     const csvContent =
@@ -242,10 +242,10 @@ export default function AdminRegistrationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Quản Lý Đăng Ký & Đối Soát Thanh Toán
+            Registrations & Payment Reconciliation
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Theo dõi danh sách đại biểu, đối soát dòng tiền VietQR tự động & xuất báo cáo tài chính.
+            Track registered delegates, reconcile bank transfers, and export financial reports.
           </p>
         </div>
 
@@ -254,7 +254,7 @@ export default function AdminRegistrationsPage() {
             type="button"
             onClick={fetchRegistrations}
             className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer"
-            title="Tải lại danh sách"
+            title="Refresh list"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -265,7 +265,7 @@ export default function AdminRegistrationsPage() {
             className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
           >
             <FileSpreadsheet className="w-4 h-4" />
-            <span>Xuất Excel / CSV ({filtered.length})</span>
+            <span>Export CSV</span>
           </button>
         </div>
       </div>
@@ -276,7 +276,7 @@ export default function AdminRegistrationsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Tổng Đại Biểu
+              Total Delegates
             </span>
             <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#115eff] flex items-center justify-center">
               <Users className="w-4 h-4" />
@@ -284,7 +284,7 @@ export default function AdminRegistrationsPage() {
           </div>
           <div className="mt-3 text-2xl font-black text-slate-900">{metrics.total}</div>
           <span className="text-[11px] text-slate-500">
-            Đã đăng ký trên toàn hệ thống
+            Registered across the system
           </span>
         </div>
 
@@ -292,7 +292,7 @@ export default function AdminRegistrationsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Thu Ngân Sách (PAID)
+              Confirmed Revenue
             </span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
@@ -302,7 +302,7 @@ export default function AdminRegistrationsPage() {
             {formatVND(metrics.revenueVnd)}
           </div>
           <span className="text-[11px] text-slate-500">
-            {metrics.revenueUsd > 0 ? `+ ${formatUSD(metrics.revenueUsd)} USD` : "Đối soát Vietcombank"}
+            {metrics.revenueUsd > 0 ? `+ ${formatUSD(metrics.revenueUsd)} USD` : "Reconciled via bank transfer"}
           </span>
         </div>
 
@@ -310,7 +310,7 @@ export default function AdminRegistrationsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Chờ Thanh Toán
+              Pending Payment
             </span>
             <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
               <Clock className="w-4 h-4" />
@@ -319,14 +319,14 @@ export default function AdminRegistrationsPage() {
           <div className="mt-3 text-2xl font-black text-amber-600">
             {metrics.pendingCount}
           </div>
-          <span className="text-[11px] text-slate-500">Cần nhắc thanh toán / kiểm tra sao kê</span>
+          <span className="text-[11px] text-slate-500">Awaiting transfer verification</span>
         </div>
 
         {/* Card 4: Checked-in */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Điểm Danh Hội Trường
+              Venue Check-In
             </span>
             <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
               <QrCode className="w-4 h-4" />
@@ -336,7 +336,7 @@ export default function AdminRegistrationsPage() {
             {metrics.checkedInCount} / {metrics.total}
           </div>
           <span className="text-[11px] text-slate-500">
-            Tỷ lệ check-in: {metrics.total > 0 ? Math.round((metrics.checkedInCount / metrics.total) * 100) : 0}%
+            Check-in rate: {metrics.total > 0 ? Math.round((metrics.checkedInCount / metrics.total) * 100) : 0}%
           </span>
         </div>
       </div>
@@ -347,7 +347,7 @@ export default function AdminRegistrationsPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Tìm theo Mã đăng ký, Họ tên, Email, Đơn vị, Mã bài báo..."
+            placeholder="Search by Registration Code, Name, Email, Affiliation, or Paper ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:bg-white"
@@ -360,10 +360,10 @@ export default function AdminRegistrationsPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff]"
           >
-            <option value="ALL">Mọi trạng thái thanh toán</option>
-            <option value="PAID">ĐÃ THANH TOÁN (PAID)</option>
-            <option value="PENDING">CHỜ THANH TOÁN (PENDING)</option>
-            <option value="REFUNDED">HOÀN TIỀN (REFUNDED)</option>
+            <option value="ALL">All Payment Statuses</option>
+            <option value="PAID">Paid</option>
+            <option value="PENDING">Pending</option>
+            <option value="REFUNDED">Refunded</option>
           </select>
 
           <select
@@ -371,11 +371,11 @@ export default function AdminRegistrationsPage() {
             onChange={(e) => setTypeFilter(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff]"
           >
-            <option value="ALL">Mọi loại đại biểu</option>
-            <option value="AUTHOR">Tác giả (AUTHOR)</option>
-            <option value="IEEE_MEMBER">Hội viên IEEE</option>
-            <option value="STUDENT">Sinh viên</option>
-            <option value="REGULAR">Đại biểu tự do</option>
+            <option value="ALL">All Delegate Types</option>
+            <option value="AUTHOR">Author</option>
+            <option value="IEEE_MEMBER">IEEE Member</option>
+            <option value="STUDENT">Student</option>
+            <option value="REGULAR">Regular Delegate</option>
           </select>
         </div>
       </div>
@@ -386,26 +386,26 @@ export default function AdminRegistrationsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
-                <th className="py-3 px-4">Mã Đăng Ký</th>
-                <th className="py-3 px-4">Đại Biểu</th>
-                <th className="py-3 px-4">Loại & Bài Báo</th>
-                <th className="py-3 px-4">Lệ Phí</th>
-                <th className="py-3 px-4">Thanh Toán</th>
-                <th className="py-3 px-4">Điểm Danh</th>
-                <th className="py-3 px-4 text-right">Thao Tác</th>
+                <th className="py-3 px-4">Code</th>
+                <th className="py-3 px-4">Delegate</th>
+                <th className="py-3 px-4">Category & Paper</th>
+                <th className="py-3 px-4">Fee</th>
+                <th className="py-3 px-4">Payment</th>
+                <th className="py-3 px-4">Check-In</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="text-center py-10 text-slate-400">
-                    Đang nạp dữ liệu đại biểu...
+                    Loading delegate records...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-10 text-slate-400">
-                    Không tìm thấy đại biểu nào phù hợp.
+                    No matching delegate records found.
                   </td>
                 </tr>
               ) : (
@@ -445,7 +445,7 @@ export default function AdminRegistrationsPage() {
                             : "bg-amber-100 text-amber-700"
                         }`}
                       >
-                        {item.paymentStatus === "PAID" ? "Đã đối soát" : "Chờ chuyển khoản"}
+                        {item.paymentStatus === "PAID" ? "Paid" : "Pending"}
                       </span>
                     </td>
 
@@ -459,7 +459,7 @@ export default function AdminRegistrationsPage() {
                             : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                         }`}
                       >
-                        {item.checkInStatus ? "Đã Check-in" : "Chưa"}
+                        {item.checkInStatus ? "Checked In" : "Not Yet"}
                       </button>
                     </td>
 
@@ -471,9 +471,9 @@ export default function AdminRegistrationsPage() {
                             onClick={() => handleUpdateStatus(item.id, "PAID")}
                             disabled={actionLoading}
                             className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] cursor-pointer transition-colors"
-                            title="Xác nhận đã nhận tiền vào tài khoản"
+                            title="Confirm bank transfer received"
                           >
-                            Duyệt Tiền
+                            Approve Payment
                           </button>
                         )}
 
@@ -481,7 +481,7 @@ export default function AdminRegistrationsPage() {
                           type="button"
                           onClick={() => setSelectedReg(item)}
                           className="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer"
-                          title="Xem chi tiết hồ sơ"
+                          title="View registration details"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
@@ -523,46 +523,46 @@ export default function AdminRegistrationsPage() {
                 <span className="font-semibold text-slate-900">{selectedReg.email}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Điện thoại:</span>
+                <span className="text-slate-400 block">Phone:</span>
                 <span className="font-semibold text-slate-900">{selectedReg.phone || "—"}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Đơn vị:</span>
+                <span className="text-slate-400 block">Affiliation:</span>
                 <span className="font-semibold text-slate-900">{selectedReg.affiliation}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Quốc gia:</span>
+                <span className="text-slate-400 block">Country:</span>
                 <span className="font-semibold text-slate-900">{selectedReg.country}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Hộ chiếu / CCCD:</span>
+                <span className="text-slate-400 block">Passport / ID:</span>
                 <span className="font-mono font-semibold text-slate-900">
                   {selectedReg.passportNumber || "—"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">Chế độ ăn:</span>
+                <span className="text-slate-400 block">Dietary Requirement:</span>
                 <span className="font-semibold text-slate-900">
-                  {selectedReg.dietaryRequirement || "Bình thường"}
+                  {selectedReg.dietaryRequirement || "Standard"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">Hỗ trợ Visa:</span>
+                <span className="text-slate-400 block">Visa Support:</span>
                 <span className="font-semibold text-slate-900">
-                  {selectedReg.needsVisaSupport ? "Có đăng ký Thư hỗ trợ" : "Không"}
+                  {selectedReg.needsVisaSupport ? "Requested" : "No"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">Trạng thái điểm danh:</span>
+                <span className="text-slate-400 block">Check-In Status:</span>
                 <span className="font-semibold text-slate-900">
-                  {selectedReg.checkInStatus ? "Đã check-in" : "Chưa"}
+                  {selectedReg.checkInStatus ? "Checked In" : "Pending"}
                 </span>
               </div>
             </div>
 
             {selectedReg.paperId && (
               <div className="p-3 bg-blue-50 rounded-xl text-xs space-y-1">
-                <span className="font-bold text-blue-900 block">Bài Báo Khoa Học</span>
+                <span className="font-bold text-blue-900 block">Accepted Paper</span>
                 <div>Paper ID: <strong className="font-mono text-blue-700">{selectedReg.paperId}</strong></div>
                 {selectedReg.paperTitle && <div className="italic text-slate-600">"{selectedReg.paperTitle}"</div>}
               </div>
@@ -570,14 +570,14 @@ export default function AdminRegistrationsPage() {
 
             <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between text-xs">
               <div>
-                <span className="text-slate-400 block">Lệ phí đăng ký:</span>
+                <span className="text-slate-400 block">Registration Fee:</span>
                 <span className="text-base font-black text-[#115eff]">
                   {selectedReg.currency === "VND" ? formatVND(selectedReg.feeAmount) : formatUSD(selectedReg.feeAmount)}
                 </span>
               </div>
 
               <div className="text-right">
-                <span className="text-slate-400 block">Trạng thái:</span>
+                <span className="text-slate-400 block">Status:</span>
                 <span className="font-bold text-slate-900">{selectedReg.paymentStatus}</span>
               </div>
             </div>
@@ -588,7 +588,7 @@ export default function AdminRegistrationsPage() {
                 target="_blank"
                 className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
               >
-                Mở Thẻ Đại Biểu
+                Open Delegate Badge
               </Link>
 
               {selectedReg.paymentStatus === "PENDING" ? (
@@ -597,7 +597,7 @@ export default function AdminRegistrationsPage() {
                   onClick={() => handleUpdateStatus(selectedReg.id, "PAID")}
                   className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer transition-colors"
                 >
-                  Xác Nhận Đã Nhận Tiền
+                  Confirm Payment Received
                 </button>
               ) : (
                 <button
@@ -605,7 +605,7 @@ export default function AdminRegistrationsPage() {
                   onClick={() => handleUpdateStatus(selectedReg.id, "PENDING")}
                   className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold cursor-pointer transition-colors"
                 >
-                  Đặt lại Chờ thanh toán
+                  Reset to Pending
                 </button>
               )}
             </div>

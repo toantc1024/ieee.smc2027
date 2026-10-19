@@ -64,9 +64,9 @@ import { cn } from "@/lib/utils";
 const AVAILABLE_BLOCKS = [
   {
     type: "HeroCarousel",
-    title: "Hero Carousel (Trang chủ)",
+    title: "Hero Carousel",
     category: "Header & Hero",
-    description: "Banner quay vòng toàn màn hình với hiệu ứng chuyển ảnh GSAP và bộ đếm hoa sen",
+    description: "Full-width carousel banner with GSAP transitions and countdown indicators",
     defaultProps: {
       autoplayDuration: 7,
       showOverlayText: true,
@@ -75,9 +75,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "CommitteesSection",
-    title: "Ban Điều Hành & Thành Viên (Committees Carousel)",
-    category: "Tổ chức",
-    description: "Khối ban tổ chức xanh hoàng gia chuẩn HCMUTE, lưới chevron hai bên, cuộn tự động và làm mờ viền",
+    title: "Committees Carousel",
+    category: "Organization",
+    description: "Royal blue organizing and technical committees showcase with auto-scrolling carousel",
     defaultProps: {
       title: "Organizing & Technical Committees",
       subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
@@ -87,9 +87,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "PaymentMethods",
-    title: "Đăng Ký & Cổng Thanh Toán (Payment Methods)",
-    category: "Nộp bài",
-    description: "Biểu phí tác giả, mã VietQR nội địa, điện chuyển khoản SWIFT quốc tế và thanh toán thẻ trực tuyến",
+    title: "Payment Methods",
+    category: "Registration",
+    description: "Registration fee schedule, domestic VietQR code, SWIFT wire details, and card payment channels",
     defaultProps: {
       title: "Registration & Payment Methods",
       subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
@@ -98,9 +98,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "WelcomeLetter",
-    title: "Thư chào mừng (Welcome Letter)",
-    category: "Giới thiệu",
-    description: "Thông điệp từ General Chairs và chủ đề Human-Centric Intelligence",
+    title: "Welcome Letter",
+    category: "Overview",
+    description: "Official welcome message from the General Chairs and conference theme overview",
     defaultProps: {
       heading: "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       title: "Welcome Message from the General Chairs",
@@ -110,9 +110,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "NewsList",
-    title: "Tin tức & Thông báo (News)",
-    category: "Nội dung",
-    description: "Danh sách tin tức đối tác, lịch trình và mốc gia hạn từ IEEE SMC",
+    title: "News & Announcements",
+    category: "Content",
+    description: "Latest conference announcements, milestone updates, and program notices",
     defaultProps: {
       title: "Conference News & Announcements",
       subtitle: "Stay updated with the latest milestones, partnership alerts, and program schedules",
@@ -120,9 +120,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "ConferenceVideo",
-    title: "Video giới thiệu (Video Spotlight)",
-    category: "Đa phương tiện",
-    description: "Video YouTube quảng bá hội nghị tại TP. Hồ Chí Minh và điểm nhấn địa điểm",
+    title: "Video Spotlight",
+    category: "Media",
+    description: "Promotional YouTube video showcasing Ho Chi Minh City and the conference venue",
     defaultProps: {
       title: "IEEE SMC 2027 Comes to Ho Chi Minh City",
       subtitle: "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors",
@@ -132,9 +132,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "PaperTemplates",
-    title: "Mẫu bài báo & Tải về (Templates)",
-    category: "Nộp bài",
-    description: "Tải template LaTeX (.zip), Word (.docx) và hướng dẫn chuẩn bị bản thảo",
+    title: "Author Submission Templates",
+    category: "Submissions",
+    description: "Official IEEE LaTeX (.zip) and Microsoft Word (.docx) manuscript templates and guidelines",
     defaultProps: {
       title: "Author Submission Templates & Guidelines",
       subtitle: "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
@@ -142,9 +142,9 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "ContactCards",
-    title: "Thẻ liên hệ & Hỗ trợ (Contact Cards)",
-    category: "Liên hệ",
-    description: "Bộ 3 thẻ liên hệ Email, Địa điểm, Website cùng form gửi câu hỏi nhanh",
+    title: "Contact & Secretariat Cards",
+    category: "Contact",
+    description: "Secretariat email, venue address, website cards, and quick inquiry form",
     defaultProps: {
       title: "Contact the Organizing Secretariat",
       subtitle: "Have questions regarding paper submissions, proposals, or travel visas? We are here to assist you.",
@@ -156,95 +156,95 @@ const AVAILABLE_BLOCKS = [
   },
   {
     type: "CfpSubscribe",
-    title: "Đăng ký nhận tin tức (Newsletter)",
-    category: "Liên hệ",
-    description: "Form đăng ký email nhận thông báo hạn nộp bài và tin tức hội nghị",
+    title: "Newsletter Subscription",
+    category: "Contact",
+    description: "Email subscription form for Call for Papers deadlines and conference alerts",
     defaultProps: {},
   },
   {
     type: "SubmissionCountdown",
-    title: "Đếm ngược nộp bài (Countdown)",
+    title: "Submission Countdown",
     category: "Header & Hero",
-    description: "Thanh đếm ngược thời gian nộp bài Paper Submission April 08, 2027",
+    description: "Live countdown timer to the Paper Submission deadline on April 08, 2027",
     defaultProps: {},
   },
   {
     type: "ConferenceHighlights",
-    title: "Điểm nhấn hội nghị (Highlights)",
-    category: "Nội dung",
-    description: "Thống kê 68 chủ đề, 3 pillars, Scopus, IEEE Xplore indexing",
+    title: "Conference Highlights",
+    category: "Content",
+    description: "Key metrics featuring 68 research topics, 3 pillars, Scopus, and IEEE Xplore indexing",
     defaultProps: {},
   },
   {
     type: "CallForPapers",
-    title: "Thông báo nộp bài (Call for Papers)",
-    category: "Nội dung",
-    description: "Khối CFP với tải PDF, hướng dẫn tác giả và quy định hội nghị",
+    title: "Call for Papers",
+    category: "Content",
+    description: "CFP overview with downloadable brochure, author guidelines, and submission policies",
     defaultProps: {},
   },
   {
     type: "TracksExplorer",
-    title: "3 Trụ cột & 68 Chủ đề (Tracks)",
-    category: "Nội dung",
-    description: "Hệ thống khám phá Systems, Cybernetics, Human-Machine Systems",
+    title: "Research Tracks Explorer",
+    category: "Content",
+    description: "Interactive explorer for Systems Science, Cybernetics, and Human-Machine Systems",
     defaultProps: {},
   },
   {
     type: "ImportantDates",
-    title: "Mốc thời gian quan trọng (Timeline)",
-    category: "Nội dung",
-    description: "Lộ trình 9 mốc thời gian hội nghị với tính năng thêm Google Calendar",
+    title: "Important Dates Timeline",
+    category: "Content",
+    description: "9-stage conference milestone timeline with calendar export",
     defaultProps: {},
   },
   {
     type: "About",
-    title: "Giới thiệu hội nghị & IEEE SMC (About)",
-    category: "Nội dung",
-    description: "Giới thiệu HCMUTE và IEEE Systems, Man, and Cybernetics Society",
+    title: "About Conference & IEEE SMC",
+    category: "Content",
+    description: "Overview of HCMUTE and the IEEE Systems, Man, and Cybernetics Society",
     defaultProps: {},
   },
   {
     type: "Committee",
-    title: "Ban tổ chức dạng danh sách (Organizing Committee)",
-    category: "Tổ chức",
-    description: "Danh sách General Chairs, Program Chairs và ban điều hành quốc tế",
+    title: "Organizing Committee List",
+    category: "Organization",
+    description: "Structured list of General Chairs, Program Chairs, and international committee members",
     defaultProps: {},
   },
   {
     type: "Venue",
-    title: "Địa điểm & Khách sạn (Venue)",
-    category: "Địa điểm",
-    description: "Khách sạn Sheraton Saigon Grand Opera Hotel và hướng dẫn du lịch",
+    title: "Venue & Hospitality",
+    category: "Venue",
+    description: "Sheraton Saigon Grand Opera Hotel details and travel guide",
     defaultProps: {},
   },
   {
     type: "FAQ",
-    title: "Câu hỏi thường gặp (FAQ)",
-    category: "Hỗ trợ",
-    description: "Accordion giải đáp thắc mắc về visa, đăng ký và nộp bài",
+    title: "Frequently Asked Questions",
+    category: "Support",
+    description: "Accordion answering common questions on visas, registration, and paper submissions",
     defaultProps: {},
   },
   {
     type: "Keynotes",
-    title: "Diễn giả Plenary (Keynotes)",
-    category: "Nội dung",
-    description: "Khối thông báo các diễn giả chính uy tín toàn cầu",
+    title: "Keynote Speakers",
+    category: "Content",
+    description: "Plenary and keynote speaker spotlight section",
     defaultProps: {},
   },
   {
     type: "Sponsors",
-    title: "Nhà tài trợ & Đối tác (Sponsors)",
-    category: "Đối tác",
-    description: "Lưới logo các đơn vị tài trợ và đồng hành",
+    title: "Sponsors & Institutional Partners",
+    category: "Partners",
+    description: "Logo grid of organizing institutions, technical sponsors, and partners",
     defaultProps: {},
   },
   {
     type: "CustomHTML",
-    title: "Khối HTML tùy chỉnh (Embed)",
-    category: "Nâng cao",
-    description: "Chèn mã HTML, iframe, video YouTube hoặc widget tùy ý",
+    title: "Custom HTML Embed",
+    category: "Advanced",
+    description: "Embed custom HTML markup, iframes, videos, or widgets",
     defaultProps: {
-      content: "<div class='p-8 text-center bg-slate-100 rounded-lg'><h4>Khối HTML Tùy Chỉnh</h4><p>Nhập mã HTML vào bảng thuộc tính bên phải.</p></div>",
+      content: "<div class='p-8 text-center bg-slate-100 rounded-lg'><h4>Custom HTML Block</h4><p>Edit the HTML code in the properties panel on the right.</p></div>",
     },
   },
 ];
@@ -345,7 +345,7 @@ function SortableBlockWrapper({
           {...attributes}
           {...listeners}
           className="flex items-center gap-1.5 px-1 py-0.5 text-white font-bold cursor-grab active:cursor-grabbing select-none shrink-0"
-          title="Nhấn giữ để kéo thả thay đổi vị trí khối"
+          title="Drag to reorder block"
         >
           <GripVertical className="w-3.5 h-3.5 text-blue-100" />
           <span className="w-4 h-4 rounded bg-white text-[#115eff] text-[10px] font-extrabold flex items-center justify-center">
@@ -358,7 +358,7 @@ function SortableBlockWrapper({
 
         {block.hidden && (
           <span className="text-[10px] bg-amber-400 text-amber-950 font-bold px-1.5 py-0.5 rounded leading-none">
-            Đang ẩn
+            Hidden
           </span>
         )}
 
@@ -373,7 +373,7 @@ function SortableBlockWrapper({
           }}
           disabled={index === 0}
           className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 disabled:opacity-30 transition-colors cursor-pointer shrink-0"
-          title="Di chuyển lên trên"
+          title="Move up"
         >
           <ChevronUp className="w-3.5 h-3.5" />
         </button>
@@ -387,7 +387,7 @@ function SortableBlockWrapper({
           }}
           disabled={index === totalBlocks - 1}
           className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 disabled:opacity-30 transition-colors cursor-pointer shrink-0"
-          title="Di chuyển xuống dưới"
+          title="Move down"
         >
           <ChevronDown className="w-3.5 h-3.5" />
         </button>
@@ -400,7 +400,7 @@ function SortableBlockWrapper({
             onDuplicate();
           }}
           className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 transition-colors cursor-pointer shrink-0"
-          title="Nhân bản khối này"
+          title="Duplicate block"
         >
           <Copy className="w-3 h-3" />
         </button>
@@ -413,7 +413,7 @@ function SortableBlockWrapper({
             onToggleHide();
           }}
           className="w-6 h-6 flex items-center justify-center rounded text-white hover:bg-blue-700 transition-colors cursor-pointer shrink-0"
-          title={block.hidden ? "Hiện khối" : "Ẩn khối"}
+          title={block.hidden ? "Show block" : "Hide block"}
         >
           {block.hidden ? (
             <EyeOff className="w-3.5 h-3.5 text-amber-300" />
@@ -430,7 +430,7 @@ function SortableBlockWrapper({
             onRemove();
           }}
           className="w-6 h-6 flex items-center justify-center rounded text-rose-200 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer shrink-0"
-          title="Xóa khối"
+          title="Delete block"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
@@ -518,7 +518,7 @@ export default function PageBuilderRoute({
         setTimeout(() => setSavedSuccess(false), 3000);
       }
     } catch {
-      alert("Lỗi lưu trang vào cơ sở dữ liệu");
+      alert("Failed to save page to database");
     } finally {
       setSaving(false);
     }
@@ -586,12 +586,12 @@ export default function PageBuilderRoute({
     try {
       const parsed = JSON.parse(rawJsonText);
       if (!Array.isArray(parsed)) {
-        throw new Error("Dữ liệu JSON của trang phải là một mảng [] các khối component");
+        throw new Error("Page JSON schema must be an array [] of component blocks");
       }
       setBlocks(parsed);
       setJsonModalOpen(false);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "JSON cú pháp không hợp lệ";
+      const message = err instanceof Error ? err.message : "Invalid JSON syntax";
       setJsonError(message);
     }
   };
@@ -600,7 +600,7 @@ export default function PageBuilderRoute({
     if (block.hidden) {
       return (
         <div className="p-12 text-center bg-slate-100/70 border-2 border-dashed border-slate-300 rounded-xl text-slate-400 text-xs font-semibold">
-          Khối [{block.type}] đang bị ẩn trên trang công khai
+          Block [{block.type}] is currently hidden on the live page
         </div>
       );
     }
@@ -650,14 +650,14 @@ export default function PageBuilderRoute({
         return (
           <div
             dangerouslySetInnerHTML={{
-              __html: (block.props?.content as string) || "<p>Nội dung trống</p>",
+              __html: (block.props?.content as string) || "<p>Empty content</p>",
             }}
           />
         );
       default:
         return (
           <div className="p-8 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl">
-            Khối chưa định nghĩa: {block.type}
+            Undefined block type: {block.type}
           </div>
         );
     }
@@ -677,7 +677,7 @@ export default function PageBuilderRoute({
     return (
       <div className="py-24 text-center text-slate-500 text-sm flex flex-col items-center gap-3">
         <RefreshCw className="w-6 h-6 animate-spin text-[#115eff]" />
-        <span>Đang tải giao diện kéo thả (HCMUTE Drag & Drop Canvas)...</span>
+        <span>Loading drag-and-drop page builder canvas...</span>
       </div>
     );
   }
@@ -691,7 +691,7 @@ export default function PageBuilderRoute({
           <Link
             href="/admin/pages"
             className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
-            title="Quay lại danh sách trang"
+            title="Back to pages list"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -716,7 +716,7 @@ export default function PageBuilderRoute({
                 ? "bg-white text-[#115eff] shadow-2xs font-bold"
                 : "text-slate-500 hover:text-slate-900"
             )}
-            title="Xem màn hình Máy tính (Desktop 100%)"
+            title="Desktop Viewport (100%)"
           >
             <Monitor className="w-4 h-4" />
           </button>
@@ -729,7 +729,7 @@ export default function PageBuilderRoute({
                 ? "bg-white text-[#115eff] shadow-2xs font-bold"
                 : "text-slate-500 hover:text-slate-900"
             )}
-            title="Xem màn hình Máy tính bảng (Tablet 768px)"
+            title="Tablet Viewport (768px)"
           >
             <Tablet className="w-4 h-4" />
           </button>
@@ -742,7 +742,7 @@ export default function PageBuilderRoute({
                 ? "bg-white text-[#115eff] shadow-2xs font-bold"
                 : "text-slate-500 hover:text-slate-900"
             )}
-            title="Xem màn hình Điện thoại (Mobile 390px)"
+            title="Mobile Viewport (390px)"
           >
             <Smartphone className="w-4 h-4" />
           </button>
@@ -754,10 +754,10 @@ export default function PageBuilderRoute({
             type="button"
             onClick={openJsonEditor}
             className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-md transition-colors cursor-pointer"
-            title="Xem hoặc dán trực tiếp mã JSON của trang"
+            title="View or edit raw page JSON"
           >
             <Code2 className="w-4 h-4 text-slate-500" />
-            <span>Mã JSON trang</span>
+            <span>Page JSON</span>
           </button>
 
           <Link
@@ -765,7 +765,7 @@ export default function PageBuilderRoute({
             target="_blank"
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-md transition-colors"
           >
-            <span>Trang ngoài</span>
+            <span>Live Page</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </Link>
 
@@ -778,12 +778,12 @@ export default function PageBuilderRoute({
             {savedSuccess ? (
               <>
                 <Check className="w-4 h-4 text-emerald-300" />
-                <span>Đã lưu!</span>
+                <span>Saved!</span>
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>{saving ? "Đang lưu..." : "Lưu trang"}</span>
+                <span>{saving ? "Saving..." : "Save Page"}</span>
               </>
             )}
           </button>
@@ -797,10 +797,10 @@ export default function PageBuilderRoute({
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#004776]">
               <Layers className="w-4 h-4 text-[#115eff]" />
-              <span>Kho Khối Giao Diện (Components)</span>
+              <span>Component Library</span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Nhấn &ldquo;+ Thêm khối&rdquo; để chèn vào trang
+              Click &ldquo;+ Add Block&rdquo; to insert into the page
             </p>
           </div>
 
@@ -810,7 +810,7 @@ export default function PageBuilderRoute({
               type="text"
               value={paletteSearch}
               onChange={(e) => setPaletteSearch(e.target.value)}
-              placeholder="Tìm khối (Committees, Payment, FAQ...)"
+              placeholder="Search blocks (Committees, Payment, FAQ...)"
               className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:bg-white focus:border-[#115eff]"
             />
           </div>
@@ -842,7 +842,7 @@ export default function PageBuilderRoute({
                   className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Thêm khối</span>
+                  <span>Add Block</span>
                 </button>
               </div>
             ))}
@@ -862,9 +862,9 @@ export default function PageBuilderRoute({
             {blocks.length === 0 ? (
               <div className="p-16 text-center bg-white border-2 border-dashed border-slate-300 rounded-2xl space-y-3">
                 <Layers className="w-10 h-10 text-slate-400 mx-auto" />
-                <h4 className="font-bold text-slate-800 text-base">Trang chưa có khối nào</h4>
+                <h4 className="font-bold text-slate-800 text-base">No blocks on this page</h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Chọn các khối từ bảng bên trái (ví dụ: Hero Carousel, Committees, Payment Methods, Timeline...) để bắt đầu thiết kế.
+                  Select blocks from the left panel (e.g., Hero Carousel, Committees, Payment Methods, Timeline) to start building.
                 </p>
               </div>
             ) : (
@@ -911,10 +911,10 @@ export default function PageBuilderRoute({
           <div className="space-y-1 pb-3 border-b border-slate-100">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#004776]">
               <Sliders className="w-4 h-4 text-[#115eff]" />
-              <span>Bảng Thuộc Tính (Inspector)</span>
+              <span>Properties Inspector</span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Chỉnh sửa tham số chi tiết của khối đang chọn
+              Configure parameters for the selected block
             </p>
           </div>
 
@@ -922,7 +922,7 @@ export default function PageBuilderRoute({
             <div className="space-y-4 text-xs">
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
                 <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
-                  Khối được chọn
+                  Selected Block
                 </span>
                 <div className="font-extrabold text-[#004776] text-sm">
                   {AVAILABLE_BLOCKS.find((b) => b.type === selectedBlock.type)?.title || selectedBlock.type}
@@ -934,7 +934,7 @@ export default function PageBuilderRoute({
 
               {/* General Visibility Toggle */}
               <div className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
-                <span className="font-semibold text-slate-800">Hiển thị khối</span>
+                <span className="font-semibold text-slate-800">Block Visible</span>
                 <input
                   type="checkbox"
                   checked={!selectedBlock.hidden}
@@ -947,10 +947,10 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "CommitteesSection" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Ban Điều Hành & Ủy Ban
+                    Committees Settings
                   </span>
                   <div>
-                    <label className="block text-slate-600 mb-1">Huy hiệu (Badge)</label>
+                    <label className="block text-slate-600 mb-1">Badge</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.badge ?? "Leadership & Organization")}
@@ -964,7 +964,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề (Title)</label>
+                    <label className="block text-slate-600 mb-1">Title</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.title ?? "Organizing & Technical Committees")}
@@ -978,7 +978,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Mô tả phụ (Subtitle)</label>
+                    <label className="block text-slate-600 mb-1">Subtitle</label>
                     <textarea
                       rows={2}
                       value={String(selectedBlock.props?.subtitle ?? "Distinguished leadership and academic committee chairs driving IEEE SMC 2027")}
@@ -992,7 +992,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Thời gian tự cuộn carousel (ms)</label>
+                    <label className="block text-slate-600 mb-1">Autoplay Delay (ms)</label>
                     <input
                       type="number"
                       min={1000}
@@ -1014,10 +1014,10 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "PaymentMethods" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Đăng Ký & Thanh Toán
+                    Payment Methods Settings
                   </span>
                   <div>
-                    <label className="block text-slate-600 mb-1">Huy hiệu (Badge)</label>
+                    <label className="block text-slate-600 mb-1">Badge</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.badge ?? "Registration Guide")}
@@ -1031,7 +1031,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề (Title)</label>
+                    <label className="block text-slate-600 mb-1">Title</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.title ?? "Registration & Payment Methods")}
@@ -1045,7 +1045,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Mô tả phụ (Subtitle)</label>
+                    <label className="block text-slate-600 mb-1">Subtitle</label>
                     <textarea
                       rows={2}
                       value={String(selectedBlock.props?.subtitle ?? "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027")}
@@ -1065,11 +1065,11 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "HeroCarousel" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Hero Carousel
+                    Hero Carousel Settings
                   </span>
                   <div>
                     <label className="block text-slate-600 mb-1">
-                      Thời gian tự chuyển slide (giây)
+                      Autoplay Duration (seconds)
                     </label>
                     <input
                       type="number"
@@ -1087,7 +1087,7 @@ export default function PageBuilderRoute({
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-slate-200">
                     <label className="text-slate-600 text-xs">
-                      Hiển thị chữ đè lên ảnh
+                      Show Overlay Text
                     </label>
                     <input
                       type="checkbox"
@@ -1108,7 +1108,7 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "CustomHTML" && (
                 <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Mã HTML / Nhúng
+                    HTML / Embed Code
                   </span>
                   <textarea
                     rows={8}
@@ -1120,7 +1120,7 @@ export default function PageBuilderRoute({
                       })
                     }
                     className="w-full px-2.5 py-2 font-mono text-[11px] bg-white border border-slate-300 rounded focus:outline-none focus:border-[#115eff]"
-                    placeholder="<div>Nhập HTML ở đây...</div>"
+                    placeholder="<div>Enter HTML here...</div>"
                   />
                 </div>
               )}
@@ -1129,10 +1129,10 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "WelcomeLetter" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Thư Chào Mừng
+                    Welcome Letter Settings
                   </span>
                   <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề lớn (Headline)</label>
+                    <label className="block text-slate-600 mb-1">Headline</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.heading ?? "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam")}
@@ -1146,7 +1146,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Tiêu đề khối (Subtitle)</label>
+                    <label className="block text-slate-600 mb-1">Subtitle</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.title ?? "Welcome Message from the General Chairs")}
@@ -1166,10 +1166,10 @@ export default function PageBuilderRoute({
               {selectedBlock.type === "ContactCards" && (
                 <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <span className="font-bold text-slate-800 block text-xs">
-                    Thuộc tính Liên Hệ
+                    Contact Settings
                   </span>
                   <div>
-                    <label className="block text-slate-600 mb-1">Email liên hệ</label>
+                    <label className="block text-slate-600 mb-1">Contact Email</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.email ?? "ieeesmc2027@hcmute.edu.vn")}
@@ -1183,7 +1183,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Địa điểm</label>
+                    <label className="block text-slate-600 mb-1">Location</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.location ?? "Ho Chi Minh City, Vietnam")}
@@ -1197,7 +1197,7 @@ export default function PageBuilderRoute({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-600 mb-1">Trang web</label>
+                    <label className="block text-slate-600 mb-1">Website</label>
                     <input
                       type="text"
                       value={String(selectedBlock.props?.website ?? "https://ieee-smc2027.org")}
@@ -1216,7 +1216,7 @@ export default function PageBuilderRoute({
               {/* Block Raw JSON Props Inspector */}
               <div className="space-y-2 pt-2 border-t border-slate-100">
                 <span className="text-[11px] font-bold text-slate-700 block">
-                  Thuộc tính Props (JSON)
+                  Block Props JSON
                 </span>
                 <textarea
                   rows={8}
@@ -1241,7 +1241,7 @@ export default function PageBuilderRoute({
                   className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Copy className="w-3.5 h-3.5" />
-                  <span>Nhân bản khối này</span>
+                  <span>Duplicate Block</span>
                 </button>
 
                 <button
@@ -1250,13 +1250,13 @@ export default function PageBuilderRoute({
                   className="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Xóa khối này</span>
+                  <span>Delete Block</span>
                 </button>
               </div>
             </div>
           ) : (
             <div className="py-12 text-center text-slate-400 text-xs">
-              Chọn một khối component trên canvas để xem và chỉnh sửa thuộc tính.
+              Select a block on the canvas to view and edit its properties.
             </div>
           )}
         </div>
@@ -1270,7 +1270,7 @@ export default function PageBuilderRoute({
               <div className="flex items-center gap-2">
                 <Code2 className="w-5 h-5 text-[#115eff]" />
                 <h3 className="text-base font-bold text-slate-900">
-                  Mã JSON Toàn Trang (Full Page JSON Schema)
+                  Full Page JSON Schema
                 </h3>
               </div>
               <button
@@ -1283,7 +1283,7 @@ export default function PageBuilderRoute({
             </div>
 
             <p className="text-xs text-slate-500">
-              Bạn có thể sao chép, chỉnh sửa hoặc dán cấu trúc JSON các khối component của trang này:
+              Copy, edit, or paste the JSON array of component blocks for this page:
             </p>
 
             {jsonError && (
@@ -1304,11 +1304,11 @@ export default function PageBuilderRoute({
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(rawJsonText);
-                  alert("Đã sao chép JSON vào clipboard!");
+                  alert("Copied JSON to clipboard!");
                 }}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-md transition-colors"
               >
-                Sao chép JSON
+                Copy JSON
               </button>
 
               <div className="flex items-center gap-2">
@@ -1317,14 +1317,14 @@ export default function PageBuilderRoute({
                   onClick={() => setJsonModalOpen(false)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-md transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="button"
                   onClick={applyJsonData}
                   className="px-5 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold rounded-md transition-colors shadow-2xs"
                 >
-                  Áp dụng JSON
+                  Apply JSON
                 </button>
               </div>
             </div>
