@@ -237,12 +237,12 @@ export async function upsertUser(user: {
     existing?.name ||
     cleanEmail.split("@")[0].replace(/[._-]/g, " ");
 
-  const mergedProfileData: Prisma.InputJsonValue = {
+  const mergedProfileData = {
     ...(existing?.profileData && typeof existing.profileData === "object"
       ? (existing.profileData as Record<string, unknown>)
       : {}),
     ...(user.profileData || {}),
-  };
+  } as Prisma.InputJsonValue;
 
   const result = await prisma.user.upsert({
     where: { email: cleanEmail },

@@ -3,7 +3,7 @@ import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { StorageFolder } from "@/types";
 
 export async function POST(request: Request) {
-  const { errorResponse } = await requireAdminRequest();
+  const { user, errorResponse } = await requireAdminRequest();
   if (errorResponse) return errorResponse;
 
   try {
@@ -24,9 +24,11 @@ export async function POST(request: Request) {
       mimeType: file.type || "application/octet-stream",
       folder,
       generateBlur: true,
+      uploadedById: user.id,
     });
 
     return apiSuccess({
+      id: result.id,
       key: result.key,
       bucket: result.bucket,
       url: result.url,

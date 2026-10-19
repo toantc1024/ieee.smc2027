@@ -37,14 +37,14 @@ export async function PATCH(
       }
     }
 
-    const mergedProfileData: Prisma.InputJsonValue | undefined =
+    const mergedProfileData =
       profileData && typeof profileData === "object"
-        ? {
+        ? ({
             ...(targetUser.profileData && typeof targetUser.profileData === "object"
               ? (targetUser.profileData as Record<string, unknown>)
               : {}),
             ...(profileData as Record<string, unknown>),
-          }
+          } as Prisma.InputJsonValue)
         : undefined;
 
     const updated = await prisma.user.update({

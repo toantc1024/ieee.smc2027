@@ -1,13 +1,14 @@
 /**
- * Storage Service (MinIO S3 Object Storage + Sharp Image Processing)
+ * Storage Service (MinIO S3 Object Storage + PostgreSQL MediaFile Catalog + Sharp Image Processing)
  * Handles public CMS assets, delegate avatars, private passport scans,
- * PDF payment receipts, and Visa Support Letters.
+ * IEEE/Student proof documents, PDF payment receipts, and Visa Support Letters.
  */
 
 import fs from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import env from "@/config/env";
+import prisma from "@/lib/prisma";
 import minioClient from "@/lib/minio";
 import { sanitizeFilename } from "@/lib/utils";
 import type { StorageFolder, UploadFileInput, UploadFileResult } from "@/types";
@@ -47,7 +48,10 @@ export class StorageService {
         ? await this.extractImageMetadata(input.buffer)
         : {};
 
-    // Primary: Upload to MinIO Object Storage
+    let url = "";
+    let proxyUrl = "";
+    let storageDriver: "minio" | "local-fallback" = "minio";
+
     try {
       if (!this.bucketInitialized) {
         await minioClient.ensureBucket();
@@ -56,25 +60,14 @@ export class StorageService {
 
       await minioClient.putObject(objectKey, input.buffer, input.mimeType);
 
-      const url = minioClient.getPublicUrl(objectKey);
-      const proxyUrl = `/api/images/${objectKey}`;
-
-      return {
-        key: objectKey,
-        bucket: minioClient.defaultBucket,
-        url,
-        proxyUrl,
-        size: input.buffer.byteLength,
-        mimeType: input.mimeType,
-        ...imageMeta,
-        storageDriver: "minio",
-      };
+      url = minioClient.getPublicUrl(objectKey);
+      proxyUrl = `/api/images/${objectKey}`;
+      storageDriver = "minio";
     } catch (minioError) {
       if (env.isProd) {
         throw minioError;
       }
 
-      // Development fallback to local public directory if MinIO container is offline
       const localRelativeDir = folder.startsWith("public/")
         ? folder.replace(/^public\//, "")
         : path.join("uploads", folder);
@@ -85,17 +78,113 @@ export class StorageService {
       await fs.writeFile(fullLocalPath, input.buffer);
 
       const publicPath = `/${localRelativeDir}/${filename}`.replace(/\\/g, "/");
-      return {
-        key: objectKey,
-        bucket: minioClient.defaultBucket,
-        url: publicPath,
-        proxyUrl: `/api/images${publicPath}`,
-        size: input.buffer.byteLength,
-        mimeType: input.mimeType,
-        ...imageMeta,
-        storageDriver: "local-fallback",
-      };
+      url = publicPath;
+      proxyUrl = `/api/images${publicPath}`;
+      storageDriver = "local-fallback";
     }
+
+    const category = input.mimeType.startsWith("image/") ? "IMAGE" : "DOCUMENT";
+
+    const mediaRecord = await prisma.mediaFile
+      .upsert({
+        where: { key: objectKey },
+        update: {
+          filename,
+          originalName: input.filename,
+          url,
+          proxyUrl,
+          mimeType: input.mimeType,
+          size: input.buffer.byteLength,
+          folder,
+          category,
+          width: imageMeta.width ?? null,
+          height: imageMeta.height ?? null,
+          blurDataURL: imageMeta.blurDataURL ?? null,
+          uploadedById: input.uploadedById ?? null,
+        },
+        create: {
+          key: objectKey,
+          filename,
+          originalName: input.filename,
+          url,
+          proxyUrl,
+          mimeType: input.mimeType,
+          size: input.buffer.byteLength,
+          folder,
+          category,
+          width: imageMeta.width ?? null,
+          height: imageMeta.height ?? null,
+          blurDataURL: imageMeta.blurDataURL ?? null,
+          uploadedById: input.uploadedById ?? null,
+        },
+      })
+      .catch((err) => {
+        console.warn("MediaFile DB catalog insert warning:", err);
+        return null;
+      });
+
+    return {
+      id: mediaRecord?.id,
+      key: objectKey,
+      bucket: minioClient.defaultBucket,
+      url,
+      proxyUrl,
+      filename: input.filename,
+      size: input.buffer.byteLength,
+      mimeType: input.mimeType,
+      folder,
+      ...imageMeta,
+      storageDriver,
+      createdAt: mediaRecord?.createdAt?.toISOString(),
+    };
+  }
+
+  public async listMediaFiles(params?: {
+    folder?: string;
+    search?: string;
+    mimePrefix?: string;
+    uploadedById?: string;
+    includePrivate?: boolean;
+    limit?: number;
+  }) {
+    const where: Record<string, unknown> = {};
+
+    if (params?.folder && params.folder !== "all") {
+      where.folder = params.folder;
+    } else if (!params?.includePrivate) {
+      where.folder = { startsWith: "public/" };
+    }
+
+    if (params?.mimePrefix) {
+      where.mimeType = { startsWith: params.mimePrefix };
+    }
+
+    if (params?.uploadedById) {
+      where.uploadedById = params.uploadedById;
+    }
+
+    if (params?.search?.trim()) {
+      where.OR = [
+        { filename: { contains: params.search.trim(), mode: "insensitive" } },
+        { originalName: { contains: params.search.trim(), mode: "insensitive" } },
+        { key: { contains: params.search.trim(), mode: "insensitive" } },
+      ];
+    }
+
+    return prisma.mediaFile.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: params?.limit || 100,
+    });
+  }
+
+  public async deleteMediaFile(id: string): Promise<boolean> {
+    const file = await prisma.mediaFile.findUnique({ where: { id } });
+    if (!file) return false;
+
+    await this.deleteFile(file.key);
+    await prisma.mediaFile.delete({ where: { id } });
+    return true;
   }
 
   public async getFileBuffer(objectKey: string): Promise<{
@@ -105,8 +194,7 @@ export class StorageService {
   }> {
     try {
       return await minioClient.getObject(objectKey);
-    } catch (err) {
-      // Fallback to local public directory
+    } catch {
       const cleanPath = objectKey.replace(/^public\//, "").replace(/^\/+/, "");
       const localPath = path.join(process.cwd(), "public", cleanPath);
       const buffer = await fs.readFile(localPath);
