@@ -9,37 +9,37 @@ import {
   BookOpen,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 export default function SubmissionsPage() {
   const submissionPortals = [
     {
-      name: "PaperCept Conference Portal",
+      name: "PaperCept Conference Management System",
       system: "PaperCept",
-      status: "Official IEEE SMC",
-      badge: "Primary Portal",
+      badge: "Official Primary Portal",
       description:
-        "Standard manuscript submission system of the IEEE SMC Society. Includes automated PDF eXpress verification, author management, and peer-review tracking.",
+        "Official manuscript submission system for IEEE SMC 2027. Submit Regular Papers, Special Session Papers, and Workshop Manuscripts, and obtain your PaperCept Paper ID for Author Registration.",
       url: "https://ras.papercept.net",
       primary: true,
     },
     {
-      name: "EDAS Conference Management",
-      system: "EDAS",
-      status: "Mirror Portal",
-      badge: "Mirror Portal",
+      name: "IEEE PDF eXpress Verification",
+      system: "PDF eXpress",
+      badge: "Camera-Ready Check",
       description:
-        "International conference submission portal supporting technical track selection and editorial review status tracking.",
-      url: "https://edas.info",
+        "Mandatory IEEE Xplore compatibility verification tool for all accepted manuscripts prior to uploading the final camera-ready PDF to PaperCept.",
+      url: "https://ieee-pdf-express.org",
       primary: false,
     },
     {
-      name: "Microsoft CMT / B-Young System",
-      system: "CMT / B-Young",
-      status: "Regional Support",
-      badge: "Regional Access",
+      name: "IEEE Electronic Copyright Form",
+      system: "IEEE eCF",
+      badge: "Copyright Transfer",
       description:
-        "Dedicated submission and review coordination portal for organized Special Sessions and regional symposium tracks.",
-      url: "https://cmt3.research.microsoft.com",
+        "Completed directly through your PaperCept author workspace during final camera-ready manuscript submission.",
+      url: "https://ras.papercept.net",
       primary: false,
     },
   ];
@@ -47,12 +47,12 @@ export default function SubmissionsPage() {
   const milestones = [
     {
       date: "April 08, 2027",
-      event: "Full Manuscript Submission Deadline for Regular, Special Sessions & Workshops",
+      event: "Full Manuscript Submission Deadline on PaperCept",
       status: "Upcoming",
     },
     {
       date: "May 30, 2027",
-      event: "Notification of Paper Acceptance",
+      event: "Notification of Paper Acceptance via PaperCept",
       status: "Upcoming",
     },
     {
@@ -62,26 +62,29 @@ export default function SubmissionsPage() {
     },
     {
       date: "August 05, 2027",
-      event: "Author Registration Deadline",
+      event: "Author Registration & Payoo Payment Deadline",
       status: "Upcoming",
     },
   ];
 
   return (
-    <main className="min-h-screen bg-slate-50/60 pb-20">
-      {/* ── Page Header ── */}
+    <main className="min-h-screen bg-slate-50/70 pb-20">
       <div className="bg-white border-b border-slate-200">
-        <SectionContainer id="submissions-header" fullWidthBg="bg-white" className="py-10 sm:py-14">
+        <SectionContainer
+          id="submissions-header"
+          fullWidthBg="bg-white"
+          className="py-10 sm:py-14"
+        >
           <div className="max-w-4xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-[#115eff] border border-blue-100">
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Call For Papers & Submission Portals</span>
-            </div>
+            <Badge variant="ute" className="px-3 py-1">
+              <BookOpen className="size-3.5" />
+              Call For Papers & PaperCept Portal
+            </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Submission Portals & <span className="text-[#115eff]">Author Guidelines</span>
+              PaperCept Submission & <span className="text-[#005496]">Author Guidelines</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-medium">
-              Official IEEE double-column formatting instructions, LaTeX and Word templates, and direct links to PaperCept, EDAS, and CMT submission systems.
+              Official IEEE double-column formatting instructions, LaTeX and Word templates, and direct access to the PaperCept submission portal.
             </p>
           </div>
         </SectionContainer>
@@ -89,43 +92,37 @@ export default function SubmissionsPage() {
 
       <SectionContainer id="submissions-body" fullWidthBg="transparent" className="pt-8">
         <div className="space-y-10">
-          {/* 1. Portals Grid */}
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              1. Online Submission Portals
+              1. Official PaperCept Submission & Publication Workflow
             </h2>
             <p className="text-sm text-slate-500 mb-6">
-              All manuscripts submitted to IEEE SMC 2027 must be original research not previously published or currently under review elsewhere.
+              All manuscripts submitted to IEEE SMC 2027 are managed exclusively via PaperCept. Accepted authors must reference their PaperCept Paper ID during conference registration.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {submissionPortals.map((portal, idx) => (
-                <div
+                <Card
                   key={idx}
-                  className={`bg-white rounded-3xl border-2 p-6 sm:p-7 flex flex-col justify-between transition-all ${
+                  className={`justify-between ${
                     portal.primary
-                      ? "border-[#115eff] shadow-lg ring-4 ring-blue-50"
-                      : "border-slate-200 hover:border-slate-300 shadow-xs"
+                      ? "border-2 border-[#005496] shadow-md"
+                      : "border-slate-200"
                   }`}
                 >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span
-                        className={`text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full ${
-                          portal.primary
-                            ? "bg-blue-100 text-[#115eff]"
-                            : "bg-slate-100 text-slate-600"
-                        }`}
-                      >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant={portal.primary ? "ute" : "secondary"}>
                         {portal.badge}
+                      </Badge>
+                      <span className="text-xs font-bold text-slate-400">
+                        {portal.system}
                       </span>
-                      <span className="text-xs text-slate-400 font-medium">{portal.system}</span>
                     </div>
-
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    <h3 className="text-lg font-extrabold text-slate-900">
                       {portal.name}
                     </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed mb-6">
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       {portal.description}
                     </p>
                   </div>
@@ -134,137 +131,90 @@ export default function SubmissionsPage() {
                     href={portal.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
-                      portal.primary
-                        ? "bg-[#115eff] text-white hover:bg-[#0a4de6] shadow-md"
-                        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-                    }`}
+                    className="block pt-2"
                   >
-                    <span>Open {portal.system} Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <Button
+                      variant={portal.primary ? "ute" : "outline"}
+                      className="w-full"
+                    >
+                      <span>Open {portal.system}</span>
+                      <ExternalLink className="size-4" />
+                    </Button>
+                  </a>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-7">
+              <Card>
+                <h2 className="text-lg font-extrabold text-slate-900">
+                  2. Manuscript Formatting & Page Length Rules
+                </h2>
+                <ul className="space-y-3 text-xs sm:text-sm text-slate-600">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Standard Page Length:</strong> 6 pages in standard IEEE two-column conference format, including figures, tables, and references.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Extra Pages Surcharge:</strong> Up to 2 additional pages are permitted (maximum 8 pages total) with an extra page surcharge calculated automatically during registration.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Author Registration Requirement:</strong> Each accepted PaperCept manuscript must be covered by at least one paid Author Registration before the camera-ready deadline.
+                    </span>
+                  </li>
+                </ul>
+
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <a
+                    href="https://www.ieee.org/conferences/publishing/templates.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="ute" size="sm">
+                      <Download className="size-4" />
+                      Download IEEE LaTeX & Word Templates
+                    </Button>
                   </a>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 2. Manuscript Templates & Requirements */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xs">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              2. Manuscript Formatting & Templates
-            </h2>
-            <p className="text-sm text-slate-500 mb-6">
-              All papers must strictly adhere to the standard IEEE two-column US Letter conference format.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* LaTeX Card */}
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 text-[#115eff] flex items-center justify-center font-black">
-                      TeX
-                    </div>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900">
-                        LaTeX Conference Template
-                      </h4>
-                      <span className="text-xs text-slate-500">IEEEtran.cls format</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                    Standard LaTeX archive containing document class files, bibliography styles, and sample BibTeX instructions.
-                  </p>
-                </div>
-
-                <a
-                  href="https://www.ieee.org/conferences/publishing/templates.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] hover:underline"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download IEEE LaTeX Package</span>
-                </a>
-              </div>
-
-              {/* Word Card */}
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black">
-                      DOC
-                    </div>
-                    <div>
-                      <h4 className="text-base font-bold text-slate-900">
-                        Microsoft Word Template
-                      </h4>
-                      <span className="text-xs text-slate-500">.DOCX US Letter</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                    Pre-configured two-column Microsoft Word template with official IEEE typography, margins, headings, and citation styles.
-                  </p>
-                </div>
-
-                <a
-                  href="https://www.ieee.org/conferences/publishing/templates.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] hover:underline"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Word Template (.docx)</span>
-                </a>
-              </div>
+              </Card>
             </div>
 
-            {/* Checklist */}
-            <div className="mt-8 pt-6 border-t border-slate-100">
-              <h4 className="text-sm font-bold text-slate-900 mb-3">
-                Pre-Submission Checklist:
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Standard length up to 6 pages including figures, tables, and references.</span>
+            <div className="lg:col-span-5">
+              <Card>
+                <div className="flex items-center gap-2">
+                  <Calendar className="size-5 text-[#005496]" />
+                  <h2 className="text-lg font-extrabold text-slate-900">
+                    Important Deadlines
+                  </h2>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Peer-reviewed according to official IEEE SMC Society quality standards.</span>
+                <div className="space-y-3">
+                  {milestones.map((m, i) => (
+                    <div
+                      key={i}
+                      className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3"
+                    >
+                      <div>
+                        <p className="text-xs font-extrabold text-[#005496]">
+                          {m.date}
+                        </p>
+                        <p className="text-xs font-semibold text-slate-800 mt-0.5">
+                          {m.event}
+                        </p>
+                      </div>
+                      <Badge variant="secondary">{m.status}</Badge>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Final camera-ready PDFs must pass IEEE PDF eXpress compliance checks.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>At least one author must complete Author Registration for proceedings publication.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Important Dates */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xs">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-              3. Important Submission Deadlines
-            </h2>
-            <div className="mt-6 space-y-3">
-              {milestones.map((m, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-[#115eff] shrink-0" />
-                    <span className="text-sm font-bold text-slate-900">{m.event}</span>
-                  </div>
-                  <span className="font-mono text-xs font-black text-[#115eff] bg-white px-3 py-1 rounded-lg border border-slate-200 shrink-0">
-                    {m.date}
-                  </span>
-                </div>
-              ))}
+              </Card>
             </div>
           </div>
         </div>

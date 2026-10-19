@@ -1,614 +1,564 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useCallback } from "react";
 import {
-  Users,
-  Search,
-  Filter,
-  CheckCircle2,
-  Clock,
-  Download,
-  Printer,
-  QrCode,
-  DollarSign,
-  FileSpreadsheet,
-  AlertCircle,
-  Eye,
-  Check,
-  X,
   CreditCard,
-  Building,
-  Mail,
-  RefreshCw,
+  Search,
+  CheckCircle2,
+  Download,
+  Plane,
+  ShieldCheck,
+  Code2,
+  Trash2,
+  ExternalLink,
+  AlertCircle,
+  Loader2,
+  X,
 } from "lucide-react";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { formatVND, formatUSD } from "@/lib/conference-registration";
-
-interface RegistrationItem {
-  id: string;
-  registrationCode: string;
-  fullName: string;
-  email: string;
-  phone: string | null;
-  affiliation: string;
-  country: string;
-  participantType: "AUTHOR" | "STUDENT" | "IEEE_MEMBER" | "REGULAR";
-  paperId: string | null;
-  paperTitle: string | null;
-  passportNumber: string | null;
-  needsVisaSupport: boolean;
-  dietaryRequirement: string | null;
-  travelNotes: string | null;
-  feeAmount: number;
-  currency: string;
-  paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
-  paymentMethod: string | null;
-  transactionRef: string | null;
-  paidAt: string | null;
-  checkInStatus: boolean;
-  checkedInAt: string | null;
-  createdAt: string;
-}
+import type { UnstructuredRegistrationFormData } from "@/types";
 
 export default function AdminRegistrationsPage() {
-  const [registrations, setRegistrations] = useState<RegistrationItem[]>([]);
+  const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [typeFilter, setTypeFilter] = useState("ALL");
-  const [selectedReg, setSelectedReg] = useState<RegistrationItem | null>(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-  const fetchRegistrations = async () => {
+  // Inspect / Edit JSON Modal
+  const [inspectReg, setInspectReg] = useState<any | null>(null);
+  const [jsonEditorText, setJsonEditorText] = useState("{}");
+  const [savingJson, setSavingJson] = useState(false);
+
+  const loadRegistrations = useCallback(async () => {
     setLoading(true);
+    setErrorMsg("");
     try {
-      const res = await fetch("/api/registration?admin=true");
-      const data = await res.json();
-      if (data.registrations) {
-        setRegistrations(data.registrations);
+      const params = new URLSearchParams();
+      if (search.trim()) params.set("q", search.trim());
+      if (statusFilter !== "ALL") params.set("status", statusFilter);
+
+      const res = await fetch(`/api/registration?${params.toString()}`);
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Failed to load registrations");
       }
-    } catch (e) {
-      console.error("Error loading registrations:", e);
+      setRegistrations(json.data.registrations || []);
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to load registrations");
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter]);
 
   useEffect(() => {
-    fetchRegistrations();
-  }, []);
+    loadRegistrations();
+  }, [loadRegistrations]);
 
-  const handleUpdateStatus = async (id: string, paymentStatus: string) => {
-    setActionLoading(true);
+  const handleConfirmPayoo = async (reg: any) => {
+    setErrorMsg("");
+    setSuccessMsg("");
     try {
-      const res = await fetch(`/api/registration/${id}`, {
-        method: "PATCH",
+      const res = await fetch("/api/payment/payoo/simulate", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          paymentStatus,
-          transactionRef: `VCB-${Date.now().toString().slice(-6)}`,
+          registrationCode: reg.registrationCode,
+          method: reg.paymentMethod || "PAYOO_VIETQR",
         }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setRegistrations((prev) =>
-          prev.map((r) => (r.id === id ? data.registration : r))
-        );
-        if (selectedReg?.id === id) {
-          setSelectedReg(data.registration);
-        }
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Payoo confirmation failed");
       }
-    } catch (e) {
-      console.error("Failed to update status:", e);
-    } finally {
-      setActionLoading(false);
+      setSuccessMsg(
+        `Confirmed Payoo payment for ${reg.registrationCode} and sent receipt email.`
+      );
+      await loadRegistrations();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Payoo update failed");
     }
   };
 
-  const handleToggleCheckin = async (id: string, currentStatus: boolean) => {
-    setActionLoading(true);
+  const handleApproveVisa = async (reg: any) => {
+    setErrorMsg("");
+    setSuccessMsg("");
     try {
-      const res = await fetch(`/api/registration/${id}`, {
+      const currentForm: UnstructuredRegistrationFormData =
+        reg.formData && typeof reg.formData === "object" ? reg.formData : {};
+
+      const res = await fetch(`/api/registration/${reg.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          checkInStatus: !currentStatus,
+          needsVisaSupport: true,
+          formData: {
+            ...currentForm,
+            needsVisaSupport: true,
+            visaApprovalStatus: "APPROVED",
+          },
         }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setRegistrations((prev) =>
-          prev.map((r) => (r.id === id ? data.registration : r))
-        );
-        if (selectedReg?.id === id) {
-          setSelectedReg(data.registration);
-        }
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Failed to approve Visa Support Letter");
       }
-    } catch (e) {
-      console.error("Failed to toggle checkin:", e);
-    } finally {
-      setActionLoading(false);
+      setSuccessMsg(
+        `Approved Visa Support Letter for ${reg.registrationCode} and dispatched milestone email.`
+      );
+      await loadRegistrations();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Visa approval failed");
     }
   };
 
-  // Metrics
-  const metrics = useMemo(() => {
-    const total = registrations.length;
-    const paid = registrations.filter((r) => r.paymentStatus === "PAID");
-    const pending = registrations.filter((r) => r.paymentStatus === "PENDING");
-    const checkedIn = registrations.filter((r) => r.checkInStatus);
+  const handleVerifyProof = async (reg: any) => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    try {
+      const currentForm: UnstructuredRegistrationFormData =
+        reg.formData && typeof reg.formData === "object" ? reg.formData : {};
 
-    const revenueVnd = paid
-      .filter((r) => r.currency === "VND")
-      .reduce((sum, r) => sum + r.feeAmount, 0);
-
-    const revenueUsd = paid
-      .filter((r) => r.currency === "USD")
-      .reduce((sum, r) => sum + r.feeAmount, 0);
-
-    return {
-      total,
-      paidCount: paid.length,
-      pendingCount: pending.length,
-      checkedInCount: checkedIn.length,
-      revenueVnd,
-      revenueUsd,
-    };
-  }, [registrations]);
-
-  // Filtered List
-  const filtered = useMemo(() => {
-    return registrations.filter((r) => {
-      if (statusFilter !== "ALL" && r.paymentStatus !== statusFilter) return false;
-      if (typeFilter !== "ALL" && r.participantType !== typeFilter) return false;
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        return (
-          r.registrationCode.toLowerCase().includes(q) ||
-          r.fullName.toLowerCase().includes(q) ||
-          r.email.toLowerCase().includes(q) ||
-          r.affiliation.toLowerCase().includes(q) ||
-          (r.paperId && r.paperId.toLowerCase().includes(q))
-        );
+      const res = await fetch(`/api/registration/${reg.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formData: {
+            ...currentForm,
+            proofVerified: !currentForm.proofVerified,
+          },
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Failed to toggle proof verification");
       }
-      return true;
-    });
-  }, [registrations, statusFilter, typeFilter, search]);
+      setSuccessMsg(`Updated proof verification for ${reg.registrationCode}`);
+      await loadRegistrations();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Proof update failed");
+    }
+  };
 
-  // Export to CSV with UTF-8 BOM for Excel compatibility
-  const handleExportCSV = () => {
+  const handleSaveJsonModal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inspectReg) return;
+
+    setSavingJson(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    try {
+      let parsed: UnstructuredRegistrationFormData = {};
+      try {
+        parsed = JSON.parse(jsonEditorText || "{}");
+      } catch {
+        throw new Error("Invalid JSON syntax in formData.");
+      }
+
+      const res = await fetch(`/api/registration/${inspectReg.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formData: parsed,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Failed to save formData JSON");
+      }
+
+      setSuccessMsg(`Saved unstructured JSON formData for ${inspectReg.registrationCode}`);
+      setInspectReg(null);
+      await loadRegistrations();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setSavingJson(false);
+    }
+  };
+
+  const handleDelete = async (reg: any) => {
+    if (!window.confirm(`Delete registration ${reg.registrationCode}?`)) return;
+    try {
+      const res = await fetch(`/api/registration/${reg.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        await loadRegistrations();
+      }
+    } catch {
+      setErrorMsg("Failed to delete registration");
+    }
+  };
+
+  const handleExportCsv = () => {
     const headers = [
-      "Registration Code",
-      "Full Name",
+      "Code",
+      "FullName",
       "Email",
-      "Phone",
       "Affiliation",
       "Country",
-      "Participant Type",
-      "Paper ID",
-      "Paper Title",
-      "Passport Number",
-      "Visa Support",
-      "Dietary Requirement",
-      "Fee Amount",
+      "Category",
+      "PaperID",
+      "Fee",
       "Currency",
-      "Payment Status",
-      "Transaction Ref",
-      "Paid Date",
-      "Check-In Status",
-      "Registration Date",
+      "PaymentStatus",
+      "TransactionRef",
+      "VisaStatus",
+      "Dietary",
+      "InvoiceCompany",
+      "InvoiceTaxCode",
     ];
+    const rows = registrations.map((r) => {
+      const f: UnstructuredRegistrationFormData =
+        r.formData && typeof r.formData === "object" ? r.formData : {};
+      return [
+        r.registrationCode,
+        `"${(r.fullName || "").replace(/"/g, '""')}"`,
+        r.email,
+        `"${(r.affiliation || "").replace(/"/g, '""')}"`,
+        r.country,
+        r.participantType,
+        r.paperId || f.paperId || "",
+        r.feeAmount,
+        r.currency,
+        r.paymentStatus,
+        r.transactionRef || "",
+        f.visaApprovalStatus || "NOT_REQUESTED",
+        f.dietaryRequirement || r.dietaryRequirement || "",
+        `"${(f.invoiceCompanyName || "").replace(/"/g, '""')}"`,
+        f.invoiceTaxCode || "",
+      ].join(",");
+    });
 
-    const rows = filtered.map((r) => [
-      `"${r.registrationCode}"`,
-      `"${r.fullName}"`,
-      `"${r.email}"`,
-      `"${r.phone || ""}"`,
-      `"${r.affiliation}"`,
-      `"${r.country}"`,
-      `"${r.participantType}"`,
-      `"${r.paperId || ""}"`,
-      `"${(r.paperTitle || "").replace(/"/g, '""')}"`,
-      `"${r.passportNumber || ""}"`,
-      r.needsVisaSupport ? "Yes" : "No",
-      `"${r.dietaryRequirement || "None"}"`,
-      r.feeAmount,
-      r.currency,
-      r.paymentStatus,
-      `"${r.transactionRef || ""}"`,
-      r.paidAt ? new Date(r.paidAt).toLocaleDateString("en-US") : "",
-      r.checkInStatus ? "Checked In" : "Pending",
-      new Date(r.createdAt).toLocaleDateString("en-US"),
-    ]);
-
-    const csvContent =
-      "\uFEFF" + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `IEEE_SMC_2027_Delegates_${new Date().toISOString().slice(0, 10)}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ieee-smc-2027-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
   };
 
   return (
     <div className="space-y-6">
-      {/* ── Top Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Registrations & Payment Reconciliation
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Track registered delegates, reconcile bank transfers, and export financial reports.
-          </p>
+      <ManagementPageHeader
+        imageIcon="/assets/3d-icons/online-portal__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-users-bg.jpg"
+        title="Registrations, Payoo & Visa Approvals"
+        description="Inspect delegate JSON formData, verify IEEE/Student proof uploads, reconcile Payoo VietQR & Card payments, and approve official Visa Support Letters."
+      >
+        <Button type="button" variant="ute" size="sm" onClick={handleExportCsv}>
+          <Download className="size-4" />
+          Export Financial CSV
+        </Button>
+      </ManagementPageHeader>
+
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+          <AlertCircle className="size-4 shrink-0" />
+          <span>{errorMsg}</span>
         </div>
+      )}
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={fetchRegistrations}
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer"
-            title="Refresh list"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
-
-          <button
-            type="button"
-            onClick={handleExportCSV}
-            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
-          >
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>Export CSV</span>
-          </button>
+      {successMsg && (
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="size-4 shrink-0" />
+          <span>{successMsg}</span>
         </div>
-      </div>
+      )}
 
-      {/* ── KPI Metric Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Total Registered */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Total Delegates
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#115eff] flex items-center justify-center">
-              <Users className="w-4 h-4" />
-            </div>
+      <Card className="p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5">
+            {["ALL", "PAID", "PENDING"].map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                  statusFilter === st
+                    ? "bg-[#005496] text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {st}
+              </button>
+            ))}
           </div>
-          <div className="mt-3 text-2xl font-black text-slate-900">{metrics.total}</div>
-          <span className="text-[11px] text-slate-500">
-            Registered across the system
-          </span>
+
+          <div className="relative w-72">
+            <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search code, name, email, PaperCept ID..."
+              className="h-9 pl-8 text-xs"
+            />
+          </div>
         </div>
 
-        {/* Card 2: Revenue */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Confirmed Revenue
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <DollarSign className="w-4 h-4" />
-            </div>
+        {loading ? (
+          <div className="py-14 flex flex-col items-center justify-center text-slate-400 gap-2">
+            <Loader2 className="size-6 animate-spin text-[#005496]" />
+            <span className="text-xs">Loading delegate registrations...</span>
           </div>
-          <div className="mt-3 text-lg font-black text-emerald-600">
-            {formatVND(metrics.revenueVnd)}
+        ) : registrations.length === 0 ? (
+          <div className="py-14 text-center text-xs text-slate-400">
+            No registrations found matching current filter.
           </div>
-          <span className="text-[11px] text-slate-500">
-            {metrics.revenueUsd > 0 ? `+ ${formatUSD(metrics.revenueUsd)} USD` : "Reconciled via bank transfer"}
-          </span>
-        </div>
-
-        {/* Card 3: Pending Invoices */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Pending Payment
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 text-2xl font-black text-amber-600">
-            {metrics.pendingCount}
-          </div>
-          <span className="text-[11px] text-slate-500">Awaiting transfer verification</span>
-        </div>
-
-        {/* Card 4: Checked-in */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Venue Check-In
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-              <QrCode className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 text-2xl font-black text-purple-600">
-            {metrics.checkedInCount} / {metrics.total}
-          </div>
-          <span className="text-[11px] text-slate-500">
-            Check-in rate: {metrics.total > 0 ? Math.round((metrics.checkedInCount / metrics.total) * 100) : 0}%
-          </span>
-        </div>
-      </div>
-
-      {/* ── Filters & Search Bar ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row gap-3">
-        <div className="relative grow">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-          <input
-            type="text"
-            placeholder="Search by Registration Code, Name, Email, Affiliation, or Paper ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] focus:bg-white"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff]"
-          >
-            <option value="ALL">All Payment Statuses</option>
-            <option value="PAID">Paid</option>
-            <option value="PENDING">Pending</option>
-            <option value="REFUNDED">Refunded</option>
-          </select>
-
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff]"
-          >
-            <option value="ALL">All Delegate Types</option>
-            <option value="AUTHOR">Author</option>
-            <option value="IEEE_MEMBER">IEEE Member</option>
-            <option value="STUDENT">Student</option>
-            <option value="REGULAR">Regular Delegate</option>
-          </select>
-        </div>
-      </div>
-
-      {/* ── Data Table ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
-                <th className="py-3 px-4">Code</th>
-                <th className="py-3 px-4">Delegate</th>
-                <th className="py-3 px-4">Category & Paper</th>
-                <th className="py-3 px-4">Fee</th>
-                <th className="py-3 px-4">Payment</th>
-                <th className="py-3 px-4">Check-In</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-10 text-slate-400">
-                    Loading delegate records...
-                  </td>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold">
+                  <th className="py-3 px-3">Delegate</th>
+                  <th className="py-3 px-3">Category & PaperCept</th>
+                  <th className="py-3 px-3">Payoo & Fee</th>
+                  <th className="py-3 px-3">Proof & Visa Flow</th>
+                  <th className="py-3 px-3 text-right">Workflow Actions</th>
                 </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-10 text-slate-400">
-                    No matching delegate records found.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#115eff]">
-                      {item.registrationCode}
-                    </td>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {registrations.map((reg) => {
+                  const form: UnstructuredRegistrationFormData =
+                    reg.formData && typeof reg.formData === "object"
+                      ? reg.formData
+                      : {};
+                  const visaStatus =
+                    form.visaApprovalStatus ||
+                    (reg.needsVisaSupport ? "PENDING_APPROVAL" : "NOT_REQUESTED");
 
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900">{item.fullName}</div>
-                      <div className="text-[11px] text-slate-500">
-                        {item.email} • {item.affiliation}
-                      </div>
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      <span className="inline-block px-2 py-0.5 rounded font-bold text-[10px] bg-slate-100 text-slate-700">
-                        {item.participantType}
-                      </span>
-                      {item.paperId && (
-                        <div className="text-[11px] font-mono text-blue-600 mt-0.5">
-                          Paper #{item.paperId}
+                  return (
+                    <tr key={reg.id} className="hover:bg-slate-50/80">
+                      <td className="py-3.5 px-3">
+                        <div className="flex items-center gap-3">
+                          {reg.avatarUrl ? (
+                            <img
+                              src={reg.avatarUrl}
+                              alt={reg.fullName}
+                              className="size-9 rounded-full object-cover border border-slate-200"
+                            />
+                          ) : (
+                            <div className="size-9 rounded-full bg-blue-50 text-[#005496] font-bold flex items-center justify-center">
+                              {reg.fullName.charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-slate-900">
+                                {reg.fullName}
+                              </span>
+                              <span className="font-mono text-[10px] font-bold text-[#005496] bg-blue-50 px-1.5 py-0.5 rounded">
+                                {reg.registrationCode}
+                              </span>
+                            </div>
+                            <p className="text-slate-500 text-[11px]">
+                              {reg.email} · {reg.country}
+                            </p>
+                          </div>
                         </div>
-                      )}
-                    </td>
+                      </td>
 
-                    <td className="py-3.5 px-4 font-black text-slate-900">
-                      {item.currency === "VND" ? formatVND(item.feeAmount) : formatUSD(item.feeAmount)}
-                    </td>
+                      <td className="py-3.5 px-3">
+                        <Badge variant="ute">{reg.participantType}</Badge>
+                        {(reg.paperId || form.paperId) && (
+                          <p className="text-[11px] text-slate-600 mt-1 font-mono">
+                            PaperCept: {reg.paperId || form.paperId}
+                          </p>
+                        )}
+                      </td>
 
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          item.paymentStatus === "PAID"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
-                      >
-                        {item.paymentStatus === "PAID" ? "Paid" : "Pending"}
-                      </span>
-                    </td>
+                      <td className="py-3.5 px-3">
+                        <div className="font-bold text-slate-900">
+                          {reg.currency === "VND"
+                            ? formatVND(reg.feeAmount)
+                            : formatUSD(reg.feeAmount)}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <Badge
+                            variant={
+                              reg.paymentStatus === "PAID" ? "success" : "warning"
+                            }
+                          >
+                            {reg.paymentStatus}
+                          </Badge>
+                          <span className="text-[10px] text-slate-400">
+                            {reg.paymentMethod || "PAYOO"}
+                          </span>
+                        </div>
+                      </td>
 
-                    <td className="py-3.5 px-4">
-                      <button
-                        type="button"
-                        onClick={() => handleToggleCheckin(item.id, item.checkInStatus)}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                          item.checkInStatus
-                            ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
-                            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                        }`}
-                      >
-                        {item.checkInStatus ? "Checked In" : "Not Yet"}
-                      </button>
-                    </td>
+                      <td className="py-3.5 px-3 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <Badge
+                            variant={
+                              visaStatus === "APPROVED"
+                                ? "success"
+                                : visaStatus === "PENDING_APPROVAL"
+                                  ? "warning"
+                                  : "secondary"
+                            }
+                          >
+                            Visa: {visaStatus}
+                          </Badge>
+                          {form.proofVerified && (
+                            <Badge variant="success">Proof Verified</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px]">
+                          {form.proofDocumentUrl && (
+                            <a
+                              href={form.proofDocumentUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[#005496] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            >
+                              Proof File <ExternalLink className="size-3" />
+                            </a>
+                          )}
+                          {form.passportScanUrl && (
+                            <a
+                              href={form.passportScanUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[#005496] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            >
+                              Passport Scan <ExternalLink className="size-3" />
+                            </a>
+                          )}
+                        </div>
+                      </td>
 
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {item.paymentStatus === "PENDING" && (
+                      <td className="py-3.5 px-3 text-right">
+                        <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
+                          {reg.paymentStatus !== "PAID" && (
+                            <Button
+                              type="button"
+                              variant="ute"
+                              size="sm"
+                              onClick={() => handleConfirmPayoo(reg)}
+                            >
+                              <CreditCard className="size-3.5" />
+                              Confirm Payoo
+                            </Button>
+                          )}
+
+                          {visaStatus !== "APPROVED" && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleApproveVisa(reg)}
+                            >
+                              <Plane className="size-3.5" />
+                              Approve Visa
+                            </Button>
+                          )}
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleVerifyProof(reg)}
+                          >
+                            <ShieldCheck className="size-3.5" />
+                            {form.proofVerified ? "Unverify" : "Verify Proof"}
+                          </Button>
+
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => {
+                              setInspectReg(reg);
+                              setJsonEditorText(
+                                JSON.stringify(reg.formData || {}, null, 2)
+                              );
+                            }}
+                          >
+                            <Code2 className="size-3.5" />
+                            JSON
+                          </Button>
+
                           <button
                             type="button"
-                            onClick={() => handleUpdateStatus(item.id, "PAID")}
-                            disabled={actionLoading}
-                            className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] cursor-pointer transition-colors"
-                            title="Confirm bank transfer received"
+                            onClick={() => handleDelete(reg)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 cursor-pointer"
+                            title="Delete"
                           >
-                            Approve Payment
+                            <Trash2 className="size-4" />
                           </button>
-                        )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
 
-                        <button
-                          type="button"
-                          onClick={() => setSelectedReg(item)}
-                          className="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer"
-                          title="View registration details"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ── Detail Modal ── */}
-      {selectedReg && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between border-b pb-4">
+      {/* JSON FORMDATA INSPECTOR & EDITOR MODAL */}
+      {inspectReg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
               <div>
-                <span className="font-mono text-xs font-black text-[#115eff]">
-                  {selectedReg.registrationCode}
-                </span>
-                <h3 className="text-lg font-black text-slate-900">
-                  {selectedReg.fullName}
+                <h3 className="text-base font-bold text-slate-900">
+                  Unstructured JSON `Registration.formData` —{" "}
+                  {inspectReg.registrationCode}
                 </h3>
+                <p className="text-xs text-slate-500">
+                  {inspectReg.fullName} · {inspectReg.email}
+                </p>
               </div>
               <button
                 type="button"
-                onClick={() => setSelectedReg(null)}
-                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+                onClick={() => setInspectReg(null)}
+                className="text-slate-400 hover:text-slate-700"
               >
-                <X className="w-5 h-5" />
+                <X className="size-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <span className="text-slate-400 block">Email:</span>
-                <span className="font-semibold text-slate-900">{selectedReg.email}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Phone:</span>
-                <span className="font-semibold text-slate-900">{selectedReg.phone || "—"}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Affiliation:</span>
-                <span className="font-semibold text-slate-900">{selectedReg.affiliation}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Country:</span>
-                <span className="font-semibold text-slate-900">{selectedReg.country}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Passport / ID:</span>
-                <span className="font-mono font-semibold text-slate-900">
-                  {selectedReg.passportNumber || "—"}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Dietary Requirement:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedReg.dietaryRequirement || "Standard"}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Visa Support:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedReg.needsVisaSupport ? "Requested" : "No"}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 block">Check-In Status:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedReg.checkInStatus ? "Checked In" : "Pending"}
-                </span>
-              </div>
-            </div>
-
-            {selectedReg.paperId && (
-              <div className="p-3 bg-blue-50 rounded-xl text-xs space-y-1">
-                <span className="font-bold text-blue-900 block">Accepted Paper</span>
-                <div>Paper ID: <strong className="font-mono text-blue-700">{selectedReg.paperId}</strong></div>
-                {selectedReg.paperTitle && <div className="italic text-slate-600">"{selectedReg.paperTitle}"</div>}
-              </div>
-            )}
-
-            <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between text-xs">
-              <div>
-                <span className="text-slate-400 block">Registration Fee:</span>
-                <span className="text-base font-black text-[#115eff]">
-                  {selectedReg.currency === "VND" ? formatVND(selectedReg.feeAmount) : formatUSD(selectedReg.feeAmount)}
-                </span>
+            <form
+              onSubmit={handleSaveJsonModal}
+              className="flex-1 overflow-y-auto p-6 space-y-4"
+            >
+              <div className="space-y-1.5">
+                <Label>PostgreSQL JSONB Payload</Label>
+                <Textarea
+                  rows={14}
+                  value={jsonEditorText}
+                  onChange={(e) => setJsonEditorText(e.target.value)}
+                  className="font-mono text-xs bg-slate-900 text-emerald-400"
+                />
               </div>
 
-              <div className="text-right">
-                <span className="text-slate-400 block">Status:</span>
-                <span className="font-bold text-slate-900">{selectedReg.paymentStatus}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t">
-              <Link
-                href={`/portal?code=${selectedReg.registrationCode}`}
-                target="_blank"
-                className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
-              >
-                Open Delegate Badge
-              </Link>
-
-              {selectedReg.paymentStatus === "PENDING" ? (
-                <button
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <Button
                   type="button"
-                  onClick={() => handleUpdateStatus(selectedReg.id, "PAID")}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer transition-colors"
+                  variant="outline"
+                  onClick={() => setInspectReg(null)}
                 >
-                  Confirm Payment Received
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleUpdateStatus(selectedReg.id, "PENDING")}
-                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold cursor-pointer transition-colors"
-                >
-                  Reset to Pending
-                </button>
-              )}
-            </div>
+                  Close
+                </Button>
+                <Button type="submit" variant="ute" disabled={savingJson}>
+                  {savingJson ? <Loader2 className="size-4 animate-spin" /> : null}
+                  Save JSON to PostgreSQL
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       )}

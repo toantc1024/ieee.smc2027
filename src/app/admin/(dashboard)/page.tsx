@@ -2,20 +2,22 @@ import React from "react";
 import Link from "next/link";
 import { prisma, withTimeout } from "@/lib";
 import { authService, cmsService } from "@/services";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
-  PanelTop,
   Layers,
   ArrowRight,
   ExternalLink,
   Database,
   Globe,
   SlidersHorizontal,
-  Shield,
-  KeyRound,
   CreditCard,
   QrCode,
   Send,
   Users,
+  FolderOpen,
 } from "lucide-react";
 
 interface AdminPageSummary {
@@ -35,165 +37,189 @@ export default async function AdminDashboardPage() {
     []
   )) as AdminPageSummary[];
 
-  // Fetch registration stats
-  const [totalRegs, paidRegs, checkedInRegs] = await Promise.all([
+  const [totalRegs, paidRegs, checkedInRegs, totalUsers, totalMedia] = await Promise.all([
     withTimeout(prisma.registration.count().catch(() => 0), 2500, 0),
-    withTimeout(prisma.registration.count({ where: { paymentStatus: "PAID" } }).catch(() => 0), 2500, 0),
-    withTimeout(prisma.registration.count({ where: { checkInStatus: true } }).catch(() => 0), 2500, 0),
+    withTimeout(
+      prisma.registration.count({ where: { paymentStatus: "PAID" } }).catch(() => 0),
+      2500,
+      0
+    ),
+    withTimeout(
+      prisma.registration.count({ where: { checkInStatus: true } }).catch(() => 0),
+      2500,
+      0
+    ),
+    withTimeout(prisma.user.count().catch(() => 0), 2500, 0),
+    withTimeout(prisma.mediaFile.count().catch(() => 0), 2500, 0),
   ]);
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Welcome Card (Clean shadcn style, zero loud gradients) */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-7 shadow-xs">
-        <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
-            <Shield className="w-3.5 h-3.5 text-slate-500" />
-            <span>IEEE SMC 2027 Admin Console</span>
-          </div>
+      <ManagementPageHeader
+        imageIcon="/assets/3d-icons/dashboard__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-dashboard-bg.jpg"
+        title={`Welcome back, ${user?.name || "Administrator"}`}
+        description="Manage JSON-based delegate registrations, Payoo payment reconciliation, Visa Support Letter approvals, Milestone Email Templates, Media Library assets, and PostgreSQL RBAC."
+      >
+        <Link href="/admin/registrations">
+          <Button variant="ute" size="sm">
+            <CreditCard className="size-4" />
+            Registrations & Payoo
+          </Button>
+        </Link>
+        <Link href="/admin/users">
+          <Button variant="outline" size="sm">
+            <Users className="size-4" />
+            Users & Roles
+          </Button>
+        </Link>
+        <Link href="/admin/media">
+          <Button variant="outline" size="sm">
+            <FolderOpen className="size-4" />
+            Media Library
+          </Button>
+        </Link>
+      </ManagementPageHeader>
 
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            Welcome back, {user?.name || "Administrator"}!
-          </h1>
-
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Manage delegate registrations, automated VietQR bank reconciliation, on-site QR check-in, email broadcasts, hierarchical pages, and OAuth security.
-          </p>
-
-          <div className="pt-2 flex flex-wrap items-center gap-2.5">
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-5 flex-row items-center justify-between">
+          <div>
+            <span className="text-xs font-bold uppercase text-slate-400">
+              Total Delegates
+            </span>
+            <div className="text-2xl font-black text-slate-900 mt-1">{totalRegs}</div>
             <Link
               href="/admin/registrations"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#115eff] text-white hover:bg-[#0a4de6] font-semibold text-xs sm:text-sm rounded-lg transition-colors shadow-2xs"
+              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
             >
-              <CreditCard className="w-4 h-4" />
-              <span>Registrations &amp; Payments ({totalRegs})</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <Link
-              href="/admin/checkin"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
-            >
-              <QrCode className="w-4 h-4 text-slate-500" />
-              <span>QR Check-in ({checkedInRegs})</span>
-            </Link>
-
-            <Link
-              href="/admin/pages"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-slate-800 font-medium text-xs sm:text-sm rounded-lg border border-slate-200 transition-colors"
-            >
-              <Layers className="w-4 h-4 text-slate-500" />
-              <span>Tree Pages</span>
+              Inspect JSON formData →
             </Link>
           </div>
-        </div>
-      </div>
+          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+            <CreditCard className="size-5" />
+          </div>
+        </Card>
 
-      {/* Conference Registration Overview Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">Total Delegates</span>
-            <div className="text-2xl font-black text-slate-900 mt-1">{totalRegs}</div>
-            <Link href="/admin/registrations" className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block">
-              View reconciliation details →
-            </Link>
-          </div>
-          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#115eff] flex items-center justify-center">
-            <Users className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold uppercase text-slate-400">Paid Registrations</span>
+            <span className="text-xs font-bold uppercase text-slate-400">
+              Payoo Verified Paid
+            </span>
             <div className="text-2xl font-black text-emerald-600 mt-1">{paidRegs}</div>
-            <span className="text-xs text-slate-400 mt-1 block">Automated VietQR reconciliation</span>
+            <span className="text-xs text-slate-400 mt-1 block">
+              Checked-in: {checkedInRegs}
+            </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <CreditCard className="w-5 h-5" />
+          <div className="size-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <QrCode className="size-5" />
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs flex items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">Checked-in Delegates</span>
-            <div className="text-2xl font-black text-purple-600 mt-1">{checkedInRegs}</div>
-            <Link href="/admin/checkin" className="text-xs text-purple-600 font-semibold hover:underline mt-1 block">
-              Open QR scanner →
+            <span className="text-xs font-bold uppercase text-slate-400">
+              Database Users
+            </span>
+            <div className="text-2xl font-black text-slate-900 mt-1">{totalUsers}</div>
+            <Link
+              href="/admin/users"
+              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
+            >
+              Manage ADMIN / USER roles →
             </Link>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-            <QrCode className="w-5 h-5" />
+          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+            <Users className="size-5" />
           </div>
-        </div>
+        </Card>
+
+        <Card className="p-5 flex-row items-center justify-between">
+          <div>
+            <span className="text-xs font-bold uppercase text-slate-400">
+              Media Library Files
+            </span>
+            <div className="text-2xl font-black text-slate-900 mt-1">{totalMedia}</div>
+            <Link
+              href="/admin/media"
+              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
+            >
+              Open Media Manager →
+            </Link>
+          </div>
+          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+            <FolderOpen className="size-5" />
+          </div>
+        </Card>
       </div>
 
-      {/* Quick Action Feature Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* Card 1: Tree Pages */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-          <div className="space-y-2.5">
-            <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-200">
-              <Layers className="w-5 h-5" />
-            </div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-              Page Hierarchy
+      {/* Quick Modules */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <Card className="justify-between">
+          <div className="space-y-2">
+            <Badge variant="ute">Milestone Emails</Badge>
+            <h2 className="text-base font-bold text-slate-900">
+              Email Templates & Broadcasts
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Organize multi-level content in a parent-child structure with visual drag-and-drop page builder blocks.
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Customize HTML templates for Email Link OTP, CFP, PaperCept Acceptance, Registration, Payoo Receipt, and Visa Support Letters.
             </p>
           </div>
+          <Link href="/admin/broadcast">
+            <Button variant="outline" size="sm" className="w-full">
+              <Send className="size-3.5" />
+              Open Milestone Templates
+            </Button>
+          </Link>
+        </Card>
 
-          <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-400 font-medium">{pages.length} pages created</span>
-            <Link
-              href="/admin/pages"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:underline"
-            >
-              <span>View page tree</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Card 2: Header Builder */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-          <div className="space-y-2.5">
-            <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-200">
-              <PanelTop className="w-5 h-5" />
-            </div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-              Header &amp; Navigation
+        <Card className="justify-between">
+          <div className="space-y-2">
+            <Badge variant="ute">MinIO + DB Catalog</Badge>
+            <h2 className="text-base font-bold text-slate-900">
+              Media Upload Library
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Customize utility bar, contact details, social links, multi-level mega menus, and call-to-action buttons.
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Centralized storage for delegate avatars, passport scans, IEEE/student proofs, and CMS news graphics.
             </p>
           </div>
+          <Link href="/admin/media">
+            <Button variant="outline" size="sm" className="w-full">
+              <FolderOpen className="size-3.5" />
+              Browse Media Library
+            </Button>
+          </Link>
+        </Card>
 
-          <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-400 font-medium">Synced with PostgreSQL</span>
-            <Link
-              href="/admin/header"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:underline"
-            >
-              <span>Open Header Editor</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+        <Card className="justify-between">
+          <div className="space-y-2">
+            <Badge variant="ute">CMS Hierarchy</Badge>
+            <h2 className="text-base font-bold text-slate-900">
+              Page Tree & Visual Builder
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Manage {pages.length} hierarchical conference pages and dynamic content blocks stored in PostgreSQL.
+            </p>
           </div>
-        </div>
+          <Link href="/admin/pages">
+            <Button variant="outline" size="sm" className="w-full">
+              <Layers className="size-3.5" />
+              Open Page Hierarchy
+            </Button>
+          </Link>
+        </Card>
       </div>
 
       {/* Pages Table Overview */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
         <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50/60 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Website Pages</h3>
-            <p className="text-xs text-slate-400">Active pages in the CMS</p>
+            <p className="text-xs text-slate-400">Active pages in PostgreSQL CMS</p>
           </div>
           <Link
             href="/admin/pages"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-800 hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#005496] hover:underline"
           >
             <span>Open Tree View</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -213,21 +239,23 @@ export default async function AdminDashboardPage() {
                     /{p.slug === "home" ? "" : p.slug}
                   </span>
                   {p.is_published && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-medium inline-flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <Badge variant="success" className="text-[10px]">
                       Published
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  {p.block_count || 0} components • Updated: {p.updated_at ? new Date(p.updated_at).toLocaleDateString("en-US") : "Today"}
+                  {p.block_count || 0} components · Updated:{" "}
+                  {p.updated_at
+                    ? new Date(p.updated_at).toLocaleDateString("en-US")
+                    : "Today"}
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Link
                   href={`/admin/pages/${p.id}`}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded transition-colors shadow-2xs text-[11px]"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#005496] hover:bg-[#0284c7] text-white font-semibold rounded-lg transition-colors text-[11px]"
                 >
                   <SlidersHorizontal className="w-3 h-3" />
                   <span>Edit Builder</span>
@@ -236,7 +264,7 @@ export default async function AdminDashboardPage() {
                 <Link
                   href={p.slug === "home" ? "/" : `/${p.slug}`}
                   target="_blank"
-                  className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-slate-100 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
                   title="Preview live page"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -247,21 +275,22 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* System Status Footprint */}
-      <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+      <div className="p-3.5 bg-white border border-slate-200 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
             <Database className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Neon PostgreSQL: <strong className="text-slate-800">Online</strong></span>
+            <span>
+              PostgreSQL Database: <strong className="text-slate-800">Online</strong>
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Globe className="w-3.5 h-3.5 text-slate-500" />
-            <span>Next.js 16 + React 19</span>
+            <Globe className="w-3.5 h-3.5 text-[#005496]" />
+            <span>HCMUTE Branding System Active</span>
           </div>
         </div>
 
         <div className="text-slate-400 text-[11px]">
-          IEEE SMC 2027 • Admin Portal
+          IEEE SMC 2027 · Ho Chi Minh City University of Technology and Education
         </div>
       </div>
     </div>

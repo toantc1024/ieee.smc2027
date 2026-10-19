@@ -11,7 +11,6 @@ import {
   Clock,
   Navigation,
   Compass,
-  Sparkles,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO, MUST_VISIT_ATTRACTIONS, TouristAttraction } from "@/data/conference";

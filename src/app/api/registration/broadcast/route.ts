@@ -14,17 +14,22 @@ export async function POST(req: NextRequest) {
       subject,
       message,
       campaignType = "GENERAL",
+      templateSlug,
     } = body as BroadcastCampaignInput;
 
-    if (!subject || !message) {
-      return apiError("Please provide both an email subject and message body.", 400);
+    if (!templateSlug && (!subject || !message)) {
+      return apiError(
+        "Please select a Milestone Template or provide both subject and message body.",
+        400
+      );
     }
 
     const result = await emailService.sendBroadcastCampaign({
       targetGroup,
       campaignType,
-      subject,
-      message,
+      templateSlug,
+      subject: subject || "",
+      message: message || "",
     });
 
     return apiSuccess(result);

@@ -1,232 +1,380 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Send,
   Mail,
-  Users,
   CheckCircle2,
   AlertCircle,
-  FileText,
-  Clock,
-  ShieldAlert,
+  Save,
+  Eye,
+  Code2,
+  Loader2,
 } from "lucide-react";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+
+interface MilestoneTemplate {
+  id: string;
+  slug: string;
+  name: string;
+  milestone: string;
+  subject: string;
+  htmlContent: string;
+  textContent: string;
+  variables: string[];
+  isActive: boolean;
+}
 
 export default function AdminBroadcastPage() {
+  const [templates, setTemplates] = useState<MilestoneTemplate[]>([]);
+  const [selectedSlug, setSelectedSlug] = useState<string>("");
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"HTML" | "SOURCE">("HTML");
+
+  // Editable fields for the selected DB template
+  const [editSubject, setEditSubject] = useState("");
+  const [editHtml, setEditHtml] = useState("");
+  const [editText, setEditText] = useState("");
+
+  // Broadcast Dispatch Controls
   const [targetGroup, setTargetGroup] = useState<string>("ALL");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    message: string;
-    sentCount?: number;
-    sampleRecipients?: string[];
+  const [sendingBroadcast, setSendingBroadcast] = useState(false);
+  const [statusBanner, setStatusBanner] = useState<{
+    type: "success" | "error";
+    text: string;
   } | null>(null);
 
-  const TEMPLATES = [
-    {
-      title: "Camera-Ready Submission Reminder",
-      target: "AUTHOR",
-      subject: "[IEEE SMC 2027] Reminder: Camera-ready Submission Deadline Approaching",
-      body: `Dear Authors,\n\nThis is a cordial reminder from the IEEE SMC 2027 Organizing Committee regarding the final camera-ready manuscript submission deadline.\n\nPlease ensure your final PDF passes IEEE PDF eXpress verification and your IEEE Electronic Copyright Form is signed before the deadline.\n\nWarm regards,\nIEEE SMC 2027 Publication Committee\nHo Chi Minh City, Vietnam`,
-    },
-    {
-      title: "Payment Confirmation & Digital Badge",
-      target: "PAID",
-      subject: "[IEEE SMC 2027] Registration Confirmed - Access Your Digital Conference Badge",
-      body: `Dear Delegate,\n\nWe are pleased to confirm that your conference registration fee for IEEE SMC 2027 has been successfully reconciled.\n\nYou can now log in to the Delegate Portal to download your Official e-Receipt, Visa Support Letter, and Digital Badge with Scannable QR Code.\n\nVenue: Sheraton Saigon Grand Opera Hotel, Ho Chi Minh City, Vietnam.\n\nWarm regards,\nIEEE SMC 2027 Secretariat`,
-    },
-    {
-      title: "Pending Registration Fee Reminder",
-      target: "PENDING",
-      subject: "[IEEE SMC 2027] Payment Reminder for Pending Conference Registration",
-      body: `Dear Delegate,\n\nThank you for registering for IEEE SMC 2027. We noticed that your registration invoice is currently pending payment.\n\nPlease complete your bank transfer via VietQR Napas 24/7 or international bank wire using the syntax provided in your portal to secure your conference pass and inclusion in the proceedings.\n\nWarm regards,\nIEEE SMC 2027 Finance Committee`,
-    },
-  ];
+  const loadTemplates = useCallback(async () => {
+    setLoadingTemplates(true);
+    try {
+      const res = await fetch("/api/admin/email-templates");
+      const json = await res.json();
+      if (res.ok && json.success) {
+        const list: MilestoneTemplate[] = json.data.templates || [];
+        setTemplates(list);
+        if (list.length > 0 && !selectedSlug) {
+          const first = list[0];
+          setSelectedSlug(first.slug);
+          setEditSubject(first.subject);
+          setEditHtml(first.htmlContent);
+          setEditText(first.textContent);
+        }
+      }
+    } catch {
+      setStatusBanner({
+        type: "error",
+        text: "Failed to load milestone email templates from PostgreSQL.",
+      });
+    } finally {
+      setLoadingTemplates(false);
+    }
+  }, [selectedSlug]);
 
-  const handleApplyTemplate = (tmpl: (typeof TEMPLATES)[0]) => {
-    setTargetGroup(tmpl.target);
-    setSubject(tmpl.subject);
-    setMessage(tmpl.body);
-    setResult(null);
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
+
+  const handleSelectTemplate = (tpl: MilestoneTemplate) => {
+    setSelectedSlug(tpl.slug);
+    setEditSubject(tpl.subject);
+    setEditHtml(tpl.htmlContent);
+    setEditText(tpl.textContent);
+    setStatusBanner(null);
   };
 
-  const handleSendBroadcast = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!subject.trim() || !message.trim()) return;
+  const handleSaveTemplate = async () => {
+    if (!selectedSlug) return;
+    setSavingTemplate(true);
+    setStatusBanner(null);
+    try {
+      const res = await fetch("/api/admin/email-templates", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: selectedSlug,
+          subject: editSubject,
+          htmlContent: editHtml,
+          textContent: editText,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Failed to save template");
+      }
+      setStatusBanner({
+        type: "success",
+        text: `Saved milestone template "${selectedSlug}" in PostgreSQL.`,
+      });
+      await loadTemplates();
+    } catch (err: unknown) {
+      setStatusBanner({
+        type: "error",
+        text: err instanceof Error ? err.message : "Save failed",
+      });
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
 
-    setLoading(true);
-    setResult(null);
-
+  const handleBroadcastTemplate = async () => {
+    setSendingBroadcast(true);
+    setStatusBanner(null);
     try {
       const res = await fetch("/api/registration/broadcast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           targetGroup,
-          subject,
-          message,
+          templateSlug: selectedSlug,
+          subject: editSubject,
+          message: editText,
         }),
       });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Unable to send broadcast emails.");
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Broadcast dispatch failed");
       }
-
-      setResult({
-        success: true,
-        message: data.message,
-        sentCount: data.sentCount,
-        sampleRecipients: data.sampleRecipients,
+      setStatusBanner({
+        type: "success",
+        text:
+          json.data?.message ||
+          `Dispatched milestone email to ${json.data?.sentCount || 0} delegate(s).`,
       });
-    } catch (e: any) {
-      setResult({
-        success: false,
-        message: e.message || "Error sending broadcast notification.",
+    } catch (err: unknown) {
+      setStatusBanner({
+        type: "error",
+        text: err instanceof Error ? err.message : "Broadcast failed",
       });
     } finally {
-      setLoading(false);
+      setSendingBroadcast(false);
     }
   };
 
+  const activeTemplate = templates.find((t) => t.slug === selectedSlug);
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Email Broadcast
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Send submission reminders, announcements, and badge instructions to targeted delegate groups.
-          </p>
-        </div>
+    <div className="space-y-6">
+      <ManagementPageHeader
+        imageIcon="/assets/3d-icons/article-management__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-utilities-bg.jpg"
+        title="Milestone Email Templates & Broadcasts"
+        description="Customize PostgreSQL-backed HTML email templates for every IEEE SMC 2027 conference milestone and broadcast personalized notifications."
+      >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setPreviewMode((m) => (m === "HTML" ? "SOURCE" : "HTML"))
+          }
+        >
+          {previewMode === "HTML" ? (
+            <>
+              <Code2 className="size-4" />
+              Edit HTML Source
+            </>
+          ) : (
+            <>
+              <Eye className="size-4" />
+              Live Branded Preview
+            </>
+          )}
+        </Button>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-blue-50 text-[#115eff] border border-blue-200">
-          <Mail className="w-3.5 h-3.5" />
-          <span>IEEE SMC 2027 Mailer</span>
-        </div>
-      </div>
+        <Button
+          type="button"
+          variant="ute"
+          size="sm"
+          disabled={savingTemplate || !selectedSlug}
+          onClick={handleSaveTemplate}
+        >
+          {savingTemplate ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Save className="size-4" />
+          )}
+          Save Template to DB
+        </Button>
+      </ManagementPageHeader>
 
-      {/* ── Quick Templates ── */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Quick Templates
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {TEMPLATES.map((tmpl, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleApplyTemplate(tmpl)}
-              className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 text-left transition-all cursor-pointer group"
-            >
-              <div className="font-bold text-xs text-slate-900 group-hover:text-[#115eff]">
-                {tmpl.title}
+      {statusBanner && (
+        <div
+          className={`p-4 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
+            statusBanner.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : "bg-red-50 border-red-200 text-red-700"
+          }`}
+        >
+          {statusBanner.type === "success" ? (
+            <CheckCircle2 className="size-4 shrink-0" />
+          ) : (
+            <AlertCircle className="size-4 shrink-0" />
+          )}
+          <span>{statusBanner.text}</span>
+        </div>
+      )}
+
+      {loadingTemplates ? (
+        <Card className="p-16 items-center justify-center text-slate-400">
+          <Loader2 className="size-7 animate-spin text-[#005496]" />
+          <span className="text-xs">Loading milestone email templates...</span>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Milestone List & Broadcast Trigger */}
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="p-4 space-y-2">
+              <h3 className="text-sm font-extrabold text-slate-900 px-1">
+                Conference Milestone Templates
+              </h3>
+              <div className="space-y-1.5">
+                {templates.map((tpl) => {
+                  const isSelected = tpl.slug === selectedSlug;
+                  return (
+                    <button
+                      key={tpl.slug}
+                      type="button"
+                      onClick={() => handleSelectTemplate(tpl)}
+                      className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                        isSelected
+                          ? "border-[#005496] bg-blue-50/70 shadow-2xs"
+                          : "border-slate-200 bg-white hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <Badge variant={isSelected ? "ute" : "secondary"}>
+                          {tpl.milestone}
+                        </Badge>
+                        <span className="font-mono text-[10px] text-slate-400">
+                          {tpl.slug}
+                        </span>
+                      </div>
+                      <p className="text-xs font-bold text-slate-900 mt-1.5">
+                        {tpl.name}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
-              <div className="text-[11px] text-slate-400 mt-1 line-clamp-1">
-                Audience: {tmpl.target}
+            </Card>
+
+            {/* Broadcast Campaign Sender */}
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <Mail className="size-4 text-[#005496]" />
+                <h3 className="text-sm font-extrabold text-slate-900">
+                  Dispatch Milestone Broadcast
+                </h3>
               </div>
-            </button>
-          ))}
-        </div>
-      </div>
+              <p className="text-xs text-slate-500">
+                Send the currently selected milestone template with automatic merge tags to a delegate group.
+              </p>
 
-      {/* ── Broadcast Form ── */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs">
-        <form onSubmit={handleSendBroadcast} className="space-y-5">
-          {/* Target Audience */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Target Audience
-            </label>
-            <select
-              value={targetGroup}
-              onChange={(e) => setTargetGroup(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-semibold"
-            >
-              <option value="ALL">All Registered Delegates</option>
-              <option value="PAID">Paid Delegates Only</option>
-              <option value="PENDING">Pending Payment Delegates Only</option>
-              <option value="AUTHOR">Paper Authors Only</option>
-              <option value="STUDENT">Student Delegates Only</option>
-            </select>
+              <div className="space-y-1.5">
+                <Label>Target Delegate Group</Label>
+                <select
+                  value={targetGroup}
+                  onChange={(e) => setTargetGroup(e.target.value)}
+                  className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold"
+                >
+                  <option value="ALL">All Registered Delegates</option>
+                  <option value="PAID">Paid Delegates Only</option>
+                  <option value="PENDING">Pending Payment Delegates</option>
+                  <option value="AUTHOR">PaperCept Authors</option>
+                  <option value="STUDENT">Student Delegates</option>
+                </select>
+              </div>
+
+              <Button
+                type="button"
+                variant="ute"
+                className="w-full"
+                disabled={sendingBroadcast || !selectedSlug}
+                onClick={handleBroadcastTemplate}
+              >
+                {sendingBroadcast ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Send className="size-4" />
+                )}
+                Broadcast Selected Template
+              </Button>
+            </Card>
           </div>
 
-          {/* Subject */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Email Subject <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="[IEEE SMC 2027] Announcement subject..."
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-semibold"
-            />
-          </div>
+          {/* Right Column: Template Editor & Branded HTML Preview */}
+          <div className="lg:col-span-8 space-y-6">
+            {activeTemplate && (
+              <Card className="p-6 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      {activeTemplate.name}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Available Merge Variables:{" "}
+                      {(activeTemplate.variables || []).map((v) => (
+                        <code
+                          key={v}
+                          className="mx-1 px-1.5 py-0.5 rounded bg-slate-100 text-[#005496] font-mono text-[11px]"
+                        >
+                          {`{{${v}}}`}
+                        </code>
+                      ))}
+                    </p>
+                  </div>
+                </div>
 
-          {/* Message Body */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Email Message Body <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              rows={8}
-              required
-              placeholder="Enter the announcement message to send to delegates..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#115eff] font-sans leading-relaxed"
-            />
-          </div>
+                <div className="space-y-1.5">
+                  <Label>Email Subject Line</Label>
+                  <Input
+                    value={editSubject}
+                    onChange={(e) => setEditSubject(e.target.value)}
+                  />
+                </div>
 
-          {/* Result Alert */}
-          {result && (
-            <div
-              className={`p-4 rounded-2xl border text-xs sm:text-sm flex items-start gap-3 ${
-                result.success
-                  ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-                  : "bg-red-50 border-red-200 text-red-900"
-              }`}
-            >
-              {result.success ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              ) : (
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-              )}
-              <div className="space-y-1">
-                <span className="font-bold">{result.message}</span>
-                {result.sampleRecipients && result.sampleRecipients.length > 0 && (
-                  <div className="text-[11px] opacity-80 pt-1">
-                    Sample recipients: {result.sampleRecipients.join(", ")}
+                {previewMode === "HTML" ? (
+                  <div className="space-y-1.5">
+                    <Label>Branded HTML Email Preview</Label>
+                    <div
+                      className="rounded-2xl border border-slate-200 bg-slate-100 p-4 overflow-x-auto"
+                      dangerouslySetInnerHTML={{ __html: editHtml }}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label>HTML Template Content</Label>
+                      <Textarea
+                        rows={12}
+                        value={editHtml}
+                        onChange={(e) => setEditHtml(e.target.value)}
+                        className="font-mono text-xs bg-slate-900 text-emerald-400"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>Plain Text Fallback Content</Label>
+                      <Textarea
+                        rows={5}
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        className="font-mono text-xs"
+                      />
+                    </div>
                   </div>
                 )}
-              </div>
-            </div>
-          )}
-
-          {/* Submit */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-400">
-              * Sent officially from ieeesmc2027@hcmute.edu.vn
-            </span>
-
-            <button
-              type="submit"
-              disabled={loading || !subject.trim() || !message.trim()}
-              className="px-6 py-2.5 rounded-xl bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
-            >
-              <Send className="w-4 h-4" />
-              <span>{loading ? "Sending Broadcast..." : "Send Broadcast"}</span>
-            </button>
+              </Card>
+            )}
           </div>
-        </form>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
