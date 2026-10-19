@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateOtp } from "@/lib/auth";
+import { emailService } from "@/services/email.service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,17 +11,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const { code, devMode } = await generateOtp(email);
+    const { code, emailLink, devMode } = await generateOtp(email);
+
+    await emailService
+      .sendAuthEmailLink({
+        email,
+        code,
+        emailLink,
+      })
+      .catch((err) => console.error("Failed to dispatch auth email:", err));
 
     return NextResponse.json({
       success: true,
-      message: `A 6-digit verification code has been sent to ${email}.`,
+      message: `Sign-in link and 6-digit verification code sent to ${email}.`,
       devMode,
-      // If dev mode is enabled, supply devCode so user can test effortlessly in local dev
       devCode: devMode ? code : undefined,
+      devEmailLink: devMode ? emailLink : undefined,
     });
   } catch (err) {
     console.error("OTP send error:", err);
-    return NextResponse.json({ error: "Unable to generate OTP code. Please try again later." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Unable to generate sign-in link. Please try again later." },
+      { status: 500 }
+    );
   }
 }

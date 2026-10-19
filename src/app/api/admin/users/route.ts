@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
+import { Role, Prisma } from "@prisma/client";
 import {
   prisma,
   normalizeEmail,
-  isSuperAdminEmail,
+  ensureDatabaseAdmins,
+  hashPassword,
   requireAdminRequest,
   apiSuccess,
   apiError,
@@ -14,6 +15,8 @@ export async function GET() {
   if (errorResponse) return errorResponse;
 
   try {
+    await ensureDatabaseAdmins();
+
     const users = await prisma.user.findMany({
       orderBy: { createdAt: "asc" },
       select: {
@@ -23,10 +26,14 @@ export async function GET() {
         avatar: true,
         role: true,
         provider: true,
+        profileData: true,
         createdAt: true,
         updatedAt: true,
         _count: {
-          select: { posts: true },
+          select: {
+            posts: true,
+            registrations: true,
+          },
         },
       },
     });
@@ -43,30 +50,50 @@ export async function POST(request: Request) {
   if (errorResponse) return errorResponse;
 
   try {
+    await ensureDatabaseAdmins();
     const body = await request.json();
-    const { email, name, role = "USER" } = body;
+    const {
+      email,
+      name,
+      role = "USER",
+      avatar,
+      password,
+      profileData,
+    } = body;
 
     if (!email || !name) {
-      return apiError("Email and user name are required", 400);
+      return apiError("Email and full name are required", 400);
     }
 
     const cleanEmail = normalizeEmail(email);
-    const targetRole =
-      isSuperAdminEmail(cleanEmail) || role === "ADMIN" ? Role.ADMIN : Role.USER;
+    const targetRole = role === "ADMIN" ? Role.ADMIN : Role.USER;
+    const passwordHash =
+      typeof password === "string" && password.trim()
+        ? hashPassword(password.trim())
+        : undefined;
+
+    const cleanProfileData: Prisma.InputJsonValue =
+      profileData && typeof profileData === "object" ? profileData : {};
 
     const newUser = await prisma.user.upsert({
       where: { email: cleanEmail },
       update: {
         name: name.trim(),
         role: targetRole,
+        ...(avatar !== undefined ? { avatar } : {}),
+        ...(passwordHash ? { passwordHash } : {}),
+        ...(profileData && typeof profileData === "object"
+          ? { profileData: cleanProfileData }
+          : {}),
       },
       create: {
-        id: `usr_${Date.now()}`,
         email: cleanEmail,
         name: name.trim(),
-        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+        avatar: avatar || null,
         role: targetRole,
-        provider: "credentials",
+        provider: passwordHash ? "password" : "email_link",
+        passwordHash: passwordHash || null,
+        profileData: cleanProfileData,
       },
     });
 

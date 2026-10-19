@@ -15,6 +15,10 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  if (user.role !== "ADMIN") {
+    redirect("/portal");
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col lg:flex-row">
       {/* Collapsible / Sticky Sidebar */}

@@ -1,6 +1,7 @@
 /**
- * Centralized Environment Configuration (Development & Production)
+ * Centralized Environment Configuration
  * Validates and provides strongly-typed access to environment variables.
+ * Admin accounts and roles are stored exclusively in PostgreSQL.
  */
 
 export type AppEnvironment = "development" | "production" | "test";
@@ -28,9 +29,6 @@ export const env = {
       process.env.JWT_SECRET ||
       "ieee_smc_2027_ultra_secure_jwt_secret_key_92837482",
     sessionCookieName: process.env.SESSION_COOKIE_NAME || "admin_session",
-    adminInitialEmail: process.env.ADMIN_INITIAL_EMAIL || "admin@hcmute.edu.vn",
-    adminInitialPassword:
-      process.env.ADMIN_INITIAL_PASSWORD || "Admin@Smc2027Secure!",
     googleClientId: process.env.GOOGLE_CLIENT_ID || "",
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
   },
@@ -61,6 +59,9 @@ export const env = {
   },
 
   payment: {
+    provider: process.env.PAYMENT_PROVIDER || "PAYOO",
+    payooMerchantId: process.env.PAYOO_MERCHANT_ID || "SMC2027_HCMUTE_DEMO",
+    payooSecretKey: process.env.PAYOO_SECRET_KEY || "payoo_temp_secret_key",
     bankId: process.env.VIETQR_BANK_ID || "VCB",
     bankName:
       process.env.VIETQR_BANK_NAME ||
@@ -71,10 +72,6 @@ export const env = {
     swiftBic: process.env.VIETQR_SWIFT_BIC || "BFTVVNVX",
     webhookSecret:
       process.env.PAYMENT_WEBHOOK_SECRET || "dev_payment_webhook_secret_key",
-    cardGatewayProvider: process.env.CARD_GATEWAY_PROVIDER || "STRIPE",
-    cardGatewayPublicKey: process.env.CARD_GATEWAY_PUBLIC_KEY || "",
-    cardGatewaySecretKey: process.env.CARD_GATEWAY_SECRET_KEY || "",
-    cardGatewayWebhookSecret: process.env.CARD_GATEWAY_WEBHOOK_SECRET || "",
   },
 } as const;
 

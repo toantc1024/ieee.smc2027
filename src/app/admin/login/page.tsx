@@ -98,6 +98,7 @@ function AdminLoginForm() {
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
+  const [devEmailLink, setDevEmailLink] = useState<string | null>(null);
 
   const [pwdPassword, setPwdPassword] = useState("Admin@Smc2027Secure!");
   const [showPassword, setShowPassword] = useState(false);
@@ -133,13 +134,18 @@ function AdminLoginForm() {
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
-        setCustomSuccess(data.message || "Verification code sent to your email.");
+        setCustomSuccess(
+          data.message || "Sign-in link and verification code sent to your email."
+        );
         if (data.devCode) {
           setDevOtpHint(data.devCode);
           setOtpCode(data.devCode);
         }
+        if (data.devEmailLink) {
+          setDevEmailLink(data.devEmailLink);
+        }
       } else {
-        setCustomError(data.error || "Failed to generate verification code.");
+        setCustomError(data.error || "Failed to send sign-in link.");
       }
     } catch {
       setCustomError("Unable to connect to authentication server.");
@@ -161,7 +167,7 @@ function AdminLoginForm() {
       });
       const data = await res.json();
       if (res.ok) {
-        router.push("/admin");
+        router.push(data.redirectTo || "/admin");
       } else {
         setCustomError(data.error || "Invalid verification code.");
       }
@@ -191,7 +197,7 @@ function AdminLoginForm() {
       });
       const data = await res.json();
       if (res.ok) {
-        router.push("/admin");
+        router.push(data.redirectTo || "/admin");
       } else {
         setCustomError(data.error || "Incorrect email or password.");
       }
@@ -416,9 +422,23 @@ function AdminLoginForm() {
                       </button>
                     </div>
 
-                    {devOtpHint && (
-                      <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#115eff] text-xs text-center font-bold">
-                        Dev Verification Code: {devOtpHint}
+                    {(devOtpHint || devEmailLink) && (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-[#115eff] text-xs text-center space-y-2">
+                        {devOtpHint && (
+                          <div className="font-bold">
+                            Dev Verification Code: {devOtpHint}
+                          </div>
+                        )}
+                        {devEmailLink && (
+                          <div>
+                            <a
+                              href={devEmailLink}
+                              className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-[#115eff] text-white font-bold text-xs hover:bg-[#0a4de6] transition-colors"
+                            >
+                              Click Email Sign-In Link
+                            </a>
+                          </div>
+                        )}
                       </div>
                     )}
 

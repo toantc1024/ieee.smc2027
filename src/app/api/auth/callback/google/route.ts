@@ -73,12 +73,12 @@ export async function GET(request: Request) {
       email: profile.email,
       name: profile.name || profile.email.split("@")[0],
       avatar: profile.picture || null,
-      role: "ADMIN",
       provider: "google",
     });
 
     const sessionToken = await createSessionToken(dbUser);
-    const response = NextResponse.redirect(new URL("/admin", currentOrigin));
+    const destination = dbUser.role === "ADMIN" ? "/admin" : "/portal";
+    const response = NextResponse.redirect(new URL(destination, currentOrigin));
     return attachSessionCookie(response, sessionToken);
   } catch (err: unknown) {
     const message = extractErrorMessage(err, "internal_error");

@@ -29,19 +29,16 @@ export async function POST(req: NextRequest) {
       return apiError("Incorrect password", 401);
     }
 
-    const name = email.split("@")[0].toUpperCase();
     const user = await upsertUser({
-      id: `pwd_${Date.now()}`,
       email,
-      name: `Admin ${name}`,
       provider: "password",
-      role: "ADMIN",
     });
 
     const token = await createSessionToken(user);
     const response = apiSuccess({
       message: "Signed in with password successfully",
       user,
+      redirectTo: user.role === "ADMIN" ? "/admin" : "/portal",
     });
 
     return attachSessionCookie(response, token);

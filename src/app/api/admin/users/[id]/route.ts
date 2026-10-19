@@ -1,7 +1,7 @@
-import { Role } from "@prisma/client";
+import { Role, Prisma } from "@prisma/client";
 import {
   prisma,
-  isSuperAdminEmail,
+  hashPassword,
   requireAdminRequest,
   apiSuccess,
   apiError,
@@ -18,22 +18,45 @@ export async function PATCH(
 
   try {
     const body = await request.json();
-    const { role, name } = body;
+    const { role, name, avatar, password, profileData } = body;
 
     const targetUser = await prisma.user.findUnique({ where: { id } });
     if (!targetUser) {
       return apiError("User not found", 404);
     }
 
-    if (isSuperAdminEmail(targetUser.email) && role && role !== "ADMIN") {
-      return apiError("Cannot downgrade administrator role of primary super-admin account", 400);
+    if (targetUser.role === Role.ADMIN && role && role !== "ADMIN") {
+      const totalAdmins = await prisma.user.count({
+        where: { role: Role.ADMIN },
+      });
+      if (totalAdmins <= 1) {
+        return apiError(
+          "Cannot downgrade the last remaining ADMIN account in the database",
+          400
+        );
+      }
     }
+
+    const mergedProfileData: Prisma.InputJsonValue | undefined =
+      profileData && typeof profileData === "object"
+        ? {
+            ...(targetUser.profileData && typeof targetUser.profileData === "object"
+              ? (targetUser.profileData as Record<string, unknown>)
+              : {}),
+            ...(profileData as Record<string, unknown>),
+          }
+        : undefined;
 
     const updated = await prisma.user.update({
       where: { id },
       data: {
         ...(role ? { role: role === "ADMIN" ? Role.ADMIN : Role.USER } : {}),
-        ...(name ? { name: name.trim() } : {}),
+        ...(typeof name === "string" && name.trim() ? { name: name.trim() } : {}),
+        ...(avatar !== undefined ? { avatar } : {}),
+        ...(typeof password === "string" && password.trim()
+          ? { passwordHash: hashPassword(password.trim()) }
+          : {}),
+        ...(mergedProfileData !== undefined ? { profileData: mergedProfileData } : {}),
       },
     });
 
@@ -59,8 +82,16 @@ export async function DELETE(
       return apiError("User not found", 404);
     }
 
-    if (isSuperAdminEmail(targetUser.email)) {
-      return apiError("Cannot delete primary super-admin account", 400);
+    if (targetUser.role === Role.ADMIN) {
+      const totalAdmins = await prisma.user.count({
+        where: { role: Role.ADMIN },
+      });
+      if (totalAdmins <= 1) {
+        return apiError(
+          "Cannot delete the last remaining ADMIN account in the database",
+          400
+        );
+      }
     }
 
     await prisma.user.delete({ where: { id } });

@@ -1,6 +1,5 @@
 /**
- * Authentication Service Template (Google OAuth, Email OTP, Email & Password)
- * WeChat authentication has been removed per project specification.
+ * Authentication Service (DB-Backed Roles, Google OAuth, Email Link & OTP, Password)
  */
 
 import {
@@ -15,14 +14,19 @@ import {
   setUserPassword,
   generateOtp,
   verifyOtp,
+  createEmailLinkToken,
+  verifyEmailLinkToken,
+  ensureDatabaseAdmins,
   SESSION_COOKIE_NAME,
-  ADMIN_EMAILS,
   type SessionUser,
 } from "@/lib/auth";
 
 export class AuthService {
   public readonly sessionCookieName = SESSION_COOKIE_NAME;
-  public readonly adminEmails = ADMIN_EMAILS;
+
+  public async ensureDatabaseAdmins(): Promise<void> {
+    return ensureDatabaseAdmins();
+  }
 
   public async getCurrentUser(): Promise<SessionUser | null> {
     return getCurrentUser();
@@ -49,12 +53,13 @@ export class AuthService {
   }
 
   public async syncUserAccount(user: {
-    id: string;
+    id?: string;
     email: string;
-    name: string;
+    name?: string;
     avatar?: string | null;
-    role?: string;
-    provider?: "google" | "email_otp" | "password";
+    role?: "ADMIN" | "USER";
+    provider?: "google" | "email_link" | "email_otp" | "password";
+    profileData?: Record<string, unknown>;
   }) {
     return upsertUser(user);
   }
@@ -65,6 +70,14 @@ export class AuthService {
 
   public async verifyEmailOtp(email: string, code: string) {
     return verifyOtp(email, code);
+  }
+
+  public async createEmailLink(email: string) {
+    return createEmailLinkToken(email);
+  }
+
+  public async verifyEmailLink(token: string) {
+    return verifyEmailLinkToken(token);
   }
 
   public async verifyUserPassword(email: string, plainPassword: string): Promise<boolean> {
