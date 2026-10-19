@@ -7,7 +7,7 @@ import {
   emailService,
 } from "@/services";
 import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
-import type { ParticipantType, PaymentStatus } from "@/types";
+import type { ParticipantType, PaymentStatus, UnstructuredRegistrationFormData } from "@/types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
       dietaryRequirement,
       travelNotes,
       avatarUrl,
-      paymentMethod = "VIETQR",
+      paymentMethod = "PAYOO_VIETQR",
       currency = "VND",
+      formData,
     } = body;
 
     if (!fullName || !email || !affiliation || !country || !participantType) {
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
       avatarUrl,
       paymentMethod,
       currency,
+      formData: (formData || {}) as UnstructuredRegistrationFormData,
     });
 
     const payment = paymentService.buildVietQrPaymentInfo(
@@ -69,6 +71,7 @@ export async function POST(req: NextRequest) {
       email: registration.email,
       fullName: registration.fullName,
       registrationCode: registration.registrationCode,
+      participantType: registration.participantType,
       feeAmount: registration.feeAmount,
       currency: registration.currency,
     });
@@ -89,6 +92,43 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const code = searchParams.get("code");
     const email = searchParams.get("email");
+    const mine = searchParams.get("mine");
+
+    if (mine === "1" || mine === "true") {
+      const session = await authService.getSession();
+      if (!session?.user) {
+        return apiError("Not authenticated.", 401);
+      }
+
+      const registrations = await registrationService.getByUser(
+        session.user.id,
+        session.user.email
+      );
+
+      if (registrations.length === 0) {
+        return apiSuccess({
+          user: session.user,
+          registration: null,
+          registrations: [],
+        });
+      }
+
+      const latest = registrations[0];
+      const payment = paymentService.buildVietQrPaymentInfo(
+        latest.registrationCode,
+        latest.feeAmount,
+        latest.currency
+      );
+      const badgeQrUrl = await checkInService.generateBadgeQr(latest);
+
+      return apiSuccess({
+        user: session.user,
+        registration: latest,
+        registrations,
+        payment,
+        badgeQrUrl,
+      });
+    }
 
     if (code) {
       const reg = await registrationService.getByCode(code);

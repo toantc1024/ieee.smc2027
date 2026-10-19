@@ -393,6 +393,33 @@ export class EmailService {
     });
   }
 
+  public async sendVisaSupportApprovedEmail(params: {
+    email: string;
+    fullName: string;
+    registrationCode: string;
+  }) {
+    await this.ensureMilestoneTemplates();
+    const tpl =
+      (await prisma.emailTemplate.findUnique({
+        where: { slug: "milestone-visa-letter-ready" },
+      })) || DEFAULT_MILESTONE_TEMPLATES[5];
+
+    const portalUrl = `${env.app.url}/portal?code=${encodeURIComponent(params.registrationCode)}`;
+    const vars = {
+      FullName: params.fullName,
+      Email: params.email,
+      RegistrationCode: params.registrationCode,
+      PortalUrl: portalUrl,
+    };
+
+    return this.sendEmail({
+      to: params.email,
+      subject: applyMergeTags(tpl.subject, vars),
+      html: applyMergeTags(tpl.htmlContent, vars),
+      text: applyMergeTags(tpl.textContent, vars),
+    });
+  }
+
   public async sendBroadcastCampaign(input: BroadcastCampaignInput & { templateSlug?: string }) {
     await this.ensureMilestoneTemplates();
     const where: Record<string, unknown> = {};
