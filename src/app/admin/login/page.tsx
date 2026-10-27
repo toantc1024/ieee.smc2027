@@ -89,7 +89,14 @@ function AdminLoginForm() {
   }, []);
 
   const [emailMode, setEmailMode] = useState<EmailAuthMode>("otp");
-  const [loading, setLoading] = useState(false);
+  type AuthAction = "google" | "send_otp" | "verify_otp" | "password" | null;
+  const [activeAction, setActiveAction] = useState<AuthAction>(null);
+
+  const isGoogleLoading = activeAction === "google";
+  const isSendingOtp = activeAction === "send_otp";
+  const isVerifyingOtp = activeAction === "verify_otp";
+  const isPasswordLoading = activeAction === "password";
+
   const [customError, setCustomError] = useState<string | null>(null);
   const [customSuccess, setCustomSuccess] = useState<string | null>(null);
 
@@ -112,15 +119,15 @@ function AdminLoginForm() {
   const errorMessage = customError || derivedError;
 
   const handleGoogleLogin = () => {
-    setLoading(true);
+    setActiveAction("google");
     setCustomError(null);
     window.location.assign("/api/auth/google");
   };
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setLoading(true);
+    if (!email || isSendingOtp) return;
+    setActiveAction("send_otp");
     setCustomError(null);
     setCustomSuccess(null);
 
@@ -149,13 +156,13 @@ function AdminLoginForm() {
     } catch {
       setCustomError("Unable to reach authentication server.");
     } finally {
-      setLoading(false);
+      setActiveAction(null);
     }
   };
 
   const verifyOtpCode = async (codeToVerify: string) => {
-    if (!email || codeToVerify.length !== 6 || loading) return;
-    setLoading(true);
+    if (!email || codeToVerify.length !== 6 || isVerifyingOtp) return;
+    setActiveAction("verify_otp");
     setCustomError(null);
 
     try {
@@ -173,7 +180,7 @@ function AdminLoginForm() {
     } catch {
       setCustomError("Unable to reach verification server.");
     } finally {
-      setLoading(false);
+      setActiveAction(null);
     }
   };
 
@@ -184,8 +191,8 @@ function AdminLoginForm() {
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !pwdPassword) return;
-    setLoading(true);
+    if (!email || !pwdPassword || isPasswordLoading) return;
+    setActiveAction("password");
     setCustomError(null);
 
     try {
@@ -203,7 +210,7 @@ function AdminLoginForm() {
     } catch {
       setCustomError("Unable to reach authentication server.");
     } finally {
-      setLoading(false);
+      setActiveAction(null);
     }
   };
 
@@ -380,11 +387,11 @@ function AdminLoginForm() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              disabled={loading}
+              disabled={isGoogleLoading}
               className="w-full h-10 flex items-center justify-center gap-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm rounded-lg border border-slate-200 shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
             >
               <GoogleLogo className="size-4 shrink-0" />
-              <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
+              <span>{isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}</span>
             </button>
 
             {/* Divider */}
@@ -456,10 +463,10 @@ function AdminLoginForm() {
 
                     <Button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSendingOtp}
                       className="w-full h-10 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs"
                     >
-                      {loading ? "Sending Code..." : "Continue with Email Code"}
+                      {isSendingOtp ? "Sending Code..." : "Continue with Email Code"}
                       <ArrowRight className="size-4 ml-1" />
                     </Button>
                   </form>
@@ -533,17 +540,17 @@ function AdminLoginForm() {
 
                     <Button
                       type="submit"
-                      disabled={loading || otpCode.length !== 6}
+                      disabled={isVerifyingOtp || otpCode.length !== 6}
                       className="w-full h-10 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs"
                     >
-                      {loading ? "Verifying..." : "Verify & Sign In"}
+                      {isVerifyingOtp ? "Verifying..." : "Verify & Sign In"}
                     </Button>
 
                     <div className="text-center pt-0.5">
                       <button
                         type="button"
                         onClick={handleSendOtp}
-                        disabled={loading}
+                        disabled={isSendingOtp}
                         className="text-xs text-slate-500 hover:text-[#115eff] font-medium cursor-pointer"
                       >
                         Resend code
@@ -616,10 +623,10 @@ function AdminLoginForm() {
 
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={isPasswordLoading}
                   className="w-full h-10 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs"
                 >
-                  {loading ? "Signing In..." : "Sign In with Password"}
+                  {isPasswordLoading ? "Signing In..." : "Sign In with Password"}
                 </Button>
               </form>
             )}
