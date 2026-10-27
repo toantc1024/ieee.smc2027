@@ -3,41 +3,55 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { GridPattern } from "@/components/ui/grid-pattern";
+import {
+  Shield,
+  Mail,
+  KeyRound,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  AlertCircle,
+  ExternalLink,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 /* ── Poster Slideshow: Ho Chi Minh City Landmarks & HCMUTE ── */
 const SLIDES = [
   {
     image: "/login/posters/hcmc-skyline.jpg",
-    title: "SAI GON",
-    subtitle: "Dynamic Metropolis & Warm Hospitality",
+    title: "Dynamic Saigon",
+    subtitle: "A vibrant metropolis welcoming global pioneers in AI and systems engineering.",
   },
   {
     image: "/login/posters/1-sang-tao.jpg",
-    title: "INNOVATE",
-    subtitle: "Human-Centric Intelligence & Systems",
+    title: "Human-Centric Intelligence",
+    subtitle: "Pioneering the frontiers of cybernetics, autonomous robotics, and interactive systems.",
   },
   {
     image: "/login/posters/hcmc-nguyen-hue.jpg",
-    title: "CONVERGE",
-    subtitle: "Uniting Global Pioneers at IEEE SMC 2027",
+    title: "Global Collaboration",
+    subtitle: "Uniting leading researchers, industry visionaries, and IEEE delegates worldwide.",
   },
   {
     image: "/login/posters/2-hien-dai.jpg",
-    title: "SYNERGY",
-    subtitle: "Autonomous & Sustainable Future",
+    title: "Sustainable Cybernetics",
+    subtitle: "Fostering impactful technological breakthroughs for a connected and resilient world.",
   },
   {
     image: "/login/posters/hcmc-ben-thanh.jpg",
-    title: "HERITAGE",
-    subtitle: "Rich Traditions & Welcoming Spirit",
+    title: "Cultural Heritage",
+    subtitle: "Discover Vietnam's hospitality, timeless culture, and thriving technology landscape.",
   },
 ] as const;
 
 /* ── Official Google 4-Color SVG Logo ── */
 function GoogleLogo({ className }: { className?: string }) {
   return (
-    <svg className={className || "w-5 h-5"} viewBox="0 0 24 24">
+    <svg className={className || "w-4 h-4"} viewBox="0 0 24 24">
       <path
         fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -70,24 +84,9 @@ function AdminLoginForm() {
   useEffect(() => {
     const timer = setInterval(() => {
       setSlideIdx((prev) => (prev + 1) % SLIDES.length);
-    }, 4500);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.body.classList.remove("page-border-x");
-      document.body.classList.add("no-page-borders");
-    }
-    return () => {
-      if (typeof document !== "undefined") {
-        document.body.classList.remove("no-page-borders");
-        document.body.classList.add("page-border-x");
-      }
-    };
-  }, []);
-
-  const currentSlide = SLIDES[slideIdx];
 
   const [emailMode, setEmailMode] = useState<EmailAuthMode>("otp");
   const [loading, setLoading] = useState(false);
@@ -105,7 +104,7 @@ function AdminLoginForm() {
 
   const derivedError =
     errorParam === "missing_google_credentials"
-      ? "Google Client Secret is not configured yet. Please sign in with Email above."
+      ? "Google OAuth is not configured on this server. Please use email sign in."
       : errorParam
       ? `Authentication error: ${errorParam}`
       : null;
@@ -135,7 +134,7 @@ function AdminLoginForm() {
       if (res.ok) {
         setOtpSent(true);
         setCustomSuccess(
-          data.message || "Sign-in link and verification code sent to your email."
+          data.message || "A 6-digit verification code has been dispatched."
         );
         if (data.devCode) {
           setDevOtpHint(data.devCode);
@@ -145,10 +144,10 @@ function AdminLoginForm() {
           setDevEmailLink(data.devEmailLink);
         }
       } else {
-        setCustomError(data.error || "Failed to send sign-in link.");
+        setCustomError(data.error || "Failed to dispatch verification code.");
       }
     } catch {
-      setCustomError("Unable to connect to authentication server.");
+      setCustomError("Unable to reach authentication server.");
     } finally {
       setLoading(false);
     }
@@ -172,7 +171,7 @@ function AdminLoginForm() {
         setCustomError(data.error || "Invalid verification code.");
       }
     } catch {
-      setCustomError("Unable to connect to verification server.");
+      setCustomError("Unable to reach verification server.");
     } finally {
       setLoading(false);
     }
@@ -202,389 +201,385 @@ function AdminLoginForm() {
         setCustomError(data.error || "Incorrect email or password.");
       }
     } catch {
-      setCustomError("Unable to connect to authentication server.");
+      setCustomError("Unable to reach authentication server.");
     } finally {
       setLoading(false);
     }
   };
 
+  const currentSlide = SLIDES[slideIdx];
+
   return (
-    <div
-      data-no-page-borders="true"
-      className="admin-page-root no-page-borders min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-0 sm:p-4 lg:p-4 gap-0 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border select-none"
-    >
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-slate-50 font-sans antialiased text-slate-900">
       {/* ═══════════════════════════════════════════════════════════════════
-          LEFT COLUMN (60% on Desktop): Ho Chi Minh City & HCMUTE Hero Card
+          LEFT COLUMN: Conference Visual Showcase
          ═══════════════════════════════════════════════════════════════════ */}
-      <div className="w-full lg:w-[calc(58%-0.5rem)] xl:w-[calc(60%-0.5rem)] flex flex-col h-[320px] sm:h-[370px] lg:h-full min-h-0 min-w-0 shrink-0">
-        <div className="relative w-full h-full rounded-lg overflow-hidden shadow-md lg:shadow-[0_16px_48px_-12px_rgba(17,94,255,0.20)] border-b lg:border border-[#115eff]/20 flex flex-col justify-between select-none">
-          {/* Background Slideshow with Smooth Crossfade */}
-          <div className="absolute inset-0 bg-[#115eff] overflow-hidden">
-            <AnimatePresence initial={false}>
-              <motion.img
-                key={slideIdx}
-                src={currentSlide.image}
-                alt={currentSlide.title}
-                initial={{ opacity: 0, scale: 1.06 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0 w-full h-full object-cover object-center"
-              />
-            </AnimatePresence>
-
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#0a4de6]/30 via-transparent to-[#115eff]/20 mix-blend-multiply pointer-events-none" />
-
-            <GridPattern
-              width={28}
-              height={28}
-              strokeDasharray="4 2"
-              className="absolute -bottom-8 -left-8 w-88 h-88 opacity-30 text-white pointer-events-none z-10 hidden sm:block"
+      <div className="relative w-full lg:w-[54%] xl:w-[58%] min-h-[380px] lg:min-h-screen overflow-hidden bg-[#002b54] flex flex-col justify-between p-6 sm:p-10 lg:p-12 text-white">
+        {/* Smooth Crossfade Image Slideshow */}
+        <div className="absolute inset-0 z-0">
+          <AnimatePresence initial={false}>
+            <motion.img
+              key={slideIdx}
+              src={currentSlide.image}
+              alt={currentSlide.title}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.6, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover object-center"
             />
+          </AnimatePresence>
 
-            <div
-              className="absolute inset-0 opacity-[0.20] mix-blend-overlay pointer-events-none z-15"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "repeat",
-              }}
+          {/* High-Contrast Gradient Backdrop for Flawless Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001f3f] via-[#00386b]/75 to-[#005496]/45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001f3f]/80 to-transparent" />
+        </div>
+
+        {/* Top Header Branding */}
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/login/rectangle-logo-white.png"
+              alt="HCMUTE Logo"
+              className="h-9 sm:h-11 w-auto object-contain drop-shadow-md"
             />
-
-            <div className="absolute inset-x-0 top-0 h-28 sm:h-44 bg-gradient-to-b from-[#115eff]/80 via-[#0a4de6]/30 to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-x-0 bottom-0 h-44 sm:h-60 lg:h-72 bg-gradient-to-t from-[#05225c] via-[#0a4de6]/90 via-35% via-[#115eff]/55 via-65% to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-x-0 bottom-0 h-28 sm:h-40 bg-gradient-to-tr from-[#115eff]/30 via-white/10 to-transparent mix-blend-overlay pointer-events-none z-12" />
-          </div>
-
-          {/* Top Brand Bar */}
-          <div className="relative z-20 p-4 sm:p-6 lg:p-7 flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
-              <img
-                src="/login/rectangle-logo-white.png"
-                alt="HCMUTE Logo"
-                className="h-8 sm:h-11 w-auto object-contain drop-shadow-xl"
-              />
-              <div className="hidden sm:flex flex-col border-l border-white/30 pl-3">
-                <span className="text-white font-extrabold text-sm sm:text-base tracking-tight leading-none">
-                  IEEE SMC 2027
-                </span>
-                <span className="text-blue-100 text-[11px] font-medium tracking-wide mt-0.5">
-                  Ho Chi Minh City, Vietnam
-                </span>
-              </div>
+            <div className="hidden sm:flex flex-col border-l border-white/20 pl-3">
+              <span className="font-extrabold text-base tracking-tight text-white">
+                IEEE SMC 2027
+              </span>
+              <span className="text-[11px] text-blue-200 font-medium">
+                Ho Chi Minh City, Vietnam
+              </span>
             </div>
           </div>
 
-          {/* Bottom Typography */}
-          <div className="relative z-20 px-4 sm:px-6 pb-9 sm:pb-10 lg:pb-3 flex flex-col items-center text-center w-full max-w-full mt-auto overflow-visible">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={slideIdx + "-sub"}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="text-white text-xs sm:text-sm lg:text-base font-normal tracking-wide drop-shadow-md mb-1.5 max-w-full whitespace-nowrap text-center select-none"
-              >
-                {currentSlide.subtitle}
-              </motion.p>
-            </AnimatePresence>
+          <Badge className="bg-white/15 hover:bg-white/25 text-white border-white/20 backdrop-blur-md text-[11px] font-medium">
+            October 2027
+          </Badge>
+        </div>
 
-            <div
-              className="relative w-full max-w-full flex justify-center items-center py-1 overflow-visible"
-              style={{
-                maskImage:
-                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slideIdx}
-                  initial={{ opacity: 0, y: 16, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -16, scale: 1.04 }}
-                  transition={{ duration: 0.45, ease: "easeOut" }}
-                  className="w-full max-w-full flex justify-center items-center select-none overflow-visible px-2"
-                >
-                  <span
-                    className="font-black uppercase select-none leading-[1.05] pt-1 pb-2 whitespace-nowrap text-[36px] sm:text-[50px] lg:text-[clamp(2.5rem,6.2vw,96px)] tracking-[-0.03em] font-sans"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 22%, #CBD5E1 48%, #94A3B8 72%, #E2E8F0 88%, rgba(255,255,255,0.75) 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      filter:
-                        "drop-shadow(0 4px 20px rgba(0, 34, 68, 0.85)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4))",
-                    }}
-                  >
-                    {currentSlide.title}
-                  </span>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+        {/* Bottom Hero Text and Slide Navigation */}
+        <div className="relative z-10 mt-auto pt-12 space-y-5">
+          <div className="space-y-2 max-w-xl">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-300">
+              IEEE Systems, Man, and Cybernetics Society
+            </span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              {currentSlide.title}
+            </h2>
+            <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed font-normal max-w-lg">
+              {currentSlide.subtitle}
+            </p>
+          </div>
+
+          {/* Interactive Slide Indicators */}
+          <div className="flex items-center gap-2 pt-2">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setSlideIdx(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  slideIdx === idx ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/70"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          RIGHT COLUMN (40% on Desktop): Auth Card
+          RIGHT COLUMN: Standard Admin Authentication
          ═══════════════════════════════════════════════════════════════════ */}
-      <div className="w-full lg:w-[calc(42%-0.5rem)] xl:w-[calc(40%-0.5rem)] flex flex-col h-auto lg:h-full min-h-0 min-w-0 shrink-0 relative px-4 sm:px-6 lg:px-0 -mt-8 sm:-mt-10 lg:mt-0 z-20 pb-8 lg:pb-0">
-        <div className="relative z-10 flex flex-col justify-center items-center flex-1 min-h-0 rounded-lg border border-slate-200/90 bg-white shadow-md lg:shadow-[0_16px_50px_rgba(17,94,255,0.08)] p-5 sm:p-7 lg:p-6 xl:p-8 overflow-y-auto">
-          <GridPattern
-            width={32}
-            height={32}
-            strokeDasharray="0"
-            className="absolute inset-0 w-full h-full stroke-[#115eff]/10 fill-none opacity-40 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)] pointer-events-none"
-          />
-
-          <div className="relative z-20 w-full max-w-[400px] mx-auto my-auto flex flex-col justify-center">
-            <div className="mb-5 text-center">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                IEEE SMC 2027 CMS
-              </h1>
-              <p className="text-xs text-slate-500 mt-1">
-                Sign in to manage conference content, registrations, and system modules.
-              </p>
+      <div className="w-full lg:w-[46%] xl:w-[42%] flex flex-col justify-center items-center p-6 sm:p-10 lg:p-14 bg-white min-h-[520px]">
+        <div className="w-full max-w-md space-y-6">
+          {/* Header */}
+          <div className="space-y-1.5 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-blue-50 text-[#005496] border border-blue-100 text-xs font-semibold mb-2">
+              <Shield className="size-3.5" />
+              <span>Admin Console</span>
             </div>
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              Sign In
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Manage conference operations, registrations, and content.
+            </p>
+          </div>
 
-            {errorMessage && (
-              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs text-center leading-relaxed">
-                {errorMessage}
-              </div>
-            )}
+          {/* Feedback Banners */}
+          {errorMessage && (
+            <div className="flex items-start gap-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs leading-relaxed">
+              <AlertCircle className="size-4 shrink-0 mt-0.5 text-rose-600" />
+              <div>{errorMessage}</div>
+            </div>
+          )}
 
-            {customSuccess && (
-              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs text-center leading-relaxed">
-                {customSuccess}
-              </div>
-            )}
+          {customSuccess && (
+            <div className="flex items-start gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs leading-relaxed">
+              <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-emerald-600" />
+              <div>{customSuccess}</div>
+            </div>
+          )}
 
-            {/* ── Step 1 & 2: Progressive Email-First OTP Flow ── */}
-            {emailMode === "otp" && (
-              <div className="space-y-3">
-                {!otpSent ? (
-                  <form onSubmit={handleSendOtp} className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Email Address
-                      </label>
-                      <input
+          {/* Google OAuth Quick Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm rounded-lg border border-slate-200 shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <GoogleLogo className="size-4 shrink-0" />
+            <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
+          </button>
+
+          {/* Divider */}
+          <div className="relative flex items-center py-1">
+            <div className="flex-grow border-t border-slate-200" />
+            <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              or continue with email
+            </span>
+            <div className="flex-grow border-t border-slate-200" />
+          </div>
+
+          {/* Auth Mode Toggle Pill */}
+          <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-lg text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setEmailMode("otp");
+                setCustomError(null);
+                setCustomSuccess(null);
+              }}
+              className={`py-1.5 rounded-md transition-all cursor-pointer ${
+                emailMode === "otp"
+                  ? "bg-white text-[#005496] shadow-2xs font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Email Code
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmailMode("password");
+                setCustomError(null);
+                setCustomSuccess(null);
+              }}
+              className={`py-1.5 rounded-md transition-all cursor-pointer ${
+                emailMode === "password"
+                  ? "bg-white text-[#005496] shadow-2xs font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Password
+            </button>
+          </div>
+
+          {/* ── Mode 1: Email Code (OTP) ── */}
+          {emailMode === "otp" && (
+            <div className="space-y-4">
+              {!otpSent ? (
+                <form onSubmit={handleSendOtp} className="space-y-3.5">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="login-email" className="text-xs font-bold text-slate-700">
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="login-email"
                         type="email"
                         required
                         autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="admin@hcmute.edu.vn"
-                        className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                        className="pl-9 h-10 text-xs sm:text-sm bg-white"
                       />
+                      <Mail className="absolute left-3 top-3 size-4 text-slate-400 pointer-events-none" />
                     </div>
+                  </div>
 
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-10 bg-[#005496] hover:bg-[#004776] text-white font-semibold text-xs sm:text-sm rounded-lg"
+                  >
+                    {loading ? "Sending Code..." : "Continue with Email Code"}
+                    <ArrowRight className="size-4 ml-1.5" />
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+                  <div className="flex items-center justify-between text-xs text-slate-600">
+                    <span>
+                      Code sent to: <strong className="text-slate-900">{email}</strong>
+                    </span>
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setCustomError(null);
+                        setCustomSuccess(null);
+                      }}
+                      className="text-[#005496] hover:underline cursor-pointer font-bold"
+                    >
+                      Change
+                    </button>
+                  </div>
+
+                  {/* Dev Code Hint Box */}
+                  {(devOtpHint || devEmailLink) && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-[#005496] text-xs space-y-2">
+                      {devOtpHint && (
+                        <div className="flex items-center justify-between">
+                          <span>Developer Verification Code:</span>
+                          <span className="font-mono font-bold tracking-widest text-sm bg-white px-2 py-0.5 rounded border border-blue-200">
+                            {devOtpHint}
+                          </span>
+                        </div>
+                      )}
+                      {devEmailLink && (
+                        <div>
+                          <a
+                            href={devEmailLink}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#005496] text-white font-bold text-[11px] hover:bg-[#004776]"
+                          >
+                            <span>Open Sign-In Link</span>
+                            <ExternalLink className="size-3" />
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="otp-code" className="text-xs font-bold text-slate-700">
+                      6-Digit Verification Code
+                    </Label>
+                    <Input
+                      id="otp-code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      required
+                      maxLength={6}
+                      value={otpCode}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                        setOtpCode(digits);
+                        if (digits.length === 6) {
+                          void verifyOtpCode(digits);
+                        }
+                      }}
+                      placeholder="123456"
+                      className="h-11 tracking-widest text-center font-mono font-bold text-lg bg-white"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={loading || otpCode.length !== 6}
+                    className="w-full h-10 bg-[#005496] hover:bg-[#004776] text-white font-semibold text-xs sm:text-sm rounded-lg"
+                  >
+                    {loading ? "Verifying..." : "Verify & Sign In"}
+                  </Button>
+
+                  <div className="text-center pt-1">
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
                       disabled={loading}
-                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+                      className="text-xs text-slate-500 hover:text-[#005496] font-medium cursor-pointer"
                     >
-                      {loading ? "Sending code..." : "Continue with Email"}
+                      Did not receive code? Resend
                     </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
 
-                    <div className="text-center pt-0.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEmailMode("password");
-                          setCustomError(null);
-                          setCustomSuccess(null);
-                        }}
-                        className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
-                      >
-                        Use password instead
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <form onSubmit={handleVerifyOtp} className="space-y-3">
-                    <div className="flex items-center justify-between text-xs text-slate-600">
-                      <span>
-                        Sent to: <strong className="text-slate-900">{email}</strong>
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOtpSent(false);
-                          setCustomError(null);
-                          setCustomSuccess(null);
-                        }}
-                        className="text-[#115eff] hover:underline cursor-pointer font-bold"
-                      >
-                        Change email
-                      </button>
-                    </div>
-
-                    {(devOtpHint || devEmailLink) && (
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-[#115eff] text-xs text-center space-y-2">
-                        {devOtpHint && (
-                          <div className="font-bold">
-                            Dev Verification Code: {devOtpHint}
-                          </div>
-                        )}
-                        {devEmailLink && (
-                          <div>
-                            <a
-                              href={devEmailLink}
-                              className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-[#115eff] text-white font-bold text-xs hover:bg-[#0a4de6] transition-colors"
-                            >
-                              Click Email Sign-In Link
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1 text-center">
-                        Enter 6-digit verification code
-                      </label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="one-time-code"
-                        required
-                        maxLength={6}
-                        value={otpCode}
-                        onChange={(e) => {
-                          const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
-                          setOtpCode(digits);
-                          if (digits.length === 6) {
-                            void verifyOtpCode(digits);
-                          }
-                        }}
-                        placeholder="123456"
-                        className="w-full tracking-widest text-center font-mono font-black text-lg h-11 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={loading || otpCode.length !== 6}
-                      className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
-                    >
-                      {loading ? "Verifying..." : "Verify & Sign In"}
-                    </button>
-
-                    <div className="flex items-center justify-between pt-0.5 text-xs">
-                      <button
-                        type="button"
-                        onClick={handleSendOtp}
-                        disabled={loading}
-                        className="text-slate-500 hover:text-[#115eff] cursor-pointer font-medium transition-colors"
-                      >
-                        Resend code
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEmailMode("password");
-                          setCustomError(null);
-                          setCustomSuccess(null);
-                        }}
-                        className="text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
-                      >
-                        Use password instead
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            )}
-
-            {/* ── Fallback: Email & Password ── */}
-            {emailMode === "password" && (
-              <form onSubmit={handlePasswordLogin} className="space-y-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Email Address
-                  </label>
-                  <input
+          {/* ── Mode 2: Password Authentication ── */}
+          {emailMode === "password" && (
+            <form onSubmit={handlePasswordLogin} className="space-y-3.5">
+              <div className="space-y-1.5">
+                <Label htmlFor="pwd-email" className="text-xs font-bold text-slate-700">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="pwd-email"
                     type="email"
                     required
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@hcmute.edu.vn"
-                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                    className="pl-9 h-10 text-xs sm:text-sm bg-white"
                   />
+                  <Mail className="absolute left-3 top-3 size-4 text-slate-400 pointer-events-none" />
                 </div>
+              </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-bold text-slate-700">
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-[11px] font-bold text-[#115eff] hover:underline cursor-pointer"
-                    >
-                      {showPassword ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                  <input
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="pwd-password" className="text-xs font-bold text-slate-700">
+                    Password
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[11px] font-semibold text-[#005496] hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    {showPassword ? (
+                      <>
+                        <EyeOff className="size-3" />
+                        <span>Hide</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="size-3" />
+                        <span>Show</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="pwd-password"
                     type={showPassword ? "text" : "password"}
                     required
                     autoComplete="current-password"
                     value={pwdPassword}
                     onChange={(e) => setPwdPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 h-11 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white text-slate-900 font-medium transition-colors"
+                    className="pl-9 h-10 text-xs sm:text-sm bg-white"
                   />
+                  <KeyRound className="absolute left-3 top-3 size-4 text-slate-400 pointer-events-none" />
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-11 bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm rounded-md shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
-                >
-                  {loading ? "Signing in..." : "Sign In with Password"}
-                </button>
-
-                <div className="text-center pt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmailMode("otp");
-                      setCustomError(null);
-                    }}
-                    className="text-xs text-slate-500 hover:text-[#115eff] cursor-pointer font-semibold transition-colors"
-                  >
-                    Use verification code instead
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* Divider */}
-            <div className="relative flex py-4 items-center">
-              <div className="flex-grow border-t border-slate-200"></div>
-              <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                or
-              </span>
-              <div className="flex-grow border-t border-slate-200"></div>
-            </div>
-
-            {/* ── Social Login: Borderless Theme-Synced Google OAuth Button ── */}
-            <div className="space-y-2.5 w-full">
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
+              <Button
+                type="submit"
                 disabled={loading}
-                className="w-full h-11 flex items-center justify-center gap-3 px-4 bg-slate-100 hover:bg-slate-200/80 text-slate-900 font-bold text-xs sm:text-sm rounded-md border-0 transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
+                className="w-full h-10 bg-[#005496] hover:bg-[#004776] text-white font-semibold text-xs sm:text-sm rounded-lg"
               >
-                <GoogleLogo className="w-4 h-4 shrink-0" />
-                <span>{loading ? "Connecting to Google..." : "Continue with Google"}</span>
-              </button>
-            </div>
+                {loading ? "Signing In..." : "Sign In with Password"}
+              </Button>
+            </form>
+          )}
+
+          {/* Footer Portal Links */}
+          <div className="pt-2 text-center text-xs text-slate-500">
+            <span>Need attendee registration? </span>
+            <a
+              href="/#register"
+              className="font-semibold text-[#005496] hover:underline"
+            >
+              Register here
+            </a>
           </div>
         </div>
       </div>
@@ -597,7 +592,7 @@ export default function AdminLoginPage() {
     <React.Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="w-7 h-7 rounded-full border-2 border-[#115eff] border-t-transparent animate-spin" />
+          <div className="size-7 rounded-full border-2 border-[#005496] border-t-transparent animate-spin" />
         </div>
       }
     >
