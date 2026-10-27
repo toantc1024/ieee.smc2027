@@ -263,10 +263,6 @@ function AdminLoginForm() {
                 </span>
               </div>
             </div>
-
-            <div className="px-2.5 py-1 rounded-md bg-white/20 backdrop-blur-xs border border-white/25 text-white text-[11px] font-semibold drop-shadow-sm">
-              October 2027
-            </div>
           </div>
 
           {/* Bottom Typography with Original Bottom Fade Text Mask */}
