@@ -84,7 +84,7 @@ function AdminLoginForm() {
   useEffect(() => {
     const timer = setInterval(() => {
       setSlideIdx((prev) => (prev + 1) % SLIDES.length);
-    }, 5500);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -212,35 +212,37 @@ function AdminLoginForm() {
   return (
     <div
       data-no-page-borders="true"
-      className="admin-page-root no-page-borders min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-3 sm:p-4 lg:p-4 gap-3 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border"
+      className="admin-page-root no-page-borders min-h-screen lg:h-dvh w-full flex flex-col lg:flex-row bg-[#F8FAFC] text-slate-900 font-sans antialiased p-3 sm:p-4 lg:p-4 gap-3 sm:gap-4 lg:overflow-hidden overflow-y-auto box-border select-none"
     >
       {/* ═══════════════════════════════════════════════════════════════════
-          LEFT CARD (60% on Desktop): Poster Slideshow Card
+          LEFT CARD (60% on Desktop): Poster Slideshow Card (Original Image Colors)
          ═══════════════════════════════════════════════════════════════════ */}
       <div className="w-full lg:w-[calc(58%-0.5rem)] xl:w-[calc(60%-0.5rem)] flex flex-col h-[340px] sm:h-[400px] lg:h-full min-h-0 min-w-0 shrink-0">
         <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md lg:shadow-[0_16px_48px_-12px_rgba(17,94,255,0.20)] border border-[#115eff]/20 flex flex-col justify-between select-none">
-          {/* Background Slideshow with Smooth Crossfade */}
-          <div className="absolute inset-0 bg-[#002b54] overflow-hidden">
+          {/* Background Slideshow: Shows Original Image Colors without dark shadow filters */}
+          <div className="absolute inset-0 bg-[#005496] overflow-hidden">
             <AnimatePresence initial={false}>
               <motion.img
                 key={slideIdx}
                 src={currentSlide.image}
                 alt={currentSlide.title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.4, ease: "easeInOut" }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 className="absolute inset-0 w-full h-full object-cover object-center"
               />
             </AnimatePresence>
 
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#001f3f]/90 via-[#00386b]/65 to-[#005496]/40 pointer-events-none" />
+            {/* Subtle natural edge gradients for text legibility without color-tinting the image */}
+            <div className="absolute inset-x-0 top-0 h-28 sm:h-36 bg-gradient-to-b from-black/45 via-black/15 to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-44 sm:h-64 bg-gradient-to-t from-black/75 via-black/35 to-transparent pointer-events-none z-10" />
 
             <GridPattern
               width={28}
               height={28}
               strokeDasharray="4 2"
-              className="absolute -bottom-8 -left-8 size-80 opacity-25 text-white pointer-events-none z-10 hidden sm:block"
+              className="absolute -bottom-8 -left-8 size-80 opacity-20 text-white pointer-events-none z-10 hidden sm:block"
             />
           </div>
 
@@ -253,52 +255,73 @@ function AdminLoginForm() {
                 className="h-8 sm:h-11 w-auto object-contain drop-shadow-xl"
               />
               <div className="hidden sm:flex flex-col border-l border-white/30 pl-3">
-                <span className="text-white font-extrabold text-sm sm:text-base tracking-tight leading-none">
+                <span className="text-white font-extrabold text-sm sm:text-base tracking-tight leading-none drop-shadow-md">
                   IEEE SMC 2027
                 </span>
-                <span className="text-blue-100 text-[11px] font-medium tracking-wide mt-0.5">
+                <span className="text-blue-100 text-[11px] font-medium tracking-wide mt-0.5 drop-shadow-sm">
                   Ho Chi Minh City, Vietnam
                 </span>
               </div>
             </div>
 
-            <div className="px-2.5 py-1 rounded-md bg-white/15 backdrop-blur-xs border border-white/20 text-white text-[11px] font-semibold">
+            <div className="px-2.5 py-1 rounded-md bg-white/20 backdrop-blur-xs border border-white/25 text-white text-[11px] font-semibold drop-shadow-sm">
               October 2027
             </div>
           </div>
 
-          {/* Bottom Typography & Slide Indicators */}
-          <div className="relative z-20 px-4 sm:px-6 pb-6 sm:pb-8 flex flex-col items-center text-center w-full max-w-full mt-auto">
-            <AnimatePresence mode="popLayout">
+          {/* Bottom Typography with Original Bottom Fade Text Mask */}
+          <div className="relative z-20 px-4 sm:px-6 pb-6 sm:pb-8 flex flex-col items-center text-center w-full max-w-full mt-auto overflow-visible">
+            <AnimatePresence mode="wait">
               <motion.p
                 key={slideIdx + "-sub"}
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="text-white text-xs sm:text-sm font-medium tracking-wide drop-shadow-md mb-1 max-w-full text-center"
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="text-white text-xs sm:text-sm lg:text-base font-medium tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-1 max-w-full whitespace-nowrap text-center select-none"
               >
                 {currentSlide.subtitle}
               </motion.p>
             </AnimatePresence>
 
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={slideIdx}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full flex justify-center items-center py-1"
-              >
-                <span className="font-black uppercase tracking-tight text-3xl sm:text-5xl lg:text-6xl text-white drop-shadow-[0_4px_20px_rgba(0,34,68,0.85)] font-sans">
-                  {currentSlide.title}
-                </span>
-              </motion.div>
-            </AnimatePresence>
+            {/* Bottom Fade Masked Text from Original Commit */}
+            <div
+              className="relative w-full max-w-full flex justify-center items-center py-1 overflow-visible"
+              style={{
+                maskImage:
+                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, #000 0%, #000 35%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.2) 85%, transparent 100%)",
+              }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={slideIdx}
+                  initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -14, scale: 1.03 }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  className="w-full max-w-full flex justify-center items-center select-none overflow-visible px-2"
+                >
+                  <span
+                    className="font-black uppercase select-none leading-[1.05] pt-1 pb-2 whitespace-nowrap text-[36px] sm:text-[50px] lg:text-[clamp(2.5rem,6.2vw,96px)] tracking-[-0.03em] font-sans"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 22%, #CBD5E1 48%, #94A3B8 72%, #E2E8F0 88%, rgba(255,255,255,0.75) 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      filter:
+                        "drop-shadow(0 4px 20px rgba(0, 34, 68, 0.85)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4))",
+                    }}
+                  >
+                    {currentSlide.title}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             {/* Interactive Slide Indicator Dots */}
-            <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex items-center gap-1.5 mt-2.5">
               {SLIDES.map((_, idx) => (
                 <button
                   key={idx}
