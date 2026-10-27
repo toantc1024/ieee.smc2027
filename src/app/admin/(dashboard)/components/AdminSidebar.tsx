@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,108 +11,152 @@ import {
   PanelTop,
   ExternalLink,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
   Shield,
   KeyRound,
-  Menu,
-  X,
   Globe,
   CreditCard,
   QrCode,
   Send,
   FolderOpen,
+  ChevronsUpDown,
+  Laptop,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { SessionUser } from "@/lib/auth";
 
 interface AdminSidebarProps {
   user: SessionUser;
 }
 
-const NAV_GROUPS = [
+interface NavItem {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
+  badge?: string;
+  external?: boolean;
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
   {
-    title: "OVERVIEW",
+    title: "Overview",
     items: [
       {
-        name: "Dashboard",
-        href: "/admin",
+        title: "Dashboard",
+        url: "/admin",
         icon: LayoutDashboard,
         exact: true,
       },
     ],
   },
   {
-    title: "DELEGATES & PAYOO",
+    title: "Delegate Operations",
     items: [
       {
-        name: "Registrations & Payoo",
-        href: "/admin/registrations",
+        title: "Registrations & Payoo",
+        url: "/admin/registrations",
         icon: CreditCard,
-        exact: false,
         badge: "Payoo",
       },
       {
-        name: "QR Check-in",
-        href: "/admin/checkin",
+        title: "QR Check-in",
+        url: "/admin/checkin",
         icon: QrCode,
-        exact: false,
       },
       {
-        name: "Milestone Emails",
-        href: "/admin/broadcast",
+        title: "Milestone Emails",
+        url: "/admin/broadcast",
         icon: Send,
-        exact: false,
         badge: "Templates",
       },
     ],
   },
   {
-    title: "CONTENT & MEDIA LIBRARY",
+    title: "Content & Assets",
     items: [
       {
-        name: "Media Upload Library",
-        href: "/admin/media",
+        title: "Media Library",
+        url: "/admin/media",
         icon: FolderOpen,
-        exact: false,
         badge: "MinIO",
       },
       {
-        name: "Page Hierarchy",
-        href: "/admin/pages",
+        title: "Page Hierarchy",
+        url: "/admin/pages",
         icon: Layers,
-        exact: false,
         badge: "Tree",
       },
       {
-        name: "Posts & News",
-        href: "/admin/posts",
+        title: "Posts & News",
+        url: "/admin/posts",
         icon: FileText,
-        exact: false,
       },
       {
-        name: "Header & Navigation",
-        href: "/admin/header",
+        title: "Header & Navigation",
+        url: "/admin/header",
         icon: PanelTop,
-        exact: false,
       },
     ],
   },
   {
-    title: "SECURITY & RBAC",
+    title: "System & RBAC",
     items: [
       {
-        name: "User & Role Management",
-        href: "/admin/users",
+        title: "Users & Roles",
+        url: "/admin/users",
         icon: Users,
-        exact: false,
-        badge: "DB RBAC",
+        badge: "RBAC",
       },
       {
-        name: "OAuth & AI Agent",
-        href: "/admin/oauth",
+        title: "OAuth & AI Agent",
+        url: "/admin/oauth",
         icon: KeyRound,
-        exact: false,
+      },
+    ],
+  },
+  {
+    title: "Portals",
+    items: [
+      {
+        title: "Conference Website",
+        url: "/",
+        icon: Globe,
+        external: true,
+      },
+      {
+        title: "Delegate Portal",
+        url: "/portal",
+        icon: Laptop,
+        external: true,
       },
     ],
   },
@@ -120,229 +164,189 @@ const NAV_GROUPS = [
 
 export function AdminSidebar({ user }: AdminSidebarProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("ieee_admin_sidebar_collapsed");
-    if (saved !== null) {
-      setCollapsed(saved === "true");
-    }
-  }, []);
-
-  const toggleCollapsed = () => {
-    const next = !collapsed;
-    setCollapsed(next);
-    localStorage.setItem("ieee_admin_sidebar_collapsed", String(next));
-  };
 
   return (
-    <>
-      <div className="lg:hidden fixed bottom-5 right-5 z-50">
-        <button
-          onClick={() => setMobileOpen((o) => !o)}
-          className="w-11 h-11 rounded-lg bg-[#005496] text-white shadow-md flex items-center justify-center cursor-pointer hover:bg-[#0284c7] transition-colors"
-          aria-label="Toggle Navigation"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {mobileOpen && (
-        <div
-          onClick={() => setMobileOpen(false)}
-          className="lg:hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs transition-opacity"
-        />
-      )}
-
-      <aside
-        className={cn(
-          "fixed lg:sticky top-0 left-0 z-40 h-screen bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 transition-all duration-200 ease-in-out",
-          collapsed ? "w-16" : "w-64 xl:w-72",
-          mobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"
-        )}
-      >
-        <div className="h-16 px-4 border-b border-slate-200/90 flex items-center justify-between">
-          <Link
-            href="/admin"
-            className="flex items-center gap-2.5 overflow-hidden group focus:outline-none"
-          >
-            <div className="w-8 h-8 rounded-lg bg-[#005496] text-white flex items-center justify-center shrink-0 shadow-2xs">
-              <Shield className="w-4 h-4 text-white" />
-            </div>
-            {!collapsed && (
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-extrabold text-[#005496] tracking-tight truncate">
-                  IEEE SMC 2027
-                </span>
-                <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider truncate">
-                  HCMUTE Admin Console
-                </span>
-              </div>
-            )}
-          </Link>
-
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            className="hidden lg:flex p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-2.5 space-y-5">
-          {NAV_GROUPS.map((group, gIdx) => (
-            <div key={gIdx} className="space-y-1">
-              {!collapsed && (
-                <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  {group.title}
+    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-white">
+      {/* ── Brand Header ── */}
+      <SidebarHeader className="border-b border-slate-100 p-3">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild className="hover:bg-slate-50">
+              <Link href="/admin" className="flex items-center gap-3">
+                <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-[#005496] text-white shadow-xs">
+                  <Shield className="size-5" />
                 </div>
-              )}
+                <div className="grid flex-1 text-left text-xs leading-tight">
+                  <span className="truncate font-black text-[#005496] tracking-tight">
+                    IEEE SMC 2027
+                  </span>
+                  <span className="truncate text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                    HCMUTE Admin
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-              <nav className="space-y-0.5">
-                {group.items.map((item) => {
+      {/* ── Nav Groups ── */}
+      <SidebarContent className="px-2 py-2">
+        {NAV_SECTIONS.map((section, idx) => (
+          <SidebarGroup key={section.title} className="py-1">
+            <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2">
+              {section.title}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item) => {
                   const isActive = item.exact
-                    ? pathname === item.href
-                    : pathname.startsWith(item.href);
-                  const Icon = item.icon;
+                    ? pathname === item.url
+                    : !item.external && pathname.startsWith(item.url);
 
                   return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      title={collapsed ? item.name : undefined}
-                      className={cn(
-                        "flex items-center rounded-xl text-xs font-medium transition-all group",
-                        collapsed
-                          ? "justify-center p-2.5"
-                          : "justify-between px-3 py-2",
-                        isActive
-                          ? "bg-[#005496] text-white font-semibold shadow-2xs"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                      )}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon
-                          className={cn(
-                            "w-4 h-4 shrink-0 transition-colors",
-                            isActive
-                              ? "text-white"
-                              : "text-slate-400 group-hover:text-[#005496]"
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                        className={
+                          isActive
+                            ? "bg-[#005496] text-white font-semibold hover:bg-[#004776] hover:text-white"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        }
+                      >
+                        <Link
+                          href={item.url}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noreferrer" : undefined}
+                        >
+                          <item.icon
+                            className={
+                              isActive
+                                ? "text-white"
+                                : "text-slate-500 group-hover:text-[#005496]"
+                            }
+                          />
+                          <span className="truncate text-xs">{item.title}</span>
+                          {item.external && (
+                            <ExternalLink className="ml-auto size-3 text-slate-400" />
                           )}
-                        />
-                        {!collapsed && <span className="truncate">{item.name}</span>}
-                      </div>
+                        </Link>
+                      </SidebarMenuButton>
 
-                      {!collapsed && item.badge && (
-                        <span
-                          className={cn(
-                            "text-[10px] px-1.5 py-0.2 rounded font-mono font-medium shrink-0",
+                      {item.badge && (
+                        <SidebarMenuBadge
+                          className={
                             isActive
-                              ? "bg-white/20 text-white"
-                              : "bg-blue-50 text-[#005496]"
-                          )}
+                              ? "bg-white/20 text-white font-mono text-[10px]"
+                              : "bg-blue-50 text-[#005496] font-mono text-[10px]"
+                          }
                         >
                           {item.badge}
-                        </span>
+                        </SidebarMenuBadge>
                       )}
-                    </Link>
+                    </SidebarMenuItem>
                   );
                 })}
-              </nav>
-            </div>
-          ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+            {idx < NAV_SECTIONS.length - 1 && <SidebarSeparator className="my-2" />}
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
 
-          {!collapsed && (
-            <div className="pt-3 border-t border-slate-200/80 space-y-1">
-              <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                PUBLIC PORTALS
-              </div>
-              <Link
-                href="/"
-                target="_blank"
-                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Conference Homepage</span>
-                </div>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
-              </Link>
-              <Link
-                href="/portal"
-                target="_blank"
-                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <QrCode className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Delegate Badge Portal</span>
-                </div>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
-              </Link>
-            </div>
-          )}
-        </div>
-
-        <div className="p-2.5 border-t border-slate-200/90 bg-slate-50/60">
-          <div
-            className={cn(
-              "flex items-center gap-2.5",
-              collapsed ? "justify-center" : "justify-between"
-            )}
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-8 h-8 rounded-full border border-slate-200 object-cover shrink-0"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-[#005496] text-white font-bold text-xs flex items-center justify-center shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              {!collapsed && (
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-semibold text-slate-900 truncate">
-                    {user.name}
-                  </span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[9px] font-bold uppercase px-1 rounded bg-blue-50 text-[#005496]">
-                      {user.role}
+      {/* ── User Profile Footer ── */}
+      <SidebarFooter className="border-t border-slate-100 p-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-[state=open]:bg-slate-100 hover:bg-slate-50"
+                >
+                  <Avatar className="size-8 rounded-lg">
+                    {user.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                    ) : null}
+                    <AvatarFallback className="rounded-lg bg-[#005496] text-white text-xs font-bold">
+                      {user.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-xs leading-tight">
+                    <span className="truncate font-semibold text-slate-900">
+                      {user.name}
                     </span>
-                    <span className="text-[10px] text-slate-400 truncate max-w-[100px]">
+                    <span className="truncate text-[10px] text-slate-500">
                       {user.email}
                     </span>
                   </div>
-                </div>
-              )}
-            </div>
+                  <ChevronsUpDown className="ml-auto size-4 text-slate-400" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-56 rounded-lg"
+                side="top"
+                align="end"
+                sideOffset={8}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-2 py-1.5 text-left text-xs">
+                    <Avatar className="size-8 rounded-lg">
+                      {user.avatar ? (
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                      ) : null}
+                      <AvatarFallback className="rounded-lg bg-[#005496] text-white text-xs font-bold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-xs leading-tight">
+                      <span className="truncate font-bold text-slate-900">
+                        {user.name}
+                      </span>
+                      <span className="truncate text-[10px] text-[#005496] font-semibold">
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link href="/" target="_blank" className="flex items-center gap-2">
+                      <Globe className="size-4 text-slate-500" />
+                      <span>Conference Homepage</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/portal" target="_blank" className="flex items-center gap-2">
+                      <Shield className="size-4 text-slate-500" />
+                      <span>Delegate Portal</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <form action="/api/auth/logout" method="POST" className="w-full">
+                    <button
+                      type="submit"
+                      className="flex w-full items-center gap-2 text-rose-600 hover:text-rose-700 cursor-pointer"
+                    >
+                      <LogOut className="size-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
 
-            {!collapsed && (
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  title="Sign Out"
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
-                  aria-label="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      </aside>
-    </>
+      {/* ── Desktop Rail Drag/Expand Handle ── */}
+      <SidebarRail />
+    </Sidebar>
   );
 }
 
