@@ -127,7 +127,15 @@ export default function AdminOAuthPage() {
   const origins = Array.from(
     new Set([
       "http://localhost:3000",
+      "http://localhost:3001",
       "http://localhost:3002",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001",
+      "http://127.0.0.1:3002",
+      "https://ieee-smc2027.org",
+      "https://www.ieee-smc2027.org",
+      "https://smc2027.hcmute.edu.vn",
+      "https://ieee-smc2027.vercel.app",
       currentOrigin,
       appUrl,
     ].filter(Boolean))
