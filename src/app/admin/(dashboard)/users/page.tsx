@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Plus, Users, Edit2, Trash2, ChevronDown, Check } from "lucide-react";
+import {
+  Plus,
+  Users,
+  Edit2,
+  Trash2,
+  ChevronDown,
+  Check,
+  Mail,
+  KeyRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +28,30 @@ import {
 } from "@/components/admin/users/EditUserModal";
 import { UserDeleteDialog } from "@/components/admin/users/UserDeleteDialog";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
+import { cn } from "@/lib/utils";
+
+function GoogleIcon({ className = "size-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.13z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
+      />
+    </svg>
+  );
+}
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
@@ -52,14 +85,14 @@ export default function AdminUsersPage() {
       const res = await fetch("/api/admin/users");
       const json = await res.json();
       if (!res.ok || json.error) {
-        throw new Error(json.error || "Không thể tải danh sách người dùng");
+        throw new Error(json.error || "Failed to load users");
       }
       const list = json.users || json.data?.users || (Array.isArray(json) ? json : []);
       setUsers(list);
     } catch (err: unknown) {
       setAlert({
         type: "error",
-        text: err instanceof Error ? err.message : "Lỗi khi tải dữ liệu",
+        text: err instanceof Error ? err.message : "Error loading data",
       });
     } finally {
       setLoading(false);
@@ -88,18 +121,18 @@ export default function AdminUsersPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Không thể tạo người dùng mới");
+        throw new Error(json.error || "Failed to create user");
       }
       setAlert({
         type: "success",
-        text: `Đã tạo tài khoản cho ${payload.email} thành công!`,
+        text: `Created account for ${payload.email} successfully!`,
       });
       setCreateOpen(false);
       await fetchUsers();
     } catch (err: unknown) {
       setAlert({
         type: "error",
-        text: err instanceof Error ? err.message : "Thao tác thất bại",
+        text: err instanceof Error ? err.message : "Operation failed",
       });
       throw err;
     } finally {
@@ -126,18 +159,18 @@ export default function AdminUsersPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Không thể cập nhật người dùng");
+        throw new Error(json.error || "Failed to update user");
       }
       setAlert({
         type: "success",
-        text: "Đã cập nhật thông tin người dùng thành công!",
+        text: "User profile updated successfully!",
       });
       setEditingUser(null);
       await fetchUsers();
     } catch (err: unknown) {
       setAlert({
         type: "error",
-        text: err instanceof Error ? err.message : "Cập nhật thất bại",
+        text: err instanceof Error ? err.message : "Update failed",
       });
       throw err;
     } finally {
@@ -152,9 +185,9 @@ export default function AdminUsersPage() {
     });
     const json = await res.json();
     if (!res.ok) {
-      throw new Error(json.error || "Không thể xóa người dùng");
+      throw new Error(json.error || "Failed to delete user");
     }
-    setAlert({ type: "success", text: "Đã xóa người dùng thành công!" });
+    setAlert({ type: "success", text: "User deleted successfully!" });
     setDeletingUser(null);
     await fetchUsers();
   };
@@ -173,14 +206,14 @@ export default function AdminUsersPage() {
     if (safeToDelete.length === 0) {
       setAlert({
         type: "error",
-        text: "Không thể xóa tài khoản bạn đang đăng nhập!",
+        text: "You cannot delete your own active administrator account!",
       });
       return;
     }
 
     if (
       !confirm(
-        `Bạn có chắc chắn muốn xóa ${safeToDelete.length} tài khoản đã chọn?`
+        `Are you sure you want to delete ${safeToDelete.length} selected account(s)?`
       )
     )
       return;
@@ -194,11 +227,11 @@ export default function AdminUsersPage() {
       clearSelection();
       setAlert({
         type: "success",
-        text: `Đã xóa ${safeToDelete.length} tài khoản thành công!`,
+        text: `Deleted ${safeToDelete.length} account(s) successfully!`,
       });
       await fetchUsers();
     } catch {
-      setAlert({ type: "error", text: "Xảy ra lỗi khi xóa tài khoản hàng loạt" });
+      setAlert({ type: "error", text: "Error deleting accounts in batch" });
     }
   };
 
@@ -218,20 +251,20 @@ export default function AdminUsersPage() {
         });
         const json = await res.json();
         if (!res.ok || !json.success) {
-          throw new Error(json.error || "Không thể cập nhật vai trò");
+          throw new Error(json.error || "Failed to update role");
         }
         setAlert({
           type: "success",
-          text: `Đã đổi vai trò thành ${
-            newRole === "ADMIN" ? "Quản trị viên" : "Thành viên"
-          } thành công!`,
+          text: `Role changed to ${
+            newRole === "ADMIN" ? "Admin" : "User"
+          } successfully!`,
         });
       } catch (err: unknown) {
         // Rollback on error
         await fetchUsers();
         setAlert({
           type: "error",
-          text: err instanceof Error ? err.message : "Cập nhật vai trò thất bại",
+          text: err instanceof Error ? err.message : "Failed to change role",
         });
       }
     },
@@ -244,14 +277,16 @@ export default function AdminUsersPage() {
       {
         id: "select",
         header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Chọn tất cả"
-          />
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+            />
+          </div>
         ),
         cell: ({ row }) => {
           const item = row.original;
@@ -260,20 +295,22 @@ export default function AdminUsersPage() {
             item.email.toLowerCase() === currentUserEmail.toLowerCase()
           );
           return (
-            <Checkbox
-              disabled={isSelf}
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Chọn dòng"
-            />
+            <div className="flex items-center justify-center">
+              <Checkbox
+                disabled={isSelf}
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+              />
+            </div>
           );
         },
-        size: 36,
+        size: 40,
         enableSorting: false,
       },
       {
         accessorKey: "name",
-        header: "Người dùng",
+        header: "User",
         cell: ({ row }) => {
           const u = row.original;
           const isSelf = Boolean(
@@ -296,16 +333,16 @@ export default function AdminUsersPage() {
               )}
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-slate-900 truncate">
+                  <span className="font-semibold text-slate-900 text-sm truncate">
                     {u.name}
                   </span>
                   {isSelf && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#005496]/10 text-[#005496]">
-                      Bạn
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#005496]/10 text-[#005496] border border-[#005496]/20">
+                      You
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] text-slate-500 truncate block">
+                <span className="text-xs text-slate-500 truncate block">
                   {u.email}
                 </span>
               </div>
@@ -315,7 +352,7 @@ export default function AdminUsersPage() {
       },
       {
         accessorKey: "role",
-        header: "Vai trò",
+        header: "Role",
         cell: ({ row }) => {
           const u = row.original;
           const role = (row.getValue("role") as string) || u.role;
@@ -326,105 +363,136 @@ export default function AdminUsersPage() {
 
           if (isSelf) {
             return (
-              <span
-                className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-medium px-2 py-1 select-none"
-                title="Tài khoản của bạn"
-              >
-                <span className="size-2 rounded-full bg-blue-500" />
-                Quản trị viên
-              </span>
+              <div className="flex items-center justify-center">
+                <span
+                  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border border-[#005496]/30 bg-[#005496]/10 text-[#005496] select-none"
+                  title="Your active account"
+                >
+                  <span className="size-1.5 rounded-full bg-[#005496]" />
+                  <span>Admin</span>
+                </span>
+              </div>
             );
           }
 
           return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
-                  title="Nhấn để đổi vai trò nhanh"
-                >
-                  {role === "ADMIN" ? (
-                    <span className="inline-flex items-center gap-1.5 text-blue-700">
-                      <span className="size-2 rounded-full bg-blue-500" />
-                      <span>Quản trị viên</span>
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer shadow-2xs group focus:outline-none focus:ring-1 focus:ring-[#005496]",
+                      role === "ADMIN"
+                        ? "bg-[#005496]/10 text-[#005496] border-[#005496]/30 hover:bg-[#005496]/20"
+                        : "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200/80"
+                    )}
+                    title="Click to quick-change role"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "size-1.5 rounded-full",
+                          role === "ADMIN" ? "bg-[#005496]" : "bg-slate-400"
+                        )}
+                      />
+                      <span>{role === "ADMIN" ? "Admin" : "User"}</span>
                     </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-slate-600">
-                      <span className="size-2 rounded-full bg-slate-400" />
-                      <span>Thành viên</span>
+                    <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-36 p-1.5 rounded-2xl shadow-xl border border-slate-200">
+                  <DropdownMenuItem
+                    onClick={() => handleQuickRoleChange(u.id, "ADMIN")}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-[#005496] font-semibold">
+                      <span className="size-1.5 rounded-full bg-[#005496]" />
+                      Admin
                     </span>
-                  )}
-                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40 p-1">
-                <DropdownMenuItem
-                  onClick={() => handleQuickRoleChange(u.id, "ADMIN")}
-                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 text-blue-700 font-medium">
-                    <span className="size-2 rounded-full bg-blue-500" />
-                    Quản trị viên
-                  </span>
-                  {role === "ADMIN" && <Check className="size-3.5 text-blue-700" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleQuickRoleChange(u.id, "USER")}
-                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 text-slate-700 font-medium">
-                    <span className="size-2 rounded-full bg-slate-400" />
-                    Thành viên
-                  </span>
-                  {role === "USER" && <Check className="size-3.5 text-slate-700" />}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    {role === "ADMIN" && <Check className="size-3.5 text-[#005496]" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleQuickRoleChange(u.id, "USER")}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-slate-700 font-medium">
+                      <span className="size-1.5 rounded-full bg-slate-400" />
+                      User
+                    </span>
+                    {role === "USER" && <Check className="size-3.5 text-slate-700" />}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           );
         },
       },
       {
         accessorKey: "provider",
-        header: "Đăng nhập qua",
+        header: "Provider",
         cell: ({ row }) => {
           const provider = (row.getValue("provider") as string) || "email";
-          let label = "Email";
-          if (provider.toLowerCase().includes("google")) label = "Google";
-          if (provider.toLowerCase().includes("password")) label = "Mật khẩu";
-          return <span className="text-slate-600 font-medium">{label}</span>;
+          const provLower = provider.toLowerCase();
+
+          return (
+            <div className="flex items-center justify-center">
+              {provLower.includes("google") ? (
+                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
+                  <GoogleIcon className="size-3.5 shrink-0" />
+                  <span>Google</span>
+                </div>
+              ) : provLower.includes("password") ? (
+                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
+                  <KeyRound className="size-3.5 text-slate-400 shrink-0" />
+                  <span>Password</span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
+                  <Mail className="size-3.5 text-slate-400 shrink-0" />
+                  <span>Email</span>
+                </div>
+              )}
+            </div>
+          );
         },
       },
       {
         id: "affiliation",
-        header: "Đơn vị công tác",
+        header: "Affiliation",
         cell: ({ row }) => {
           const profile = row.original.profileData || {};
           const aff = profile.affiliation || "-";
           return (
-            <span className="text-slate-500 truncate block max-w-xs font-medium">
-              {String(aff)}
-            </span>
+            <div className="text-center">
+              <span className="text-sm text-slate-600 truncate block max-w-xs font-medium mx-auto">
+                {String(aff)}
+              </span>
+            </div>
           );
         },
       },
       {
         accessorKey: "createdAt",
-        header: "Ngày tham gia",
+        header: "Joined Date",
         cell: ({ row }) => {
           const val = row.getValue("createdAt") as string;
-          if (!val) return <span className="text-slate-400">-</span>;
+          if (!val) return <div className="text-center text-slate-400">-</div>;
           const date = new Date(val);
           return (
-            <span className="text-slate-500 font-medium">
-              {date.toLocaleDateString("vi-VN")}
-            </span>
+            <div className="text-center text-xs text-slate-500 font-medium">
+              {date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </div>
           );
         },
       },
       {
         id: "actions",
-        header: "",
+        header: "Actions",
         cell: ({ row }) => {
           const u = row.original;
           const isSelf = Boolean(
@@ -433,12 +501,12 @@ export default function AdminUsersPage() {
           );
 
           return (
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex items-center justify-center gap-1">
               <button
                 type="button"
                 onClick={() => setEditingUser(u)}
-                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
-                title="Chỉnh sửa thông tin"
+                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                title="Edit user"
               >
                 <Edit2 className="size-4" />
               </button>
@@ -447,8 +515,8 @@ export default function AdminUsersPage() {
                 <button
                   type="button"
                   onClick={() => setDeletingUser(u)}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
-                  title="Xóa tài khoản"
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                  title="Delete user"
                 >
                   <Trash2 className="size-4" />
                 </button>
@@ -457,7 +525,7 @@ export default function AdminUsersPage() {
           );
         },
         enableSorting: false,
-        size: 80,
+        size: 90,
       },
     ],
     [currentUserEmail, handleQuickRoleChange]
@@ -470,10 +538,10 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
             <Users className="size-6 text-[#005496]" />
-            Người dùng &amp; Phân quyền
+            Users &amp; Roles
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Quản lý tài khoản thành viên và phân quyền quản trị hệ thống.
+            Manage user accounts, credentials, and access roles.
           </p>
         </div>
 
@@ -485,7 +553,7 @@ export default function AdminUsersPage() {
             className="h-9 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white shadow-xs"
           >
             <Plus className="size-4 mr-1.5" />
-            Thêm người dùng
+            Add User
           </Button>
         </div>
       </div>
@@ -504,14 +572,14 @@ export default function AdminUsersPage() {
         columns={columns}
         data={users}
         loading={loading}
-        searchPlaceholder="Tìm theo tên, email, cơ quan..."
+        searchPlaceholder="Search by name, email, affiliation..."
         filterColumns={[
           {
             id: "role",
-            title: "Vai trò",
+            title: "Role",
             options: [
-              { label: "Quản trị viên", value: "ADMIN" },
-              { label: "Thành viên", value: "USER" },
+              { label: "Admin", value: "ADMIN" },
+              { label: "User", value: "USER" },
             ],
           },
         ]}
@@ -524,7 +592,7 @@ export default function AdminUsersPage() {
               onClick={() => handleBatchDelete(selected, clear)}
               className="h-7 px-2.5 text-xs font-semibold"
             >
-              Xóa đã chọn
+              Delete selected
             </Button>
           </div>
         )}

@@ -47,14 +47,14 @@ export function PostDeleteDialog({
             <AlertTriangle className="size-5" />
           </div>
           <DialogTitle className="text-base font-bold text-slate-900">
-            Xác nhận xóa bài viết
+            Confirm Post Deletion
           </DialogTitle>
           <DialogDescription className="text-xs text-slate-600 leading-relaxed">
-            Bạn có chắc chắn muốn xóa bài viết{" "}
+            Are you sure you want to delete the post{" "}
             <strong className="text-slate-900 font-semibold">
               &quot;{post.title}&quot;
             </strong>
-            ? Hành động này sẽ gỡ bài viết khỏi hệ thống và không thể khôi phục.
+            ? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -67,7 +67,7 @@ export function PostDeleteDialog({
             disabled={deleting}
             className="h-8.5 px-3.5 text-xs"
           >
-            Hủy
+            Cancel
           </Button>
           <Button
             type="button"
@@ -79,10 +79,10 @@ export function PostDeleteDialog({
             {deleting ? (
               <>
                 <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-                Đang xóa...
+                Deleting...
               </>
             ) : (
-              "Xóa bài viết"
+              "Delete Post"
             )}
           </Button>
         </DialogFooter>

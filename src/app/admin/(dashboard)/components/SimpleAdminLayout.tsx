@@ -33,17 +33,17 @@ interface NavItem {
 
 const PRIMARY_NAV_ITEMS: NavItem[] = [
   {
-    name: "Bài viết & Tin tức",
+    name: "Posts & News",
     href: "/admin/posts",
     icon: FileText,
   },
   {
-    name: "Người dùng & Phân quyền",
+    name: "Users & Roles",
     href: "/admin/users",
     icon: Users,
   },
   {
-    name: "Tổng quan",
+    name: "Overview",
     href: "/admin",
     icon: LayoutDashboard,
     exact: true,
@@ -72,10 +72,10 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
   };
 
   const getBreadcrumbTitle = () => {
-    if (pathname === "/admin") return "Tổng quan";
-    if (pathname.startsWith("/admin/posts")) return "Bài viết & Tin tức";
-    if (pathname.startsWith("/admin/users")) return "Người dùng & Phân quyền";
-    return "Quản trị";
+    if (pathname === "/admin") return "Overview";
+    if (pathname.startsWith("/admin/posts")) return "Posts & News";
+    if (pathname.startsWith("/admin/users")) return "Users & Roles";
+    return "Console";
   };
 
   const renderNavLinks = (collapsed: boolean) => (
@@ -121,14 +121,14 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           href="/"
           target="_blank"
           rel="noreferrer"
-          title={collapsed ? "Xem trang chủ website" : undefined}
+          title={collapsed ? "Live Website" : undefined}
           className={`flex items-center rounded-xl text-xs font-medium text-slate-500 hover:text-[#005496] hover:bg-slate-100 transition-colors ${
             collapsed ? "justify-center p-3" : "justify-between px-3.5 py-2.5"
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
             <ExternalLink className="size-4.5 shrink-0 text-slate-400 group-hover:text-[#005496]" />
-            {!collapsed && <span className="truncate">Xem trang website</span>}
+            {!collapsed && <span className="truncate">Live Website</span>}
           </div>
         </Link>
       </div>
@@ -192,7 +192,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  title="Đăng xuất"
+                  title="Log out"
                   className="p-1.5 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
                 >
                   <LogOut className="size-4" />
@@ -244,7 +244,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
             className={`flex items-center rounded-xl text-xs font-medium text-slate-600 hover:text-[#005496] hover:bg-slate-100 transition-colors cursor-pointer group ${
               isCollapsed ? "justify-center p-2.5" : "justify-between px-3 py-2"
             }`}
-            title={isCollapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               {isCollapsed ? (
@@ -252,7 +252,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
               ) : (
                 <PanelLeftClose className="size-4 shrink-0 text-slate-500 group-hover:text-[#005496]" />
               )}
-              {!isCollapsed && <span>Thu gọn menu</span>}
+              {!isCollapsed && <span>Collapse sidebar</span>}
             </div>
           </button>
 
@@ -268,7 +268,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  title="Đăng xuất"
+                  title="Log out"
                   className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                 >
                   <LogOut className="size-4" />
@@ -290,7 +290,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  title="Đăng xuất"
+                  title="Log out"
                   className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                 >
                   <LogOut className="size-4" />
@@ -311,7 +311,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
               href="/admin"
               className="text-slate-500 hover:text-[#005496] transition-colors font-medium"
             >
-              Quản trị
+              Console
             </Link>
             <ChevronRight className="size-3.5 text-slate-400" />
             <span className="font-semibold text-slate-900">{getBreadcrumbTitle()}</span>
@@ -320,12 +320,12 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           {/* Right: Clean Search Bar */}
           <div className="flex items-center gap-4">
             <div className="relative w-64">
-              <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
-                placeholder="Tìm kiếm..."
+                placeholder="Search console..."
                 className="w-full h-8.5 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] transition-all"
               />
             </div>

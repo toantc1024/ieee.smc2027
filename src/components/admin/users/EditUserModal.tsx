@@ -79,7 +79,7 @@ export function EditUserModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Họ và tên không được để trống");
+      setError("Full name cannot be empty");
       return;
     }
 
@@ -99,7 +99,7 @@ export function EditUserModal({
       });
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Cập nhật không thành công");
+      setError(err instanceof Error ? err.message : "Failed to update user profile");
     }
   };
 
@@ -108,7 +108,7 @@ export function EditUserModal({
       <DialogContent className="max-w-md font-sans p-6">
         <DialogHeader className="pb-3 border-b border-slate-100">
           <DialogTitle className="text-base font-bold text-slate-900">
-            Chỉnh sửa thông tin người dùng
+            Edit User Profile
           </DialogTitle>
           <p className="text-xs text-slate-500">{user.email}</p>
         </DialogHeader>
@@ -120,10 +120,10 @@ export function EditUserModal({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
-          {/* Họ và tên */}
+          {/* Full Name */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Họ và tên <span className="text-rose-500">*</span>
+              Full Name <span className="text-rose-500">*</span>
             </Label>
             <Input
               type="text"
@@ -134,10 +134,10 @@ export function EditUserModal({
             />
           </div>
 
-          {/* Vai trò */}
+          {/* Role */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Vai trò tài khoản
+              Account Role
             </Label>
             <Select
               value={role}
@@ -147,50 +147,50 @@ export function EditUserModal({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USER">Thành viên thông thường</SelectItem>
-                <SelectItem value="ADMIN">Quản trị viên (Toàn quyền)</SelectItem>
+                <SelectItem value="USER">Regular User</SelectItem>
+                <SelectItem value="ADMIN">Administrator</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Đơn vị công tác & Quốc gia */}
+          {/* Affiliation & Country */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Đơn vị công tác
+                Affiliation
               </Label>
               <Input
                 type="text"
                 value={affiliation}
                 onChange={(e) => setAffiliation(e.target.value)}
-                placeholder="VD: Trường ĐH Sư Phạm Kỹ Thuật"
+                placeholder="e.g., HCMUTE"
                 className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               />
             </div>
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Quốc gia
+                Country
               </Label>
               <Input
                 type="text"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                placeholder="VD: Vietnam"
+                placeholder="e.g., Vietnam"
                 className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               />
             </div>
           </div>
 
-          {/* Đổi mật khẩu mới */}
+          {/* New Password */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Đổi mật khẩu mới
+              New Password
             </Label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Để trống nếu không thay đổi..."
+              placeholder="Leave blank to keep unchanged..."
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             />
           </div>
@@ -204,7 +204,7 @@ export function EditUserModal({
               disabled={saving}
               className="h-8.5 px-3.5 text-xs"
             >
-              Hủy
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -215,10 +215,10 @@ export function EditUserModal({
               {saving ? (
                 <>
                   <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-                  Đang lưu...
+                  Saving...
                 </>
               ) : (
-                "Lưu thay đổi"
+                "Save Changes"
               )}
             </Button>
           </DialogFooter>

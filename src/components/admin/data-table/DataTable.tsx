@@ -65,7 +65,7 @@ interface DataTableProps<TData, TValue = unknown> {
 export function DataTable<TData, TValue = unknown>({
   columns,
   data,
-  searchPlaceholder = "Tìm kiếm...",
+  searchPlaceholder = "Search...",
   filterColumns = [],
   batchActions,
   loading = false,
@@ -141,13 +141,13 @@ export function DataTable<TData, TValue = unknown>({
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 pl-9 pr-7 text-xs bg-slate-50 border-slate-200 rounded-lg focus:bg-white focus:border-[#005496] focus:ring-1 focus:ring-[#005496]"
+              className="h-9 pl-9 pr-7 text-xs bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#005496] focus:ring-1 focus:ring-[#005496]"
             />
             {globalFilter && (
               <button
                 type="button"
                 onClick={() => setGlobalFilter("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
               >
                 <X className="size-3" />
               </button>
@@ -166,11 +166,11 @@ export function DataTable<TData, TValue = unknown>({
                   }))
                 }
               >
-                <SelectTrigger className="h-9 min-w-[130px] w-auto">
-                  <SelectValue placeholder={`${filter.title}: Tất cả`} />
+                <SelectTrigger className="h-9 min-w-[130px] w-auto rounded-xl">
+                  <SelectValue placeholder={`${filter.title}: All`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">{filter.title}: Tất cả</SelectItem>
+                  <SelectItem value="ALL">{filter.title}: All</SelectItem>
                   {filter.options.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -187,47 +187,37 @@ export function DataTable<TData, TValue = unknown>({
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="h-9 px-2.5 text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5"
+              className="h-9 px-2.5 text-xs text-slate-500 hover:text-slate-800 rounded-xl flex items-center gap-1.5"
             >
               <X className="size-3.5" />
-              <span>Xóa lọc</span>
+              <span>Reset</span>
             </Button>
           )}
         </div>
 
         {/* Selected row count & batch action bar */}
         {selectedRows.length > 0 && batchActions && (
-          <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+          <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100">
             <span className="text-xs font-semibold text-[#005496]">
-              Đã chọn {selectedRows.length} mục
+              {selectedRows.length} selected
             </span>
             {batchActions(selectedRows, clearSelection)}
           </div>
         )}
       </div>
 
-      {/* ── Table Container ── */}
+      {/* ── Table Container: Clean Shadow Skeleton ── */}
       <div
         className={cn(
-          "relative bg-white rounded-xl border border-slate-200 overflow-hidden transition-all duration-300",
+          "relative bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300",
           loading
-            ? "shadow-lg shadow-slate-200/80 ring-1 ring-[#005496]/15"
-            : "shadow-2xs"
+            ? "shadow-lg shadow-slate-200/90 ring-1 ring-[#005496]/15"
+            : "shadow-xs"
         )}
       >
         {/* Animated accent shimmer progress bar when loading */}
         {loading && (
           <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#005496] to-transparent animate-pulse z-20" />
-        )}
-
-        {/* Floating loading shadow badge */}
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/45 backdrop-blur-[1px] z-10 pointer-events-none transition-all">
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/95 border border-slate-200/90 rounded-full shadow-xl shadow-slate-300/40 text-xs font-semibold text-slate-700">
-              <div className="size-3.5 border-2 border-[#005496] border-t-transparent rounded-full animate-spin" />
-              <span>Đang tải dữ liệu...</span>
-            </div>
-          </div>
         )}
 
         <div className="overflow-x-auto">
@@ -245,12 +235,13 @@ export function DataTable<TData, TValue = unknown>({
                     return (
                       <TableHead
                         key={header.id}
+                        className="text-center align-middle"
                         style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         {header.isPlaceholder ? null : canSort ? (
                           <div
                             onClick={header.column.getToggleSortingHandler()}
-                            className="flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors group"
+                            className="flex items-center justify-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors group mx-auto text-center"
                           >
                             <span>
                               {flexRender(
@@ -269,10 +260,12 @@ export function DataTable<TData, TValue = unknown>({
                             </span>
                           </div>
                         ) : (
-                          flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )
+                          <div className="flex items-center justify-center text-center mx-auto">
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </div>
                         )}
                       </TableHead>
                     );
@@ -290,12 +283,10 @@ export function DataTable<TData, TValue = unknown>({
                       className="border-b border-slate-100 hover:bg-transparent"
                     >
                       {columns.map((col, cIdx) => (
-                        <TableCell
-                          key={`skeleton-cell-${rIdx}-${cIdx}`}
-                        >
+                        <TableCell key={`skeleton-cell-${rIdx}-${cIdx}`}>
                           <div
                             className={cn(
-                              "h-3.5 bg-slate-200/60 rounded animate-pulse",
+                              "h-3.5 bg-slate-200/70 rounded animate-pulse",
                               cIdx === 0
                                 ? "w-4 h-4 rounded"
                                 : cIdx === 1
@@ -319,7 +310,7 @@ export function DataTable<TData, TValue = unknown>({
                     <div className="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
                       <FileQuestion className="size-8 text-slate-300 stroke-[1.5]" />
                       <p className="text-xs font-medium text-slate-600">
-                        Không tìm thấy dữ liệu phù hợp
+                        No matching records found
                       </p>
                       {hasActiveFilters && (
                         <button
@@ -327,7 +318,7 @@ export function DataTable<TData, TValue = unknown>({
                           onClick={clearAllFilters}
                           className="text-xs text-[#005496] hover:underline cursor-pointer"
                         >
-                          Xóa các bộ lọc hiện tại
+                          Clear current filters
                         </button>
                       )}
                     </div>
@@ -358,13 +349,13 @@ export function DataTable<TData, TValue = unknown>({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 bg-slate-50/50 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span>
-              Hiển thị{" "}
+              Showing{" "}
               <strong className="text-slate-800 font-semibold">
                 {table.getState().pagination.pageIndex *
                   table.getState().pagination.pageSize +
                   (table.getRowModel().rows.length > 0 ? 1 : 0)}
               </strong>{" "}
-              -{" "}
+              to{" "}
               <strong className="text-slate-800 font-semibold">
                 {Math.min(
                   (table.getState().pagination.pageIndex + 1) *
@@ -372,18 +363,18 @@ export function DataTable<TData, TValue = unknown>({
                   table.getFilteredRowModel().rows.length
                 )}
               </strong>{" "}
-              trong tổng số{" "}
+              of{" "}
               <strong className="text-slate-800 font-semibold">
                 {table.getFilteredRowModel().rows.length}
               </strong>{" "}
-              mục
+              entries
             </span>
 
             <span className="text-slate-300">|</span>
 
             {/* Page size selector with shadcn Select */}
             <div className="flex items-center gap-1.5">
-              <span>Mỗi trang:</span>
+              <span>Per page:</span>
               <Select
                 value={String(table.getState().pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
@@ -413,11 +404,11 @@ export function DataTable<TData, TValue = unknown>({
               className="h-8 px-2.5 text-xs text-slate-600 disabled:opacity-40"
             >
               <ChevronLeft className="size-3.5 mr-1" />
-              <span>Trước</span>
+              <span>Previous</span>
             </Button>
 
             <span className="px-2 text-xs font-medium text-slate-700">
-              Trang {table.getState().pagination.pageIndex + 1} /{" "}
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
               {Math.max(1, table.getPageCount())}
             </span>
 
@@ -429,7 +420,7 @@ export function DataTable<TData, TValue = unknown>({
               disabled={!table.getCanNextPage()}
               className="h-8 px-2.5 text-xs text-slate-600 disabled:opacity-40"
             >
-              <span>Sau</span>
+              <span>Next</span>
               <ChevronRight className="size-3.5 ml-1" />
             </Button>
           </div>

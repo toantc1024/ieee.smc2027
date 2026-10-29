@@ -51,7 +51,7 @@ export function CreateUserModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !name.trim()) {
-      setError("Vui lòng điền đầy đủ email và họ tên");
+      setError("Please provide both email and full name");
       return;
     }
 
@@ -71,7 +71,7 @@ export function CreateUserModal({
       setAvatar("");
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Thao tác không thành công");
+      setError(err instanceof Error ? err.message : "Failed to create user");
     }
   };
 
@@ -80,7 +80,7 @@ export function CreateUserModal({
       <DialogContent className="max-w-md font-sans p-6">
         <DialogHeader className="pb-3 border-b border-slate-100">
           <DialogTitle className="text-base font-bold text-slate-900">
-            Thêm người dùng mới
+            Add New User
           </DialogTitle>
         </DialogHeader>
 
@@ -94,37 +94,37 @@ export function CreateUserModal({
           {/* Email */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Địa chỉ Email <span className="text-rose-500">*</span>
+              Email Address <span className="text-rose-500">*</span>
             </Label>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@gmail.com"
+              placeholder="user@example.com"
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
-          {/* Họ và tên */}
+          {/* Full Name */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Họ và tên <span className="text-rose-500">*</span>
+              Full Name <span className="text-rose-500">*</span>
             </Label>
             <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nguyễn Văn A"
+              placeholder="John Doe"
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
-          {/* Vai trò */}
+          {/* Role */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Vai trò
+              Role
             </Label>
             <Select
               value={role}
@@ -134,26 +134,26 @@ export function CreateUserModal({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USER">Thành viên thông thường</SelectItem>
-                <SelectItem value="ADMIN">Quản trị viên (Toàn quyền)</SelectItem>
+                <SelectItem value="USER">Regular User</SelectItem>
+                <SelectItem value="ADMIN">Administrator</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Mật khẩu khởi tạo */}
+          {/* Initial Password */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Mật khẩu đăng nhập
+              Login Password
             </Label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nhập mật khẩu (tùy chọn)..."
+              placeholder="Enter initial password (optional)..."
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             />
             <p className="text-[11px] text-slate-400">
-              Nếu để trống, người dùng có thể đăng nhập bằng Google hoặc Email OTP.
+              If left empty, the user can log in via Google or Email OTP.
             </p>
           </div>
 
@@ -166,7 +166,7 @@ export function CreateUserModal({
               disabled={creating}
               className="h-8.5 px-3.5 text-xs"
             >
-              Hủy
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -177,10 +177,10 @@ export function CreateUserModal({
               {creating ? (
                 <>
                   <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-                  Đang tạo...
+                  Creating...
                 </>
               ) : (
-                "Thêm người dùng"
+                "Add User"
               )}
             </Button>
           </DialogFooter>

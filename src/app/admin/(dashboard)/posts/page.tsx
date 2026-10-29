@@ -50,12 +50,12 @@ interface PostItem {
   } | null;
 }
 
-const POST_CATEGORIES = [
-  "Thông báo",
+export const POST_CATEGORIES = [
+  "Announcements",
   "Call for Papers",
-  "Diễn giả & Keynote",
-  "Hội thảo & Workshop",
-  "Tin tức chung",
+  "Keynotes & Speakers",
+  "Workshops",
+  "General News",
 ];
 
 export default function PostsManagementPage() {
@@ -82,7 +82,7 @@ export default function PostsManagementPage() {
         setPosts(data.posts);
       }
     } catch {
-      setAlert({ type: "error", text: "Không thể tải danh sách bài viết" });
+      setAlert({ type: "error", text: "Failed to load posts list" });
     } finally {
       setLoading(false);
     }
@@ -103,16 +103,16 @@ export default function PostsManagementPage() {
         body: JSON.stringify({ action: "seed" }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Không thể nạp bài viết mẫu");
+      if (!res.ok) throw new Error(data.error || "Failed to load sample posts");
       setAlert({
         type: "success",
-        text: "Đã đồng bộ danh sách bài viết mẫu chính thức của hội nghị!",
+        text: "Official conference sample posts synchronized successfully!",
       });
       await fetchPosts();
     } catch (err: unknown) {
       setAlert({
         type: "error",
-        text: err instanceof Error ? err.message : "Thao tác thất bại",
+        text: err instanceof Error ? err.message : "Operation failed",
       });
     } finally {
       setActionLoading(false);
@@ -133,12 +133,12 @@ export default function PostsManagementPage() {
 
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || "Lưu bài viết không thành công");
+      throw new Error(data.error || "Failed to save post");
     }
 
     setAlert({
       type: "success",
-      text: isEdit ? "Cập nhật bài viết thành công" : "Tạo bài viết mới thành công",
+      text: isEdit ? "Post updated successfully!" : "Post created successfully!",
     });
     await fetchPosts();
   };
@@ -150,16 +150,16 @@ export default function PostsManagementPage() {
     });
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || "Xóa bài viết thất bại");
+      throw new Error(data.error || "Failed to delete post");
     }
 
-    setAlert({ type: "success", text: "Đã xóa bài viết thành công" });
+    setAlert({ type: "success", text: "Post deleted successfully!" });
     await fetchPosts();
   };
 
   // Batch actions
   const handleBatchDelete = async (selected: PostItem[], clearSelection: () => void) => {
-    if (!confirm(`Bạn có chắc muốn xóa ${selected.length} bài viết đã chọn?`)) return;
+    if (!confirm(`Are you sure you want to delete ${selected.length} selected post(s)?`)) return;
     try {
       await Promise.all(
         selected.map((item) =>
@@ -167,10 +167,10 @@ export default function PostsManagementPage() {
         )
       );
       clearSelection();
-      setAlert({ type: "success", text: `Đã xóa ${selected.length} bài viết` });
+      setAlert({ type: "success", text: `Deleted ${selected.length} post(s) successfully!` });
       await fetchPosts();
     } catch {
-      setAlert({ type: "error", text: "Xảy ra lỗi khi xóa bài viết hàng loạt" });
+      setAlert({ type: "error", text: "Error deleting posts in batch" });
     }
   };
 
@@ -192,11 +192,11 @@ export default function PostsManagementPage() {
       clearSelection();
       setAlert({
         type: "success",
-        text: `Đã cập nhật trạng thái cho ${selected.length} bài viết`,
+        text: `Updated status for ${selected.length} post(s) successfully!`,
       });
       await fetchPosts();
     } catch {
-      setAlert({ type: "error", text: "Xảy ra lỗi khi cập nhật trạng thái" });
+      setAlert({ type: "error", text: "Error updating status in batch" });
     }
   };
 
@@ -214,22 +214,22 @@ export default function PostsManagementPage() {
           body: JSON.stringify({ status: newStatus }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Không thể cập nhật trạng thái");
+        if (!res.ok) throw new Error(data.error || "Failed to update status");
         setAlert({
           type: "success",
-          text: `Đã đổi trạng thái thành ${
+          text: `Status changed to ${
             newStatus === "PUBLISHED"
-              ? "Đã xuất bản"
+              ? "Published"
               : newStatus === "DRAFT"
-              ? "Bản nháp"
-              : "Lưu trữ"
-          }!`,
+              ? "Draft"
+              : "Archived"
+          } successfully!`,
         });
       } catch (err: unknown) {
         await fetchPosts();
         setAlert({
           type: "error",
-          text: err instanceof Error ? err.message : "Cập nhật trạng thái thất bại",
+          text: err instanceof Error ? err.message : "Failed to update status",
         });
       }
     },
@@ -250,16 +250,16 @@ export default function PostsManagementPage() {
           body: JSON.stringify({ category: newCategory }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Không thể cập nhật chuyên mục");
+        if (!res.ok) throw new Error(data.error || "Failed to update category");
         setAlert({
           type: "success",
-          text: `Đã đổi chuyên mục sang "${newCategory}"!`,
+          text: `Category changed to "${newCategory}" successfully!`,
         });
       } catch (err: unknown) {
         await fetchPosts();
         setAlert({
           type: "error",
-          text: err instanceof Error ? err.message : "Cập nhật chuyên mục thất bại",
+          text: err instanceof Error ? err.message : "Failed to update category",
         });
       }
     },
@@ -272,34 +272,38 @@ export default function PostsManagementPage() {
       {
         id: "select",
         header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Chọn tất cả"
-          />
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+            />
+          </div>
         ),
         cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Chọn dòng"
-          />
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          </div>
         ),
-        size: 36,
+        size: 40,
         enableSorting: false,
       },
       {
         accessorKey: "title",
-        header: "Bài viết",
+        header: "Post",
         cell: ({ row }) => {
           const item = row.original;
           return (
             <div className="flex items-center gap-3 min-w-[280px]">
               {/* Thumbnail preview */}
-              <div className="relative size-11 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+              <div className="relative size-11 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                 {item.coverImage ? (
                   <Image
                     src={item.coverImage}
@@ -323,12 +327,12 @@ export default function PostsManagementPage() {
                     setActivePost(item);
                     setPreviewOpen(true);
                   }}
-                  className="font-semibold text-slate-900 hover:text-[#005496] text-left truncate block max-w-md transition-colors cursor-pointer"
-                  title="Nhấn để xem trước bài viết"
+                  className="font-semibold text-slate-900 hover:text-[#005496] text-sm text-left truncate block max-w-md transition-colors cursor-pointer"
+                  title="Click to preview post"
                 >
                   {item.title}
                 </button>
-                <span className="text-[11px] text-slate-400 font-medium truncate block max-w-xs">
+                <span className="text-xs text-slate-400 font-medium truncate block max-w-xs">
                   /{item.slug}
                 </span>
               </div>
@@ -338,154 +342,172 @@ export default function PostsManagementPage() {
       },
       {
         accessorKey: "category",
-        header: "Chuyên mục",
+        header: "Category",
         cell: ({ row }) => {
           const item = row.original;
           const cat = (row.getValue("category") as string) || item.category;
           return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
-                  title="Nhấn để đổi chuyên mục nhanh"
-                >
-                  <span className="truncate max-w-[130px]">{cat}</span>
-                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48 p-1">
-                {POST_CATEGORIES.map((categoryOption) => (
-                  <DropdownMenuItem
-                    key={categoryOption}
-                    onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50/80 hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group shadow-2xs"
+                    title="Click to quick-change category"
                   >
-                    <span className="truncate">{categoryOption}</span>
-                    {cat === categoryOption && (
-                      <Check className="size-3.5 text-[#005496] shrink-0 ml-2" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    <span className="truncate max-w-[130px]">{cat}</span>
+                    <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-2xl shadow-xl border border-slate-200">
+                  {POST_CATEGORIES.map((categoryOption) => (
+                    <DropdownMenuItem
+                      key={categoryOption}
+                      onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
+                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                    >
+                      <span className="truncate">{categoryOption}</span>
+                      {cat === categoryOption && (
+                        <Check className="size-3.5 text-[#005496] shrink-0 ml-2" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           );
         },
       },
       {
         accessorKey: "status",
-        header: "Trạng thái",
+        header: "Status",
         cell: ({ row }) => {
           const item = row.original;
           const status = (row.getValue("status") as string) || item.status;
           return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
-                  title="Nhấn để đổi trạng thái nhanh"
-                >
-                  {status === "PUBLISHED" ? (
-                    <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                      <span className="size-2 rounded-full bg-emerald-500" />
-                      <span>Đã xuất bản</span>
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer group shadow-2xs focus:outline-none focus:ring-1 focus:ring-[#005496]",
+                      status === "PUBLISHED"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100/70"
+                        : status === "DRAFT"
+                        ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100/70"
+                        : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200/70"
+                    )}
+                    title="Click to quick-change status"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "size-1.5 rounded-full",
+                          status === "PUBLISHED"
+                            ? "bg-emerald-500"
+                            : status === "DRAFT"
+                            ? "bg-amber-500"
+                            : "bg-slate-400"
+                        )}
+                      />
+                      <span>
+                        {status === "PUBLISHED"
+                          ? "Published"
+                          : status === "DRAFT"
+                          ? "Draft"
+                          : "Archived"}
+                      </span>
                     </span>
-                  ) : status === "DRAFT" ? (
-                    <span className="inline-flex items-center gap-1.5 text-amber-700">
-                      <span className="size-2 rounded-full bg-amber-500" />
-                      <span>Bản nháp</span>
+                    <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-2xl shadow-xl border border-slate-200">
+                  <DropdownMenuItem
+                    onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-emerald-700 font-semibold">
+                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                      Published
                     </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-slate-600">
-                      <span className="size-2 rounded-full bg-slate-400" />
-                      <span>Lưu trữ</span>
+                    {status === "PUBLISHED" && (
+                      <Check className="size-3.5 text-emerald-700" />
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-amber-700 font-semibold">
+                      <span className="size-1.5 rounded-full bg-amber-500" />
+                      Draft
                     </span>
-                  )}
-                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40 p-1">
-                <DropdownMenuItem
-                  onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
-                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 text-emerald-700 font-medium">
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                    Đã xuất bản
-                  </span>
-                  {status === "PUBLISHED" && (
-                    <Check className="size-3.5 text-emerald-700" />
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
-                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 text-amber-700 font-medium">
-                    <span className="size-2 rounded-full bg-amber-500" />
-                    Bản nháp
-                  </span>
-                  {status === "DRAFT" && (
-                    <Check className="size-3.5 text-amber-700" />
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
-                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 text-slate-600 font-medium">
-                    <span className="size-2 rounded-full bg-slate-400" />
-                    Lưu trữ
-                  </span>
-                  {status === "ARCHIVED" && (
-                    <Check className="size-3.5 text-slate-600" />
-                  )}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    {status === "DRAFT" && (
+                      <Check className="size-3.5 text-amber-700" />
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-slate-600 font-medium">
+                      <span className="size-1.5 rounded-full bg-slate-400" />
+                      Archived
+                    </span>
+                    {status === "ARCHIVED" && (
+                      <Check className="size-3.5 text-slate-600" />
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           );
         },
       },
       {
         accessorKey: "views",
-        header: "Lượt xem",
+        header: "Views",
         cell: ({ row }) => {
           const val = Number(row.getValue("views") || 0);
           return (
-            <span className="font-medium text-slate-600">
-              {val.toLocaleString("vi-VN")}
-            </span>
+            <div className="text-center font-medium text-slate-600 text-sm">
+              {val.toLocaleString("en-US")}
+            </div>
           );
         },
       },
       {
         accessorKey: "createdAt",
-        header: "Ngày tạo",
+        header: "Created Date",
         cell: ({ row }) => {
           const date = new Date(row.getValue("createdAt"));
           return (
-            <span className="text-slate-500 font-medium">
-              {date.toLocaleDateString("vi-VN")}
-            </span>
+            <div className="text-center text-xs text-slate-500 font-medium">
+              {date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </div>
           );
         },
       },
       {
         id: "actions",
-        header: "",
+        header: "Actions",
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex items-center justify-center gap-1">
               <button
                 type="button"
                 onClick={() => {
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
-                title="Xem trước bài viết"
+                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                title="Preview post"
               >
                 <Eye className="size-4" />
               </button>
@@ -495,8 +517,8 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setFormOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors cursor-pointer"
-                title="Chỉnh sửa bài viết"
+                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                title="Edit post"
               >
                 <Edit2 className="size-4" />
               </button>
@@ -506,8 +528,8 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
-                title="Xóa bài viết"
+                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                title="Delete post"
               >
                 <Trash2 className="size-4" />
               </button>
@@ -528,10 +550,10 @@ export default function PostsManagementPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
             <FileText className="size-6 text-[#005496]" />
-            Bài viết &amp; Tin tức
+            Posts &amp; News
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Quản lý thông báo chính thức, tin tức hội nghị và bài viết Call for Papers.
+            Manage conference announcements, call for papers, and news articles.
           </p>
         </div>
 
@@ -547,7 +569,7 @@ export default function PostsManagementPage() {
             <RefreshCw
               className={cn("size-3.5 mr-1.5", actionLoading && "animate-spin")}
             />
-            Bài mẫu
+            Seed Sample
           </Button>
 
           <Button
@@ -560,7 +582,7 @@ export default function PostsManagementPage() {
             className="h-9 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white shadow-xs"
           >
             <Plus className="size-4 mr-1.5" />
-            Viết bài mới
+            New Post
           </Button>
         </div>
       </div>
@@ -579,26 +601,21 @@ export default function PostsManagementPage() {
         columns={columns}
         data={posts}
         loading={loading}
-        searchPlaceholder="Tìm theo tiêu đề, slug, nội dung..."
+        searchPlaceholder="Search by title, slug, summary..."
         filterColumns={[
           {
             id: "status",
-            title: "Trạng thái",
+            title: "Status",
             options: [
-              { label: "Đã xuất bản", value: "PUBLISHED" },
-              { label: "Bản nháp", value: "DRAFT" },
-              { label: "Lưu trữ", value: "ARCHIVED" },
+              { label: "Published", value: "PUBLISHED" },
+              { label: "Draft", value: "DRAFT" },
+              { label: "Archived", value: "ARCHIVED" },
             ],
           },
           {
             id: "category",
-            title: "Chuyên mục",
-            options: [
-              { label: "Thông báo", value: "Thông báo" },
-              { label: "Call for Papers", value: "Call for Papers" },
-              { label: "Diễn giả & Keynote", value: "Keynote" },
-              { label: "Hội thảo & Workshop", value: "Hội thảo & Workshop" },
-            ],
+            title: "Category",
+            options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),
           },
         ]}
         batchActions={(selected, clear) => (
@@ -609,7 +626,7 @@ export default function PostsManagementPage() {
               onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
               className="h-7 px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-none"
             >
-              Xuất bản
+              Publish
             </Button>
             <Button
               type="button"
@@ -617,7 +634,7 @@ export default function PostsManagementPage() {
               onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
               className="h-7 px-2.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-none"
             >
-              Chuyển nháp
+              Set Draft
             </Button>
             <Button
               type="button"
@@ -626,7 +643,7 @@ export default function PostsManagementPage() {
               onClick={() => handleBatchDelete(selected, clear)}
               className="h-7 px-2.5 text-xs font-semibold"
             >
-              Xóa đã chọn
+              Delete selected
             </Button>
           </div>
         )}

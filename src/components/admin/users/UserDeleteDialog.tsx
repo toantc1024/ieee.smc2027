@@ -48,14 +48,14 @@ export function UserDeleteDialog({
             <AlertTriangle className="size-5" />
           </div>
           <DialogTitle className="text-base font-bold text-slate-900">
-            Xác nhận xóa tài khoản
+            Confirm Account Deletion
           </DialogTitle>
           <DialogDescription className="text-xs text-slate-600 leading-relaxed">
-            Bạn có chắc chắn muốn xóa tài khoản của{" "}
+            Are you sure you want to delete the account for{" "}
             <strong className="text-slate-900 font-semibold">
               {user.name} ({user.email})
             </strong>
-            ? Hành động này sẽ gỡ tài khoản vĩnh viễn khỏi hệ thống.
+            ? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -68,7 +68,7 @@ export function UserDeleteDialog({
             disabled={deleting}
             className="h-8.5 px-3.5 text-xs"
           >
-            Hủy
+            Cancel
           </Button>
           <Button
             type="button"
@@ -80,10 +80,10 @@ export function UserDeleteDialog({
             {deleting ? (
               <>
                 <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-                Đang xóa...
+                Deleting...
               </>
             ) : (
-              "Xóa tài khoản"
+              "Delete Account"
             )}
           </Button>
         </DialogFooter>

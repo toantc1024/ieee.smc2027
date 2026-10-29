@@ -40,12 +40,12 @@ interface PostFormDialogProps {
   onSave: (data: PostFormData) => Promise<void>;
 }
 
-const CATEGORIES = [
-  "Thông báo",
+export const CATEGORIES = [
+  "Announcements",
   "Call for Papers",
-  "Diễn giả & Keynote",
-  "Hội thảo & Workshop",
-  "Tin tức chung",
+  "Keynotes & Speakers",
+  "Workshops",
+  "General News",
 ];
 
 export function PostFormDialog({
@@ -58,7 +58,7 @@ export function PostFormDialog({
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [category, setCategory] = useState("Thông báo");
+  const [category, setCategory] = useState("Announcements");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
@@ -71,7 +71,7 @@ export function PostFormDialog({
       if (post) {
         setTitle(post.title || "");
         setSlug(post.slug || "");
-        setCategory(post.category || "Thông báo");
+        setCategory(post.category || "Announcements");
         setSummary(post.summary || "");
         setContent(post.content || "");
         setCoverImage(post.coverImage || "");
@@ -79,7 +79,7 @@ export function PostFormDialog({
       } else {
         setTitle("");
         setSlug("");
-        setCategory("Thông báo");
+        setCategory("Announcements");
         setSummary("");
         setContent("");
         setCoverImage("/news/keynote-hoi-thao.jpg");
@@ -99,11 +99,11 @@ export function PostFormDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      setError("Vui lòng nhập tiêu đề bài viết");
+      setError("Please enter a post title");
       return;
     }
     if (!content.trim()) {
-      setError("Vui lòng nhập nội dung bài viết");
+      setError("Please enter post content");
       return;
     }
 
@@ -123,7 +123,7 @@ export function PostFormDialog({
       });
       onOpenChange(false);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Không thể lưu bài viết");
+      setError(err instanceof Error ? err.message : "Failed to save post");
     } finally {
       setSaving(false);
     }
@@ -134,7 +134,7 @@ export function PostFormDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto font-sans p-6">
         <DialogHeader className="pb-3 border-b border-slate-100">
           <DialogTitle className="text-lg font-bold text-slate-900">
-            {isEdit ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
+            {isEdit ? "Edit Post" : "Create New Post"}
           </DialogTitle>
         </DialogHeader>
 
@@ -145,39 +145,39 @@ export function PostFormDialog({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
-          {/* Tiêu đề */}
+          {/* Title */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Tiêu đề bài viết <span className="text-rose-500">*</span>
+              Post Title <span className="text-rose-500">*</span>
             </Label>
             <Input
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              placeholder="Nhập tiêu đề thông báo hoặc bài viết..."
+              placeholder="Enter announcement or article title..."
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
-          {/* Đường dẫn & Chuyên mục */}
+          {/* Slug & Category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Đường dẫn (Slug)
+                Slug URL
               </Label>
               <Input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                placeholder="duong-dan-bai-viet"
+                placeholder="post-url-slug"
                 className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
               />
             </div>
 
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Chuyên mục
+                Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
@@ -194,11 +194,11 @@ export function PostFormDialog({
             </div>
           </div>
 
-          {/* Trạng thái & Ảnh bìa */}
+          {/* Status & Cover Image */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Trạng thái xuất bản
+                Publication Status
               </Label>
               <Select
                 value={status}
@@ -210,51 +210,51 @@ export function PostFormDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PUBLISHED">Đã xuất bản (Công khai)</SelectItem>
-                  <SelectItem value="DRAFT">Bản nháp (Chưa công khai)</SelectItem>
-                  <SelectItem value="ARCHIVED">Lưu trữ</SelectItem>
+                  <SelectItem value="PUBLISHED">Published</SelectItem>
+                  <SelectItem value="DRAFT">Draft</SelectItem>
+                  <SelectItem value="ARCHIVED">Archived</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-1.5">
               <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-                Ảnh bìa (Đường dẫn URL)
+                Cover Image URL
               </Label>
               <Input
                 type="text"
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
-                placeholder="/news/hcmute.jpg hoặc link ảnh"
+                placeholder="/news/hcmute.jpg or image URL"
                 className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
               />
             </div>
           </div>
 
-          {/* Tóm tắt ngắn */}
+          {/* Short Summary */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Tóm tắt ngắn (Hiển thị ở trang chủ)
+              Summary
             </Label>
             <Textarea
               rows={2}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              placeholder="Nhập 1-2 câu tóm tắt nội dung chính..."
+              placeholder="Enter brief 1-2 sentence overview..."
               className="min-h-[64px] p-2.5 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white resize-none"
             />
           </div>
 
-          {/* Nội dung chi tiết */}
+          {/* Content */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Nội dung bài viết <span className="text-rose-500">*</span>
+              Post Content <span className="text-rose-500">*</span>
             </Label>
             <Textarea
               rows={8}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Nhập nội dung bài viết (hỗ trợ văn bản hoặc HTML cơ bản)..."
+              placeholder="Enter post content (supports text or HTML formatting)..."
               className="min-h-[160px] p-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium leading-relaxed resize-y"
               required
             />
@@ -269,7 +269,7 @@ export function PostFormDialog({
               disabled={saving}
               className="h-9 px-4 text-xs"
             >
-              Hủy
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -280,12 +280,12 @@ export function PostFormDialog({
               {saving ? (
                 <>
                   <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-                  Đang lưu...
+                  Saving...
                 </>
               ) : isEdit ? (
-                "Cập nhật bài viết"
+                "Save Changes"
               ) : (
-                "Tạo bài viết"
+                "Create Post"
               )}
             </Button>
           </DialogFooter>

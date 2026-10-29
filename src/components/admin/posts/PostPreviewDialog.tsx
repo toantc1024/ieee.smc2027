@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, Calendar, User, ExternalLink } from "lucide-react";
+import { Eye, Calendar, User } from "lucide-react";
 
 interface PostPreviewDialogProps {
   open: boolean;
@@ -43,7 +43,7 @@ export function PostPreviewDialog({
         <DialogHeader className="pb-3 border-b border-slate-100 flex items-center justify-between">
           <DialogTitle className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
             <Eye className="size-4 text-[#005496]" />
-            Xem trước bài viết
+            Post Preview
           </DialogTitle>
         </DialogHeader>
 
@@ -70,7 +70,7 @@ export function PostPreviewDialog({
               <span>•</span>
               <span className="inline-flex items-center gap-1.5">
                 <Calendar className="size-3.5" />
-                {new Date(post.createdAt).toLocaleDateString("vi-VN", {
+                {new Date(post.createdAt).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -79,7 +79,7 @@ export function PostPreviewDialog({
               <span>•</span>
               <span className="inline-flex items-center gap-1.5">
                 <User className="size-3.5" />
-                {post.author?.name || "Ban tổ chức"}
+                {post.author?.name || "Organizing Committee"}
               </span>
             </div>
 
@@ -103,9 +103,13 @@ export function PostPreviewDialog({
 
         <DialogFooter className="pt-4 border-t border-slate-100 flex items-center justify-between sm:justify-between">
           <span className="text-xs text-slate-400">
-            Trạng thái:{" "}
+            Status:{" "}
             <strong className="text-slate-700">
-              {post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
+              {post.status === "PUBLISHED"
+                ? "Published"
+                : post.status === "DRAFT"
+                ? "Draft"
+                : "Archived"}
             </strong>
           </span>
 
@@ -116,7 +120,7 @@ export function PostPreviewDialog({
             onClick={() => onOpenChange(false)}
             className="h-8 px-4 text-xs"
           >
-            Đóng
+            Close
           </Button>
         </DialogFooter>
       </DialogContent>
