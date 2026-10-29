@@ -10,6 +10,7 @@ Hệ thống Website và Quản trị Hội nghị Quốc tế **IEEE SMC 2027**
 ieee-smc-2027/
 ├── docs/                                 # Tài liệu kỹ thuật, môi trường, dịch vụ và đặc tả
 │   ├── README.md                         # Tổng quan kiến trúc dự án
+│   ├── DATABASE.md                       # Lược đồ cơ sở dữ liệu, ERD và phân quyền
 │   ├── ENVIRONMENT.md                    # Cấu hình Development & Production (.env, Docker)
 │   ├── SERVICES.md                       # Đặc tả các Service Templates
 │   └── SPECIFICATION_AND_QUESTIONS.md    # Đặc tả nghiệp vụ & Câu hỏi làm rõ dữ liệu
