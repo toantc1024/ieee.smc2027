@@ -107,7 +107,7 @@ export function ContactCards({
                 </p>
 
                 {/* Email Display Box: Pure white on hover */}
-                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-mono text-slate-800 break-all mb-2 group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-semibold text-slate-800 break-all mb-2 group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
                   <span className="group-hover:!text-white">{displayEmail}</span>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export function ContactCards({
                 </p>
 
                 {/* URL Display Box: Pure white on hover */}
-                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-mono text-slate-800 break-all group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-sm sm:text-base font-semibold text-slate-800 break-all group-hover:bg-white/10 group-hover:border-white/25 group-hover:!text-white hover:!text-white transition-all duration-300">
                   <span className="group-hover:!text-white">
                     {displayWebsite.startsWith("http") ? displayWebsite : `https://${displayWebsite}`}
                   </span>

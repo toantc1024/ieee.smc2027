@@ -106,7 +106,7 @@ export function TechnicalSessionCard({
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-[#005496] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                  <span className="font-bold text-[#005496] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                     {paper.id}
                   </span>
                   <span className="font-bold text-slate-900 text-sm">
@@ -118,7 +118,7 @@ export function TechnicalSessionCard({
                   {paper.authors}
                 </p>
               </div>
-              <span className="font-mono font-semibold text-slate-500 shrink-0">
+              <span className="font-semibold text-slate-500 shrink-0">
                 {paper.time}
               </span>
             </div>

@@ -57,7 +57,7 @@ export function DigitalBadgePassCard({
         />
       )}
 
-      <div className="font-mono text-sm font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
+      <div className="text-sm font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
         {regData.registrationCode}
       </div>
     </Card>

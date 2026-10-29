@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const isVercel = Boolean(process.env.VERCEL);
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   // Use standalone output for Docker / self-hosted deployments.
   // Must be disabled on Vercel so Vercel can manage its native serverless tracing.
   ...(isVercel ? {} : { output: "standalone" }),

@@ -127,7 +127,7 @@ export function RegistrationTable({
                             <span className="font-bold text-slate-900">
                               {reg.fullName}
                             </span>
-                            <span className="font-mono text-[10px] font-bold text-[#005496] bg-blue-50 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-[#005496] bg-blue-50 px-1.5 py-0.5 rounded">
                               {reg.registrationCode}
                             </span>
                           </div>
@@ -141,7 +141,7 @@ export function RegistrationTable({
                     <td className="py-3.5 px-3">
                       <Badge variant="ute">{reg.participantType}</Badge>
                       {(reg.paperId || form.paperId) && (
-                        <p className="text-[11px] text-slate-600 mt-1 font-mono">
+                        <p className="text-[11px] text-slate-600 mt-1 font-semibold">
                           PaperCept: {reg.paperId || form.paperId}
                         </p>
                       )}

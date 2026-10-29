@@ -128,7 +128,7 @@ export function PayooCheckoutStep({
                       <span className="text-slate-400 block font-bold uppercase text-[10px]">
                         Account Number
                       </span>
-                      <span className="font-mono font-bold text-slate-900 text-sm">
+                      <span className="font-bold text-slate-900 text-sm">
                         {CONFERENCE_BANK_INFO.accountNo}
                       </span>
                     </div>
@@ -152,7 +152,7 @@ export function PayooCheckoutStep({
                       <span className="text-[#005496] block font-bold uppercase text-[10px]">
                         Required Transfer Memo
                       </span>
-                      <span className="font-mono font-extrabold text-[#005496] text-sm">
+                      <span className="font-extrabold text-[#005496] text-sm">
                         {payment.transferSyntax}
                       </span>
                     </div>
@@ -217,7 +217,7 @@ export function PayooCheckoutStep({
             />
           )}
 
-          <div className="font-mono text-base font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
+          <div className="text-base font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
             {registration.registrationCode}
           </div>
 

@@ -191,7 +191,7 @@ export function PaymentMethods({
                 </div>
                 <div>
                   <span className="text-slate-500 block text-xs">Account Number:</span>
-                  <div className="flex items-center justify-between font-mono font-bold text-base text-[#115eff]">
+                  <div className="flex items-center justify-between font-bold text-base text-[#115eff]">
                     <span>038 100 038 9999</span>
                     <button
                       onClick={() => handleCopy("vcb_acc", "0381000389999")}
@@ -214,7 +214,7 @@ export function PaymentMethods({
                 </div>
                 <div className="pt-1.5 border-t border-slate-200">
                   <span className="text-slate-500 block text-xs">Payment Reference:</span>
-                  <div className="flex items-center justify-between font-mono text-xs font-bold text-slate-800 bg-white p-2 rounded border border-slate-200 mt-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-800 bg-white p-2 rounded border border-slate-200 mt-1">
                     <span>SMC2027 [PaperID] [Author Name]</span>
                     <button
                       onClick={() => handleCopy("syntax", "SMC2027 [PaperID] [Author Name]")}
@@ -269,7 +269,7 @@ export function PaymentMethods({
                 </div>
                 <div>
                   <span className="text-slate-500 block text-xs">SWIFT Code (BIC):</span>
-                  <div className="flex items-center justify-between font-mono font-bold text-base text-[#115eff]">
+                  <div className="flex items-center justify-between font-bold text-base text-[#115eff]">
                     <span>BFTV VNVX</span>
                     <button
                       onClick={() => handleCopy("swift", "BFTVVNVX")}
@@ -286,7 +286,7 @@ export function PaymentMethods({
                 </div>
                 <div className="pt-1.5 border-t border-slate-200">
                   <span className="text-slate-500 block text-xs">Payment Reference:</span>
-                  <span className="font-mono text-xs font-bold text-slate-800 block mt-1">
+                  <span className="text-xs font-bold text-slate-800 block mt-1">
                     IEEE SMC 2027 - Paper ID [XXXX]
                   </span>
                 </div>

@@ -100,7 +100,7 @@ export function UserTable({
                       {profileKeys.slice(0, 4).map((k) => (
                         <span
                           key={k}
-                          className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[10px]"
+                          className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-medium text-[10px]"
                         >
                           {k}
                         </span>

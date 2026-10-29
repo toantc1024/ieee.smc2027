@@ -127,7 +127,7 @@ export default function AdminCheckInPage() {
             onChange={(e) => setInputCode(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={loading}
-            className="w-full pl-5 pr-28 py-4 text-base font-mono font-bold bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#115eff] focus:bg-white transition-all"
+            className="w-full pl-5 pr-28 py-4 text-base font-bold bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#115eff] focus:bg-white transition-all"
             autoFocus
           />
           <button
@@ -186,7 +186,7 @@ export default function AdminCheckInPage() {
                     </div>
                     <div>
                       <span className="opacity-70 block">Registration Code:</span>
-                      <strong className="font-mono">{feedback.delegate.registrationCode}</strong>
+                      <strong>{feedback.delegate.registrationCode}</strong>
                     </div>
                     <div>
                       <span className="opacity-70 block">Affiliation:</span>
@@ -247,7 +247,7 @@ export default function AdminCheckInPage() {
                 </div>
 
                 <div className="text-right">
-                  <span className="font-mono text-emerald-600 font-bold block">
+                  <span className="text-emerald-600 font-bold block">
                     {item.registrationCode}
                   </span>
                   <span className="text-[10px] text-slate-400">

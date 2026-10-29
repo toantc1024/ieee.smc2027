@@ -12,7 +12,6 @@ import {
   EyeOff,
   CheckCircle2,
   AlertCircle,
-  ExternalLink,
 } from "lucide-react";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { Button } from "@/components/ui/button";
@@ -103,8 +102,6 @@ function AdminLoginForm() {
   const [email, setEmail] = useState("admin@hcmute.edu.vn");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
-  const [devEmailLink, setDevEmailLink] = useState<string | null>(null);
 
   const [pwdPassword, setPwdPassword] = useState("Admin@Smc2027Secure!");
   const [showPassword, setShowPassword] = useState(false);
@@ -143,13 +140,6 @@ function AdminLoginForm() {
         setCustomSuccess(
           data.message || "A 6-digit verification code has been dispatched."
         );
-        if (data.devCode) {
-          setDevOtpHint(data.devCode);
-          setOtpCode(data.devCode);
-        }
-        if (data.devEmailLink) {
-          setDevEmailLink(data.devEmailLink);
-        }
       } else {
         setCustomError(data.error || "Failed to dispatch verification code.");
       }
@@ -489,31 +479,6 @@ function AdminLoginForm() {
                       </button>
                     </div>
 
-                    {/* Developer Code Helper */}
-                    {(devOtpHint || devEmailLink) && (
-                      <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#005496] text-xs space-y-1.5">
-                        {devOtpHint && (
-                          <div className="flex items-center justify-between">
-                            <span>Dev Code:</span>
-                            <span className="font-mono font-bold tracking-widest text-xs bg-white px-2 py-0.5 rounded border border-blue-200">
-                              {devOtpHint}
-                            </span>
-                          </div>
-                        )}
-                        {devEmailLink && (
-                          <div>
-                            <a
-                              href={devEmailLink}
-                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[#115eff] text-white font-bold text-[11px] hover:bg-[#0a4de6]"
-                            >
-                              <span>Open Sign-In Link</span>
-                              <ExternalLink className="size-3" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
                     <div className="space-y-1">
                       <Label htmlFor="otp-code" className="text-xs font-bold text-slate-700">
                         6-Digit Verification Code
@@ -534,7 +499,7 @@ function AdminLoginForm() {
                           }
                         }}
                         placeholder="123456"
-                        className="h-11 tracking-widest text-center font-mono font-bold text-lg bg-white"
+                        className="h-11 tracking-widest text-center font-bold text-lg bg-white"
                       />
                     </div>
 
