@@ -313,20 +313,6 @@ function AdminLoginForm() {
               </AnimatePresence>
             </div>
 
-            {/* Interactive Slide Indicator Dots */}
-            <div className="flex items-center gap-1.5 mt-2.5">
-              {SLIDES.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSlideIdx(idx)}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    slideIdx === idx ? "w-7 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
-                  }`}
-                  aria-label={`Slide ${idx + 1}`}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
