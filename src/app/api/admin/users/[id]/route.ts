@@ -11,7 +11,7 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { errorResponse } = await requireAdminRequest();
+  const { user: currentAdmin, errorResponse } = await requireAdminRequest();
   if (errorResponse) return errorResponse;
 
   const { id } = await params;
@@ -23,6 +23,13 @@ export async function PATCH(
     const targetUser = await prisma.user.findUnique({ where: { id } });
     if (!targetUser) {
       return apiError("User not found", 404);
+    }
+
+    if (currentAdmin && currentAdmin.id === targetUser.id && role && role !== "ADMIN") {
+      return apiError(
+        "You cannot downgrade your own active administrator account",
+        400
+      );
     }
 
     if (targetUser.role === Role.ADMIN && role && role !== "ADMIN") {
@@ -71,7 +78,7 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { errorResponse } = await requireAdminRequest();
+  const { user: currentAdmin, errorResponse } = await requireAdminRequest();
   if (errorResponse) return errorResponse;
 
   const { id } = await params;
@@ -80,6 +87,10 @@ export async function DELETE(
     const targetUser = await prisma.user.findUnique({ where: { id } });
     if (!targetUser) {
       return apiError("User not found", 404);
+    }
+
+    if (currentAdmin && currentAdmin.id === targetUser.id) {
+      return apiError("You cannot delete your own active administrator account", 400);
     }
 
     if (targetUser.role === Role.ADMIN) {

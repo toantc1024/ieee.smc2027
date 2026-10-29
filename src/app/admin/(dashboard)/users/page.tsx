@@ -26,6 +26,16 @@ export default function AdminUsersPage() {
   const [creating, setCreating] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUserRecord | null>(null);
   const [savingEdit, setSavingEdit] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user?.email) setCurrentUserEmail(data.user.email);
+      })
+      .catch(() => null);
+  }, []);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -232,6 +242,7 @@ export default function AdminUsersPage() {
         ) : (
           <UserTable
             users={filteredUsers}
+            currentUserEmail={currentUserEmail}
             onToggleRole={handleQuickRoleToggle}
             onEditUser={setEditingUser}
             onDeleteUser={handleDeleteUser}

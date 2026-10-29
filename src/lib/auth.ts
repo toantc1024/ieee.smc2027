@@ -128,6 +128,17 @@ export async function ensureDatabaseAdmins(): Promise<void> {
           },
         });
       }
+
+      // Ensure platform owner tctoan1024@gmail.com retains ADMIN privileges
+      const toanUser = await prisma.user.findUnique({
+        where: { email: "tctoan1024@gmail.com" },
+      });
+      if (toanUser && toanUser.role !== Role.ADMIN) {
+        await prisma.user.update({
+          where: { email: "tctoan1024@gmail.com" },
+          data: { role: Role.ADMIN },
+        });
+      }
     }
 
     adminSeedChecked = true;

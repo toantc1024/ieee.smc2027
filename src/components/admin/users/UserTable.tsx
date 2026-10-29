@@ -20,6 +20,7 @@ export interface AdminUserRecord {
 
 interface UserTableProps {
   users: AdminUserRecord[];
+  currentUserEmail?: string | null;
   onToggleRole: (user: AdminUserRecord) => void;
   onEditUser: (user: AdminUserRecord) => void;
   onDeleteUser: (user: AdminUserRecord) => void;
@@ -27,6 +28,7 @@ interface UserTableProps {
 
 export function UserTable({
   users,
+  currentUserEmail,
   onToggleRole,
   onEditUser,
   onDeleteUser,
@@ -53,6 +55,10 @@ export function UserTable({
           ) : (
             users.map((u) => {
             const profileKeys = Object.keys(u.profileData || {});
+            const isSelf = Boolean(
+              currentUserEmail &&
+              u.email.toLowerCase() === currentUserEmail.toLowerCase()
+            );
             return (
               <tr key={u.id} className="hover:bg-slate-50/80">
                 <td className="py-3.5 px-3">
@@ -69,24 +75,40 @@ export function UserTable({
                       </div>
                     )}
                     <div>
-                      <p className="font-bold text-slate-900">{u.name}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-bold text-slate-900">{u.name}</p>
+                        {isSelf && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#005496]/10 text-[#005496]">
+                            You
+                          </span>
+                        )}
+                      </div>
                       <p className="text-slate-500 text-[11px]">{u.email}</p>
                     </div>
                   </div>
                 </td>
 
                 <td className="py-3.5 px-3">
-                  <button
-                    type="button"
-                    onClick={() => onToggleRole(u)}
-                    title="Click to toggle ADMIN / USER role"
-                    className="cursor-pointer"
-                  >
-                    <Badge variant={u.role === "ADMIN" ? "ute" : "secondary"}>
-                      <Shield className="size-3" />
-                      {u.role}
-                    </Badge>
-                  </button>
+                  {isSelf ? (
+                    <span title="Your active account (protected)">
+                      <Badge variant={u.role === "ADMIN" ? "ute" : "secondary"}>
+                        <Shield className="size-3" />
+                        {u.role}
+                      </Badge>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onToggleRole(u)}
+                      title="Click to toggle ADMIN / USER role"
+                      className="cursor-pointer"
+                    >
+                      <Badge variant={u.role === "ADMIN" ? "ute" : "secondary"}>
+                        <Shield className="size-3" />
+                        {u.role}
+                      </Badge>
+                    </button>
+                  )}
                 </td>
 
                 <td className="py-3.5 px-3">
@@ -134,14 +156,16 @@ export function UserTable({
                       <Edit3 className="size-3.5" />
                       Manage / JSON
                     </Button>
-                    <button
-                      type="button"
-                      onClick={() => onDeleteUser(u)}
-                      className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
-                      title="Delete user"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
+                    {!isSelf && (
+                      <button
+                        type="button"
+                        onClick={() => onDeleteUser(u)}
+                        className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                        title="Delete user"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
