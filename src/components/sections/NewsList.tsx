@@ -155,12 +155,69 @@ export interface NewsListProps {
 export function NewsList({
   title = "Conference News & Announcements",
   subtitle = "Stay updated with the latest milestones, partnership alerts, and program schedules",
-  items = DEFAULT_NEWS_ITEMS,
+  items: initialItems = DEFAULT_NEWS_ITEMS,
 }: NewsListProps) {
+  const [items, setItems] = useState<NewsItem[]>(initialItems);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/posts")
+      .then((res) => res.json())
+      .then((data) => {
+        if (
+          isMounted &&
+          data.success &&
+          Array.isArray(data.posts) &&
+          data.posts.length > 0
+        ) {
+          const mapped: NewsItem[] = data.posts.map(
+            (p: {
+              id: string;
+              title: string;
+              publishedAt?: string | null;
+              createdAt: string;
+              category?: string | null;
+              summary?: string | null;
+              content: string;
+              coverImage?: string | null;
+              views?: number;
+              slug?: string;
+            }) => {
+              const dateObj = new Date(p.publishedAt || p.createdAt);
+              const day = String(dateObj.getDate()).padStart(2, "0");
+              const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+              const year = String(dateObj.getFullYear());
+              return {
+                id: p.id,
+                title: p.title,
+                date: `${day}/${month}/${year}`,
+                day,
+                month,
+                year,
+                category: p.category || "Announcements",
+                summary: p.summary || p.title,
+                content: p.content,
+                image: p.coverImage || "/news/keynote-hoi-thao.jpg",
+                viewCount: p.views || 0,
+                externalUrl: p.slug ? `#${p.slug}` : undefined,
+              };
+            }
+          );
+          setItems(mapped);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load live news posts:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Scrollable categories (excluding "All" which is pinned to the left)
   const categories = useMemo(() => {
@@ -693,8 +750,15 @@ export function NewsList({
               {selectedNews.title}
             </h3>
 
-            <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-700 leading-relaxed space-y-3 mb-6">
-              <p>{selectedNews.content}</p>
+            <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-700 leading-relaxed space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
+              {selectedNews.content.includes("<") && selectedNews.content.includes(">") ? (
+                <div
+                  className="prose prose-sm max-w-none text-slate-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: selectedNews.content }}
+                />
+              ) : (
+                <p>{selectedNews.content}</p>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">

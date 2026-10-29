@@ -85,8 +85,9 @@ export function TiptapEditor({
       });
 
       const data = await res.json();
-      if (data.url) {
-        editor.chain().focus().setImage({ src: data.url }).run();
+      const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
+      if (uploadedUrl) {
+        editor.chain().focus().setImage({ src: uploadedUrl }).run();
       } else {
         alert(data.error || "Image upload failed");
       }

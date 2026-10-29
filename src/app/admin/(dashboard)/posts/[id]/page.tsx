@@ -77,8 +77,9 @@ export default function EditPostPage({
       });
 
       const data = await res.json();
-      if (data.url) {
-        setCoverImage(data.url);
+      const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
+      if (uploadedUrl) {
+        setCoverImage(uploadedUrl);
       } else {
         alert(data.error || "Failed to upload cover image");
       }
@@ -280,7 +281,7 @@ export default function EditPostPage({
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                 URL Slug
               </label>
-              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-3 text-xs text-slate-500 font-mono">
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-3 text-xs text-slate-500">
                 <span>/posts/</span>
                 <input
                   type="text"

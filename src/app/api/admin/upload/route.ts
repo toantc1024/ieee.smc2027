@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { storageService } from "@/services";
 import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
 import type { StorageFolder } from "@/types";
@@ -27,17 +28,22 @@ export async function POST(request: Request) {
       uploadedById: user.id,
     });
 
-    return apiSuccess({
-      id: result.id,
-      key: result.key,
-      bucket: result.bucket,
+    return NextResponse.json({
+      success: true,
       url: result.url,
       proxyUrl: result.proxyUrl,
-      blurDataURL: result.blurDataURL || "",
-      width: result.width || 0,
-      height: result.height || 0,
-      size: result.size,
-      storageDriver: result.storageDriver,
+      data: {
+        id: result.id,
+        key: result.key,
+        bucket: result.bucket,
+        url: result.url,
+        proxyUrl: result.proxyUrl,
+        blurDataURL: result.blurDataURL || "",
+        width: result.width || 0,
+        height: result.height || 0,
+        size: result.size,
+        storageDriver: result.storageDriver,
+      },
     });
   } catch (error: unknown) {
     console.error("MinIO Upload error:", error);
