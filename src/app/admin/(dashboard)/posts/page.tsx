@@ -11,8 +11,16 @@ import {
   Trash2,
   FileText,
   ImageIcon,
+  ChevronDown,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import {
   PostFormDialog,
@@ -40,6 +48,14 @@ interface PostItem {
     email: string;
   } | null;
 }
+
+const POST_CATEGORIES = [
+  "Thông báo",
+  "Call for Papers",
+  "Diễn giả & Keynote",
+  "Hội thảo & Workshop",
+  "Tin tức chung",
+];
 
 export default function PostsManagementPage() {
   const [posts, setPosts] = useState<PostItem[]>([]);
@@ -183,6 +199,72 @@ export default function PostsManagementPage() {
     }
   };
 
+  // Quick status change handler with optimistic update
+  const handleQuickStatusChange = useCallback(
+    async (postId: string, newStatus: "PUBLISHED" | "DRAFT" | "ARCHIVED") => {
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, status: newStatus } : p))
+      );
+
+      try {
+        const res = await fetch(`/api/admin/posts/${postId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Không thể cập nhật trạng thái");
+        setAlert({
+          type: "success",
+          text: `Đã đổi trạng thái thành ${
+            newStatus === "PUBLISHED"
+              ? "Đã xuất bản"
+              : newStatus === "DRAFT"
+              ? "Bản nháp"
+              : "Lưu trữ"
+          }!`,
+        });
+      } catch (err: unknown) {
+        await fetchPosts();
+        setAlert({
+          type: "error",
+          text: err instanceof Error ? err.message : "Cập nhật trạng thái thất bại",
+        });
+      }
+    },
+    [fetchPosts]
+  );
+
+  // Quick category change handler with optimistic update
+  const handleQuickCategoryChange = useCallback(
+    async (postId: string, newCategory: string) => {
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, category: newCategory } : p))
+      );
+
+      try {
+        const res = await fetch(`/api/admin/posts/${postId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ category: newCategory }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Không thể cập nhật chuyên mục");
+        setAlert({
+          type: "success",
+          text: `Đã đổi chuyên mục sang "${newCategory}"!`,
+        });
+      } catch (err: unknown) {
+        await fetchPosts();
+        setAlert({
+          type: "error",
+          text: err instanceof Error ? err.message : "Cập nhật chuyên mục thất bại",
+        });
+      }
+    },
+    [fetchPosts]
+  );
+
   // Column definitions using @tanstack/react-table
   const columns = useMemo<ColumnDef<PostItem, any>[]>(
     () => [
@@ -257,38 +339,111 @@ export default function PostsManagementPage() {
       {
         accessorKey: "category",
         header: "Chuyên mục",
-        cell: ({ row }) => (
-          <span className="text-slate-600 font-medium">
-            {row.getValue("category")}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const item = row.original;
+          const cat = (row.getValue("category") as string) || item.category;
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
+                  title="Nhấn để đổi chuyên mục nhanh"
+                >
+                  <span className="truncate max-w-[130px]">{cat}</span>
+                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 p-1">
+                {POST_CATEGORIES.map((categoryOption) => (
+                  <DropdownMenuItem
+                    key={categoryOption}
+                    onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                  >
+                    <span className="truncate">{categoryOption}</span>
+                    {cat === categoryOption && (
+                      <Check className="size-3.5 text-[#005496] shrink-0 ml-2" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
       },
       {
         accessorKey: "status",
         header: "Trạng thái",
         cell: ({ row }) => {
-          const status = row.getValue("status") as string;
-          if (status === "PUBLISHED") {
-            return (
-              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
-                <span className="size-2 rounded-full bg-emerald-500" />
-                Đã xuất bản
-              </span>
-            );
-          }
-          if (status === "DRAFT") {
-            return (
-              <span className="inline-flex items-center gap-1.5 text-xs text-amber-700 font-medium">
-                <span className="size-2 rounded-full bg-amber-500" />
-                Bản nháp
-              </span>
-            );
-          }
+          const item = row.original;
+          const status = (row.getValue("status") as string) || item.status;
           return (
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-              <span className="size-2 rounded-full bg-slate-400" />
-              Lưu trữ
-            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
+                  title="Nhấn để đổi trạng thái nhanh"
+                >
+                  {status === "PUBLISHED" ? (
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>Đã xuất bản</span>
+                    </span>
+                  ) : status === "DRAFT" ? (
+                    <span className="inline-flex items-center gap-1.5 text-amber-700">
+                      <span className="size-2 rounded-full bg-amber-500" />
+                      <span>Bản nháp</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-slate-600">
+                      <span className="size-2 rounded-full bg-slate-400" />
+                      <span>Lưu trữ</span>
+                    </span>
+                  )}
+                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-40 p-1">
+                <DropdownMenuItem
+                  onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
+                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-emerald-700 font-medium">
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                    Đã xuất bản
+                  </span>
+                  {status === "PUBLISHED" && (
+                    <Check className="size-3.5 text-emerald-700" />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
+                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-amber-700 font-medium">
+                    <span className="size-2 rounded-full bg-amber-500" />
+                    Bản nháp
+                  </span>
+                  {status === "DRAFT" && (
+                    <Check className="size-3.5 text-amber-700" />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
+                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-slate-600 font-medium">
+                    <span className="size-2 rounded-full bg-slate-400" />
+                    Lưu trữ
+                  </span>
+                  {status === "ARCHIVED" && (
+                    <Check className="size-3.5 text-slate-600" />
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           );
         },
       },
@@ -363,7 +518,7 @@ export default function PostsManagementPage() {
         size: 90,
       },
     ],
-    []
+    [handleQuickStatusChange, handleQuickCategoryChange]
   );
 
   return (

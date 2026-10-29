@@ -58,9 +58,13 @@ export async function PATCH(
     if (coverImage !== undefined) data.coverImage = coverImage;
     if (category !== undefined) data.category = category;
     if (status !== undefined) {
-      data.status = status === "PUBLISHED" ? PostStatus.PUBLISHED : PostStatus.DRAFT;
       if (status === "PUBLISHED") {
+        data.status = PostStatus.PUBLISHED;
         data.publishedAt = new Date();
+      } else if (status === "ARCHIVED") {
+        data.status = PostStatus.ARCHIVED;
+      } else {
+        data.status = PostStatus.DRAFT;
       }
     }
 

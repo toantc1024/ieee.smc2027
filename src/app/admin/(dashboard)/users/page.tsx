@@ -2,8 +2,14 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Plus, Users, Edit2, Trash2 } from "lucide-react";
+import { Plus, Users, Edit2, Trash2, ChevronDown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { CreateUserModal } from "@/components/admin/users/CreateUserModal";
 import {
@@ -195,6 +201,42 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Quick role change handler with optimistic update
+  const handleQuickRoleChange = useCallback(
+    async (userId: string, newRole: "ADMIN" | "USER") => {
+      // Optimistic update
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      );
+
+      try {
+        const res = await fetch(`/api/admin/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role: newRole }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          throw new Error(json.error || "Không thể cập nhật vai trò");
+        }
+        setAlert({
+          type: "success",
+          text: `Đã đổi vai trò thành ${
+            newRole === "ADMIN" ? "Quản trị viên" : "Thành viên"
+          } thành công!`,
+        });
+      } catch (err: unknown) {
+        // Rollback on error
+        await fetchUsers();
+        setAlert({
+          type: "error",
+          text: err instanceof Error ? err.message : "Cập nhật vai trò thất bại",
+        });
+      }
+    },
+    [fetchUsers]
+  );
+
   // Table columns definition
   const columns = useMemo<ColumnDef<AdminUserRecord, any>[]>(
     () => [
@@ -275,20 +317,70 @@ export default function AdminUsersPage() {
         accessorKey: "role",
         header: "Vai trò",
         cell: ({ row }) => {
-          const role = row.getValue("role") as string;
-          if (role === "ADMIN") {
+          const u = row.original;
+          const role = (row.getValue("role") as string) || u.role;
+          const isSelf = Boolean(
+            currentUserEmail &&
+            u.email.toLowerCase() === currentUserEmail.toLowerCase()
+          );
+
+          if (isSelf) {
             return (
-              <span className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-medium">
+              <span
+                className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-medium px-2 py-1 select-none"
+                title="Tài khoản của bạn"
+              >
                 <span className="size-2 rounded-full bg-blue-500" />
                 Quản trị viên
               </span>
             );
           }
+
           return (
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-              <span className="size-2 rounded-full bg-slate-400" />
-              Thành viên
-            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 -mx-2 rounded-md hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group"
+                  title="Nhấn để đổi vai trò nhanh"
+                >
+                  {role === "ADMIN" ? (
+                    <span className="inline-flex items-center gap-1.5 text-blue-700">
+                      <span className="size-2 rounded-full bg-blue-500" />
+                      <span>Quản trị viên</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-slate-600">
+                      <span className="size-2 rounded-full bg-slate-400" />
+                      <span>Thành viên</span>
+                    </span>
+                  )}
+                  <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-40 p-1">
+                <DropdownMenuItem
+                  onClick={() => handleQuickRoleChange(u.id, "ADMIN")}
+                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-blue-700 font-medium">
+                    <span className="size-2 rounded-full bg-blue-500" />
+                    Quản trị viên
+                  </span>
+                  {role === "ADMIN" && <Check className="size-3.5 text-blue-700" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleQuickRoleChange(u.id, "USER")}
+                  className="flex items-center justify-between py-1.5 px-2.5 text-xs cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-slate-700 font-medium">
+                    <span className="size-2 rounded-full bg-slate-400" />
+                    Thành viên
+                  </span>
+                  {role === "USER" && <Check className="size-3.5 text-slate-700" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           );
         },
       },
@@ -368,7 +460,7 @@ export default function AdminUsersPage() {
         size: 80,
       },
     ],
-    [currentUserEmail]
+    [currentUserEmail, handleQuickRoleChange]
   );
 
   return (

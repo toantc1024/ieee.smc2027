@@ -24,6 +24,7 @@ import {
   FileQuestion,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface FilterOption {
   label: string;
@@ -184,7 +185,29 @@ export function DataTable<TData, TValue = unknown>({
       </div>
 
       {/* ── Table Container ── */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+      <div
+        className={cn(
+          "relative bg-white rounded-xl border border-slate-200 overflow-hidden transition-all duration-300",
+          loading
+            ? "shadow-lg shadow-slate-200/80 ring-1 ring-[#005496]/15"
+            : "shadow-2xs"
+        )}
+      >
+        {/* Animated accent shimmer progress bar when loading */}
+        {loading && (
+          <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#005496] to-transparent animate-pulse z-20" />
+        )}
+
+        {/* Floating loading shadow badge */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/45 backdrop-blur-[1px] z-10 pointer-events-none transition-all">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/95 border border-slate-200/90 rounded-full shadow-xl shadow-slate-300/40 text-xs font-semibold text-slate-700">
+              <div className="size-3.5 border-2 border-[#005496] border-t-transparent rounded-full animate-spin" />
+              <span>Đang tải dữ liệu...</span>
+            </div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
@@ -200,7 +223,7 @@ export function DataTable<TData, TValue = unknown>({
                     return (
                       <th
                         key={header.id}
-                        className="py-3 px-3.5 select-none"
+                        className="py-3 px-3.5 select-none border-r border-slate-200/80 last:border-r-0"
                         style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         {header.isPlaceholder ? null : canSort ? (
@@ -239,17 +262,34 @@ export function DataTable<TData, TValue = unknown>({
 
             <tbody className="divide-y divide-slate-100 text-slate-800">
               {loading ? (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-16 text-center text-slate-400"
-                  >
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="size-6 border-2 border-[#005496] border-t-transparent rounded-full animate-spin" />
-                      <span className="text-xs">Đang tải dữ liệu...</span>
-                    </div>
-                  </td>
-                </tr>
+                <>
+                  {Array.from({ length: 6 }).map((_, rIdx) => (
+                    <tr
+                      key={`skeleton-row-${rIdx}`}
+                      className="border-b border-slate-100 last:border-b-0"
+                    >
+                      {columns.map((col, cIdx) => (
+                        <td
+                          key={`skeleton-cell-${rIdx}-${cIdx}`}
+                          className="py-3.5 px-3.5 align-middle border-r border-slate-100 last:border-r-0"
+                        >
+                          <div
+                            className={cn(
+                              "h-3.5 bg-slate-200/60 rounded animate-pulse",
+                              cIdx === 0
+                                ? "w-4 h-4 rounded"
+                                : cIdx === 1
+                                ? "w-3/4"
+                                : cIdx % 2 === 0
+                                ? "w-1/2"
+                                : "w-2/3"
+                            )}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td
@@ -282,7 +322,10 @@ export function DataTable<TData, TValue = unknown>({
                     }`}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-3.5 align-middle">
+                      <td
+                        key={cell.id}
+                        className="py-3 px-3.5 align-middle border-r border-slate-100 last:border-r-0"
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
