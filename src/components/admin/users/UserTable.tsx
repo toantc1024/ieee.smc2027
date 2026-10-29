@@ -44,7 +44,14 @@ export function UserTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {users.map((u) => {
+          {users.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="py-12 text-center text-slate-400 text-xs">
+                No users found.
+              </td>
+            </tr>
+          ) : (
+            users.map((u) => {
             const profileKeys = Object.keys(u.profileData || {});
             return (
               <tr key={u.id} className="hover:bg-slate-50/80">
@@ -139,7 +146,8 @@ export function UserTable({
                 </td>
               </tr>
             );
-          })}
+          })
+        )}
         </tbody>
       </table>
     </div>

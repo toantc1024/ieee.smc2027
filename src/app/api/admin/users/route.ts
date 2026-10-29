@@ -38,7 +38,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ users });
+    return apiSuccess({ users });
   } catch (error: unknown) {
     console.error("Error fetching users:", error);
     return apiError(error, 500);

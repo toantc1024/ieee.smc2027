@@ -33,10 +33,11 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch("/api/admin/users");
       const json = await res.json();
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         throw new Error(json.error || "Failed to load users");
       }
-      setUsers(json.data.users || []);
+      const list = json.users || json.data?.users || (Array.isArray(json) ? json : []);
+      setUsers(list);
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : "Failed to load users");
     } finally {
