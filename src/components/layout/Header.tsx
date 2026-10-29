@@ -15,7 +15,6 @@ import {
   FileText,
   ChevronDown,
   User,
-  LogIn,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
 import {
@@ -599,17 +598,6 @@ export function Header() {
                 <FileDown className="w-4 h-4 text-blue-200" />
                 <span>CFP PDF</span>
               </a>
-
-              <span className="text-white/30">•</span>
-
-              <Link
-                href={isLoggedIn ? "/admin" : "/admin/login"}
-                className="px-2.5 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5 font-medium text-sm"
-                title={isLoggedIn ? "Admin Dashboard" : "Sign In to Portal"}
-              >
-                <LogIn className="w-3.5 h-3.5 text-blue-200" />
-                <span>{isLoggedIn ? "Dashboard" : "Login"}</span>
-              </Link>
 
               <span className="text-white/30">•</span>
 
