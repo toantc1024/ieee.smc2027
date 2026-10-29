@@ -10,7 +10,8 @@ import {
 
 export async function GET(request: Request) {
   const currentOrigin = getRequestOrigin(request);
-  const { searchParams } = new URL(request.url);
+  const requestUrl = new URL(request.url);
+  const { searchParams } = requestUrl;
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
   }
 
   const { clientId, clientSecret } = await getGoogleOAuthConfig();
-  const redirectUri = `${currentOrigin}/api/auth/callback/google`;
+  const redirectUri = `${currentOrigin}${requestUrl.pathname}`;
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(

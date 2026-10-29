@@ -235,7 +235,7 @@ export default function AdminOAuthPage() {
                   className="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 rounded-lg transition-colors group"
                 >
                   <div className="flex items-center gap-2 min-w-0 pr-2">
-                    <span className="text-xs font-mono font-semibold text-slate-800 truncate">
+                    <span className="text-xs font-medium text-slate-800 truncate">
                       {origin}
                     </span>
                     {origin === currentOrigin && (
@@ -309,7 +309,7 @@ export default function AdminOAuthPage() {
                   className="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-indigo-50/50 border border-slate-200 rounded-lg transition-colors group"
                 >
                   <div className="flex items-center gap-2 min-w-0 pr-2">
-                    <span className="text-xs font-mono font-semibold text-slate-800 truncate">
+                    <span className="text-xs font-medium text-slate-800 truncate">
                       {uri}
                     </span>
                     {uri.includes(currentOrigin) && (
@@ -409,7 +409,7 @@ export default function AdminOAuthPage() {
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
                 placeholder="e.g. 1234567890-abcdefg12345.apps.googleusercontent.com"
-                className="w-full px-4 py-2.5 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
               />
               {clientId && (
                 <button
@@ -450,7 +450,7 @@ export default function AdminOAuthPage() {
                 value={clientSecret}
                 onChange={(e) => setClientSecret(e.target.value)}
                 placeholder={hasSecret ? "••••••••••••••••••••" : "e.g. GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx"}
-                className="w-full px-4 py-2.5 pr-20 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
+                className="w-full px-4 py-2.5 pr-20 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 <button
@@ -478,7 +478,7 @@ export default function AdminOAuthPage() {
               value={appUrl}
               onChange={(e) => setAppUrl(e.target.value)}
               placeholder="https://smc2027.hcmute.edu.vn"
-              className="w-full px-4 py-2.5 text-sm font-mono border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
+              className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#115eff]/30 focus:border-[#115eff] transition-all"
             />
             <p className="text-[11px] text-slate-500">
               Base URL of the website used by Google to redirect users after authentication.

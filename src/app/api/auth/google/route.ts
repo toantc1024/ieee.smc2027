@@ -11,7 +11,10 @@ export async function GET(request: Request) {
   }
 
   const currentOrigin = getRequestOrigin(request);
-  const redirectUri = `${currentOrigin}/api/auth/callback/google`;
+  const requestUrl = new URL(request.url);
+  const customCallback = requestUrl.searchParams.get("callback");
+  const callbackPath = customCallback?.startsWith("/") ? customCallback : "/api/auth/callback/google";
+  const redirectUri = `${currentOrigin}${callbackPath}`;
 
   const state = Math.random().toString(36).substring(2);
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
