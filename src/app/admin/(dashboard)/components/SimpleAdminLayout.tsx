@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -141,14 +140,9 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
       {/* ── Mobile Top Header (< md) ── */}
       <div className="md:hidden sticky top-0 z-40 h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between shadow-2xs">
         <Link href="/admin" className="flex items-center gap-2">
-          <Image
-            src="/logo/rectangle-logo.png"
-            alt="IEEE SMC 2027"
-            width={120}
-            height={28}
-            className="h-7 w-auto object-contain"
-            priority
-          />
+          <span className="font-extrabold text-base tracking-tight text-[#005496]">
+            IEEE SMC 2027
+          </span>
         </Link>
 
         <button
@@ -170,13 +164,9 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           />
           <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl z-10">
             <div className="h-14 px-4 border-b border-slate-200 flex items-center justify-between">
-              <Image
-                src="/logo/rectangle-logo.png"
-                alt="IEEE SMC 2027"
-                width={130}
-                height={30}
-                className="h-7 w-auto object-contain"
-              />
+              <span className="font-extrabold text-base tracking-tight text-[#005496]">
+                IEEE SMC 2027
+              </span>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
@@ -231,23 +221,13 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
             title={isCollapsed ? "IEEE SMC 2027" : undefined}
           >
             {isCollapsed ? (
-              <Image
-                src="/logo/square-logo.png"
-                alt="IEEE SMC"
-                width={32}
-                height={32}
-                className="size-8 object-contain rounded"
-                priority
-              />
+              <span className="font-black text-sm tracking-tight text-[#005496]">
+                SMC
+              </span>
             ) : (
-              <Image
-                src="/logo/rectangle-logo.png"
-                alt="IEEE SMC 2027"
-                width={140}
-                height={32}
-                className="h-7 w-auto object-contain"
-                priority
-              />
+              <span className="font-extrabold text-base tracking-tight text-[#005496]">
+                IEEE SMC 2027
+              </span>
             )}
           </Link>
         </div>
