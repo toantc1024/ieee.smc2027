@@ -9,6 +9,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
 interface CreateUserModalProps {
@@ -84,56 +93,64 @@ export function CreateUserModal({
         <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
           {/* Email */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
               Địa chỉ Email <span className="text-rose-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@gmail.com"
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
           {/* Họ và tên */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
               Họ và tên <span className="text-rose-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nguyễn Văn A"
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
           {/* Vai trò */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Vai trò</label>
-            <select
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Vai trò
+            </Label>
+            <Select
               value={role}
-              onChange={(e) => setRole(e.target.value as "ADMIN" | "USER")}
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white cursor-pointer font-medium"
+              onValueChange={(val) => setRole(val as "ADMIN" | "USER")}
             >
-              <option value="USER">Thành viên thông thường</option>
-              <option value="ADMIN">Quản trị viên (Toàn quyền)</option>
-            </select>
+              <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USER">Thành viên thông thường</SelectItem>
+                <SelectItem value="ADMIN">Quản trị viên (Toàn quyền)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Mật khẩu khởi tạo */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Mật khẩu đăng nhập</label>
-            <input
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Mật khẩu đăng nhập
+            </Label>
+            <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Nhập mật khẩu (tùy chọn)..."
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             />
             <p className="text-[11px] text-slate-400">
               Nếu để trống, người dùng có thể đăng nhập bằng Google hoặc Email OTP.

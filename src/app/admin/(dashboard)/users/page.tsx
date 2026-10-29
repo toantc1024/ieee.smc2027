@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { CreateUserModal } from "@/components/admin/users/CreateUserModal";
 import {
@@ -243,11 +244,12 @@ export default function AdminUsersPage() {
       {
         id: "select",
         header: ({ table }) => (
-          <input
-            type="checkbox"
-            checked={table.getIsAllPageRowsSelected()}
-            onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
-            className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer"
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Chọn tất cả"
           />
         ),
@@ -258,12 +260,10 @@ export default function AdminUsersPage() {
             item.email.toLowerCase() === currentUserEmail.toLowerCase()
           );
           return (
-            <input
-              type="checkbox"
+            <Checkbox
               disabled={isSelf}
               checked={row.getIsSelected()}
-              onChange={(e) => row.toggleSelected(e.target.checked)}
-              className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer disabled:opacity-30"
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Chọn dòng"
             />
           );
@@ -517,13 +517,15 @@ export default function AdminUsersPage() {
         ]}
         batchActions={(selected, clear) => (
           <div className="flex items-center gap-1.5 ml-2">
-            <button
+            <Button
               type="button"
+              variant="destructive"
+              size="sm"
               onClick={() => handleBatchDelete(selected, clear)}
-              className="px-2.5 py-1 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded cursor-pointer"
+              className="h-7 px-2.5 text-xs font-semibold"
             >
               Xóa đã chọn
-            </button>
+            </Button>
           </div>
         )}
       />

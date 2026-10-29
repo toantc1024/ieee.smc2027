@@ -9,6 +9,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { slugify } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
@@ -137,15 +147,15 @@ export function PostFormDialog({
         <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
           {/* Tiêu đề */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
               Tiêu đề bài viết <span className="text-rose-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Nhập tiêu đề thông báo hoặc bài viết..."
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white transition-all"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
@@ -153,82 +163,99 @@ export function PostFormDialog({
           {/* Đường dẫn & Chuyên mục */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Đường dẫn (Slug)</label>
-              <input
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Đường dẫn (Slug)
+              </Label>
+              <Input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="duong-dan-bai-viet"
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white font-medium"
+                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Chuyên mục</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white font-medium cursor-pointer"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Chuyên mục
+              </Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           {/* Trạng thái & Ảnh bìa */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Trạng thái xuất bản</label>
-              <select
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Trạng thái xuất bản
+              </Label>
+              <Select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as "DRAFT" | "PUBLISHED" | "ARCHIVED")}
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white font-medium cursor-pointer"
+                onValueChange={(val) =>
+                  setStatus(val as "DRAFT" | "PUBLISHED" | "ARCHIVED")
+                }
               >
-                <option value="PUBLISHED">Đã xuất bản (Công khai)</option>
-                <option value="DRAFT">Bản nháp (Chưa công khai)</option>
-                <option value="ARCHIVED">Lưu trữ</option>
-              </select>
+                <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PUBLISHED">Đã xuất bản (Công khai)</SelectItem>
+                  <SelectItem value="DRAFT">Bản nháp (Chưa công khai)</SelectItem>
+                  <SelectItem value="ARCHIVED">Lưu trữ</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Ảnh bìa (Đường dẫn URL)</label>
-              <input
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Ảnh bìa (Đường dẫn URL)
+              </Label>
+              <Input
                 type="text"
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
                 placeholder="/news/hcmute.jpg hoặc link ảnh"
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white font-medium"
+                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
               />
             </div>
           </div>
 
           {/* Tóm tắt ngắn */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Tóm tắt ngắn (Hiển thị ở trang chủ)</label>
-            <textarea
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Tóm tắt ngắn (Hiển thị ở trang chủ)
+            </Label>
+            <Textarea
               rows={2}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Nhập 1-2 câu tóm tắt nội dung chính..."
-              className="w-full p-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white resize-none"
+              className="min-h-[64px] p-2.5 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white resize-none"
             />
           </div>
 
           {/* Nội dung chi tiết */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
               Nội dung bài viết <span className="text-rose-500">*</span>
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               rows={8}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Nhập nội dung bài viết (hỗ trợ văn bản hoặc HTML cơ bản)..."
-              className="w-full p-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white font-medium leading-relaxed resize-y"
+              className="min-h-[160px] p-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium leading-relaxed resize-y"
               required
             />
           </div>

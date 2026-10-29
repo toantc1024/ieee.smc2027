@@ -9,6 +9,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
 export interface AdminUserRecord {
@@ -113,64 +122,76 @@ export function EditUserModal({
         <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
           {/* Họ và tên */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
               Họ và tên <span className="text-rose-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
           {/* Vai trò */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Vai trò tài khoản</label>
-            <select
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Vai trò tài khoản
+            </Label>
+            <Select
               value={role}
-              onChange={(e) => setRole(e.target.value as "ADMIN" | "USER")}
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white cursor-pointer font-medium"
+              onValueChange={(val) => setRole(val as "ADMIN" | "USER")}
             >
-              <option value="USER">Thành viên thông thường</option>
-              <option value="ADMIN">Quản trị viên (Toàn quyền)</option>
-            </select>
+              <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USER">Thành viên thông thường</SelectItem>
+                <SelectItem value="ADMIN">Quản trị viên (Toàn quyền)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Đơn vị công tác & Quốc gia */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Đơn vị công tác</label>
-              <input
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Đơn vị công tác
+              </Label>
+              <Input
                 type="text"
                 value={affiliation}
                 onChange={(e) => setAffiliation(e.target.value)}
                 placeholder="VD: Trường ĐH Sư Phạm Kỹ Thuật"
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Quốc gia</label>
-              <input
+              <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+                Quốc gia
+              </Label>
+              <Input
                 type="text"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 placeholder="VD: Vietnam"
-                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               />
             </div>
           </div>
 
           {/* Đổi mật khẩu mới */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Đổi mật khẩu mới</label>
-            <input
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Đổi mật khẩu mới
+            </Label>
+            <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Để trống nếu không thay đổi..."
-              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             />
           </div>
 

@@ -21,6 +21,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import {
   PostFormDialog,
@@ -271,20 +272,19 @@ export default function PostsManagementPage() {
       {
         id: "select",
         header: ({ table }) => (
-          <input
-            type="checkbox"
-            checked={table.getIsAllPageRowsSelected()}
-            onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
-            className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer"
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Chọn tất cả"
           />
         ),
         cell: ({ row }) => (
-          <input
-            type="checkbox"
+          <Checkbox
             checked={row.getIsSelected()}
-            onChange={(e) => row.toggleSelected(e.target.checked)}
-            className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer"
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Chọn dòng"
           />
         ),
@@ -603,27 +603,31 @@ export default function PostsManagementPage() {
         ]}
         batchActions={(selected, clear) => (
           <div className="flex items-center gap-1.5 ml-2">
-            <button
+            <Button
               type="button"
+              size="sm"
               onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-              className="px-2.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded cursor-pointer"
+              className="h-7 px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-none"
             >
               Xuất bản
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              size="sm"
               onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-              className="px-2.5 py-1 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded cursor-pointer"
+              className="h-7 px-2.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-none"
             >
               Chuyển nháp
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="destructive"
+              size="sm"
               onClick={() => handleBatchDelete(selected, clear)}
-              className="px-2.5 py-1 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded cursor-pointer"
+              className="h-7 px-2.5 text-xs font-semibold"
             >
               Xóa đã chọn
-            </button>
+            </Button>
           </div>
         )}
       />
