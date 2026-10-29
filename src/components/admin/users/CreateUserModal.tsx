@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ImageUploadField } from "@/components/media/ImageUploadField";
+import { Loader2 } from "lucide-react";
 
 interface CreateUserModalProps {
   open: boolean;
@@ -26,111 +30,145 @@ export function CreateUserModal({
   onClose,
   onCreate,
 }: CreateUserModalProps) {
-  const [form, setForm] = useState({
-    email: "",
-    name: "",
-    role: "USER" as "ADMIN" | "USER",
-    password: "",
-    avatar: "",
-  });
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState<"ADMIN" | "USER">("USER");
+  const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [error, setError] = useState("");
 
   if (!open) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onCreate(form);
-    setForm({ email: "", name: "", role: "USER", password: "", avatar: "" });
+    if (!email.trim() || !name.trim()) {
+      setError("Vui lòng điền đầy đủ email và họ tên");
+      return;
+    }
+
+    setError("");
+    try {
+      await onCreate({
+        email: email.trim().toLowerCase(),
+        name: name.trim(),
+        role,
+        password: password.trim(),
+        avatar: avatar.trim(),
+      });
+      setEmail("");
+      setName("");
+      setRole("USER");
+      setPassword("");
+      setAvatar("");
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Thao tác không thành công");
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-          <h3 className="text-base font-bold text-slate-900">
-            Create Database User / Administrator
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 cursor-pointer"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-md font-sans p-6">
+        <DialogHeader className="pb-3 border-b border-slate-100">
+          <DialogTitle className="text-base font-bold text-slate-900">
+            Thêm người dùng mới
+          </DialogTitle>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <ImageUploadField
-            label="Avatar Photo"
-            value={form.avatar}
-            onChange={(url) => setForm((prev) => ({ ...prev, avatar: url }))}
-            folder="public/avatars"
-            accept="image/*"
-          />
+        {error && (
+          <div className="p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded-lg">
+            {error}
+          </div>
+        )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label>Email Address *</Label>
-              <Input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, email: e.target.value }))
-                }
-                placeholder="user@hcmute.edu.vn"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Full Name *</Label>
-              <Input
-                required
-                value={form.name}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, name: e.target.value }))
-                }
-                placeholder="Full Name"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Database Role</Label>
-              <select
-                value={form.role}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    role: e.target.value as "ADMIN" | "USER",
-                  }))
-                }
-                className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
-              >
-                <option value="USER">USER — Delegate</option>
-                <option value="ADMIN">ADMIN — Full Console Access</option>
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Optional Password</Label>
-              <Input
-                type="password"
-                value={form.password}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, password: e.target.value }))
-                }
-                placeholder="Leave blank for OTP / Google only"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
+          {/* Email */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">
+              Địa chỉ Email <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@gmail.com"
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              required
+            />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="ute" disabled={creating}>
-              {creating ? <Loader2 className="size-4 animate-spin" /> : null}
-              Create Account in DB
-            </Button>
+          {/* Họ và tên */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">
+              Họ và tên <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nguyễn Văn A"
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              required
+            />
           </div>
+
+          {/* Vai trò */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">Vai trò</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as "ADMIN" | "USER")}
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white cursor-pointer font-medium"
+            >
+              <option value="USER">Thành viên thông thường</option>
+              <option value="ADMIN">Quản trị viên (Toàn quyền)</option>
+            </select>
+          </div>
+
+          {/* Mật khẩu khởi tạo */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">Mật khẩu đăng nhập</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Nhập mật khẩu (tùy chọn)..."
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+            />
+            <p className="text-[11px] text-slate-400">
+              Nếu để trống, người dùng có thể đăng nhập bằng Google hoặc Email OTP.
+            </p>
+          </div>
+
+          <DialogFooter className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onClose}
+              disabled={creating}
+              className="h-8.5 px-3.5 text-xs"
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={creating}
+              className="h-8.5 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white"
+            >
+              {creating ? (
+                <>
+                  <Loader2 className="size-3.5 mr-1.5 animate-spin" />
+                  Đang tạo...
+                </>
+              ) : (
+                "Thêm người dùng"
+              )}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

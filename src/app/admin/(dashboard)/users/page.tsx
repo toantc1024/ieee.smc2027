@@ -1,33 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Plus, Search, Loader2 } from "lucide-react";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Plus, Users, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
-import {
-  UserTable,
-  AdminUserRecord,
-} from "@/components/admin/users/UserTable";
+import { DataTable } from "@/components/admin/data-table/DataTable";
 import { CreateUserModal } from "@/components/admin/users/CreateUserModal";
-import { EditUserModal } from "@/components/admin/users/EditUserModal";
+import {
+  EditUserModal,
+  AdminUserRecord,
+} from "@/components/admin/users/EditUserModal";
+import { UserDeleteDialog } from "@/components/admin/users/UserDeleteDialog";
+import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"ALL" | "ADMIN" | "USER">("ALL");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
+  // Modal dialog states
   const [createOpen, setCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUserRecord | null>(null);
   const [savingEdit, setSavingEdit] = useState(false);
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const [deletingUser, setDeletingUser] = useState<AdminUserRecord | null>(null);
 
+  // Fetch current user email to protect active account
   useEffect(() => {
     fetch("/api/auth/me")
       .then((res) => res.json())
@@ -39,17 +41,19 @@ export default function AdminUsersPage() {
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-    setErrorMsg("");
     try {
       const res = await fetch("/api/admin/users");
       const json = await res.json();
       if (!res.ok || json.error) {
-        throw new Error(json.error || "Failed to load users");
+        throw new Error(json.error || "Không thể tải danh sách người dùng");
       }
       const list = json.users || json.data?.users || (Array.isArray(json) ? json : []);
       setUsers(list);
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Failed to load users");
+      setAlert({
+        type: "error",
+        text: err instanceof Error ? err.message : "Lỗi khi tải dữ liệu",
+      });
     } finally {
       setLoading(false);
     }
@@ -59,6 +63,7 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [fetchUsers]);
 
+  // Create user handler
   const handleCreateUser = async (payload: {
     email: string;
     name: string;
@@ -67,8 +72,7 @@ export default function AdminUsersPage() {
     avatar: string;
   }) => {
     setCreating(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    setAlert(null);
     try {
       const res = await fetch("/api/admin/users", {
         method: "POST",
@@ -77,18 +81,26 @@ export default function AdminUsersPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Failed to create user");
+        throw new Error(json.error || "Không thể tạo người dùng mới");
       }
-      setSuccessMsg(`Created ${payload.role} account for ${payload.email}`);
+      setAlert({
+        type: "success",
+        text: `Đã tạo tài khoản cho ${payload.email} thành công!`,
+      });
       setCreateOpen(false);
       await fetchUsers();
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Failed to create user");
+      setAlert({
+        type: "error",
+        text: err instanceof Error ? err.message : "Thao tác thất bại",
+      });
+      throw err;
     } finally {
       setCreating(false);
     }
   };
 
+  // Edit user handler
   const handleSaveEdit = async (payload: {
     id: string;
     name: string;
@@ -98,8 +110,7 @@ export default function AdminUsersPage() {
     profileData: Record<string, unknown>;
   }) => {
     setSavingEdit(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    setAlert(null);
     try {
       const res = await fetch(`/api/admin/users/${payload.id}`, {
         method: "PATCH",
@@ -108,148 +119,324 @@ export default function AdminUsersPage() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Failed to update user");
+        throw new Error(json.error || "Không thể cập nhật người dùng");
       }
-      setSuccessMsg(`Updated user account in PostgreSQL.`);
+      setAlert({
+        type: "success",
+        text: "Đã cập nhật thông tin người dùng thành công!",
+      });
       setEditingUser(null);
       await fetchUsers();
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Failed to update user");
+      setAlert({
+        type: "error",
+        text: err instanceof Error ? err.message : "Cập nhật thất bại",
+      });
+      throw err;
     } finally {
       setSavingEdit(false);
     }
   };
 
-  const handleQuickRoleToggle = async (u: AdminUserRecord) => {
-    const nextRole = u.role === "ADMIN" ? "USER" : "ADMIN";
-    setErrorMsg("");
-    setSuccessMsg("");
-    try {
-      const res = await fetch(`/api/admin/users/${u.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: nextRole }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || "Unable to change role");
-      }
-      setSuccessMsg(`Changed role for ${u.email} to ${nextRole}`);
-      await fetchUsers();
-    } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Role update failed");
+  // Delete user handler
+  const handleDeleteConfirm = async (id: string) => {
+    const res = await fetch(`/api/admin/users/${id}`, {
+      method: "DELETE",
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error || "Không thể xóa người dùng");
     }
+    setAlert({ type: "success", text: "Đã xóa người dùng thành công!" });
+    setDeletingUser(null);
+    await fetchUsers();
   };
 
-  const handleDeleteUser = async (u: AdminUserRecord) => {
-    if (!window.confirm(`Delete user ${u.email} from PostgreSQL?`)) return;
-    setErrorMsg("");
-    setSuccessMsg("");
-    try {
-      const res = await fetch(`/api/admin/users/${u.id}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || "Unable to delete user");
-      }
-      setSuccessMsg(`Deleted user ${u.email}`);
-      await fetchUsers();
-    } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Delete failed");
-    }
-  };
+  // Batch delete handler
+  const handleBatchDelete = async (
+    selected: AdminUserRecord[],
+    clearSelection: () => void
+  ) => {
+    const safeToDelete = selected.filter(
+      (u) =>
+        !currentUserEmail ||
+        u.email.toLowerCase() !== currentUserEmail.toLowerCase()
+    );
 
-  const filteredUsers = users.filter((u) => {
-    if (roleFilter !== "ALL" && u.role !== roleFilter) return false;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      return (
-        u.email.toLowerCase().includes(q) ||
-        u.name.toLowerCase().includes(q) ||
-        JSON.stringify(u.profileData || {}).toLowerCase().includes(q)
+    if (safeToDelete.length === 0) {
+      setAlert({
+        type: "error",
+        text: "Không thể xóa tài khoản bạn đang đăng nhập!",
+      });
+      return;
+    }
+
+    if (
+      !confirm(
+        `Bạn có chắc chắn muốn xóa ${safeToDelete.length} tài khoản đã chọn?`
+      )
+    )
+      return;
+
+    try {
+      await Promise.all(
+        safeToDelete.map((u) =>
+          fetch(`/api/admin/users/${u.id}`, { method: "DELETE" })
+        )
       );
+      clearSelection();
+      setAlert({
+        type: "success",
+        text: `Đã xóa ${safeToDelete.length} tài khoản thành công!`,
+      });
+      await fetchUsers();
+    } catch {
+      setAlert({ type: "error", text: "Xảy ra lỗi khi xóa tài khoản hàng loạt" });
     }
-    return true;
-  });
+  };
+
+  // Table columns definition
+  const columns = useMemo<ColumnDef<AdminUserRecord, any>[]>(
+    () => [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <input
+            type="checkbox"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
+            className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer"
+            aria-label="Chọn tất cả"
+          />
+        ),
+        cell: ({ row }) => {
+          const item = row.original;
+          const isSelf = Boolean(
+            currentUserEmail &&
+            item.email.toLowerCase() === currentUserEmail.toLowerCase()
+          );
+          return (
+            <input
+              type="checkbox"
+              disabled={isSelf}
+              checked={row.getIsSelected()}
+              onChange={(e) => row.toggleSelected(e.target.checked)}
+              className="size-4 rounded border-slate-300 text-[#005496] focus:ring-[#005496] cursor-pointer disabled:opacity-30"
+              aria-label="Chọn dòng"
+            />
+          );
+        },
+        size: 36,
+        enableSorting: false,
+      },
+      {
+        accessorKey: "name",
+        header: "Người dùng",
+        cell: ({ row }) => {
+          const u = row.original;
+          const isSelf = Boolean(
+            currentUserEmail &&
+            u.email.toLowerCase() === currentUserEmail.toLowerCase()
+          );
+
+          return (
+            <div className="flex items-center gap-3 min-w-[200px]">
+              {u.avatar ? (
+                <img
+                  src={u.avatar}
+                  alt={u.name}
+                  className="size-9 rounded-full object-cover border border-slate-200"
+                />
+              ) : (
+                <div className="size-9 rounded-full bg-blue-50 text-[#005496] font-bold text-xs flex items-center justify-center shrink-0">
+                  {u.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-semibold text-slate-900 truncate">
+                    {u.name}
+                  </span>
+                  {isSelf && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#005496]/10 text-[#005496]">
+                      Bạn
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] text-slate-500 truncate block">
+                  {u.email}
+                </span>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "role",
+        header: "Vai trò",
+        cell: ({ row }) => {
+          const role = row.getValue("role") as string;
+          if (role === "ADMIN") {
+            return (
+              <span className="inline-flex items-center gap-1.5 text-xs text-blue-700 font-medium">
+                <span className="size-2 rounded-full bg-blue-500" />
+                Quản trị viên
+              </span>
+            );
+          }
+          return (
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+              <span className="size-2 rounded-full bg-slate-400" />
+              Thành viên
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "provider",
+        header: "Đăng nhập qua",
+        cell: ({ row }) => {
+          const provider = (row.getValue("provider") as string) || "email";
+          let label = "Email";
+          if (provider.toLowerCase().includes("google")) label = "Google";
+          if (provider.toLowerCase().includes("password")) label = "Mật khẩu";
+          return <span className="text-slate-600 font-medium">{label}</span>;
+        },
+      },
+      {
+        id: "affiliation",
+        header: "Đơn vị công tác",
+        cell: ({ row }) => {
+          const profile = row.original.profileData || {};
+          const aff = profile.affiliation || "-";
+          return (
+            <span className="text-slate-500 truncate block max-w-xs font-medium">
+              {String(aff)}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Ngày tham gia",
+        cell: ({ row }) => {
+          const val = row.getValue("createdAt") as string;
+          if (!val) return <span className="text-slate-400">-</span>;
+          const date = new Date(val);
+          return (
+            <span className="text-slate-500 font-medium">
+              {date.toLocaleDateString("vi-VN")}
+            </span>
+          );
+        },
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => {
+          const u = row.original;
+          const isSelf = Boolean(
+            currentUserEmail &&
+            u.email.toLowerCase() === currentUserEmail.toLowerCase()
+          );
+
+          return (
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => setEditingUser(u)}
+                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
+                title="Chỉnh sửa thông tin"
+              >
+                <Edit2 className="size-4" />
+              </button>
+
+              {!isSelf && (
+                <button
+                  type="button"
+                  onClick={() => setDeletingUser(u)}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
+                  title="Xóa tài khoản"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              )}
+            </div>
+          );
+        },
+        enableSorting: false,
+        size: 80,
+      },
+    ],
+    [currentUserEmail]
+  );
 
   return (
-    <div className="space-y-6">
-      <ManagementPageHeader
-        imageIcon="/assets/3d-icons/users__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-users-bg.jpg"
-        title="User & Role Management"
-        description="Manage ADMIN and USER accounts directly in PostgreSQL. No .env credentials required — configure roles, passwords, avatars, and unstructured JSON profileData."
-      >
-        <Button
-          type="button"
-          variant="ute"
-          size="sm"
-          onClick={() => setCreateOpen(true)}
-        >
-          <Plus className="size-4" />
-          Add User / Admin
-        </Button>
-      </ManagementPageHeader>
-
-      <StatusAlertBanner
-        variant="error"
-        message={errorMsg}
-        onDismiss={() => setErrorMsg("")}
-      />
-
-      <StatusAlertBanner
-        variant="success"
-        message={successMsg}
-        onDismiss={() => setSuccessMsg("")}
-      />
-
-      <Card className="p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            {(["ALL", "ADMIN", "USER"] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRoleFilter(r)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                  roleFilter === r
-                    ? "bg-[#005496] text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {r === "ALL" ? `All (${users.length})` : r}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative w-64">
-            <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, email, JSON..."
-              className="h-9 pl-8 text-xs"
-            />
-          </div>
+    <div className="space-y-4 font-sans">
+      {/* ── Page Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <Users className="size-6 text-[#005496]" />
+            Người dùng &amp; Phân quyền
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Quản lý tài khoản thành viên và phân quyền quản trị hệ thống.
+          </p>
         </div>
 
-        {loading ? (
-          <div className="py-14 flex flex-col items-center justify-center text-slate-400 gap-2">
-            <Loader2 className="size-6 animate-spin text-[#005496]" />
-            <span className="text-xs">Loading PostgreSQL users...</span>
-          </div>
-        ) : (
-          <UserTable
-            users={filteredUsers}
-            currentUserEmail={currentUserEmail}
-            onToggleRole={handleQuickRoleToggle}
-            onEditUser={setEditingUser}
-            onDeleteUser={handleDeleteUser}
-          />
-        )}
-      </Card>
+        <div className="flex items-center gap-2.5 shrink-0">
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => setCreateOpen(true)}
+            className="h-9 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white shadow-xs"
+          >
+            <Plus className="size-4 mr-1.5" />
+            Thêm người dùng
+          </Button>
+        </div>
+      </div>
 
+      {/* Alert Banner */}
+      {alert && (
+        <StatusAlertBanner
+          variant={alert.type}
+          message={alert.text}
+          onDismiss={() => setAlert(null)}
+        />
+      )}
+
+      {/* ── Advanced Table ── */}
+      <DataTable
+        columns={columns}
+        data={users}
+        loading={loading}
+        searchPlaceholder="Tìm theo tên, email, cơ quan..."
+        filterColumns={[
+          {
+            id: "role",
+            title: "Vai trò",
+            options: [
+              { label: "Quản trị viên", value: "ADMIN" },
+              { label: "Thành viên", value: "USER" },
+            ],
+          },
+        ]}
+        batchActions={(selected, clear) => (
+          <div className="flex items-center gap-1.5 ml-2">
+            <button
+              type="button"
+              onClick={() => handleBatchDelete(selected, clear)}
+              className="px-2.5 py-1 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded cursor-pointer"
+            >
+              Xóa đã chọn
+            </button>
+          </div>
+        )}
+      />
+
+      {/* ── Dialogs ── */}
       <CreateUserModal
         open={createOpen}
         creating={creating}
@@ -262,6 +449,13 @@ export default function AdminUsersPage() {
         saving={savingEdit}
         onClose={() => setEditingUser(null)}
         onSave={handleSaveEdit}
+      />
+
+      <UserDeleteDialog
+        open={Boolean(deletingUser)}
+        onOpenChange={(open) => !open && setDeletingUser(null)}
+        user={deletingUser}
+        onConfirm={handleDeleteConfirm}
       />
     </div>
   );

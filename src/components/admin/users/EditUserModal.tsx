@@ -1,13 +1,28 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, Code2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { ImageUploadField } from "@/components/media/ImageUploadField";
-import type { AdminUserRecord } from "./UserTable";
+import { Loader2 } from "lucide-react";
+
+export interface AdminUserRecord {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string | null;
+  role: "ADMIN" | "USER";
+  provider?: string;
+  hasPassword?: boolean;
+  profileData?: Record<string, unknown>;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 interface EditUserModalProps {
   user: AdminUserRecord | null;
@@ -33,8 +48,9 @@ export function EditUserModal({
   const [role, setRole] = useState<"ADMIN" | "USER">("USER");
   const [avatar, setAvatar] = useState("");
   const [password, setPassword] = useState("");
-  const [jsonText, setJsonText] = useState("{}");
-  const [syntaxError, setSyntaxError] = useState("");
+  const [affiliation, setAffiliation] = useState("");
+  const [country, setCountry] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -42,8 +58,10 @@ export function EditUserModal({
       setRole(user.role);
       setAvatar(user.avatar || "");
       setPassword("");
-      setJsonText(JSON.stringify(user.profileData || {}, null, 2));
-      setSyntaxError("");
+      const profile = user.profileData || {};
+      setAffiliation(String(profile.affiliation || ""));
+      setCountry(String(profile.country || ""));
+      setError("");
     }
   }, [user]);
 
@@ -51,108 +69,140 @@ export function EditUserModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSyntaxError("");
+    if (!name.trim()) {
+      setError("Họ và tên không được để trống");
+      return;
+    }
+
+    setError("");
     try {
-      const parsed = JSON.parse(jsonText || "{}");
       await onSave({
         id: user.id,
-        name,
+        name: name.trim(),
         role,
-        avatar: avatar || null,
+        avatar: avatar.trim() || null,
         ...(password.trim() ? { password: password.trim() } : {}),
-        profileData: parsed,
+        profileData: {
+          ...(user.profileData || {}),
+          affiliation: affiliation.trim(),
+          country: country.trim(),
+        },
       });
-    } catch {
-      setSyntaxError("Invalid JSON syntax in profileData editor.");
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Cập nhật không thành công");
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
-      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-          <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Manage User & Unstructured JSON Profile
-            </h3>
-            <p className="text-xs text-slate-500">{user.email}</p>
+    <Dialog open={Boolean(user)} onOpenChange={onClose}>
+      <DialogContent className="max-w-md font-sans p-6">
+        <DialogHeader className="pb-3 border-b border-slate-100">
+          <DialogTitle className="text-base font-bold text-slate-900">
+            Chỉnh sửa thông tin người dùng
+          </DialogTitle>
+          <p className="text-xs text-slate-500">{user.email}</p>
+        </DialogHeader>
+
+        {error && (
+          <div className="p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded-lg">
+            {error}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 cursor-pointer"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+        )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex-1 overflow-y-auto p-6 space-y-4"
-        >
-          <ImageUploadField
-            label="User Avatar"
-            value={avatar}
-            onChange={setAvatar}
-            folder="public/avatars"
-            accept="image/*"
-          />
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1 text-xs">
+          {/* Họ và tên */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">
+              Họ và tên <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              required
+            />
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Vai trò */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-slate-700">Vai trò tài khoản</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as "ADMIN" | "USER")}
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white cursor-pointer font-medium"
+            >
+              <option value="USER">Thành viên thông thường</option>
+              <option value="ADMIN">Quản trị viên (Toàn quyền)</option>
+            </select>
+          </div>
+
+          {/* Đơn vị công tác & Quốc gia */}
+          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>Full Name</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <label className="font-semibold text-slate-700">Đơn vị công tác</label>
+              <input
+                type="text"
+                value={affiliation}
+                onChange={(e) => setAffiliation(e.target.value)}
+                placeholder="VD: Trường ĐH Sư Phạm Kỹ Thuật"
+                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
+              />
             </div>
             <div className="space-y-1.5">
-              <Label>System Role</Label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value as "ADMIN" | "USER")}
-                className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
-              >
-                <option value="USER">USER</option>
-                <option value="ADMIN">ADMIN</option>
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Set / Reset Password</Label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="New password..."
+              <label className="font-semibold text-slate-700">Quốc gia</label>
+              <input
+                type="text"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="VD: Vietnam"
+                className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
               />
             </div>
           </div>
 
+          {/* Đổi mật khẩu mới */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1.5">
-              <Code2 className="size-3.5 text-[#005496]" />
-              Unstructured JSON `User.profileData`
-            </Label>
-            <Textarea
-              rows={8}
-              value={jsonText}
-              onChange={(e) => setJsonText(e.target.value)}
-              className="font-mono text-xs bg-slate-900 text-emerald-400"
+            <label className="font-semibold text-slate-700">Đổi mật khẩu mới</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Để trống nếu không thay đổi..."
+              className="w-full h-9 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] bg-slate-50 focus:bg-white"
             />
           </div>
 
-          {syntaxError && (
-            <p className="text-xs font-semibold text-red-600">{syntaxError}</p>
-          )}
-
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+          <DialogFooter className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onClose}
+              disabled={saving}
+              className="h-8.5 px-3.5 text-xs"
+            >
+              Hủy
             </Button>
-            <Button type="submit" variant="ute" disabled={saving}>
-              {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-              Save Changes to DB
+            <Button
+              type="submit"
+              size="sm"
+              disabled={saving}
+              className="h-8.5 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="size-3.5 mr-1.5 animate-spin" />
+                  Đang lưu...
+                </>
+              ) : (
+                "Lưu thay đổi"
+              )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
