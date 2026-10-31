@@ -296,43 +296,70 @@ export default function PostsManagementPage() {
         enableSorting: false,
       },
       {
+        accessorKey: "coverImage",
+        header: "Cover",
+        enableSorting: false,
+        size: 130,
+        cell: ({ row }) => {
+          const item = row.original;
+          return (
+            <div className="flex items-center justify-center py-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePost(item);
+                  setPreviewOpen(true);
+                }}
+                className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 hover:border-[#115eff]/50 shadow-2xs hover:shadow-md transition-all duration-200 shrink-0 cursor-pointer block"
+                title="Click to preview post"
+              >
+                {item.coverImage ? (
+                  <Image
+                    src={item.coverImage}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
+                    <ImageIcon className="size-5" />
+                    <span className="text-[10px] font-medium text-slate-400">No cover</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 flex items-center justify-center transition-colors">
+                  <Eye className="size-4 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-sm" />
+                </div>
+              </button>
+            </div>
+          );
+        },
+      },
+      {
         accessorKey: "title",
         header: "Post",
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="flex items-center gap-3 min-w-[280px]">
-              {/* Thumbnail preview */}
-              <div className="relative size-11 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                {item.coverImage ? (
-                  <Image
-                    src={item.coverImage}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="size-full flex items-center justify-center text-slate-300">
-                    <ImageIcon className="size-4" />
-                  </div>
-                )}
-              </div>
-
-              {/* Title & Slug */}
-              <div className="min-w-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActivePost(item);
-                    setPreviewOpen(true);
-                  }}
-                  className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left truncate block max-w-md transition-colors cursor-pointer"
-                  title="Click to preview post"
-                >
-                  {item.title}
-                </button>
-                <span className="text-xs text-slate-400 font-medium truncate block max-w-xs">
+            <div className="min-w-[240px] max-w-md py-1 space-y-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePost(item);
+                  setPreviewOpen(true);
+                }}
+                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left line-clamp-2 transition-colors cursor-pointer block leading-snug"
+                title="Click to preview post"
+              >
+                {item.title}
+              </button>
+              {item.summary && (
+                <p className="text-xs text-slate-500 line-clamp-1 leading-normal">
+                  {item.summary}
+                </p>
+              )}
+              <div className="flex items-center gap-2 pt-0.5">
+                <span className="text-[11px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 truncate max-w-[200px]">
                   /{item.slug}
                 </span>
               </div>
