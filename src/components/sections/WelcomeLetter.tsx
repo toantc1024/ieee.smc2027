@@ -109,7 +109,7 @@ export function WelcomeLetter({
                 Sincerely and warmly yours,
               </p>
 
-              {/* Honorary Chairs Grid - Center Aligned */}
+              {/* General Chairs Grid - Center Aligned */}
               <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl sm:max-w-3xl mx-auto gap-6 sm:gap-8 pt-6 sm:pt-8">
                 {CHAIR_MEMBERS.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">

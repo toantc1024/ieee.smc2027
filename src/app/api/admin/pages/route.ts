@@ -20,7 +20,7 @@ const DEFAULT_HOME_BLOCKS = [
     props: {
       title: "Welcome Message from the General Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
-      theme: "Human-Centric Intelligence: Shaping the Digital Future",
+      theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
       datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
     },
     hidden: false,

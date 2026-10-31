@@ -105,7 +105,7 @@ const AVAILABLE_BLOCKS = [
       heading: "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       title: "Welcome Message from the General Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
-      theme: "Human-Centric Intelligence: Shaping the Digital Future",
+      theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
     },
   },
   {

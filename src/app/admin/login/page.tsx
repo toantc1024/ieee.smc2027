@@ -28,7 +28,7 @@ const SLIDES = [
   {
     image: "/login/posters/1-sang-tao.jpg",
     title: "INNOVATE",
-    subtitle: "Human-Centric Intelligence & Systems",
+    subtitle: "Human-AI Symbiosis & Systems",
   },
   {
     image: "/login/posters/hcmc-nguyen-hue.jpg",

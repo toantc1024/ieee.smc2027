@@ -342,7 +342,7 @@ export async function GET(request: NextRequest) {
                 letterSpacing: "-0.01em",
               }}
             >
-              Human-Centric Intelligence
+              Human-AI Symbiosis
             </div>
             <div
               style={{
@@ -351,7 +351,7 @@ export async function GET(request: NextRequest) {
                 lineHeight: 1.4,
               }}
             >
-              Shaping the Digital Future in Ho Chi Minh City
+              Engineering Intelligent, Autonomous, and Sustainable Futures
             </div>
             <div
               style={{

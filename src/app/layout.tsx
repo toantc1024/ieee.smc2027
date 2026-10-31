@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "IEEE SMC 2027 | Ho Chi Minh City, Vietnam • October 6–10, 2027",
     description:
-      "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-Centric Intelligence.",
+      "Flagship global conference on systems science, human–machine systems, and cybernetics. October 6–10, 2027 in Ho Chi Minh City, Vietnam, hosted by HCM-UTE. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.",
     creator: "@IEEESMC",
     images: ["/api/og"],
   },
