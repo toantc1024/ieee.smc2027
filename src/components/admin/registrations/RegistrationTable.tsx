@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { formatVND, formatUSD } from "@/lib/conference-registration";
 import type { UnstructuredRegistrationFormData } from "@/types";
 
@@ -77,9 +79,28 @@ export function RegistrationTable({
       </div>
 
       {loading ? (
-        <div className="py-14 flex flex-col items-center justify-center text-slate-400 gap-2">
-          <Loader2 className="size-6 animate-spin text-[#115eff]" />
-          <span className="text-xs">Loading delegate registrations...</span>
+        <div className="space-y-3 py-2">
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <div
+              key={`skeleton-reg-${idx}`}
+              className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 bg-slate-50/50"
+            >
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-9 rounded-full" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-36 rounded" />
+                  <Skeleton className="h-3 w-48 rounded" />
+                </div>
+              </div>
+              <Skeleton className="h-5 w-24 rounded-full" />
+              <Skeleton className="h-5 w-20 rounded" />
+              <Skeleton className="h-5 w-28 rounded-full" />
+              <div className="flex items-center gap-1.5">
+                <Skeleton className="h-7 w-16 rounded-md" />
+                <Skeleton className="h-7 w-16 rounded-md" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : registrations.length === 0 ? (
         <div className="py-14 text-center text-xs text-slate-400">
@@ -118,7 +139,7 @@ export function RegistrationTable({
                             className="size-9 rounded-full object-cover border border-slate-200"
                           />
                         ) : (
-                          <div className="size-9 rounded-full bg-blue-50 text-[#115eff] font-bold flex items-center justify-center">
+                          <div className="size-9 rounded-full bg-[#115eff] text-white font-bold flex items-center justify-center text-xs">
                             {reg.fullName.charAt(0)}
                           </div>
                         )}
@@ -127,7 +148,7 @@ export function RegistrationTable({
                             <span className="font-bold text-slate-900">
                               {reg.fullName}
                             </span>
-                            <span className="text-[10px] font-bold text-[#115eff] bg-blue-50 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-[#004776] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
                               {reg.registrationCode}
                             </span>
                           </div>

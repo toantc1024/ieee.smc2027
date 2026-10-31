@@ -508,13 +508,10 @@ export default function AdminOAuthPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] active:bg-[#083eb8] text-white font-bold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg shadow-[#115eff]/25 inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 w-full sm:w-auto"
+                className="px-6 py-2 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs transition-colors shadow-none inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 w-full sm:w-auto"
               >
                 {saving ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Saving...</span>
-                  </>
+                  <span>Saving...</span>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />

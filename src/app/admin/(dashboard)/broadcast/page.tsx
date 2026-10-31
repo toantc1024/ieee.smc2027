@@ -11,6 +11,8 @@ import {
   type MilestoneTemplateItem,
 } from "@/components/admin/broadcast/MilestoneTemplateSelector";
 import { MilestoneTemplateEditor } from "@/components/admin/broadcast/MilestoneTemplateEditor";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function AdminBroadcastPage() {
   const [templates, setTemplates] = useState<MilestoneTemplateItem[]>([]);
@@ -176,12 +178,8 @@ export default function AdminBroadcastPage() {
           disabled={savingTemplate || !selectedSlug}
           onClick={handleSaveTemplate}
         >
-          {savingTemplate ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Save className="size-4" />
-          )}
-          Save Template to DB
+          <Save className="size-4" />
+          <span>{savingTemplate ? "Saving..." : "Save Template to DB"}</span>
         </Button>
       </ManagementPageHeader>
 
@@ -194,10 +192,17 @@ export default function AdminBroadcastPage() {
       )}
 
       {loadingTemplates ? (
-        <Card className="p-16 items-center justify-center text-slate-400">
-          <Loader2 className="size-7 animate-spin text-[#115eff]" />
-          <span className="text-xs">Loading milestone email templates...</span>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-4 space-y-3">
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-44 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+          </div>
+          <div className="lg:col-span-8 space-y-3">
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-96 w-full rounded-xl" />
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-4">

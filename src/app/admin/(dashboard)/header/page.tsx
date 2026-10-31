@@ -28,6 +28,9 @@ import {
   AlertCircle,
   ImageIcon,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
+
 import {
   DEFAULT_HEADER_DATA,
   type HeaderConfig,
@@ -895,9 +898,18 @@ export default function HeaderEditorPage() {
 
   if (loading) {
     return (
-      <div className="py-24 flex flex-col items-center justify-center text-slate-500 gap-3">
-        <RefreshCw className="size-6 animate-spin text-[#115eff]" />
-        <span className="text-sm font-medium">Loading Header configuration...</span>
+      <div className="space-y-6 pb-16 font-sans">
+        <Skeleton className="h-28 w-full rounded-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-4 space-y-3">
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl" />
+          </div>
+          <div className="lg:col-span-8 space-y-3">
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-96 w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -905,54 +917,43 @@ export default function HeaderEditorPage() {
   return (
     <div className="space-y-6 pb-16 font-sans">
       {/* ── Page Header & Save Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#115eff] text-[11px] font-bold uppercase tracking-wider mb-1.5">
-            <PanelTop className="size-3.5" />
-            <span>HCMUTE Full-Width Mega Navigation Editor</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Header &amp; Navigation Manager
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Configure navigation items, full-width columns, promo cards, topbar details, and call-to-action buttons.
-          </p>
-        </div>
+      <ManagementPageHeader
+        title="Header & Navigation"
+        description="Configure navigation items, multi-level dropdowns, and topbar contact links"
+        actions={
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
+            >
+              <Eye className="size-3.5 text-slate-300" />
+              <span>Live Site</span>
+            </Link>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <Link
-            href="/"
-            target="_blank"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-          >
-            <Eye className="size-3.5 text-slate-500" />
-            <span>View Live Site</span>
-          </Link>
-
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50"
-          >
-            {saving ? (
-              <>
-                <Loader2 className="size-4 animate-spin" />
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs rounded-lg shadow-none transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {saving ? (
                 <span>Saving...</span>
-              </>
-            ) : savedSuccess ? (
-              <>
-                <Check className="size-4 text-emerald-300" />
-                <span>Saved!</span>
-              </>
-            ) : (
-              <>
-                <Save className="size-4" />
-                <span>Save Changes</span>
-              </>
-            )}
-          </button>
-        </div>
+              ) : savedSuccess ? (
+                <>
+                  <Check className="size-3.5 text-emerald-300" />
+                  <span>Saved!</span>
+                </>
+              ) : (
+                <>
+                  <Save className="size-3.5" />
+                  <span>Save Changes</span>
+                </>
+              )}
+            </button>
+          </div>
+        }
+      />
       </div>
 
       {/* ── Interactive Live Preview Box with Full-Width Mega Dropdown ── */}

@@ -17,6 +17,8 @@ import { GridPattern } from "@/components/ui/grid-pattern";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 /* ── Poster Slideshow: Ho Chi Minh City Landmarks & HCMUTE ── */
 const SLIDES = [
@@ -603,8 +605,19 @@ export default function AdminLoginPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-          <div className="size-7 rounded-full border-2 border-[#115eff] border-t-transparent animate-spin" />
+        <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-4 font-sans">
+          <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+            <div className="flex flex-col items-center gap-2">
+              <Skeleton className="size-12 rounded-xl" />
+              <Skeleton className="h-6 w-44 rounded-md" />
+              <Skeleton className="h-4 w-60 rounded-md" />
+            </div>
+            <div className="space-y-4 pt-2">
+              <Skeleton className="h-10 w-full rounded-lg" />
+              <Skeleton className="h-10 w-full rounded-lg" />
+              <Skeleton className="h-10 w-full rounded-lg" />
+            </div>
+          </div>
         </div>
       }
     >

@@ -129,12 +129,8 @@ export default function AdminMediaLibraryPage() {
           disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
         >
-          {uploading ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Upload className="size-4" />
-          )}
-          {uploading ? "Uploading..." : "Upload Files"}
+          <Upload className="size-4" />
+          <span>{uploading ? "Uploading..." : "Upload Files"}</span>
         </Button>
       </ManagementPageHeader>
 

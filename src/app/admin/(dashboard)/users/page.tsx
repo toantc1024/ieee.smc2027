@@ -28,7 +28,9 @@ import {
 } from "@/components/admin/users/EditUserModal";
 import { UserDeleteDialog } from "@/components/admin/users/UserDeleteDialog";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
+
 
 function GoogleIcon({ className = "size-3.5" }: { className?: string }) {
   return (
@@ -534,29 +536,21 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-4 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Users className="size-6 text-[#115eff]" />
-            Users &amp; Roles
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage user accounts, credentials, and access roles.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2.5 shrink-0">
+      <ManagementPageHeader
+        title="Users & Access Roles"
+        description="Manage administrative users, delegates, credentials, and access roles"
+        actions={
           <Button
             type="button"
             size="sm"
             onClick={() => setCreateOpen(true)}
-            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-xs"
+            className="h-8 px-3.5 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none"
           >
             <Plus className="size-4 mr-1.5" />
             Add User
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Alert Banner */}
       {alert && (

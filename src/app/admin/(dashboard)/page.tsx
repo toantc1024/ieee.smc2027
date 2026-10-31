@@ -96,7 +96,7 @@ export default async function AdminDashboardPage() {
               Inspect JSON formData →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
+          <div className="size-10 rounded-xl bg-slate-100 text-[#004776] border border-slate-200 flex items-center justify-center">
             <CreditCard className="size-5" />
           </div>
         </Card>
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
               Checked-in: {checkedInRegs}
             </span>
           </div>
-          <div className="size-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <div className="size-10 rounded-xl bg-slate-100 text-emerald-700 border border-slate-200 flex items-center justify-center">
             <QrCode className="size-5" />
           </div>
         </Card>
@@ -129,7 +129,7 @@ export default async function AdminDashboardPage() {
               Manage ADMIN / USER roles →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
+          <div className="size-10 rounded-xl bg-slate-100 text-[#004776] border border-slate-200 flex items-center justify-center">
             <Users className="size-5" />
           </div>
         </Card>
@@ -147,7 +147,7 @@ export default async function AdminDashboardPage() {
               Open Media Manager →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
+          <div className="size-10 rounded-xl bg-slate-100 text-[#004776] border border-slate-200 flex items-center justify-center">
             <FolderOpen className="size-5" />
           </div>
         </Card>
