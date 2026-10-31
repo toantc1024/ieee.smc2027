@@ -16,6 +16,7 @@ import {
   Search,
   ChevronRight,
 } from "lucide-react";
+import { Toaster } from "sonner";
 import type { SessionUser } from "@/lib/auth";
 
 interface SimpleAdminLayoutProps {
@@ -337,6 +338,8 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           {children}
         </main>
       </div>
+
+      <Toaster position="top-right" richColors />
     </div>
   );
 }

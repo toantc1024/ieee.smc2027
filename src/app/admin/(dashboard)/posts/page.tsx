@@ -5,7 +5,6 @@ import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   Plus,
-  RefreshCw,
   Eye,
   Edit2,
   Trash2,
@@ -14,6 +13,7 @@ import {
   ChevronDown,
   Check,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,7 +29,6 @@ import {
 } from "@/components/admin/posts/PostFormDialog";
 import { PostPreviewDialog } from "@/components/admin/posts/PostPreviewDialog";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
-import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 import { cn } from "@/lib/utils";
 
 interface PostItem {
@@ -58,14 +57,49 @@ export const POST_CATEGORIES = [
   "General News",
 ];
 
+function PostCoverThumbnail({
+  src,
+  alt,
+  onClick,
+}: {
+  src?: string | null;
+  alt: string;
+  onClick: () => void;
+}) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block"
+      title="Click to preview post"
+    >
+      {src && !imgError ? (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          unoptimized
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
+          <ImageIcon className="size-5" />
+          <span className="text-[10px] font-medium text-slate-400">No cover</span>
+        </div>
+      )}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-colors">
+        <Eye className="size-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+      </div>
+    </button>
+  );
+}
+
 export default function PostsManagementPage() {
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [alert, setAlert] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
 
   // Dialog states
   const [formOpen, setFormOpen] = useState(false);
@@ -82,7 +116,7 @@ export default function PostsManagementPage() {
         setPosts(data.posts);
       }
     } catch {
-      setAlert({ type: "error", text: "Failed to load posts list" });
+      toast.error("Failed to load posts list");
     } finally {
       setLoading(false);
     }
@@ -91,33 +125,6 @@ export default function PostsManagementPage() {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
-
-  // Re-seed default posts handler
-  const handleSeedDefaultPosts = async () => {
-    setActionLoading(true);
-    setAlert(null);
-    try {
-      const res = await fetch("/api/admin/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "seed" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to load sample posts");
-      setAlert({
-        type: "success",
-        text: "Official conference sample posts synchronized successfully!",
-      });
-      await fetchPosts();
-    } catch (err: unknown) {
-      setAlert({
-        type: "error",
-        text: err instanceof Error ? err.message : "Operation failed",
-      });
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
   // Save post (Create or Edit)
   const handleSavePost = async (formData: PostFormData) => {
@@ -136,10 +143,7 @@ export default function PostsManagementPage() {
       throw new Error(data.error || "Failed to save post");
     }
 
-    setAlert({
-      type: "success",
-      text: isEdit ? "Post updated successfully!" : "Post created successfully!",
-    });
+    toast.success(isEdit ? "Post updated successfully" : "Post created successfully");
     await fetchPosts();
   };
 
@@ -153,7 +157,7 @@ export default function PostsManagementPage() {
       throw new Error(data.error || "Failed to delete post");
     }
 
-    setAlert({ type: "success", text: "Post deleted successfully!" });
+    toast.success("Post deleted successfully");
     await fetchPosts();
   };
 
@@ -167,10 +171,10 @@ export default function PostsManagementPage() {
         )
       );
       clearSelection();
-      setAlert({ type: "success", text: `Deleted ${selected.length} post(s) successfully!` });
+      toast.success(`Deleted ${selected.length} post(s) successfully`);
       await fetchPosts();
     } catch {
-      setAlert({ type: "error", text: "Error deleting posts in batch" });
+      toast.error("Error deleting posts in batch");
     }
   };
 
@@ -190,13 +194,12 @@ export default function PostsManagementPage() {
         )
       );
       clearSelection();
-      setAlert({
-        type: "success",
-        text: `Updated status for ${selected.length} post(s) successfully!`,
-      });
+      toast.success(
+        `Updated status to ${status === "PUBLISHED" ? "Published" : "Draft"} for ${selected.length} post(s)`
+      );
       await fetchPosts();
     } catch {
-      setAlert({ type: "error", text: "Error updating status in batch" });
+      toast.error("Error updating status in batch");
     }
   };
 
@@ -215,22 +218,18 @@ export default function PostsManagementPage() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update status");
-        setAlert({
-          type: "success",
-          text: `Status changed to ${
+        toast.success(
+          `Status changed to ${
             newStatus === "PUBLISHED"
               ? "Published"
               : newStatus === "DRAFT"
               ? "Draft"
               : "Archived"
-          } successfully!`,
-        });
+          }`
+        );
       } catch (err: unknown) {
         await fetchPosts();
-        setAlert({
-          type: "error",
-          text: err instanceof Error ? err.message : "Failed to update status",
-        });
+        toast.error(err instanceof Error ? err.message : "Failed to update status");
       }
     },
     [fetchPosts]
@@ -251,23 +250,17 @@ export default function PostsManagementPage() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update category");
-        setAlert({
-          type: "success",
-          text: `Category changed to "${newCategory}" successfully!`,
-        });
+        toast.success(`Category updated to ${newCategory}`);
       } catch (err: unknown) {
         await fetchPosts();
-        setAlert({
-          type: "error",
-          text: err instanceof Error ? err.message : "Failed to update category",
-        });
+        toast.error(err instanceof Error ? err.message : "Failed to update category");
       }
     },
     [fetchPosts]
   );
 
-  // Column definitions using @tanstack/react-table
-  const columns = useMemo<ColumnDef<PostItem, any>[]>(
+  // Table columns definition
+  const columns: ColumnDef<PostItem>[] = useMemo(
     () => [
       {
         id: "select",
@@ -304,33 +297,14 @@ export default function PostsManagementPage() {
           const item = row.original;
           return (
             <div className="flex items-center justify-center py-1">
-              <button
-                type="button"
+              <PostCoverThumbnail
+                src={item.coverImage}
+                alt={item.title}
                 onClick={() => {
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 hover:border-[#115eff]/50 shadow-2xs hover:shadow-md transition-all duration-200 shrink-0 cursor-pointer block"
-                title="Click to preview post"
-              >
-                {item.coverImage ? (
-                  <Image
-                    src={item.coverImage}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
-                    <ImageIcon className="size-5" />
-                    <span className="text-[10px] font-medium text-slate-400">No cover</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 flex items-center justify-center transition-colors">
-                  <Eye className="size-4 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-sm" />
-                </div>
-              </button>
+              />
             </div>
           );
         },
@@ -349,17 +323,23 @@ export default function PostsManagementPage() {
                   setPreviewOpen(true);
                 }}
                 className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left line-clamp-2 transition-colors cursor-pointer block leading-snug"
-                title="Click to preview post"
+                title={item.title}
               >
                 {item.title}
               </button>
               {item.summary && (
-                <p className="text-xs text-slate-500 line-clamp-1 leading-normal">
+                <p
+                  className="text-xs text-slate-500 truncate leading-normal"
+                  title={item.summary}
+                >
                   {item.summary}
                 </p>
               )}
               <div className="flex items-center gap-2 pt-0.5">
-                <span className="text-[11px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 truncate max-w-[200px]">
+                <span
+                  className="text-[11px] font-mono text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 truncate max-w-[220px]"
+                  title={`/${item.slug}`}
+                >
                   /{item.slug}
                 </span>
               </div>
@@ -379,21 +359,21 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50/80 hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#115eff] transition-colors cursor-pointer group shadow-2xs"
-                    title="Click to quick-change category"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    title={cat}
                   >
                     <span className="truncate max-w-[130px]">{cat}</span>
-                    <ChevronDown className="size-3 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-2xl shadow-xl border border-slate-200">
+                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white">
                   {POST_CATEGORIES.map((categoryOption) => (
                     <DropdownMenuItem
                       key={categoryOption}
                       onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
-                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                     >
-                      <span className="truncate">{categoryOption}</span>
+                      <span className="truncate" title={categoryOption}>{categoryOption}</span>
                       {cat === categoryOption && (
                         <Check className="size-3.5 text-[#115eff] shrink-0 ml-2" />
                       )}
@@ -417,24 +397,15 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className={cn(
-                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer group shadow-2xs focus:outline-none focus:ring-1 focus:ring-[#115eff]",
-                      status === "PUBLISHED"
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100/70"
-                        : status === "DRAFT"
-                        ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100/70"
-                        : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200/70"
-                    )}
-                    title="Click to quick-change status"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    title={status}
                   >
                     <span className="flex items-center gap-1.5">
                       <span
                         className={cn(
                           "size-1.5 rounded-full",
                           status === "PUBLISHED"
-                            ? "bg-emerald-500"
-                            : status === "DRAFT"
-                            ? "bg-amber-500"
+                            ? "bg-[#115eff]"
                             : "bg-slate-400"
                         )}
                       />
@@ -446,44 +417,44 @@ export default function PostsManagementPage() {
                           : "Archived"}
                       </span>
                     </span>
-                    <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-2xl shadow-xl border border-slate-200">
+                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-xl border border-slate-200 bg-white">
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
-                    <span className="flex items-center gap-2 text-emerald-700 font-semibold">
-                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                    <span className="flex items-center gap-2 font-medium">
+                      <span className="size-1.5 rounded-full bg-[#115eff]" />
                       Published
                     </span>
                     {status === "PUBLISHED" && (
-                      <Check className="size-3.5 text-emerald-700" />
+                      <Check className="size-3.5 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
-                    <span className="flex items-center gap-2 text-amber-700 font-semibold">
-                      <span className="size-1.5 rounded-full bg-amber-500" />
+                    <span className="flex items-center gap-2 font-medium">
+                      <span className="size-1.5 rounded-full bg-slate-400" />
                       Draft
                     </span>
                     {status === "DRAFT" && (
-                      <Check className="size-3.5 text-amber-700" />
+                      <Check className="size-3.5 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
-                    <span className="flex items-center gap-2 text-slate-600 font-medium">
-                      <span className="size-1.5 rounded-full bg-slate-400" />
+                    <span className="flex items-center gap-2 font-medium">
+                      <span className="size-1.5 rounded-full bg-slate-300" />
                       Archived
                     </span>
                     {status === "ARCHIVED" && (
-                      <Check className="size-3.5 text-slate-600" />
+                      <Check className="size-3.5 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -498,7 +469,10 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const val = Number(row.getValue("views") || 0);
           return (
-            <div className="text-center font-medium text-slate-600 text-sm">
+            <div
+              className="text-center font-medium text-slate-600 text-sm truncate"
+              title={`${val.toLocaleString("en-US")} views`}
+            >
               {val.toLocaleString("en-US")}
             </div>
           );
@@ -510,7 +484,10 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const date = new Date(row.getValue("createdAt"));
           return (
-            <div className="text-center text-xs text-slate-500 font-medium">
+            <div
+              className="text-center text-xs text-slate-500 font-medium truncate"
+              title={date.toLocaleString("en-US")}
+            >
               {date.toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
@@ -533,7 +510,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Preview post"
               >
                 <Eye className="size-4" />
@@ -544,7 +521,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setFormOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Edit post"
               >
                 <Edit2 className="size-4" />
@@ -555,7 +532,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Delete post"
               >
                 <Trash2 className="size-4" />
@@ -579,26 +556,9 @@ export default function PostsManagementPage() {
             <FileText className="size-6 text-[#115eff]" />
             Posts &amp; News
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage conference announcements, call for papers, and news articles.
-          </p>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleSeedDefaultPosts}
-            disabled={actionLoading}
-            className="h-9 px-3.5 text-xs text-slate-600 border-slate-200"
-          >
-            <RefreshCw
-              className={cn("size-3.5 mr-1.5", actionLoading && "animate-spin")}
-            />
-            Seed Sample
-          </Button>
-
           <Button
             type="button"
             size="sm"
@@ -606,22 +566,13 @@ export default function PostsManagementPage() {
               setActivePost(null);
               setFormOpen(true);
             }}
-            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-xs"
+            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent"
           >
             <Plus className="size-4 mr-1.5" />
             New Post
           </Button>
         </div>
       </div>
-
-      {/* Alert banner */}
-      {alert && (
-        <StatusAlertBanner
-          variant={alert.type}
-          message={alert.text}
-          onDismiss={() => setAlert(null)}
-        />
-      )}
 
       {/* ── Advanced Table ── */}
       <DataTable
@@ -646,29 +597,30 @@ export default function PostsManagementPage() {
           },
         ]}
         batchActions={(selected, clear) => (
-          <div className="flex items-center gap-1.5 ml-2">
+          <div className="flex items-center gap-2 ml-2">
             <Button
               type="button"
               size="sm"
               onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-              className="h-7 px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-none"
+              className="h-7 px-3 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent"
             >
               Publish
             </Button>
             <Button
               type="button"
               size="sm"
+              variant="outline"
               onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-              className="h-7 px-2.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-none"
+              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             >
               Set Draft
             </Button>
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               size="sm"
               onClick={() => handleBatchDelete(selected, clear)}
-              className="h-7 px-2.5 text-xs font-semibold"
+              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
             >
               Delete selected
             </Button>

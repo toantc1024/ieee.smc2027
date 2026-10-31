@@ -82,7 +82,7 @@ export function PostFormDialog({
         setCategory("Announcements");
         setSummary("");
         setContent("");
-        setCoverImage("/news/keynote-hoi-thao.jpg");
+        setCoverImage("");
         setStatus("PUBLISHED");
       }
       setError("");
@@ -131,7 +131,7 @@ export function PostFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto font-sans p-6">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto font-sans p-6 shadow-none border border-slate-200">
         <DialogHeader className="pb-3 border-b border-slate-100">
           <DialogTitle className="text-lg font-bold text-slate-900">
             {isEdit ? "Edit Post" : "Create New Post"}
@@ -139,7 +139,7 @@ export function PostFormDialog({
         </DialogHeader>
 
         {error && (
-          <div className="p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded-lg">
+          <div className="p-3 text-xs bg-slate-50 border border-slate-200 text-slate-800 rounded-lg">
             {error}
           </div>
         )}
@@ -267,7 +267,7 @@ export function PostFormDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={saving}
-              className="h-9 px-4 text-xs"
+              className="h-9 px-4 text-xs bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-none"
             >
               Cancel
             </Button>
@@ -275,7 +275,7 @@ export function PostFormDialog({
               type="submit"
               size="sm"
               disabled={saving}
-              className="h-9 px-5 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"
+              className="h-9 px-5 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
             >
               {saving ? (
                 <>

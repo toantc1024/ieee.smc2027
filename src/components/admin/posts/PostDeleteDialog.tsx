@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 interface PostDeleteDialogProps {
   open: boolean;
@@ -41,10 +41,10 @@ export function PostDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md font-sans p-6">
+      <DialogContent className="max-w-md font-sans p-6 shadow-none border border-slate-200">
         <DialogHeader className="space-y-3">
-          <div className="size-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center">
-            <AlertTriangle className="size-5" />
+          <div className="size-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+            <AlertCircle className="size-5" />
           </div>
           <DialogTitle className="text-base font-bold text-slate-900">
             Confirm Post Deletion
@@ -65,7 +65,7 @@ export function PostDeleteDialog({
             size="sm"
             onClick={() => onOpenChange(false)}
             disabled={deleting}
-            className="h-8.5 px-3.5 text-xs"
+            className="h-8.5 px-3.5 text-xs bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-none"
           >
             Cancel
           </Button>
@@ -74,7 +74,7 @@ export function PostDeleteDialog({
             size="sm"
             onClick={handleConfirm}
             disabled={deleting}
-            className="h-8.5 px-4 text-xs bg-rose-600 hover:bg-rose-700 text-white"
+            className="h-8.5 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
           >
             {deleting ? (
               <>
@@ -82,7 +82,7 @@ export function PostDeleteDialog({
                 Deleting...
               </>
             ) : (
-              "Delete Post"
+              "Confirm Delete"
             )}
           </Button>
         </DialogFooter>

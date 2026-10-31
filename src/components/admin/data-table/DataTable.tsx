@@ -197,8 +197,8 @@ export function DataTable<TData, TValue = unknown>({
 
         {/* Selected row count & batch action bar */}
         {selectedRows.length > 0 && batchActions && (
-          <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100">
-            <span className="text-xs font-semibold text-[#115eff]">
+          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+            <span className="text-xs font-semibold text-slate-800">
               {selectedRows.length} selected
             </span>
             {batchActions(selectedRows, clearSelection)}
@@ -206,15 +206,8 @@ export function DataTable<TData, TValue = unknown>({
         )}
       </div>
 
-      {/* ── Table Container: Clean Shadow Skeleton ── */}
-      <div
-        className={cn(
-          "relative bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300",
-          loading
-            ? "shadow-lg shadow-slate-200/80"
-            : "shadow-xs"
-        )}
-      >
+      {/* ── Table Container ── */}
+      <div className="relative bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200">

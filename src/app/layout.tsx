@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -166,6 +167,8 @@ export default function RootLayout({
 
         {/* Full-width HCMUTE styled footer */}
         <Footer />
+
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
