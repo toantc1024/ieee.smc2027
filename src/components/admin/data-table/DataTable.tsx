@@ -319,7 +319,14 @@ export function DataTable<TData, TValue = unknown>({
                     data-state={row.getIsSelected() ? "selected" : undefined}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className="align-middle"
+                        style={{
+                          width: cell.column.getSize() !== 150 ? cell.column.getSize() : undefined,
+                          maxWidth: cell.column.getSize() !== 150 ? cell.column.getSize() : undefined,
+                        }}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

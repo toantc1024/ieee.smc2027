@@ -292,7 +292,7 @@ export default function PostsManagementPage() {
         accessorKey: "coverImage",
         header: "Cover",
         enableSorting: false,
-        size: 130,
+        size: 110,
         cell: ({ row }) => {
           const item = row.original;
           return (
@@ -312,32 +312,38 @@ export default function PostsManagementPage() {
       {
         accessorKey: "title",
         header: "Post",
+        size: 320,
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="min-w-[240px] max-w-md py-1 space-y-1">
+            <div className="w-full min-w-0 max-w-[340px] sm:max-w-md py-1 space-y-1 overflow-hidden whitespace-normal">
+              {/* Title with word-wrap and caption */}
               <button
                 type="button"
                 onClick={() => {
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left line-clamp-2 transition-colors cursor-pointer block leading-snug"
+                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
               </button>
+
+              {/* Summary with wrap and caption */}
               {item.summary && (
                 <p
-                  className="text-xs text-slate-500 truncate leading-normal"
+                  className="text-xs text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-relaxed w-full"
                   title={item.summary}
                 >
                   {item.summary}
                 </p>
               )}
-              <div className="flex items-center gap-2 pt-0.5">
+
+              {/* Slug tag with safe truncation */}
+              <div className="pt-0.5 min-w-0 max-w-full overflow-hidden">
                 <span
-                  className="text-[11px] font-mono text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 truncate max-w-[220px]"
+                  className="text-[11px] font-mono text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
                   title={`/${item.slug}`}
                 >
                   /{item.slug}
@@ -350,20 +356,21 @@ export default function PostsManagementPage() {
       {
         accessorKey: "category",
         header: "Category",
+        size: 140,
         cell: ({ row }) => {
           const item = row.original;
           const cat = (row.getValue("category") as string) || item.category;
           return (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center min-w-0 max-w-[140px] mx-auto overflow-hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-2.5 max-w-full rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={cat}
                   >
-                    <span className="truncate max-w-[130px]">{cat}</span>
-                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0" />
+                    <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
+                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white">
@@ -388,28 +395,29 @@ export default function PostsManagementPage() {
       {
         accessorKey: "status",
         header: "Status",
+        size: 130,
         cell: ({ row }) => {
           const item = row.original;
           const status = (row.getValue("status") as string) || item.status;
           return (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center min-w-0 max-w-[130px] mx-auto overflow-hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-2.5 max-w-full rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={status}
                   >
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 min-w-0 truncate">
                       <span
                         className={cn(
-                          "size-1.5 rounded-full",
+                          "size-1.5 rounded-full shrink-0",
                           status === "PUBLISHED"
                             ? "bg-[#115eff]"
                             : "bg-slate-400"
                         )}
                       />
-                      <span>
+                      <span className="truncate">
                         {status === "PUBLISHED"
                           ? "Published"
                           : status === "DRAFT"
@@ -417,7 +425,7 @@ export default function PostsManagementPage() {
                           : "Archived"}
                       </span>
                     </span>
-                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-xl border border-slate-200 bg-white">
@@ -466,11 +474,12 @@ export default function PostsManagementPage() {
       {
         accessorKey: "views",
         header: "Views",
+        size: 80,
         cell: ({ row }) => {
           const val = Number(row.getValue("views") || 0);
           return (
             <div
-              className="text-center font-medium text-slate-600 text-sm truncate"
+              className="text-center font-medium text-slate-600 text-sm truncate px-1"
               title={`${val.toLocaleString("en-US")} views`}
             >
               {val.toLocaleString("en-US")}
@@ -481,11 +490,12 @@ export default function PostsManagementPage() {
       {
         accessorKey: "createdAt",
         header: "Created Date",
+        size: 115,
         cell: ({ row }) => {
           const date = new Date(row.getValue("createdAt"));
           return (
             <div
-              className="text-center text-xs text-slate-500 font-medium truncate"
+              className="text-center text-xs text-slate-500 font-medium truncate px-1"
               title={date.toLocaleString("en-US")}
             >
               {date.toLocaleDateString("en-US", {
@@ -500,6 +510,7 @@ export default function PostsManagementPage() {
       {
         id: "actions",
         header: "Actions",
+        size: 100,
         cell: ({ row }) => {
           const item = row.original;
           return (
@@ -541,7 +552,6 @@ export default function PostsManagementPage() {
           );
         },
         enableSorting: false,
-        size: 90,
       },
     ],
     [handleQuickStatusChange, handleQuickCategoryChange]
