@@ -20,6 +20,9 @@ import {
   CornerDownRight,
   FolderPlus,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
+
 
 interface PageSummary {
   id: string;
@@ -362,34 +365,25 @@ export default function PagesManagementPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-1 border border-slate-200">
-            <Layers className="w-3 h-3 text-slate-500" />
-            <span>Website Page Tree</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            Page Hierarchy Management
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Organize pages in a parent-child hierarchy with nested routes and drag-and-drop page builder blocks.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setParentSlug("");
-            setNewTitle("");
-            setNewSlugPart("");
-            setCreateModalOpen(true);
-          }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition-all active:scale-[0.99] cursor-pointer shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>New Root Page</span>
-        </button>
-      </div>
+      <ManagementPageHeader
+        title="Pages & Layouts"
+        description="Hierarchical navigation tree and visual component page builder"
+        actions={
+          <button
+            type="button"
+            onClick={() => {
+              setParentSlug("");
+              setNewTitle("");
+              setNewSlugPart("");
+              setCreateModalOpen(true);
+            }}
+            className="h-8 inline-flex items-center gap-1.5 px-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold text-xs rounded-lg transition-colors cursor-pointer shadow-none"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Root Page</span>
+          </button>
+        }
+      />
 
       {/* Main Tree Card */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
@@ -437,9 +431,25 @@ export default function PagesManagementPage() {
         {/* Tree Container */}
         <div className="p-4 sm:p-5">
           {loading ? (
-            <div className="py-16 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
-              <RefreshCw className="w-5 h-5 animate-spin text-slate-400" />
-              <span>Loading page hierarchy from database...</span>
+            <div className="space-y-2 py-1">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={`skeleton-tree-${idx}`}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-slate-100 bg-slate-50/50"
+                  style={{ paddingLeft: `${idx % 2 === 0 ? 12 : 36}px` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-4 rounded" />
+                    <Skeleton className="h-4 w-44 rounded" />
+                    <Skeleton className="h-3.5 w-24 rounded" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-6 w-20 rounded" />
+                    <Skeleton className="h-6 w-20 rounded" />
+                    <Skeleton className="size-6 rounded" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : treeData.length === 0 ? (
             <div className="py-12 text-center text-slate-500 text-xs">

@@ -38,6 +38,8 @@ import {
   Layers,
   Sliders,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
 import { NewsList } from "@/components/sections/NewsList";
@@ -675,9 +677,50 @@ export default function PageBuilderRoute({
 
   if (loading) {
     return (
-      <div className="py-24 text-center text-slate-500 text-sm flex flex-col items-center gap-3">
-        <RefreshCw className="w-6 h-6 animate-spin text-[#115eff]" />
-        <span>Loading drag-and-drop page builder canvas...</span>
+      <div className="space-y-4 -mx-4 sm:-mx-6 lg:-mx-8 -my-4 sm:-my-6 lg:-my-8 font-sans">
+        {/* Top Toolbar Skeleton */}
+        <div className="bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-8 rounded-lg" />
+            <Skeleton className="h-5 w-40 rounded" />
+            <Skeleton className="h-5 w-20 rounded" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-28 rounded-lg" />
+            <Skeleton className="h-8 w-24 rounded-lg" />
+            <Skeleton className="h-8 w-28 rounded-lg" />
+          </div>
+        </div>
+
+        {/* 3-Column Skeleton Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[calc(100vh-130px)]">
+          {/* Left Palette Skeleton */}
+          <div className="lg:col-span-3 bg-white border-r border-slate-200 p-4 space-y-3">
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-8 w-full rounded-md" />
+            <div className="space-y-2 pt-2">
+              <Skeleton className="h-20 w-full rounded-xl" />
+              <Skeleton className="h-20 w-full rounded-xl" />
+              <Skeleton className="h-20 w-full rounded-xl" />
+            </div>
+          </div>
+
+          {/* Center Canvas Skeleton */}
+          <div className="lg:col-span-6 bg-slate-100/70 p-6 flex flex-col items-center gap-4">
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-2xl" />
+          </div>
+
+          {/* Right Inspector Skeleton */}
+          <div className="lg:col-span-3 bg-white border-l border-slate-200 p-4 space-y-4">
+            <Skeleton className="h-5 w-36 rounded" />
+            <Skeleton className="h-8 w-full rounded-md" />
+            <Skeleton className="h-8 w-full rounded-md" />
+            <Skeleton className="h-24 w-full rounded-md" />
+            <Skeleton className="h-8 w-full rounded-md" />
+          </div>
+        </div>
       </div>
     );
   }
