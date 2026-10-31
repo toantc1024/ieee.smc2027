@@ -154,9 +154,50 @@ export default function EditPostPage({
 
   if (pageLoading) {
     return (
-      <div className="py-24 text-center text-slate-500 text-xs flex flex-col items-center gap-3 font-sans">
-        <RefreshCw className="size-5 animate-spin text-[#115eff]" />
-        <span>Loading post details...</span>
+      <div className="max-w-5xl mx-auto space-y-4 font-sans">
+        {/* Top Header Skeleton */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-8 rounded-lg" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-5 w-48 rounded" />
+              <Skeleton className="h-3.5 w-64 rounded" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-20 rounded-lg" />
+            <Skeleton className="h-8 w-28 rounded-lg" />
+          </div>
+        </div>
+
+        {/* Form Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-8 w-full rounded-lg" />
+              <Skeleton className="h-4 w-24 rounded pt-2" />
+              <Skeleton className="h-8 w-full rounded-lg" />
+              <Skeleton className="h-4 w-24 rounded pt-2" />
+              <Skeleton className="h-20 w-full rounded-lg" />
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <Skeleton className="h-8 w-full rounded-lg" />
+              <Skeleton className="h-64 w-full rounded-lg" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <Skeleton className="h-5 w-32 rounded" />
+              <Skeleton className="h-8 w-full rounded-lg" />
+              <Skeleton className="h-8 w-full rounded-lg" />
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <Skeleton className="h-5 w-32 rounded" />
+              <Skeleton className="h-40 w-full rounded-lg" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -178,7 +219,7 @@ export default function EditPostPage({
                 Edit Post
               </h1>
               <span
-                className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${
                   status === "PUBLISHED"
                     ? "bg-slate-50 text-[#115eff] border-slate-200"
                     : "bg-slate-50 text-slate-600 border-slate-200"
@@ -188,7 +229,7 @@ export default function EditPostPage({
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Update content, cover image, and category for this conference post
+              Edit article, manage publishing status and conference updates
             </p>
           </div>
         </div>
@@ -197,7 +238,7 @@ export default function EditPostPage({
           <button
             type="button"
             onClick={handleDelete}
-            className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition-colors cursor-pointer"
+            className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
             title="Delete post"
           >
             <Trash2 className="size-3.5" />
@@ -205,37 +246,50 @@ export default function EditPostPage({
           </button>
 
           {status === "PUBLISHED" ? (
-            <button
-              type="button"
-              onClick={() => handleUpdate("DRAFT")}
-              disabled={loading}
-              className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 transition-colors cursor-pointer"
-            >
-              <span>Set Draft</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => handleUpdate("DRAFT")}
+                disabled={loading}
+                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+              >
+                <span>Switch to Draft</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleUpdate("PUBLISHED")}
+                disabled={loading}
+                className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-semibold border border-transparent transition-colors cursor-pointer"
+              >
+                <Save className="size-3.5" />
+                <span>{loading ? "Saving..." : "Save Changes"}</span>
+              </button>
+            </>
           ) : (
-            <button
-              type="button"
-              onClick={() => handleUpdate("PUBLISHED")}
-              disabled={loading}
-              className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-medium border border-transparent transition-colors cursor-pointer"
-            >
-              <Send className="size-3.5" />
-              <span>Publish</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => handleUpdate("DRAFT")}
+                disabled={loading}
+                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+              >
+                <Save className="size-3.5" />
+                <span>{loading ? "Saving..." : "Save Draft"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleUpdate("PUBLISHED")}
+                disabled={loading}
+                className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-semibold border border-transparent transition-colors cursor-pointer"
+              >
+                <Send className="size-3.5" />
+                <span>Publish Post</span>
+              </button>
+            </>
           )}
-
-          <button
-            type="button"
-            onClick={() => handleUpdate()}
-            disabled={loading}
-            className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-medium border border-transparent transition-colors cursor-pointer"
-          >
-            <Save className="size-3.5" />
-            <span>{loading ? "Saving..." : "Save Changes"}</span>
-          </button>
         </div>
       </div>
+
 
       {/* Main Form */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

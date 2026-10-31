@@ -26,6 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { PostPreviewDialog } from "@/components/admin/posts/PostPreviewDialog";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
+import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
 
 interface PostItem {
@@ -557,26 +558,21 @@ export default function PostsManagementPage() {
   return (
     <div className="space-y-4 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <FileText className="size-6 text-[#115eff]" />
-            Posts &amp; News
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-2.5 shrink-0">
+      <ManagementPageHeader
+        title="Posts & News"
+        description="Conference announcements, call for papers, and news updates"
+        actions={
           <Button
             type="button"
             size="sm"
             onClick={() => router.push("/admin/posts/create")}
-            className="h-8 px-3.5 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
+            className="h-8 px-3.5 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
           >
             <Plus className="size-4 mr-1.5" />
             New Post
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* ── Advanced Table ── */}
       <DataTable
