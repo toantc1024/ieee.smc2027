@@ -21,18 +21,18 @@ export const CHAIR_MEMBERS: ChairMember[] = [
     image: "/chairs/prof-yo-ping-huang.png",
   },
   {
-    name: "Assoc. Prof. Dinh-Thanh Chau",
-    role: "General Chair",
-    affiliation: "Vice President, HCM-UTE",
-    country: "Vietnam",
-    image: "/chairs/prof-dinh-thanh-chau.png",
-  },
-  {
     name: "Prof. Saeid Nahavandi",
     role: "Honorary Chair",
     affiliation: "President, IEEE SMC Society • Swinburne Univ.",
     country: "Australia",
     image: "/chairs/prof-saeid-nahavandi.png",
+  },
+  {
+    name: "Assoc. Prof. Dinh-Thanh Chau",
+    role: "General Chair",
+    affiliation: "Vice President, HCM-UTE",
+    country: "Vietnam",
+    image: "/chairs/prof-dinh-thanh-chau.png",
   },
   {
     name: "Assoc. Prof. Hieu-Giang Le",
@@ -52,6 +52,7 @@ export interface WelcomeLetterProps {
   conferenceName?: string;
   datesLocation?: string;
   showSignatures?: boolean;
+  chairs?: ChairMember[];
 }
 
 export function WelcomeLetter({
@@ -63,6 +64,7 @@ export function WelcomeLetter({
   conferenceName = "IEEE SMC 2027",
   datesLocation = "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
   showSignatures = true,
+  chairs = CHAIR_MEMBERS,
 }: WelcomeLetterProps) {
   return (
     <SectionContainer id="welcome" fullWidthBg="bg-white">
@@ -125,7 +127,7 @@ export function WelcomeLetter({
 
               {/* Four Chairs Grid: General Chairs & Honorary Chairs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 sm:pt-8">
-                {CHAIR_MEMBERS.map((chair) => (
+                {chairs.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}
                     <div className="relative rounded-2xl bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
