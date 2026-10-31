@@ -27,6 +27,20 @@ export const CHAIR_MEMBERS: ChairMember[] = [
     country: "Taiwan",
     image: "/chairs/prof-yo-ping-huang.png",
   },
+  {
+    name: "Assoc. Prof. Hieu-Giang Le",
+    role: "Honorary Chair",
+    affiliation: "Acting President, HCM-UTE",
+    country: "Vietnam",
+    image: "/chairs/prof-hieu-giang-le.png",
+  },
+  {
+    name: "Prof. Saeid Nahavandi",
+    role: "Honorary Chair",
+    affiliation: "President, IEEE SMC Society • Swinburne Univ.",
+    country: "Australia",
+    image: "/chairs/prof-saeid-nahavandi.png",
+  },
 ];
 
 export interface WelcomeLetterProps {
@@ -42,7 +56,7 @@ export interface WelcomeLetterProps {
 
 export function WelcomeLetter({
   heading = "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
-  title = "Welcome Message from the General Chairs",
+  title = "Welcome Message from the General Chairs & Honorary Chairs",
   subtitle = "Welcome to IEEE SMC 2027 • Ho Chi Minh City",
   salutation = "Dear Colleagues & Honored Participants,",
   theme = "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
@@ -109,8 +123,8 @@ export function WelcomeLetter({
                 Sincerely and warmly yours,
               </p>
 
-              {/* General Chairs Grid - Center Aligned */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl sm:max-w-3xl mx-auto gap-6 sm:gap-8 pt-6 sm:pt-8">
+              {/* Four Chairs Grid: General Chairs & Honorary Chairs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 sm:pt-8">
                 {CHAIR_MEMBERS.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}
@@ -153,15 +167,15 @@ export function WelcomeLetter({
                       </div>
 
                       {/* Bottom Details Section - Center Aligned */}
-                      <div className="relative z-20 w-full p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
+                      <div className="relative z-20 w-full p-4 sm:p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
                         <div className="relative z-10 flex flex-col items-center text-center">
-                          <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 px-3 py-1 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
+                          <span className="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
                             {chair.role}
                           </span>
-                          <h4 className="text-lg sm:text-xl font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
+                          <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
                             {chair.name}
                           </h4>
-                          <p className="text-sm sm:text-base text-[#004776]/80 group-hover:!text-white/90 mt-1.5 font-medium leading-relaxed transition-colors duration-300">
+                          <p className="text-xs sm:text-sm text-[#004776]/80 group-hover:!text-white/90 mt-1 font-medium leading-relaxed transition-colors duration-300">
                             {chair.affiliation}, {chair.country}
                           </p>
                         </div>

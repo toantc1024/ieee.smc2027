@@ -18,7 +18,7 @@ const DEFAULT_HOME_BLOCKS = [
     id: "welcome-1",
     type: "WelcomeLetter",
     props: {
-      title: "Welcome Message from the General Chairs",
+      title: "Welcome Message from the General Chairs & Honorary Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
       theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
       datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",

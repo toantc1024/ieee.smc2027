@@ -103,7 +103,7 @@ const AVAILABLE_BLOCKS = [
     description: "Official welcome message from the General Chairs and conference theme overview",
     defaultProps: {
       heading: "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
-      title: "Welcome Message from the General Chairs",
+      title: "Welcome Message from the General Chairs & Honorary Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
       theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
     },
