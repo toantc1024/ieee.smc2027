@@ -791,5 +791,57 @@ select {
   color: rgb(0, 71, 118);
 }
 
+/* ── Sidebar Active Nav Item Aesthetics (HCMUTE 100% Brand) ── */
+.sidebar-nav-active {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+.sidebar-nav-active:hover {
+  background-color: color-mix(in oklch, var(--primary) 88%, black) !important;
+  color: var(--primary-foreground) !important;
+}
+
+.sidebar-nav-active svg {
+  color: var(--primary-foreground) !important;
+  stroke: var(--primary-foreground) !important;
+}
+
+.sidebar-nav-active:hover svg {
+  color: var(--primary-foreground) !important;
+  stroke: var(--primary-foreground) !important;
+}
+
+.sidebar-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.28) 1.1px, transparent 1.1px);
+  background-size: 6px 6px;
+  mask-image: radial-gradient(ellipse at 100% 100%, #ffffff 10%, transparent 60%);
+  -webkit-mask-image: radial-gradient(ellipse at 100% 100%, #ffffff 10%, transparent 60%);
+}
+
+/* ── Left Sidebar: Pure Solid White Background (No Gradient) ── */
+[data-sidebar="sidebar"],
+[data-slot="sidebar-container"],
+[data-slot="sidebar-inner"],
+.sidebar-gradient-surface {
+  background: #ffffff !important;
+}
+
+.dark [data-sidebar="sidebar"],
+.dark [data-slot="sidebar-container"],
+.dark [data-slot="sidebar-inner"],
+.dark .sidebar-gradient-surface {
+  background: #090e1a !important;
+}
+
+.sidebar-bg-dot-pattern,
+.sidebar-bg-dot-pattern-bottom,
+.sidebar-bg-dot-pattern-top {
+  display: none !important;
+}
+
+
 
 

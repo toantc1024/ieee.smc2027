@@ -1,345 +1,51 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  FileText,
-  Users,
-  ExternalLink,
-  LogOut,
-  Menu,
-  X,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Search,
-  ChevronRight,
-} from "lucide-react";
 import { Toaster } from "sonner";
 import type { SessionUser } from "@/lib/auth";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AdminSidebar } from "./AdminSidebar";
+import { AdminHeader } from "./AdminHeader";
 
 interface SimpleAdminLayoutProps {
   user: SessionUser;
   children: React.ReactNode;
 }
 
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  exact?: boolean;
-  external?: boolean;
-}
-
-const PRIMARY_NAV_ITEMS: NavItem[] = [
-  {
-    name: "Posts & News",
-    href: "/admin/posts",
-    icon: FileText,
-  },
-  {
-    name: "Users & Roles",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
-    name: "Overview",
-    href: "/admin",
-    icon: LayoutDashboard,
-    exact: true,
-  },
-];
-
 export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [globalSearch, setGlobalSearch] = useState("");
 
-  useEffect(() => {
-    const saved = localStorage.getItem("ieee_admin_sidebar_collapsed");
-    if (saved !== null) {
-      setIsCollapsed(saved === "true");
-    }
-  }, []);
-
-  const toggleCollapse = () => {
-    setIsCollapsed((prev) => {
-      const next = !prev;
-      localStorage.setItem("ieee_admin_sidebar_collapsed", String(next));
-      return next;
-    });
-  };
-
-  const getBreadcrumbTitle = () => {
-    if (pathname === "/admin") return "Overview";
-    if (pathname.startsWith("/admin/posts")) return "Posts & News";
-    if (pathname.startsWith("/admin/users")) return "Users & Roles";
-    return "Console";
-  };
-
-  const renderNavLinks = (collapsed: boolean) => (
-    <div className="flex-1 overflow-y-auto px-2.5 py-4 space-y-1">
-      {PRIMARY_NAV_ITEMS.map((item) => {
-        const isActive = item.exact
-          ? pathname === item.href
-          : pathname.startsWith(item.href);
-        const Icon = item.icon;
-
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => setMobileMenuOpen(false)}
-            title={collapsed ? item.name : undefined}
-            className={`flex items-center rounded-xl text-xs font-medium transition-all group ${
-              collapsed
-                ? "justify-center p-3"
-                : "justify-between px-3.5 py-2.5"
-            } ${
-              isActive
-                ? "bg-[#115eff] text-white shadow-xs font-semibold"
-                : "text-slate-700 hover:bg-slate-100 hover:text-[#115eff]"
-            }`}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <Icon
-                className={`size-4.5 shrink-0 transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-slate-500 group-hover:text-[#115eff]"
-                }`}
-              />
-              {!collapsed && <span className="truncate">{item.name}</span>}
-            </div>
-          </Link>
-        );
-      })}
-
-      <div className="pt-2 mt-2 border-t border-slate-100">
-        <Link
-          href="/"
-          target="_blank"
-          rel="noreferrer"
-          title={collapsed ? "Live Website" : undefined}
-          className={`flex items-center rounded-xl text-xs font-medium text-slate-500 hover:text-[#115eff] hover:bg-slate-100 transition-colors ${
-            collapsed ? "justify-center p-3" : "justify-between px-3.5 py-2.5"
-          }`}
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <ExternalLink className="size-4.5 shrink-0 text-slate-400 group-hover:text-[#115eff]" />
-            {!collapsed && <span className="truncate">Live Website</span>}
-          </div>
-        </Link>
-      </div>
-    </div>
-  );
+  const isFullBleed = useMemo(() => {
+    return (
+      (pathname.startsWith("/admin/posts/") &&
+        pathname !== "/admin/posts" &&
+        pathname !== "/admin/posts/new") ||
+      (pathname.startsWith("/admin/pages/") && pathname !== "/admin/pages")
+    );
+  }, [pathname]);
 
   return (
-    <div className="admin-page-root min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row antialiased font-sans">
-      {/* ── Mobile Top Header (< md) ── */}
-      <div className="md:hidden sticky top-0 z-40 h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between shadow-2xs">
-        <Link href="/admin" className="flex items-center gap-2">
-          <span className="font-extrabold text-base tracking-tight text-[#115eff]">
-            IEEE SMC 2027
-          </span>
-        </Link>
-
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
-      </div>
-
-      {/* ── Mobile Drawer ── */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          <div
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl z-10">
-            <div className="h-14 px-4 border-b border-slate-200 flex items-center justify-between">
-              <span className="font-extrabold text-base tracking-tight text-[#115eff]">
-                IEEE SMC 2027
-              </span>
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-md cursor-pointer"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-
-            {renderNavLinks(false)}
-
-            {/* Mobile User Footer */}
-            <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-semibold truncate text-slate-900">{user.name}</span>
-                  <span className="text-[10px] text-slate-500 truncate">{user.email}</span>
-                </div>
-              </div>
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  title="Log out"
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
-                >
-                  <LogOut className="size-4" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Desktop Permanent Sidebar (md+) ── */}
-      <aside
-        className={`hidden md:flex shrink-0 flex-col bg-white border-r border-slate-200 min-h-screen sticky top-0 h-screen z-30 transition-[width] duration-300 ease-in-out ${
-          isCollapsed ? "w-[72px]" : "w-64"
-        }`}
-      >
-        {/* Brand Header */}
-        <div
-          className={`h-14 border-b border-slate-200 flex items-center shrink-0 transition-all ${
-            isCollapsed ? "justify-center px-2" : "px-4"
-          }`}
-        >
-          <Link
-            href="/admin"
-            className="flex items-center gap-2 min-w-0 overflow-hidden"
-            title={isCollapsed ? "IEEE SMC 2027" : undefined}
+    <div className="admin-page-root">
+      <SidebarProvider className="fixed inset-0 h-svh max-h-svh overflow-hidden overscroll-none bg-background text-foreground antialiased font-sans">
+        <AdminSidebar user={user} />
+        <SidebarInset className="flex flex-col h-full min-h-0 overflow-hidden bg-slate-50/60 dark:bg-[#070b14]">
+          <AdminHeader />
+          <main
+            id="admin-main-content"
+            className={
+              isFullBleed
+                ? "relative flex-1 min-h-0 overflow-hidden p-0"
+                : "relative flex-1 min-h-0 overflow-y-auto p-4 md:px-6 md:pb-8 md:pt-6"
+            }
           >
-            {isCollapsed ? (
-              <span className="font-black text-sm tracking-tight text-[#115eff]">
-                SMC
-              </span>
-            ) : (
-              <span className="font-extrabold text-base tracking-tight text-[#115eff]">
-                IEEE SMC 2027
-              </span>
-            )}
-          </Link>
-        </div>
-
-        {/* Navigation Items */}
-        {renderNavLinks(isCollapsed)}
-
-        {/* ── Sidebar Bottom: Collapse Button (Above Logout) + User & Logout ── */}
-        <div className="p-2.5 border-t border-slate-200 bg-slate-50/70 flex flex-col gap-1.5 shrink-0">
-          {/* Collapse / Expand Toggle Button as an item above logout */}
-          <button
-            type="button"
-            onClick={toggleCollapse}
-            className={`flex items-center rounded-xl text-xs font-medium text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer group ${
-              isCollapsed ? "justify-center p-2.5" : "justify-between px-3 py-2"
-            }`}
-            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              {isCollapsed ? (
-                <PanelLeftOpen className="size-4 shrink-0 text-slate-500 group-hover:text-[#115eff]" />
-              ) : (
-                <PanelLeftClose className="size-4 shrink-0 text-slate-500 group-hover:text-[#115eff]" />
-              )}
-              {!isCollapsed && <span>Collapse sidebar</span>}
+            <div className={isFullBleed ? "h-full w-full" : "max-w-7xl mx-auto w-full"}>
+              {children}
             </div>
-          </button>
-
-          {/* User Info & Logout Button */}
-          {isCollapsed ? (
-            <div className="pt-1.5 border-t border-slate-200/80 flex flex-col items-center gap-1.5">
-              <div
-                className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0 cursor-default"
-                title={`${user.name} (${user.email})`}
-              >
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  title="Log out"
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                >
-                  <LogOut className="size-4" />
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="pt-1.5 border-t border-slate-200/80 flex items-center justify-between gap-2 min-w-0">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-semibold text-slate-900 truncate">{user.name}</span>
-                  <span className="text-[10px] text-slate-500 truncate">{user.email}</span>
-                </div>
-              </div>
-
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  title="Log out"
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                >
-                  <LogOut className="size-4" />
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* ── Main Viewport Area ── */}
-      <div className="flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-300 ease-in-out">
-        {/* Desktop Clean Top Header Bar */}
-        <header className="hidden md:flex h-14 bg-white border-b border-slate-200 px-6 items-center justify-between sticky top-0 z-20">
-          {/* Left: Clean Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs">
-            <Link
-              href="/admin"
-              className="text-slate-500 hover:text-[#115eff] transition-colors font-medium"
-            >
-              Console
-            </Link>
-            <ChevronRight className="size-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-900">{getBreadcrumbTitle()}</span>
-          </div>
-
-          {/* Right: Clean Search Bar */}
-          <div className="flex items-center gap-4">
-            <div className="relative w-64">
-              <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={globalSearch}
-                onChange={(e) => setGlobalSearch(e.target.value)}
-                placeholder="Search console..."
-                className="w-full h-8.5 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#115eff] transition-all"
-              />
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content Viewport */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
-          {children}
-        </main>
-      </div>
-
-      <Toaster position="top-right" richColors />
+          </main>
+        </SidebarInset>
+        <Toaster position="top-right" richColors />
+      </SidebarProvider>
     </div>
   );
 }

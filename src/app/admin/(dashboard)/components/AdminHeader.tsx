@@ -1,74 +1,151 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, ChevronRight, Database, Shield } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, Search } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import type { SessionUser } from "@/lib/auth";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
-interface AdminHeaderProps {
-  user: SessionUser;
+interface BreadcrumbItemData {
+  label: string;
+  href?: string;
 }
 
-export function AdminHeader({ user: _user }: AdminHeaderProps) {
+function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
+  const items: BreadcrumbItemData[] = [
+    { label: "Console", href: "/admin" },
+  ];
+
+  if (pathname === "/admin") {
+    items.push({ label: "Tổng quan" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/posts")) {
+    items.push({ label: "Quản lý nội dung" });
+    items.push({ label: "Văn bản và bài viết", href: "/admin/posts" });
+    if (pathname === "/admin/posts/new") {
+      items.push({ label: "Tạo mới" });
+    } else if (pathname !== "/admin/posts") {
+      items.push({ label: "Chỉnh sửa bài viết" });
+    }
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/media")) {
+    items.push({ label: "Quản lý nội dung" });
+    items.push({ label: "Đa phương tiện", href: "/admin/media" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/pages")) {
+    items.push({ label: "Website" });
+    items.push({ label: "Trang", href: "/admin/pages" });
+    if (pathname !== "/admin/pages") {
+      items.push({ label: "Trình thiết kế trực quan" });
+    }
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/header")) {
+    items.push({ label: "Website" });
+    items.push({ label: "Header & Mega Menu", href: "/admin/header" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/registrations")) {
+    items.push({ label: "Hội nghị & Đăng ký" });
+    items.push({ label: "Đăng ký & Payoo", href: "/admin/registrations" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/broadcast")) {
+    items.push({ label: "Hội nghị & Đăng ký" });
+    items.push({ label: "Gửi thư thông báo", href: "/admin/broadcast" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/users")) {
+    items.push({ label: "Quản trị hệ thống" });
+    items.push({ label: "Tài khoản & Phân quyền", href: "/admin/users" });
+    return items;
+  }
+
+  if (pathname.startsWith("/admin/oauth")) {
+    items.push({ label: "Quản trị hệ thống" });
+    items.push({ label: "Cấu hình Google OAuth", href: "/admin/oauth" });
+    return items;
+  }
+
+  items.push({ label: "Bảng điều khiển" });
+  return items;
+}
+
+export function AdminHeader() {
   const pathname = usePathname();
-
-  const getBreadcrumbInfo = () => {
-    if (pathname === "/admin") return { category: "Overview", title: "Dashboard" };
-    if (pathname.startsWith("/admin/registrations")) return { category: "Operations", title: "Registrations & Payoo" };
-    if (pathname.startsWith("/admin/checkin")) return { category: "Operations", title: "QR Check-in" };
-    if (pathname.startsWith("/admin/broadcast")) return { category: "Operations", title: "Milestone Emails" };
-    if (pathname.startsWith("/admin/media")) return { category: "Content", title: "Media Library" };
-    if (pathname.startsWith("/admin/pages")) return { category: "Content", title: "Page Hierarchy" };
-    if (pathname.startsWith("/admin/posts")) return { category: "Content", title: "Posts & News" };
-    if (pathname.startsWith("/admin/header")) return { category: "Content", title: "Header & Navigation" };
-    if (pathname.startsWith("/admin/users")) return { category: "System", title: "Users & Roles" };
-    if (pathname.startsWith("/admin/oauth")) return { category: "System", title: "OAuth & AI Agent" };
-    return { category: "Console", title: "Administration" };
-  };
-
-  const breadcrumb = getBreadcrumbInfo();
+  const breadcrumbs = getBreadcrumbs(pathname);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 backdrop-blur-md transition-[width,height] ease-linear">
-      <div className="flex items-center gap-2">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4 bg-slate-200" />
-        
-        <nav className="flex items-center gap-1.5 text-xs">
-          <Link
-            href="/admin"
-            className="text-slate-500 hover:text-[#115eff] transition-colors font-medium"
-          >
-            Console
-          </Link>
-          <ChevronRight className="size-3.5 text-slate-400" />
-          <span className="text-slate-500 hidden sm:inline">{breadcrumb.category}</span>
-          <ChevronRight className="size-3.5 text-slate-400 hidden sm:inline" />
-          <span className="font-bold text-[#115eff]">{breadcrumb.title}</span>
-        </nav>
+    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
+      <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+        <SidebarTrigger className="-ml-1 mr-1" />
+
+        <Breadcrumb className="min-w-0 overflow-hidden">
+          <BreadcrumbList className="flex-nowrap whitespace-nowrap overflow-hidden text-xs">
+            {breadcrumbs.map((item, index) => {
+              const isLast = index === breadcrumbs.length - 1;
+
+              return (
+                <div
+                  key={item.label + index}
+                  className="flex items-center gap-1.5 min-w-0 shrink-0"
+                >
+                  {index > 0 && <BreadcrumbSeparator className="shrink-0" />}
+                  <BreadcrumbItem className="min-w-0">
+                    {item.href && !isLast ? (
+                      <BreadcrumbLink asChild>
+                        <Link
+                          href={item.href}
+                          className="text-muted-foreground hover:text-primary transition-colors max-w-[140px] truncate block"
+                          title={item.label}
+                        >
+                          {item.label}
+                        </Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage
+                        className="font-semibold text-foreground max-w-[200px] truncate block"
+                        title={item.label}
+                      >
+                        {item.label}
+                      </BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </div>
+              );
+            })}
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-2.5">
-        <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-[#115eff] border border-blue-100 text-[11px] font-semibold">
-          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-          <Database className="size-3" />
-          <span>PostgreSQL + MinIO Live</span>
-        </div>
-
+      <div className="flex items-center gap-2 shrink-0">
         <Link
           href="/"
           target="_blank"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#115eff] bg-white hover:bg-slate-50 border border-slate-200 rounded-md transition-colors shadow-2xs"
+          rel="noreferrer"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors border border-slate-200/80 dark:border-slate-700"
         >
-          <span className="hidden sm:inline">Conference Website</span>
-          <ExternalLink className="size-3 text-slate-400" />
+          <span>Xem trang chủ</span>
+          <ExternalLink className="size-3.5 text-slate-400 group-hover:text-primary" />
         </Link>
       </div>
     </header>
   );
 }
-
-export default AdminHeader;
