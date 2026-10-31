@@ -20,7 +20,7 @@ services:
       retries: 5
 
   minio:
-    image: minio/minio:latest
+    image: pgsty/silo:latest
     container_name: ieee_smc_2027_minio_prod
     restart: unless-stopped
     command: server /data --console-address ":9001"
@@ -35,13 +35,13 @@ services:
     networks:
       - smc2027_network
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 5
 
   minio-init:
-    image: minio/mc:latest
+    image: pgsty/silo:latest
     container_name: ieee_smc_2027_minio_init_prod
     depends_on:
       minio:
