@@ -954,7 +954,6 @@ export default function HeaderEditorPage() {
           </div>
         }
       />
-      </div>
 
       {/* ── Interactive Live Preview Box with Full-Width Mega Dropdown ── */}
       <div className="bg-white border border-slate-200 rounded-2xl overflow-visible shadow-xs relative">

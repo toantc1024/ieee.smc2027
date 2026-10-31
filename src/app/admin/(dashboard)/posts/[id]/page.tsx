@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EditPostPage({
   params,
