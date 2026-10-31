@@ -55,7 +55,6 @@ import {
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import {
@@ -67,16 +66,15 @@ import {
 import {
   quickNavItems,
   sidebarMenuGroups,
-  sidebarFooterItems,
   type SidebarMenuGroup,
 } from "./sidebar-config";
 import type { SessionUser } from "@/lib/auth";
 
 function getTimeGreeting(): string {
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "Chào buổi sáng";
-  if (hour >= 12 && hour < 18) return "Chào buổi chiều";
-  return "Chào buổi tối";
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 18) return "Good afternoon";
+  return "Good evening";
 }
 
 const LIGHT_AVATAR_COLORS = [
@@ -196,7 +194,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     return "A";
   };
 
-  const displayName = user?.name || "Quản trị viên";
+  const displayName = user?.name || "Administrator";
 
   const handleItemClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
     try {
@@ -341,13 +339,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               {/* Bottom Row: Role badge & Unit badge */}
               <div className="mt-2.5 flex items-center gap-1.5 min-w-0">
                 <span className="inline-flex items-center text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-2xs shrink-0 whitespace-nowrap">
-                  {user.role === "ADMIN" ? "Quản trị viên" : "Ban tổ chức"}
+                  {user.role === "ADMIN" ? "Administrator" : "Organizer"}
                 </span>
                 <span
                   className="inline-flex items-center gap-1 text-[9.5px] px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-2xs min-w-0 truncate max-w-full"
-                  title={`Đơn vị: ${displayUnit}`}
+                  title={`Unit: ${displayUnit}`}
                 >
-                  <span className="text-white/75 shrink-0">Đơn vị: </span>
+                  <span className="text-white/75 shrink-0">Unit: </span>
                   <span className="font-semibold text-white truncate">{displayUnit}</span>
                 </span>
               </div>
@@ -367,7 +365,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           {state === "collapsed" ? (
             <SidebarGroup className="p-0 py-0.5 flex flex-col items-center justify-center w-full">
               <div className="flex flex-col items-center gap-1 w-full">
-                {/* Nút Truy cập trang chủ */}
+                {/* Visit Homepage */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link
@@ -385,7 +383,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent side="right" align="center">
-                    Truy cập trang chủ
+                    Visit Homepage
                   </TooltipContent>
                 </Tooltip>
 
@@ -428,11 +426,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             <SidebarGroup className="px-2 py-1">
               <SidebarGroupContent>
                 <SidebarMenu className="gap-1">
-                  {/* Nút Truy cập trang chủ */}
+                  {/* Visit Homepage */}
                   <SidebarMenuItem className="w-full">
                     <SidebarMenuButton
                       asChild
-                      tooltip="Truy cập trang chủ"
+                      tooltip="Visit Homepage"
                       className="relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem border w-full border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground shadow-2xs hover:shadow-xs cursor-pointer"
                     >
                       <Link
@@ -449,7 +447,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                           <Home className="size-4.5 shrink-0 text-muted-foreground group-hover/navitem:text-primary transition-colors duration-200" />
                         </div>
                         <span className="relative z-1 truncate min-w-0 flex-1 text-xs font-medium group-hover/navitem:font-semibold transition-colors">
-                          Truy cập trang chủ
+                          Visit Homepage
                         </span>
                         <ExternalLink className="relative z-1 size-3.5 text-muted-foreground/60 group-hover/navitem:text-primary/70 transition-colors shrink-0 mr-1" />
                       </Link>
@@ -541,8 +539,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           <button
             type="button"
             onClick={() => scrollContentRef.current?.scrollBy({ top: 140, behavior: "smooth" })}
-            title="Cuộn xuống để xem thêm"
-            aria-label="Cuộn xuống để xem thêm"
+            title="Scroll down for more"
+            aria-label="Scroll down for more"
             className="absolute bottom-0 inset-x-0 z-20 h-10 w-full flex items-end justify-center bg-gradient-to-t from-white/95 via-white/70 to-transparent dark:from-[#090e1a]/95 dark:via-[#090e1a]/70 dark:to-transparent hover:via-white dark:hover:via-[#090e1a] transition-colors cursor-pointer group-data-[collapsible=icon]:hidden pb-2"
           >
             <ChevronDown className="size-5 shrink-0 stroke-[2.4] text-muted-foreground hover:text-primary transition-all hover:translate-y-0.5 mb-1.5" />
@@ -566,14 +564,14 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   type="button"
                   onClick={toggleSidebar}
                   data-testid="sidebar-collapse-toggle"
-                  aria-label="Mở rộng thanh bên"
+                  aria-label="Expand sidebar"
                   className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-foreground/80 hover:bg-primary/10 hover:border-primary/40 hover:text-primary dark:hover:bg-primary/20 dark:hover:border-primary/50 group/toggle shadow-2xs"
                 >
                   <ChevronRight className="size-4 stroke-[2.2] transition-transform duration-200 group-hover/toggle:translate-x-0.5 text-muted-foreground group-hover/toggle:text-primary shrink-0" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" align="center">
-                Mở rộng thanh bên
+                Expand sidebar
               </TooltipContent>
             </Tooltip>
 
@@ -585,7 +583,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <form action="/api/auth/logout" method="POST">
                   <button
                     type="submit"
-                    aria-label="Đăng xuất"
+                    aria-label="Log out"
                     className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-transparent hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/60 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 group/logout"
                   >
                     <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-slate-500 dark:text-slate-400 group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400 shrink-0" />
@@ -593,7 +591,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 </form>
               </TooltipTrigger>
               <TooltipContent side="right" align="center">
-                Đăng xuất
+                Log out
               </TooltipContent>
             </Tooltip>
           </div>
@@ -604,7 +602,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               <SidebarMenuButton
                 onClick={toggleSidebar}
                 data-testid="sidebar-collapse-toggle"
-                tooltip="Thu gọn thanh bên"
+                tooltip="Collapse sidebar"
                 className={cn(
                   "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/collapse",
                   "bg-slate-50/80 dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-800/80 text-foreground/80 font-medium shadow-2xs",
@@ -615,7 +613,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   <ChevronLeft className="size-4 stroke-[2.2] transition-transform duration-200 group-hover/collapse:-translate-x-0.5 text-muted-foreground group-hover/collapse:text-primary" />
                 </div>
                 <span className="text-xs font-semibold transition-colors group-hover/collapse:text-primary">
-                  Thu gọn thanh bên
+                  Collapse sidebar
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -627,7 +625,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               <form action="/api/auth/logout" method="POST" className="w-full">
                 <SidebarMenuButton
                   type="submit"
-                  tooltip="Đăng xuất"
+                  tooltip="Log out"
                   className={cn(
                     "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/logout",
                     "bg-transparent border-transparent text-muted-foreground font-medium",
@@ -638,7 +636,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-muted-foreground group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400" />
                   </div>
                   <span className="text-xs font-semibold transition-colors group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400">
-                    Đăng xuất
+                    Log out
                   </span>
                 </SidebarMenuButton>
               </form>
@@ -647,23 +645,23 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         )}
       </SidebarFooter>
 
+      {/* ── Resizable and Interactive Sidebar Rail (Drag to resize width) ── */}
       <SidebarRail />
 
-      {/* Confirmation Dialog: Truy cập trang chủ */}
+      {/* Confirmation Dialog: Leave Admin Console */}
       <AlertDialog open={isConfirmHomeOpen} onOpenChange={setIsConfirmHomeOpen}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Xác nhận truy cập trang chủ?</AlertDialogTitle>
+            <AlertDialogTitle>Leave Admin Console?</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn rời khỏi trang quản trị để chuyển đến Trang chủ?
-              Mọi thay đổi chưa được lưu trên trang hiện tại có thể bị mất.
+              Are you sure you want to visit the homepage? Any unsaved changes on your current page may be lost.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Ở lại quản trị</AlertDialogCancel>
+            <AlertDialogCancel>Stay Here</AlertDialogCancel>
             <AlertDialogAction asChild>
               <Link href="/" onClick={handleGoHome}>
-                Truy cập trang chủ
+                Visit Homepage
               </Link>
             </AlertDialogAction>
           </AlertDialogFooter>

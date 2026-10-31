@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink, Search } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
@@ -24,67 +24,67 @@ function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
   ];
 
   if (pathname === "/admin") {
-    items.push({ label: "Tổng quan" });
+    items.push({ label: "Overview" });
     return items;
   }
 
   if (pathname.startsWith("/admin/posts")) {
-    items.push({ label: "Quản lý nội dung" });
-    items.push({ label: "Văn bản và bài viết", href: "/admin/posts" });
+    items.push({ label: "Content Management" });
+    items.push({ label: "Posts & News", href: "/admin/posts" });
     if (pathname === "/admin/posts/new") {
-      items.push({ label: "Tạo mới" });
+      items.push({ label: "New Post" });
     } else if (pathname !== "/admin/posts") {
-      items.push({ label: "Chỉnh sửa bài viết" });
+      items.push({ label: "Editor" });
     }
     return items;
   }
 
   if (pathname.startsWith("/admin/media")) {
-    items.push({ label: "Quản lý nội dung" });
-    items.push({ label: "Đa phương tiện", href: "/admin/media" });
+    items.push({ label: "Content Management" });
+    items.push({ label: "Media Library", href: "/admin/media" });
     return items;
   }
 
   if (pathname.startsWith("/admin/pages")) {
     items.push({ label: "Website" });
-    items.push({ label: "Trang", href: "/admin/pages" });
+    items.push({ label: "Pages", href: "/admin/pages" });
     if (pathname !== "/admin/pages") {
-      items.push({ label: "Trình thiết kế trực quan" });
+      items.push({ label: "Visual Page Builder" });
     }
     return items;
   }
 
   if (pathname.startsWith("/admin/header")) {
     items.push({ label: "Website" });
-    items.push({ label: "Header & Mega Menu", href: "/admin/header" });
+    items.push({ label: "Header & Navigation", href: "/admin/header" });
     return items;
   }
 
   if (pathname.startsWith("/admin/registrations")) {
-    items.push({ label: "Hội nghị & Đăng ký" });
-    items.push({ label: "Đăng ký & Payoo", href: "/admin/registrations" });
+    items.push({ label: "Conference & Finance" });
+    items.push({ label: "Registrations & Payoo", href: "/admin/registrations" });
     return items;
   }
 
   if (pathname.startsWith("/admin/broadcast")) {
-    items.push({ label: "Hội nghị & Đăng ký" });
-    items.push({ label: "Gửi thư thông báo", href: "/admin/broadcast" });
+    items.push({ label: "Conference & Finance" });
+    items.push({ label: "Broadcast Emails", href: "/admin/broadcast" });
     return items;
   }
 
   if (pathname.startsWith("/admin/users")) {
-    items.push({ label: "Quản trị hệ thống" });
-    items.push({ label: "Tài khoản & Phân quyền", href: "/admin/users" });
+    items.push({ label: "Administration" });
+    items.push({ label: "Users & Roles", href: "/admin/users" });
     return items;
   }
 
   if (pathname.startsWith("/admin/oauth")) {
-    items.push({ label: "Quản trị hệ thống" });
-    items.push({ label: "Cấu hình Google OAuth", href: "/admin/oauth" });
+    items.push({ label: "Administration" });
+    items.push({ label: "Google OAuth", href: "/admin/oauth" });
     return items;
   }
 
-  items.push({ label: "Bảng điều khiển" });
+  items.push({ label: "Dashboard" });
   return items;
 }
 
@@ -142,7 +142,7 @@ export function AdminHeader() {
           rel="noreferrer"
           className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors border border-slate-200/80 dark:border-slate-700"
         >
-          <span>Xem trang chủ</span>
+          <span>View Site</span>
           <ExternalLink className="size-3.5 text-slate-400 group-hover:text-primary" />
         </Link>
       </div>
