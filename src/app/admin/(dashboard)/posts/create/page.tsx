@@ -7,11 +7,9 @@ import {
   ArrowLeft,
   Save,
   Send,
-  Upload,
   Image as ImageIcon,
-  Check,
-  AlertCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
 
 export default function CreatePostPage() {
@@ -28,7 +26,7 @@ export default function CreatePostPage() {
 
   const [loading, setLoading] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [coverImgError, setCoverImgError] = useState(false);
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -62,11 +60,13 @@ export default function CreatePostPage() {
       const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
       if (uploadedUrl) {
         setCoverImage(uploadedUrl);
+        setCoverImgError(false);
+        toast.success("Cover image uploaded successfully");
       } else {
-        alert(data.error || "Failed to upload cover image");
+        toast.error(data.error || "Failed to upload cover image");
       }
     } catch {
-      alert("Unable to upload cover image");
+      toast.error("Unable to upload cover image");
     } finally {
       setUploadingCover(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -75,16 +75,15 @@ export default function CreatePostPage() {
 
   const handleSubmit = async (submitStatus: "DRAFT" | "PUBLISHED") => {
     if (!title.trim()) {
-      setError("Please enter a post title");
+      toast.error("Please enter a post title");
       return;
     }
     if (!content.trim() || content === "<p></p>") {
-      setError("Please enter post content in the editor");
+      toast.error("Please enter post content in the editor");
       return;
     }
 
     setLoading(true);
-    setError(null);
 
     try {
       const res = await fetch("/api/admin/posts", {
@@ -106,44 +105,45 @@ export default function CreatePostPage() {
         throw new Error(data.error || "Failed to create post");
       }
 
+      toast.success("Post created successfully");
       router.push("/admin/posts");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to save post";
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-4 font-sans">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200">
         <div className="flex items-center gap-3">
           <Link
             href="/admin/posts"
-            className="p-2 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="size-4" />
           </Link>
           <div>
-            <h1 className="text-xl font-extrabold text-[#004776]">
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">
               Create New Post
             </h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 mt-0.5">
               Publish news, submission guidelines, or official announcements for IEEE SMC 2027
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => handleSubmit("DRAFT")}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[0.26rem] bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+            className="h-8 inline-flex items-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 transition-colors cursor-pointer"
           >
-            <Save className="w-3.5 h-3.5" />
+            <Save className="size-3.5" />
             <span>Save Draft</span>
           </button>
 
@@ -151,28 +151,21 @@ export default function CreatePostPage() {
             type="button"
             onClick={() => handleSubmit("PUBLISHED")}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[0.26rem] bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+            className="h-8 inline-flex items-center gap-1.5 px-3.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-medium border border-transparent transition-colors cursor-pointer"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="size-3.5" />
             <span>{loading ? "Publishing..." : "Publish Post"}</span>
           </button>
         </div>
       </div>
 
-      {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm rounded-lg flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
-
       {/* Main Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left 2 Cols: Main Editor */}
-        <div className="lg:col-span-2 space-y-5">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Post Title *
               </label>
               <input
@@ -181,175 +174,186 @@ export default function CreatePostPage() {
                 placeholder="Enter conference announcement title..."
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-base font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white"
+                className="w-full h-8 px-3 text-xs text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 URL Slug
               </label>
-              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-3 text-xs text-slate-500">
-                <span>/posts/</span>
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 h-8 text-xs text-slate-500">
+                <span className="font-mono text-[11px]">/posts/</span>
                 <input
                   type="text"
                   placeholder="post-url-slug"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full py-2 pl-1 bg-transparent focus:outline-none text-slate-800 font-bold"
+                  className="w-full py-1 pl-1 bg-transparent focus:outline-none text-slate-800 font-mono text-[11px]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Summary
               </label>
               <textarea
-                rows={3}
+                rows={2}
                 placeholder="Short excerpt displayed on the homepage and news list..."
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
-                className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff] focus:bg-white leading-relaxed"
+                className="w-full p-2.5 text-xs text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white resize-none leading-relaxed"
               />
             </div>
           </div>
 
           {/* Tiptap Rich Editor */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-2">
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                Post Content *
-              </label>
-              <span className="text-[11px] text-slate-400">
-                Supports image uploads, headings, lists, and quotes
-              </span>
-            </div>
-
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-700">
+              Post Content *
+            </label>
             <TiptapEditor
               content={content}
               onChange={setContent}
-              placeholder="Start writing your post..."
+              placeholder="Start writing your post content, insert images, headings..."
             />
           </div>
         </div>
 
         {/* Right Col: Metadata & Cover Image */}
-        <div className="space-y-5">
-          {/* Cover Image Upload Card */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-              Cover Image
-            </label>
-
-            {coverImage ? (
-              <div className="relative w-full h-44 rounded-lg overflow-hidden border border-slate-200 group">
-                <img
-                  src={coverImage}
-                  alt="Cover preview"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-2.5 py-1.5 bg-white text-xs font-bold rounded shadow-xs cursor-pointer"
-                  >
-                    Change Image
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCoverImage("")}
-                    className="px-2.5 py-1.5 bg-rose-600 text-white text-xs font-bold rounded shadow-xs cursor-pointer"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-44 border-2 border-dashed border-slate-300 hover:border-[#115eff] bg-slate-50/60 hover:bg-blue-50/20 rounded-lg flex flex-col items-center justify-center gap-2 text-slate-500 cursor-pointer transition-colors"
-              >
-                <Upload className="w-6 h-6 text-slate-400" />
-                <span className="text-xs font-bold text-[#115eff]">
-                  {uploadingCover ? "Uploading..." : "Upload from computer"}
-                </span>
-                <span className="text-[11px] text-slate-400">PNG, JPG, WebP</span>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleCoverUpload}
-              className="hidden"
-            />
+        <div className="space-y-4">
+          {/* Post Settings Card */}
+          <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+            <h3 className="text-xs font-semibold text-slate-800 pb-2 border-b border-slate-100">
+              Post Settings
+            </h3>
 
             <div>
-              <span className="text-[11px] text-slate-500 block mb-1">
-                Or paste direct image URL:
-              </span>
-              <input
-                type="url"
-                placeholder="https://example.com/cover.jpg"
-                value={coverImage}
-                onChange={(e) => setCoverImage(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-[#115eff]"
-              />
-            </div>
-          </div>
-
-          {/* Taxonomy & Settings Card */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-xs font-medium text-slate-600 mb-1">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 text-xs sm:text-sm font-semibold text-[#004776] bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-[#115eff]"
+                className="w-full h-8 px-2.5 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white cursor-pointer"
               >
                 <option value="Announcements">Announcements</option>
-                <option value="CFP">Call for Papers</option>
-                <option value="Venue">Venue &amp; Travel</option>
-                <option value="Keynotes">Keynotes &amp; Speakers</option>
-                <option value="Workshops">Workshops &amp; Tutorials</option>
-                <option value="General">General News</option>
+                <option value="Call for Papers">Call for Papers</option>
+                <option value="Keynotes & Speakers">Keynotes &amp; Speakers</option>
+                <option value="Workshops">Workshops</option>
+                <option value="General News">General News</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Publication Status
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Status
               </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStatus("DRAFT")}
-                  className={`p-2.5 rounded border text-xs font-bold cursor-pointer transition-all ${
-                    status === "DRAFT"
-                      ? "border-amber-400 bg-amber-50 text-amber-800"
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  Draft
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatus("PUBLISHED")}
-                  className={`p-2.5 rounded border text-xs font-bold cursor-pointer transition-all ${
-                    status === "PUBLISHED"
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-800"
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  Published
-                </button>
-              </div>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as "DRAFT" | "PUBLISHED")}
+                className="w-full h-8 px-2.5 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white cursor-pointer"
+              >
+                <option value="PUBLISHED">Published</option>
+                <option value="DRAFT">Draft</option>
+              </select>
             </div>
+          </div>
+
+          {/* Cover Image Upload Card */}
+          <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+            <h3 className="text-xs font-semibold text-slate-800 pb-2 border-b border-slate-100">
+              Cover Image
+            </h3>
+
+            {coverImage ? (
+              <div className="space-y-2.5">
+                <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 group bg-slate-100">
+                  {!coverImgError ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={coverImage}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                      onError={() => setCoverImgError(true)}
+                    />
+                  ) : (
+                    <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-400 bg-slate-100">
+                      <ImageIcon className="size-6 text-slate-300" />
+                      <span className="text-[10px] font-medium">Image not found</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCoverImage("");
+                        setCoverImgError(false);
+                      }}
+                      className="h-7 px-2.5 bg-white text-slate-800 hover:bg-slate-100 rounded-md text-xs font-medium border border-slate-200 cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Or paste direct image URL..."
+                  value={coverImage}
+                  onChange={(e) => {
+                    setCoverImage(e.target.value);
+                    setCoverImgError(false);
+                  }}
+                  className="w-full h-8 px-2.5 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-slate-200 hover:border-[#115eff] bg-slate-50 hover:bg-blue-50/40 rounded-xl p-5 text-center cursor-pointer transition-colors"
+                >
+                  <div className="size-9 rounded-full bg-blue-50 text-[#115eff] flex items-center justify-center mx-auto mb-2 border border-blue-100">
+                    <ImageIcon className="size-4.5" />
+                  </div>
+                  <p className="text-xs font-semibold text-slate-700">
+                    {uploadingCover ? "Uploading image..." : "Upload from computer"}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    PNG, JPG, WebP up to 5MB
+                  </p>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverUpload}
+                  className="hidden"
+                />
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200" />
+                  </div>
+                  <div className="relative flex justify-center text-[10px]">
+                    <span className="bg-white px-2 text-slate-400 font-medium">Or</span>
+                  </div>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Paste image URL..."
+                  value={coverImage}
+                  onChange={(e) => {
+                    setCoverImage(e.target.value);
+                    setCoverImgError(false);
+                  }}
+                  className="w-full h-8 px-2.5 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#115eff] focus:bg-white"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

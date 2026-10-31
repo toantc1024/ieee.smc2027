@@ -59,6 +59,7 @@ interface DataTableProps<TData, TValue = unknown> {
   searchPlaceholder?: string;
   filterColumns?: FilterColumn[];
   batchActions?: (selectedRows: TData[], clearSelection: () => void) => React.ReactNode;
+  onRowClick?: (row: TData) => void;
   loading?: boolean;
 }
 
@@ -68,6 +69,7 @@ export function DataTable<TData, TValue = unknown>({
   searchPlaceholder = "Search...",
   filterColumns = [],
   batchActions,
+  onRowClick,
   loading = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -131,17 +133,17 @@ export function DataTable<TData, TValue = unknown>({
   return (
     <div className="space-y-3 font-sans">
       {/* ── Toolbar: Search & Faceted Filters ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-wrap items-center gap-2 flex-1">
           {/* Global search with shadcn Input */}
-          <div className="relative min-w-[220px] max-w-xs w-full">
+          <div className="relative min-w-[200px] max-w-xs w-full">
             <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <Input
               type="text"
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 pl-9 pr-7 text-xs bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]"
+              className="h-8 pl-8.5 pr-7 text-xs bg-slate-50 border-slate-200 rounded-lg focus:bg-white focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]"
             />
             {globalFilter && (
               <button
@@ -166,7 +168,7 @@ export function DataTable<TData, TValue = unknown>({
                   }))
                 }
               >
-                <SelectTrigger className="h-9 min-w-[130px] w-auto rounded-xl">
+                <SelectTrigger className="h-8 min-w-[120px] w-auto text-xs rounded-lg border-slate-200 bg-white">
                   <SelectValue placeholder={`${filter.title}: All`} />
                 </SelectTrigger>
                 <SelectContent>
@@ -187,7 +189,7 @@ export function DataTable<TData, TValue = unknown>({
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="h-9 px-2.5 text-xs text-slate-500 hover:text-slate-800 rounded-xl flex items-center gap-1.5"
+              className="h-8 px-2.5 text-xs text-slate-500 hover:text-slate-800 rounded-lg flex items-center gap-1.5"
             >
               <X className="size-3.5" />
               <span>Reset</span>
@@ -197,7 +199,7 @@ export function DataTable<TData, TValue = unknown>({
 
         {/* Selected row count & batch action bar */}
         {selectedRows.length > 0 && batchActions && (
-          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-2 bg-slate-50 px-2.5 h-8 rounded-lg border border-slate-200">
             <span className="text-xs font-semibold text-slate-800">
               {selectedRows.length} selected
             </span>
@@ -317,6 +319,11 @@ export function DataTable<TData, TValue = unknown>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() ? "selected" : undefined}
+                    onClick={() => onRowClick?.(row.original)}
+                    className={cn(
+                      "border-b border-slate-100 transition-colors",
+                      onRowClick ? "cursor-pointer hover:bg-slate-50/80" : "hover:bg-slate-50/40"
+                    )}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
@@ -341,7 +348,7 @@ export function DataTable<TData, TValue = unknown>({
         </div>
 
         {/* ── Pagination Footer with shadcn Select & Button ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 bg-slate-50/50 text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 border-t border-slate-200 bg-slate-50/50 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span>
               Showing{" "}
@@ -374,7 +381,7 @@ export function DataTable<TData, TValue = unknown>({
                 value={String(table.getState().pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
               >
-                <SelectTrigger className="h-7 w-[68px] px-2 text-xs bg-white border-slate-200">
+                <SelectTrigger className="h-8 w-[68px] px-2 text-xs bg-white border-slate-200 rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

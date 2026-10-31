@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   Plus,
@@ -23,10 +24,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/admin/data-table/DataTable";
-import {
-  PostFormDialog,
-  PostFormData,
-} from "@/components/admin/posts/PostFormDialog";
 import { PostPreviewDialog } from "@/components/admin/posts/PostPreviewDialog";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
 import { cn } from "@/lib/utils";
@@ -64,7 +61,7 @@ function PostCoverThumbnail({
 }: {
   src?: string | null;
   alt: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
 }) {
   const [imgError, setImgError] = useState(false);
 
@@ -98,11 +95,11 @@ function PostCoverThumbnail({
 }
 
 export default function PostsManagementPage() {
+  const router = useRouter();
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Dialog states
-  const [formOpen, setFormOpen] = useState(false);
+  // Dialog states (only Preview and Delete; Editing/Creation use dedicated Tiptap page)
   const [previewOpen, setPreviewOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [activePost, setActivePost] = useState<PostItem | null>(null);
@@ -125,27 +122,6 @@ export default function PostsManagementPage() {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
-
-  // Save post (Create or Edit)
-  const handleSavePost = async (formData: PostFormData) => {
-    const isEdit = Boolean(formData.id);
-    const url = isEdit ? `/api/admin/posts/${formData.id}` : "/api/admin/posts";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to save post");
-    }
-
-    toast.success(isEdit ? "Post updated successfully" : "Post created successfully");
-    await fetchPosts();
-  };
 
   // Delete post
   const handleDeletePost = async (id: string) => {
@@ -265,7 +241,10 @@ export default function PostsManagementPage() {
       {
         id: "select",
         header: ({ table }) => (
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Checkbox
               checked={
                 table.getIsAllPageRowsSelected() ||
@@ -277,7 +256,10 @@ export default function PostsManagementPage() {
           </div>
         ),
         cell: ({ row }) => (
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Checkbox
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -296,11 +278,15 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="flex items-center justify-center py-1">
+            <div
+              className="flex items-center justify-center py-1"
+              onClick={(e) => e.stopPropagation()}
+            >
               <PostCoverThumbnail
                 src={item.coverImage}
                 alt={item.title}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
@@ -320,11 +306,11 @@ export default function PostsManagementPage() {
               {/* Title with word-wrap and caption */}
               <button
                 type="button"
-                onClick={() => {
-                  setActivePost(item);
-                  setPreviewOpen(true);
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/admin/posts/${item.id}`);
                 }}
-                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
+                className="font-semibold text-slate-900 hover:text-[#115eff] text-xs text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
@@ -333,7 +319,7 @@ export default function PostsManagementPage() {
               {/* Summary with wrap and caption */}
               {item.summary && (
                 <p
-                  className="text-xs text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-relaxed w-full"
+                  className="text-xs text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-normal w-full"
                   title={item.summary}
                 >
                   {item.summary}
@@ -361,12 +347,15 @@ export default function PostsManagementPage() {
           const item = row.original;
           const cat = (row.getValue("category") as string) || item.category;
           return (
-            <div className="flex items-center justify-center min-w-0 max-w-[140px] mx-auto overflow-hidden">
+            <div
+              className="flex items-center justify-center min-w-0 max-w-[140px] mx-auto overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={cat}
                   >
                     <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
@@ -400,12 +389,15 @@ export default function PostsManagementPage() {
           const item = row.original;
           const status = (row.getValue("status") as string) || item.status;
           return (
-            <div className="flex items-center justify-center min-w-0 max-w-[130px] mx-auto overflow-hidden">
+            <div
+              className="flex items-center justify-center min-w-0 max-w-[130px] mx-auto overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={status}
                   >
                     <span className="flex items-center gap-1.5 min-w-0 truncate">
@@ -479,7 +471,7 @@ export default function PostsManagementPage() {
           const val = Number(row.getValue("views") || 0);
           return (
             <div
-              className="text-center font-medium text-slate-600 text-sm truncate px-1"
+              className="text-center font-medium text-slate-600 text-xs truncate px-1"
               title={`${val.toLocaleString("en-US")} views`}
             >
               {val.toLocaleString("en-US")}
@@ -514,36 +506,41 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="flex items-center justify-center gap-1">
+            <div
+              className="flex items-center justify-center gap-1 shrink-0"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Preview post"
               >
                 <Eye className="size-4" />
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setActivePost(item);
-                  setFormOpen(true);
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/admin/posts/${item.id}`);
                 }}
-                className="p-1.5 text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                title="Edit post"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                title="Edit post in full editor"
               >
                 <Edit2 className="size-4" />
               </button>
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Delete post"
               >
                 <Trash2 className="size-4" />
@@ -554,15 +551,15 @@ export default function PostsManagementPage() {
         enableSorting: false,
       },
     ],
-    [handleQuickStatusChange, handleQuickCategoryChange]
+    [router, handleQuickStatusChange, handleQuickCategoryChange]
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
             <FileText className="size-6 text-[#115eff]" />
             Posts &amp; News
           </h1>
@@ -572,11 +569,8 @@ export default function PostsManagementPage() {
           <Button
             type="button"
             size="sm"
-            onClick={() => {
-              setActivePost(null);
-              setFormOpen(true);
-            }}
-            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent"
+            onClick={() => router.push("/admin/posts/create")}
+            className="h-8 px-3.5 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
           >
             <Plus className="size-4 mr-1.5" />
             New Post
@@ -589,6 +583,7 @@ export default function PostsManagementPage() {
         columns={columns}
         data={posts}
         loading={loading}
+        onRowClick={(item) => router.push(`/admin/posts/${item.id}`)}
         searchPlaceholder="Search by title, slug, summary..."
         filterColumns={[
           {
@@ -607,12 +602,12 @@ export default function PostsManagementPage() {
           },
         ]}
         batchActions={(selected, clear) => (
-          <div className="flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-1.5 ml-2">
             <Button
               type="button"
               size="sm"
               onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-              className="h-7 px-3 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent"
+              className="h-7 px-3 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
             >
               Publish
             </Button>
@@ -621,7 +616,7 @@ export default function PostsManagementPage() {
               size="sm"
               variant="outline"
               onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-none"
             >
               Set Draft
             </Button>
@@ -630,7 +625,7 @@ export default function PostsManagementPage() {
               variant="outline"
               size="sm"
               onClick={() => handleBatchDelete(selected, clear)}
-              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900 shadow-none"
             >
               Delete selected
             </Button>
@@ -638,33 +633,14 @@ export default function PostsManagementPage() {
         )}
       />
 
-      {/* ── Dialogs ── */}
-      <PostFormDialog
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        post={
-          activePost
-            ? {
-                id: activePost.id,
-                title: activePost.title,
-                slug: activePost.slug,
-                category: activePost.category,
-                summary: activePost.summary || "",
-                content: activePost.content,
-                coverImage: activePost.coverImage || "",
-                status: activePost.status,
-              }
-            : null
-        }
-        onSave={handleSavePost}
-      />
-
+      {/* ── Preview Dialog ── */}
       <PostPreviewDialog
         open={previewOpen}
         onOpenChange={setPreviewOpen}
         post={activePost}
       />
 
+      {/* ── Delete Confirmation Dialog ── */}
       <PostDeleteDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
