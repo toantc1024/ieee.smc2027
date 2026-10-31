@@ -327,7 +327,7 @@ export default function PostsManagementPage() {
                     setActivePost(item);
                     setPreviewOpen(true);
                   }}
-                  className="font-semibold text-slate-900 hover:text-[#005496] text-sm text-left truncate block max-w-md transition-colors cursor-pointer"
+                  className="font-semibold text-slate-900 hover:text-[#115eff] text-sm text-left truncate block max-w-md transition-colors cursor-pointer"
                   title="Click to preview post"
                 >
                   {item.title}
@@ -352,7 +352,7 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50/80 hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#005496] transition-colors cursor-pointer group shadow-2xs"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50/80 hover:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-[#115eff] transition-colors cursor-pointer group shadow-2xs"
                     title="Click to quick-change category"
                   >
                     <span className="truncate max-w-[130px]">{cat}</span>
@@ -368,7 +368,7 @@ export default function PostsManagementPage() {
                     >
                       <span className="truncate">{categoryOption}</span>
                       {cat === categoryOption && (
-                        <Check className="size-3.5 text-[#005496] shrink-0 ml-2" />
+                        <Check className="size-3.5 text-[#115eff] shrink-0 ml-2" />
                       )}
                     </DropdownMenuItem>
                   ))}
@@ -391,7 +391,7 @@ export default function PostsManagementPage() {
                   <button
                     type="button"
                     className={cn(
-                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer group shadow-2xs focus:outline-none focus:ring-1 focus:ring-[#005496]",
+                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer group shadow-2xs focus:outline-none focus:ring-1 focus:ring-[#115eff]",
                       status === "PUBLISHED"
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100/70"
                         : status === "DRAFT"
@@ -506,7 +506,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setPreviewOpen(true);
                 }}
-                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Preview post"
               >
                 <Eye className="size-4" />
@@ -549,7 +549,7 @@ export default function PostsManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <FileText className="size-6 text-[#005496]" />
+            <FileText className="size-6 text-[#115eff]" />
             Posts &amp; News
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -579,7 +579,7 @@ export default function PostsManagementPage() {
               setActivePost(null);
               setFormOpen(true);
             }}
-            className="h-9 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white shadow-xs"
+            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-xs"
           >
             <Plus className="size-4 mr-1.5" />
             New Post

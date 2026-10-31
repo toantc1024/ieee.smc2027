@@ -23,7 +23,7 @@ export function RegistrationStepperHeader({
             Official Delegate Registration
           </Badge>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Conference Registration <span className="text-[#005496]">IEEE SMC 2027</span>
+            Conference Registration <span className="text-[#115eff]">IEEE SMC 2027</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-600">
             Ho Chi Minh City, Vietnam · October 6–10, 2027. Complete your registration to receive your delegate code, Payoo checkout, and Visa Support Letter.
@@ -33,7 +33,7 @@ export function RegistrationStepperHeader({
             <div
               className={`flex items-center gap-2.5 p-3 rounded-xl border ${
                 currentStep === "TIER"
-                  ? "bg-blue-50/80 border-[#005496] text-[#005496]"
+                  ? "bg-blue-50/80 border-[#115eff] text-[#115eff]"
                   : "bg-white border-slate-200 text-slate-500"
               }`}
             >
@@ -46,7 +46,7 @@ export function RegistrationStepperHeader({
             <div
               className={`flex items-center gap-2.5 p-3 rounded-xl border ${
                 currentStep === "INFO"
-                  ? "bg-blue-50/80 border-[#005496] text-[#005496]"
+                  ? "bg-blue-50/80 border-[#115eff] text-[#115eff]"
                   : "bg-white border-slate-200 text-slate-500"
               }`}
             >

@@ -327,7 +327,7 @@ export default function AdminUsersPage() {
                   className="size-9 rounded-full object-cover border border-slate-200"
                 />
               ) : (
-                <div className="size-9 rounded-full bg-blue-50 text-[#005496] font-bold text-xs flex items-center justify-center shrink-0">
+                <div className="size-9 rounded-full bg-blue-50 text-[#115eff] font-bold text-xs flex items-center justify-center shrink-0">
                   {u.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -337,7 +337,7 @@ export default function AdminUsersPage() {
                     {u.name}
                   </span>
                   {isSelf && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#005496]/10 text-[#005496] border border-[#005496]/20">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#115eff]/10 text-[#115eff] border border-[#115eff]/20">
                       You
                     </span>
                   )}
@@ -365,10 +365,10 @@ export default function AdminUsersPage() {
             return (
               <div className="flex items-center justify-center">
                 <span
-                  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border border-[#005496]/30 bg-[#005496]/10 text-[#005496] select-none"
+                  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border border-[#115eff]/30 bg-[#115eff]/10 text-[#115eff] select-none"
                   title="Your active account"
                 >
-                  <span className="size-1.5 rounded-full bg-[#005496]" />
+                  <span className="size-1.5 rounded-full bg-[#115eff]" />
                   <span>Admin</span>
                 </span>
               </div>
@@ -382,9 +382,9 @@ export default function AdminUsersPage() {
                   <button
                     type="button"
                     className={cn(
-                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer shadow-2xs group focus:outline-none focus:ring-1 focus:ring-[#005496]",
+                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 rounded-full text-xs font-semibold border transition-colors cursor-pointer shadow-2xs group focus:outline-none focus:ring-1 focus:ring-[#115eff]",
                       role === "ADMIN"
-                        ? "bg-[#005496]/10 text-[#005496] border-[#005496]/30 hover:bg-[#005496]/20"
+                        ? "bg-[#115eff]/10 text-[#115eff] border-[#115eff]/30 hover:bg-[#115eff]/20"
                         : "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200/80"
                     )}
                     title="Click to quick-change role"
@@ -393,7 +393,7 @@ export default function AdminUsersPage() {
                       <span
                         className={cn(
                           "size-1.5 rounded-full",
-                          role === "ADMIN" ? "bg-[#005496]" : "bg-slate-400"
+                          role === "ADMIN" ? "bg-[#115eff]" : "bg-slate-400"
                         )}
                       />
                       <span>{role === "ADMIN" ? "Admin" : "User"}</span>
@@ -406,11 +406,11 @@ export default function AdminUsersPage() {
                     onClick={() => handleQuickRoleChange(u.id, "ADMIN")}
                     className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-xl cursor-pointer"
                   >
-                    <span className="flex items-center gap-2 text-[#005496] font-semibold">
-                      <span className="size-1.5 rounded-full bg-[#005496]" />
+                    <span className="flex items-center gap-2 text-[#115eff] font-semibold">
+                      <span className="size-1.5 rounded-full bg-[#115eff]" />
                       Admin
                     </span>
-                    {role === "ADMIN" && <Check className="size-3.5 text-[#005496]" />}
+                    {role === "ADMIN" && <Check className="size-3.5 text-[#115eff]" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickRoleChange(u.id, "USER")}
@@ -505,7 +505,7 @@ export default function AdminUsersPage() {
               <button
                 type="button"
                 onClick={() => setEditingUser(u)}
-                className="p-1.5 text-slate-400 hover:text-[#005496] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Edit user"
               >
                 <Edit2 className="size-4" />
@@ -537,7 +537,7 @@ export default function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Users className="size-6 text-[#005496]" />
+            <Users className="size-6 text-[#115eff]" />
             Users &amp; Roles
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -550,7 +550,7 @@ export default function AdminUsersPage() {
             type="button"
             size="sm"
             onClick={() => setCreateOpen(true)}
-            className="h-9 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white shadow-xs"
+            className="h-9 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-xs"
           >
             <Plus className="size-4 mr-1.5" />
             Add User

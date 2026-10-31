@@ -37,14 +37,14 @@ export class DocumentService {
   <title>Receipt - ${reg.registrationCode}</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 48px; color: #0f172a; max-width: 820px; margin: 0 auto; }
-    .header { border-bottom: 3px solid #005496; padding-bottom: 20px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-start; }
-    .title { color: #005496; font-size: 24px; font-weight: 800; margin: 0; }
+    .header { border-bottom: 3px solid #115eff; padding-bottom: 20px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .title { color: #115eff; font-size: 24px; font-weight: 800; margin: 0; }
     .subtitle { color: #475569; font-size: 13px; margin-top: 4px; }
     .badge { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 12px; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
     th { background: #f8fafc; color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .total { font-size: 18px; font-weight: 800; color: #005496; }
+    .total { font-size: 18px; font-weight: 800; color: #115eff; }
   </style>
 </head>
 <body>
@@ -124,8 +124,8 @@ export class DocumentService {
   <title>Visa Support Letter - ${reg.registrationCode}</title>
   <style>
     body { font-family: Georgia, "Times New Roman", serif; padding: 56px; color: #0f172a; line-height: 1.7; max-width: 820px; margin: 0 auto; }
-    .letterhead { border-bottom: 2px solid #005496; padding-bottom: 16px; margin-bottom: 32px; }
-    .org { color: #005496; font-size: 20px; font-weight: bold; margin: 0; }
+    .letterhead { border-bottom: 2px solid #115eff; padding-bottom: 16px; margin-bottom: 32px; }
+    .org { color: #115eff; font-size: 20px; font-weight: bold; margin: 0; }
     .sub { font-size: 13px; color: #475569; margin: 4px 0 0 0; }
     .grid { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px 24px; margin: 24px 0; }
     .grid p { margin: 6px 0; font-size: 14px; }

@@ -92,7 +92,7 @@ export function ImageUploadField({
         >
           {value ? (
             isPdf ? (
-              <div className="flex flex-col items-center gap-1 text-[#005496] p-2 text-center">
+              <div className="flex flex-col items-center gap-1 text-[#115eff] p-2 text-center">
                 <FileText className="size-7" />
                 <span className="text-[9px] font-bold uppercase">PDF Uploaded</span>
               </div>
@@ -165,7 +165,7 @@ export function ImageUploadField({
                 href={value}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#005496] hover:underline ml-1"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#115eff] hover:underline ml-1"
               >
                 View <ExternalLink className="size-3" />
               </a>

@@ -24,7 +24,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost:
     "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
   link: "text-primary underline-offset-4 hover:underline",
-  ute: "group relative overflow-hidden bg-gradient-to-r from-[#005496] to-[#0284c7] text-white shadow-md transition-all duration-300 hover:from-[#0284c7] hover:to-[#0369a1] hover:shadow-lg",
+  ute: "group relative overflow-hidden bg-[#115eff] text-white shadow-md transition-all duration-300 hover:bg-[#0a4de6] hover:shadow-lg",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

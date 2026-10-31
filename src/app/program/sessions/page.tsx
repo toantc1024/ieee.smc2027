@@ -85,7 +85,7 @@ export default function ProgramSessionsPage() {
               Technical Program & PaperCept Schedule
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-              Technical Sessions <span className="text-[#005496]">&amp; Tracks</span>
+              Technical Sessions <span className="text-[#115eff]">&amp; Tracks</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600">
               Live database schedule of oral presentations, special sessions,
@@ -113,7 +113,7 @@ export default function ProgramSessionsPage() {
 
           {loading ? (
             <Card className="p-16 items-center justify-center text-slate-400">
-              <Loader2 className="size-7 animate-spin text-[#005496]" />
+              <Loader2 className="size-7 animate-spin text-[#115eff]" />
               <span className="text-xs">
                 Loading technical sessions from PostgreSQL...
               </span>

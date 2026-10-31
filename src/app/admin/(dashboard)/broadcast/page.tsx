@@ -195,7 +195,7 @@ export default function AdminBroadcastPage() {
 
       {loadingTemplates ? (
         <Card className="p-16 items-center justify-center text-slate-400">
-          <Loader2 className="size-7 animate-spin text-[#005496]" />
+          <Loader2 className="size-7 animate-spin text-[#115eff]" />
           <span className="text-xs">Loading milestone email templates...</span>
         </Card>
       ) : (

@@ -68,7 +68,7 @@ export function PortalPayooStatusCard({
             <span className="text-slate-400 font-bold uppercase block">
               Visa Letter Status
             </span>
-            <span className="text-base font-black text-[#005496] mt-1 block">
+            <span className="text-base font-black text-[#115eff] mt-1 block">
               {visaStatus}
             </span>
           </div>

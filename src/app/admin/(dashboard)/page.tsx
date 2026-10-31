@@ -91,12 +91,12 @@ export default async function AdminDashboardPage() {
             <div className="text-2xl font-black text-slate-900 mt-1">{totalRegs}</div>
             <Link
               href="/admin/registrations"
-              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
             >
               Inspect JSON formData →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
             <CreditCard className="size-5" />
           </div>
         </Card>
@@ -124,12 +124,12 @@ export default async function AdminDashboardPage() {
             <div className="text-2xl font-black text-slate-900 mt-1">{totalUsers}</div>
             <Link
               href="/admin/users"
-              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
             >
               Manage ADMIN / USER roles →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
             <Users className="size-5" />
           </div>
         </Card>
@@ -142,12 +142,12 @@ export default async function AdminDashboardPage() {
             <div className="text-2xl font-black text-slate-900 mt-1">{totalMedia}</div>
             <Link
               href="/admin/media"
-              className="text-xs text-[#005496] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
             >
               Open Media Manager →
             </Link>
           </div>
-          <div className="size-11 rounded-xl bg-blue-50 text-[#005496] flex items-center justify-center">
+          <div className="size-11 rounded-xl bg-blue-50 text-[#115eff] flex items-center justify-center">
             <FolderOpen className="size-5" />
           </div>
         </Card>
@@ -219,7 +219,7 @@ export default async function AdminDashboardPage() {
           </div>
           <Link
             href="/admin/pages"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[#005496] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#115eff] hover:underline"
           >
             <span>Open Tree View</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -255,7 +255,7 @@ export default async function AdminDashboardPage() {
               <div className="flex items-center gap-2">
                 <Link
                   href={`/admin/pages/${p.id}`}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#005496] hover:bg-[#0284c7] text-white font-semibold rounded-lg transition-colors text-[11px]"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold rounded-lg transition-colors text-[11px]"
                 >
                   <SlidersHorizontal className="w-3 h-3" />
                   <span>Edit Builder</span>
@@ -284,7 +284,7 @@ export default async function AdminDashboardPage() {
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Globe className="w-3.5 h-3.5 text-[#005496]" />
+            <Globe className="w-3.5 h-3.5 text-[#115eff]" />
             <span>HCMUTE Branding System Active</span>
           </div>
         </div>

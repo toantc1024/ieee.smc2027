@@ -56,7 +56,7 @@ export function RegistrationTable({
               onClick={() => onStatusFilterChange(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 statusFilter === st
-                  ? "bg-[#005496] text-white"
+                  ? "bg-[#115eff] text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -78,7 +78,7 @@ export function RegistrationTable({
 
       {loading ? (
         <div className="py-14 flex flex-col items-center justify-center text-slate-400 gap-2">
-          <Loader2 className="size-6 animate-spin text-[#005496]" />
+          <Loader2 className="size-6 animate-spin text-[#115eff]" />
           <span className="text-xs">Loading delegate registrations...</span>
         </div>
       ) : registrations.length === 0 ? (
@@ -118,7 +118,7 @@ export function RegistrationTable({
                             className="size-9 rounded-full object-cover border border-slate-200"
                           />
                         ) : (
-                          <div className="size-9 rounded-full bg-blue-50 text-[#005496] font-bold flex items-center justify-center">
+                          <div className="size-9 rounded-full bg-blue-50 text-[#115eff] font-bold flex items-center justify-center">
                             {reg.fullName.charAt(0)}
                           </div>
                         )}
@@ -127,7 +127,7 @@ export function RegistrationTable({
                             <span className="font-bold text-slate-900">
                               {reg.fullName}
                             </span>
-                            <span className="text-[10px] font-bold text-[#005496] bg-blue-50 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-[#115eff] bg-blue-50 px-1.5 py-0.5 rounded">
                               {reg.registrationCode}
                             </span>
                           </div>
@@ -190,7 +190,7 @@ export function RegistrationTable({
                             href={form.proofDocumentUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[#005496] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            className="text-[#115eff] font-semibold hover:underline inline-flex items-center gap-0.5"
                           >
                             Proof File <ExternalLink className="size-3" />
                           </a>
@@ -200,7 +200,7 @@ export function RegistrationTable({
                             href={form.passportScanUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[#005496] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            className="text-[#115eff] font-semibold hover:underline inline-flex items-center gap-0.5"
                           >
                             Passport Scan <ExternalLink className="size-3" />
                           </a>

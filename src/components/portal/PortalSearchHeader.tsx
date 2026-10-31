@@ -29,7 +29,7 @@ export function PortalSearchHeader({
             Delegate Portal & Digital Badge
           </Badge>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Delegate Profile & <span className="text-[#005496]">Digital Badge Portal</span>
+            Delegate Profile & <span className="text-[#115eff]">Digital Badge Portal</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-600">
             Manage your JSON-based delegate profile, complete Payoo checkout, print your QR conference badge, and download your Official Receipt or Visa Support Letter.

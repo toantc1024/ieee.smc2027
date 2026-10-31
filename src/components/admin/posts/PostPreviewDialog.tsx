@@ -42,7 +42,7 @@ export function PostPreviewDialog({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto font-sans p-6 sm:p-8">
         <DialogHeader className="pb-3 border-b border-slate-100 flex items-center justify-between">
           <DialogTitle className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-            <Eye className="size-4 text-[#005496]" />
+            <Eye className="size-4 text-[#115eff]" />
             Post Preview
           </DialogTitle>
         </DialogHeader>
@@ -64,7 +64,7 @@ export function PostPreviewDialog({
           {/* Meta header */}
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-xs text-slate-500">
-              <span className="font-semibold text-[#005496]">
+              <span className="font-semibold text-[#115eff]">
                 {post.category}
               </span>
               <span>•</span>
@@ -88,7 +88,7 @@ export function PostPreviewDialog({
             </h1>
 
             {post.summary && (
-              <p className="text-sm text-slate-600 font-medium italic border-l-3 border-[#005496] pl-3 py-0.5">
+              <p className="text-sm text-slate-600 font-medium italic border-l-3 border-[#115eff] pl-3 py-0.5">
                 {post.summary}
               </p>
             )}

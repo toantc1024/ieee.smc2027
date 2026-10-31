@@ -275,7 +275,7 @@ export function PostFormDialog({
               type="submit"
               size="sm"
               disabled={saving}
-              className="h-9 px-5 text-xs bg-[#005496] hover:bg-[#004276] text-white"
+              className="h-9 px-5 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"
             >
               {saving ? (
                 <>

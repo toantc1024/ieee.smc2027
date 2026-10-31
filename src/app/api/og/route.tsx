@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   const title = searchParams.get("title") || "IEEE SMC 2027 • Ho Chi Minh City, Vietnam";
   const description =
     searchParams.get("description") ||
-    "The 2027 IEEE International Conference on Systems, Man, and Cybernetics. October 6–10, 2027 • Ho Chi Minh City, Vietnam. Theme: Human-Centric Intelligence: Shaping the Digital Future.";
+    "The 2027 IEEE International Conference on Systems, Man, and Cybernetics. October 6–10, 2027 • Ho Chi Minh City, Vietnam. Theme: Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures.";
   const badge = searchParams.get("badge") || "FLAGSHIP CONFERENCE";
   const cover = searchParams.get("cover");
 

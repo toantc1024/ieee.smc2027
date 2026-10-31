@@ -217,7 +217,7 @@ function AdminLoginForm() {
       <div className="w-full lg:w-[calc(58%-0.5rem)] xl:w-[calc(60%-0.5rem)] flex flex-col h-[340px] sm:h-[400px] lg:h-full min-h-0 min-w-0 shrink-0">
         <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md lg:shadow-[0_16px_48px_-12px_rgba(17,94,255,0.20)] border border-[#115eff]/20 flex flex-col justify-between select-none">
           {/* Background Slideshow: Shows Original Image Colors without dark shadow filters */}
-          <div className="absolute inset-0 bg-[#005496] overflow-hidden">
+          <div className="absolute inset-0 bg-[#115eff] overflow-hidden">
             <AnimatePresence initial={false}>
               <motion.img
                 key={slideIdx}
@@ -332,7 +332,7 @@ function AdminLoginForm() {
           <div className="relative z-20 w-full max-w-[380px] mx-auto my-auto flex flex-col justify-center space-y-5">
             {/* Header */}
             <div className="text-center space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-[#005496] border border-blue-100 text-[11px] font-semibold mb-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-[#115eff] border border-blue-100 text-[11px] font-semibold mb-1">
                 <Shield className="size-3" />
                 <span>Admin Console</span>
               </div>

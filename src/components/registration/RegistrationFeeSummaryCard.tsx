@@ -69,7 +69,7 @@ export function RegistrationFeeSummaryCard({
 
         <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline">
           <span className="font-bold text-slate-900">Total Payable</span>
-          <span className="text-xl font-black text-[#005496]">
+          <span className="text-xl font-black text-[#115eff]">
             {computedTotalFormatted}
           </span>
         </div>
@@ -83,11 +83,11 @@ export function RegistrationFeeSummaryCard({
             onClick={() => onChangePaymentMethod("PAYOO_VIETQR")}
             className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer ${
               paymentMethod === "PAYOO_VIETQR"
-                ? "border-[#005496] bg-blue-50/60"
+                ? "border-[#115eff] bg-blue-50/60"
                 : "border-slate-200 bg-white"
             }`}
           >
-            <QrCode className="size-5 text-[#005496] shrink-0" />
+            <QrCode className="size-5 text-[#115eff] shrink-0" />
             <div>
               <p className="text-xs font-bold text-slate-900">
                 Payoo Dynamic VietQR
@@ -103,11 +103,11 @@ export function RegistrationFeeSummaryCard({
             onClick={() => onChangePaymentMethod("PAYOO_CARD")}
             className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer ${
               paymentMethod === "PAYOO_CARD"
-                ? "border-[#005496] bg-blue-50/60"
+                ? "border-[#115eff] bg-blue-50/60"
                 : "border-slate-200 bg-white"
             }`}
           >
-            <CreditCard className="size-5 text-[#005496] shrink-0" />
+            <CreditCard className="size-5 text-[#115eff] shrink-0" />
             <div>
               <p className="text-xs font-bold text-slate-900">
                 Payoo International Card

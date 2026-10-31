@@ -70,7 +70,7 @@ export function UserTable({
                         className="size-9 rounded-full object-cover border border-slate-200"
                       />
                     ) : (
-                      <div className="size-9 rounded-full bg-blue-50 text-[#005496] font-bold flex items-center justify-center">
+                      <div className="size-9 rounded-full bg-blue-50 text-[#115eff] font-bold flex items-center justify-center">
                         {u.name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -78,7 +78,7 @@ export function UserTable({
                       <div className="flex items-center gap-1.5">
                         <p className="font-bold text-slate-900">{u.name}</p>
                         {isSelf && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#005496]/10 text-[#005496]">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#115eff]/10 text-[#115eff]">
                             You
                           </span>
                         )}

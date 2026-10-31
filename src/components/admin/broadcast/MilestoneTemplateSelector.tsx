@@ -54,7 +54,7 @@ export function MilestoneTemplateSelector({
                 onClick={() => onSelectTemplate(tpl)}
                 className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
                   isSelected
-                    ? "border-[#005496] bg-blue-50/70 shadow-2xs"
+                    ? "border-[#115eff] bg-blue-50/70 shadow-2xs"
                     : "border-slate-200 bg-white hover:bg-slate-50"
                 }`}
               >
@@ -77,7 +77,7 @@ export function MilestoneTemplateSelector({
 
       <Card className="p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Mail className="size-4 text-[#005496]" />
+          <Mail className="size-4 text-[#115eff]" />
           <h3 className="text-sm font-extrabold text-slate-900">
             Dispatch Milestone Broadcast
           </h3>

@@ -74,7 +74,7 @@ export function MediaFileGrid({
               onClick={() => onFolderChange(folder.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                 activeFolder === folder.value
-                  ? "bg-[#005496] text-white"
+                  ? "bg-[#115eff] text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -101,7 +101,7 @@ export function MediaFileGrid({
 
       {loading ? (
         <div className="py-16 flex flex-col items-center justify-center text-slate-400 gap-2">
-          <Loader2 className="size-7 animate-spin text-[#005496]" />
+          <Loader2 className="size-7 animate-spin text-[#115eff]" />
           <span className="text-xs font-medium">Loading media catalog...</span>
         </div>
       ) : files.length === 0 ? (
@@ -139,7 +139,7 @@ export function MediaFileGrid({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center gap-1.5 text-[#005496]">
+                    <div className="flex flex-col items-center gap-1.5 text-[#115eff]">
                       <FileText className="size-10" />
                       <span className="text-[10px] font-bold uppercase">
                         {item.mimeType}
@@ -167,7 +167,7 @@ export function MediaFileGrid({
                     <button
                       type="button"
                       onClick={() => onCopyUrl(item.id, displayUrl)}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#005496] hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#115eff] hover:underline cursor-pointer"
                     >
                       {copiedId === item.id ? (
                         <>

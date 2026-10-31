@@ -44,7 +44,7 @@ export function CategorySelectionStep({
             onClick={() => onChangeCurrency("VND")}
             className={`px-3.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
               currency === "VND"
-                ? "bg-[#005496] text-white"
+                ? "bg-[#115eff] text-white"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -55,7 +55,7 @@ export function CategorySelectionStep({
             onClick={() => onChangeCurrency("USD")}
             className={`px-3.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
               currency === "USD"
-                ? "bg-[#005496] text-white"
+                ? "bg-[#115eff] text-white"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -75,7 +75,7 @@ export function CategorySelectionStep({
               onClick={() => onSelectTier(key)}
               className={`relative rounded-2xl border-2 p-6 cursor-pointer transition-all flex flex-col justify-between ${
                 isSelected
-                  ? "border-[#005496] bg-white shadow-lg ring-4 ring-[#005496]/10"
+                  ? "border-[#115eff] bg-white shadow-lg ring-4 ring-[#115eff]/10"
                   : "border-slate-200 bg-white/90 hover:border-slate-300"
               }`}
             >
@@ -84,7 +84,7 @@ export function CategorySelectionStep({
                   <Badge variant={isSelected ? "ute" : "secondary"}>
                     {tier.badge}
                   </Badge>
-                  {isSelected && <CheckCircle2 className="size-5 text-[#005496]" />}
+                  {isSelected && <CheckCircle2 className="size-5 text-[#115eff]" />}
                 </div>
 
                 <h3 className="text-base font-extrabold text-slate-900 mb-1">

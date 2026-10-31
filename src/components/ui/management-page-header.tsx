@@ -56,7 +56,7 @@ export function ManagementPageHeader({
           ) : null}
 
           <div className="space-y-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#005496] truncate">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#115eff] truncate">
               {title}
             </h1>
             {description && (

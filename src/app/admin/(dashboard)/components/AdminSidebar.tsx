@@ -173,11 +173,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="hover:bg-slate-50">
               <Link href="/admin" className="flex items-center gap-3">
-                <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-[#005496] text-white shadow-xs">
+                <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-[#115eff] text-white shadow-xs">
                   <Shield className="size-5" />
                 </div>
                 <div className="grid flex-1 text-left text-xs leading-tight">
-                  <span className="truncate font-black text-[#005496] tracking-tight">
+                  <span className="truncate font-black text-[#115eff] tracking-tight">
                     IEEE SMC 2027
                   </span>
                   <span className="truncate text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
@@ -212,7 +212,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                         tooltip={item.title}
                         className={
                           isActive
-                            ? "bg-[#005496] text-white font-semibold hover:bg-[#004776] hover:text-white"
+                            ? "bg-[#115eff] text-white font-semibold hover:bg-[#0a4de6] hover:text-white"
                             : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                         }
                       >
@@ -225,7 +225,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                             className={
                               isActive
                                 ? "text-white"
-                                : "text-slate-500 group-hover:text-[#005496]"
+                                : "text-slate-500 group-hover:text-[#115eff]"
                             }
                           />
                           <span className="truncate text-xs">{item.title}</span>
@@ -240,7 +240,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                           className={
                             isActive
                               ? "bg-white/20 text-white font-mono text-[10px]"
-                              : "bg-blue-50 text-[#005496] font-mono text-[10px]"
+                              : "bg-blue-50 text-[#115eff] font-mono text-[10px]"
                           }
                         >
                           {item.badge}
@@ -270,7 +270,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     {user.avatar ? (
                       <AvatarImage src={user.avatar} alt={user.name} />
                     ) : null}
-                    <AvatarFallback className="rounded-lg bg-[#005496] text-white text-xs font-bold">
+                    <AvatarFallback className="rounded-lg bg-[#115eff] text-white text-xs font-bold">
                       {user.name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -297,7 +297,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                       {user.avatar ? (
                         <AvatarImage src={user.avatar} alt={user.name} />
                       ) : null}
-                      <AvatarFallback className="rounded-lg bg-[#005496] text-white text-xs font-bold">
+                      <AvatarFallback className="rounded-lg bg-[#115eff] text-white text-xs font-bold">
                         {user.name.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -305,7 +305,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                       <span className="truncate font-bold text-slate-900">
                         {user.name}
                       </span>
-                      <span className="truncate text-[10px] text-[#005496] font-semibold">
+                      <span className="truncate text-[10px] text-[#115eff] font-semibold">
                         {user.role}
                       </span>
                     </div>

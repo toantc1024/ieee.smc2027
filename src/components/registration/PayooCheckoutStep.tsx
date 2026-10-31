@@ -68,7 +68,7 @@ export function PayooCheckoutStep({
               <p className="text-xs text-slate-400 font-bold uppercase">
                 Amount Due
               </p>
-              <p className="text-xl font-black text-[#005496]">
+              <p className="text-xl font-black text-[#115eff]">
                 {registration.currency === "VND"
                   ? formatVND(registration.feeAmount)
                   : formatUSD(registration.feeAmount)}
@@ -149,17 +149,17 @@ export function PayooCheckoutStep({
 
                   <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between">
                     <div>
-                      <span className="text-[#005496] block font-bold uppercase text-[10px]">
+                      <span className="text-[#115eff] block font-bold uppercase text-[10px]">
                         Required Transfer Memo
                       </span>
-                      <span className="font-extrabold text-[#005496] text-sm">
+                      <span className="font-extrabold text-[#115eff] text-sm">
                         {payment.transferSyntax}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleCopy("memo", payment.transferSyntax)}
-                      className="p-1.5 rounded-lg bg-white border border-blue-200 text-[#005496] cursor-pointer"
+                      className="p-1.5 rounded-lg bg-white border border-blue-200 text-[#115eff] cursor-pointer"
                     >
                       {copiedKey === "memo" ? (
                         <Check className="size-3.5 text-emerald-600" />
@@ -217,7 +217,7 @@ export function PayooCheckoutStep({
             />
           )}
 
-          <div className="text-base font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
+          <div className="text-base font-black text-[#115eff] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
             {registration.registrationCode}
           </div>
 

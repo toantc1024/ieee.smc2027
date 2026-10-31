@@ -57,15 +57,15 @@ export function TechnicalSessionCard({
             <Badge variant="ute">{session.code}</Badge>
             <Badge variant="secondary">{session.trackName}</Badge>
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
-              <Calendar className="size-3.5 text-[#005496]" />
+              <Calendar className="size-3.5 text-[#115eff]" />
               {session.dayLabel}
             </span>
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
-              <Clock className="size-3.5 text-[#005496]" />
+              <Clock className="size-3.5 text-[#115eff]" />
               {session.timeSlot}
             </span>
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
-              <MapPin className="size-3.5 text-[#005496]" />
+              <MapPin className="size-3.5 text-[#115eff]" />
               {session.room}
             </span>
           </div>
@@ -106,7 +106,7 @@ export function TechnicalSessionCard({
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#005496] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                  <span className="font-bold text-[#115eff] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                     {paper.id}
                   </span>
                   <span className="font-bold text-slate-900 text-sm">

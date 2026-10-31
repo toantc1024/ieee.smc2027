@@ -172,7 +172,7 @@ export function CreateUserModal({
               type="submit"
               size="sm"
               disabled={creating}
-              className="h-8.5 px-4 text-xs bg-[#005496] hover:bg-[#004276] text-white"
+              className="h-8.5 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"
             >
               {creating ? (
                 <>

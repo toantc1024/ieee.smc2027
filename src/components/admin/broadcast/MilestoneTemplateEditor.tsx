@@ -40,7 +40,7 @@ export function MilestoneTemplateEditor({
             {(activeTemplate.variables || []).map((v) => (
               <code
                 key={v}
-                className="mx-1 px-1.5 py-0.5 rounded bg-slate-100 text-[#005496] font-mono text-[11px]"
+                className="mx-1 px-1.5 py-0.5 rounded bg-slate-100 text-[#115eff] font-mono text-[11px]"
               >
                 {`{{${v}}}`}
               </code>

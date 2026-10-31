@@ -20,7 +20,7 @@ export function DietaryTravelSection({
   return (
     <Card>
       <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-        <Plane className="size-5 text-[#005496]" />
+        <Plane className="size-5 text-[#115eff]" />
         <div>
           <h3 className="text-base font-bold text-slate-900">
             Dietary Preferences & Travel Logistics
@@ -105,7 +105,7 @@ export function DietaryTravelSection({
                   airportShuttleRequired: e.target.checked,
                 })
               }
-              className="size-4 accent-[#005496] rounded"
+              className="size-4 accent-[#115eff] rounded"
             />
             Request Tan Son Nhat Airport Shuttle Info
           </label>

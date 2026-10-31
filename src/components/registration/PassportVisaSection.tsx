@@ -21,7 +21,7 @@ export function PassportVisaSection({
     <Card>
       <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
-          <Globe className="size-5 text-[#005496]" />
+          <Globe className="size-5 text-[#115eff]" />
           <div>
             <h3 className="text-base font-bold text-slate-900">
               Passport & Visa Support Letter
@@ -32,14 +32,14 @@ export function PassportVisaSection({
           </div>
         </div>
 
-        <label className="inline-flex items-center gap-2 text-xs font-bold text-[#005496] cursor-pointer">
+        <label className="inline-flex items-center gap-2 text-xs font-bold text-[#115eff] cursor-pointer">
           <input
             type="checkbox"
             checked={Boolean(formData.needsVisaSupport)}
             onChange={(e) =>
               onChange({ ...formData, needsVisaSupport: e.target.checked })
             }
-            className="size-4 accent-[#005496] rounded"
+            className="size-4 accent-[#115eff] rounded"
           />
           Request Visa Letter
         </label>

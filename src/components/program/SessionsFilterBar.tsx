@@ -44,7 +44,7 @@ export function SessionsFilterBar({
               onClick={() => onSelectTrack(key)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                 selectedTrack === key
-                  ? "bg-[#005496] text-white"
+                  ? "bg-[#115eff] text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -71,7 +71,7 @@ export function SessionsFilterBar({
             onClick={() => onSelectDay("ALL")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${
               selectedDay === "ALL"
-                ? "bg-blue-50 text-[#005496] border border-blue-200"
+                ? "bg-blue-50 text-[#115eff] border border-blue-200"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
@@ -84,7 +84,7 @@ export function SessionsFilterBar({
               onClick={() => onSelectDay(dayIso)}
               className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${
                 selectedDay === dayIso
-                  ? "bg-blue-50 text-[#005496] border border-blue-200"
+                  ? "bg-blue-50 text-[#115eff] border border-blue-200"
                   : "text-slate-500 hover:text-slate-900"
               }`}
             >

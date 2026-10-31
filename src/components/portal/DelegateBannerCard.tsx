@@ -40,7 +40,7 @@ export function DelegateBannerCard({
             className="size-16 rounded-2xl object-cover border border-slate-200 shrink-0"
           />
         ) : (
-          <div className="size-16 rounded-2xl bg-blue-100 text-[#005496] flex items-center justify-center font-black text-2xl shrink-0">
+          <div className="size-16 rounded-2xl bg-blue-100 text-[#115eff] flex items-center justify-center font-black text-2xl shrink-0">
             {regData.fullName.charAt(0)}
           </div>
         )}
@@ -56,7 +56,7 @@ export function DelegateBannerCard({
           </div>
           <p className="text-xs text-slate-500 mt-1">
             {regData.affiliation} · {regData.country} · Code:{" "}
-            <strong className="text-[#005496]">{regData.registrationCode}</strong>
+            <strong className="text-[#115eff]">{regData.registrationCode}</strong>
           </p>
         </div>
       </div>

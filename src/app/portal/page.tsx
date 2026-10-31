@@ -282,7 +282,7 @@ function PortalContent() {
 
         {!regData && !loading && (
           <Card className="p-10 text-center max-w-2xl mx-auto items-center my-6">
-            <div className="size-16 rounded-2xl bg-blue-50 text-[#005496] flex items-center justify-center">
+            <div className="size-16 rounded-2xl bg-blue-50 text-[#115eff] flex items-center justify-center">
               <QrCode className="size-8" />
             </div>
             <h3 className="text-xl font-bold text-slate-900">
@@ -402,7 +402,7 @@ export default function PortalPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
-          <Loader2 className="size-8 animate-spin text-[#005496]" />
+          <Loader2 className="size-8 animate-spin text-[#115eff]" />
         </div>
       }
     >

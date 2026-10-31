@@ -81,7 +81,7 @@ export default function SubmissionsPage() {
               Call For Papers & PaperCept Portal
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              PaperCept Submission & <span className="text-[#005496]">Author Guidelines</span>
+              PaperCept Submission & <span className="text-[#115eff]">Author Guidelines</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-medium">
               Official IEEE double-column formatting instructions, LaTeX and Word templates, and direct access to the PaperCept submission portal.
@@ -106,7 +106,7 @@ export default function SubmissionsPage() {
                   key={idx}
                   className={`justify-between ${
                     portal.primary
-                      ? "border-2 border-[#005496] shadow-md"
+                      ? "border-2 border-[#115eff] shadow-md"
                       : "border-slate-200"
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function SubmissionsPage() {
             <div className="lg:col-span-5">
               <Card>
                 <div className="flex items-center gap-2">
-                  <Calendar className="size-5 text-[#005496]" />
+                  <Calendar className="size-5 text-[#115eff]" />
                   <h2 className="text-lg font-extrabold text-slate-900">
                     Important Deadlines
                   </h2>
@@ -203,7 +203,7 @@ export default function SubmissionsPage() {
                       className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3"
                     >
                       <div>
-                        <p className="text-xs font-extrabold text-[#005496]">
+                        <p className="text-xs font-extrabold text-[#115eff]">
                           {m.date}
                         </p>
                         <p className="text-xs font-semibold text-slate-800 mt-0.5">

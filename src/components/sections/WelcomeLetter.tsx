@@ -14,18 +14,18 @@ export interface ChairMember {
 
 export const CHAIR_MEMBERS: ChairMember[] = [
   {
-    name: "Assoc. Prof. Hieu-Giang Le",
-    role: "Honorary Chair",
-    affiliation: "Acting President, HCM-UTE",
+    name: "Assoc. Prof. Dinh-Thanh Chau",
+    role: "General Chair",
+    affiliation: "Vice President, HCM-UTE",
     country: "Vietnam",
-    image: "/chairs/prof-hieu-giang-le.png",
+    image: "/chairs/prof-dinh-thanh-chau.png",
   },
   {
-    name: "Prof. Saeid Nahavandi",
-    role: "Honorary Chair",
-    affiliation: "President, IEEE SMC Society • Swinburne Univ.",
-    country: "Australia",
-    image: "/chairs/prof-saeid-nahavandi.png",
+    name: "Prof. Yo-Ping Huang",
+    role: "General Chair",
+    affiliation: "National Taipei University of Technology",
+    country: "Taiwan",
+    image: "/chairs/prof-yo-ping-huang.png",
   },
 ];
 
@@ -42,7 +42,7 @@ export interface WelcomeLetterProps {
 
 export function WelcomeLetter({
   heading = "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
-  title = "Welcome Message from the Honorary Chairs",
+  title = "Welcome Message from the General Chairs",
   subtitle = "Welcome to IEEE SMC 2027 • Ho Chi Minh City",
   salutation = "Dear Colleagues & Honored Participants,",
   theme = "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",

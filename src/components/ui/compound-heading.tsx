@@ -27,10 +27,10 @@ export function CompoundHeading({
       {badge && (
         <div
           className={cn(
-            "inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200/80 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#005496]"
+            "inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200/80 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#115eff]"
           )}
         >
-          <span className="size-1.5 rounded-full bg-[#005496]" />
+          <span className="size-1.5 rounded-full bg-[#115eff]" />
           {badge}
         </div>
       )}

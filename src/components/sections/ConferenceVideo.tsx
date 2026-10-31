@@ -62,7 +62,7 @@ export function ConferenceVideo({
           <div className="space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
               <span className="block text-[#004776]">IEEE SMC 2027</span>
-              <span className="block text-[#005496]">Comes to Ho Chi Minh City</span>
+              <span className="block text-[#115eff]">Comes to Ho Chi Minh City</span>
             </h2>
             <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-3xl">
               {safeSubtitle}
@@ -76,7 +76,7 @@ export function ConferenceVideo({
               onClick={() => setPlayerSource("YOUTUBE")}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "YOUTUBE"
-                  ? "bg-[#005496] text-white"
+                  ? "bg-[#115eff] text-white"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -88,7 +88,7 @@ export function ConferenceVideo({
               onClick={() => setPlayerSource("QQ_VIDEO")}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "QQ_VIDEO"
-                  ? "bg-[#005496] text-white"
+                  ? "bg-[#115eff] text-white"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >

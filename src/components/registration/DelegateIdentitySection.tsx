@@ -29,7 +29,7 @@ export function DelegateIdentitySection({
   return (
     <Card>
       <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-        <User className="size-5 text-[#005496]" />
+        <User className="size-5 text-[#115eff]" />
         <div>
           <h3 className="text-base font-bold text-slate-900">
             Core Delegate Identity & Badge Photo

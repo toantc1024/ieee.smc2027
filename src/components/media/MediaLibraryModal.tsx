@@ -164,7 +164,7 @@ export function MediaLibraryModal({
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/70">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-[#005496] border border-blue-100">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-[#115eff] border border-blue-100">
               <FolderOpen className="size-5" />
             </div>
             <div>
@@ -193,7 +193,7 @@ export function MediaLibraryModal({
                 onClick={() => setActiveFolder(f.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeFolder === f.value
-                    ? "bg-[#005496] text-white"
+                    ? "bg-[#115eff] text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
@@ -257,7 +257,7 @@ export function MediaLibraryModal({
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50/40">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400 gap-2">
-              <Loader2 className="size-7 animate-spin text-[#005496]" />
+              <Loader2 className="size-7 animate-spin text-[#115eff]" />
               <span className="text-xs font-medium">Loading files...</span>
             </div>
           ) : files.length === 0 ? (
@@ -296,7 +296,7 @@ export function MediaLibraryModal({
                     }}
                     className={`group relative rounded-xl border bg-white overflow-hidden cursor-pointer transition-all ${
                       isSelected
-                        ? "border-[#005496] ring-2 ring-[#005496]/25 shadow-md"
+                        ? "border-[#115eff] ring-2 ring-[#115eff]/25 shadow-md"
                         : "border-slate-200 hover:border-slate-300 shadow-2xs"
                     }`}
                   >
@@ -309,13 +309,13 @@ export function MediaLibraryModal({
                         />
                       ) : (
                         <div className="flex flex-col items-center gap-1.5 text-slate-500">
-                          <FileText className="size-9 text-[#005496]" />
+                          <FileText className="size-9 text-[#115eff]" />
                           <span className="text-[10px] font-bold uppercase">PDF Document</span>
                         </div>
                       )}
 
                       {isSelected && (
-                        <div className="absolute top-2 right-2 size-6 rounded-full bg-[#005496] text-white flex items-center justify-center shadow-sm">
+                        <div className="absolute top-2 right-2 size-6 rounded-full bg-[#115eff] text-white flex items-center justify-center shadow-sm">
                           <Check className="size-3.5" />
                         </div>
                       )}

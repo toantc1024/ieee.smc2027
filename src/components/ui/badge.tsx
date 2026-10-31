@@ -17,7 +17,7 @@ const badgeVariantsMap: Record<BadgeVariant, string> = {
   outline: "border-slate-200 text-slate-700 bg-white",
   success: "border-emerald-200 bg-emerald-50 text-emerald-700",
   warning: "border-amber-200 bg-amber-50 text-amber-700",
-  ute: "border-blue-200 bg-blue-50 text-[#005496]",
+  ute: "border-blue-200 bg-blue-50 text-[#115eff]",
 };
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

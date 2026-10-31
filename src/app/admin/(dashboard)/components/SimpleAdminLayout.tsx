@@ -98,8 +98,8 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
                 : "justify-between px-3.5 py-2.5"
             } ${
               isActive
-                ? "bg-[#005496] text-white shadow-xs font-semibold"
-                : "text-slate-700 hover:bg-slate-100 hover:text-[#005496]"
+                ? "bg-[#115eff] text-white shadow-xs font-semibold"
+                : "text-slate-700 hover:bg-slate-100 hover:text-[#115eff]"
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -107,7 +107,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
                 className={`size-4.5 shrink-0 transition-colors ${
                   isActive
                     ? "text-white"
-                    : "text-slate-500 group-hover:text-[#005496]"
+                    : "text-slate-500 group-hover:text-[#115eff]"
                 }`}
               />
               {!collapsed && <span className="truncate">{item.name}</span>}
@@ -122,12 +122,12 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           target="_blank"
           rel="noreferrer"
           title={collapsed ? "Live Website" : undefined}
-          className={`flex items-center rounded-xl text-xs font-medium text-slate-500 hover:text-[#005496] hover:bg-slate-100 transition-colors ${
+          className={`flex items-center rounded-xl text-xs font-medium text-slate-500 hover:text-[#115eff] hover:bg-slate-100 transition-colors ${
             collapsed ? "justify-center p-3" : "justify-between px-3.5 py-2.5"
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <ExternalLink className="size-4.5 shrink-0 text-slate-400 group-hover:text-[#005496]" />
+            <ExternalLink className="size-4.5 shrink-0 text-slate-400 group-hover:text-[#115eff]" />
             {!collapsed && <span className="truncate">Live Website</span>}
           </div>
         </Link>
@@ -140,7 +140,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
       {/* ── Mobile Top Header (< md) ── */}
       <div className="md:hidden sticky top-0 z-40 h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between shadow-2xs">
         <Link href="/admin" className="flex items-center gap-2">
-          <span className="font-extrabold text-base tracking-tight text-[#005496]">
+          <span className="font-extrabold text-base tracking-tight text-[#115eff]">
             IEEE SMC 2027
           </span>
         </Link>
@@ -164,7 +164,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           />
           <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl z-10">
             <div className="h-14 px-4 border-b border-slate-200 flex items-center justify-between">
-              <span className="font-extrabold text-base tracking-tight text-[#005496]">
+              <span className="font-extrabold text-base tracking-tight text-[#115eff]">
                 IEEE SMC 2027
               </span>
               <button
@@ -181,7 +181,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
             {/* Mobile User Footer */}
             <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="size-8 rounded-full bg-[#005496] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                <div className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex flex-col min-w-0">
@@ -221,11 +221,11 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
             title={isCollapsed ? "IEEE SMC 2027" : undefined}
           >
             {isCollapsed ? (
-              <span className="font-black text-sm tracking-tight text-[#005496]">
+              <span className="font-black text-sm tracking-tight text-[#115eff]">
                 SMC
               </span>
             ) : (
-              <span className="font-extrabold text-base tracking-tight text-[#005496]">
+              <span className="font-extrabold text-base tracking-tight text-[#115eff]">
                 IEEE SMC 2027
               </span>
             )}
@@ -241,16 +241,16 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           <button
             type="button"
             onClick={toggleCollapse}
-            className={`flex items-center rounded-xl text-xs font-medium text-slate-600 hover:text-[#005496] hover:bg-slate-100 transition-colors cursor-pointer group ${
+            className={`flex items-center rounded-xl text-xs font-medium text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer group ${
               isCollapsed ? "justify-center p-2.5" : "justify-between px-3 py-2"
             }`}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               {isCollapsed ? (
-                <PanelLeftOpen className="size-4 shrink-0 text-slate-500 group-hover:text-[#005496]" />
+                <PanelLeftOpen className="size-4 shrink-0 text-slate-500 group-hover:text-[#115eff]" />
               ) : (
-                <PanelLeftClose className="size-4 shrink-0 text-slate-500 group-hover:text-[#005496]" />
+                <PanelLeftClose className="size-4 shrink-0 text-slate-500 group-hover:text-[#115eff]" />
               )}
               {!isCollapsed && <span>Collapse sidebar</span>}
             </div>
@@ -260,7 +260,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           {isCollapsed ? (
             <div className="pt-1.5 border-t border-slate-200/80 flex flex-col items-center gap-1.5">
               <div
-                className="size-8 rounded-full bg-[#005496] text-white text-xs font-bold flex items-center justify-center shrink-0 cursor-default"
+                className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0 cursor-default"
                 title={`${user.name} (${user.email})`}
               >
                 {user.name.charAt(0).toUpperCase()}
@@ -278,7 +278,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           ) : (
             <div className="pt-1.5 border-t border-slate-200/80 flex items-center justify-between gap-2 min-w-0">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="size-8 rounded-full bg-[#005496] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                <div className="size-8 rounded-full bg-[#115eff] text-white text-xs font-bold flex items-center justify-center shrink-0">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex flex-col min-w-0">
@@ -309,7 +309,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
           <div className="flex items-center gap-2 text-xs">
             <Link
               href="/admin"
-              className="text-slate-500 hover:text-[#005496] transition-colors font-medium"
+              className="text-slate-500 hover:text-[#115eff] transition-colors font-medium"
             >
               Console
             </Link>
@@ -326,7 +326,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search console..."
-                className="w-full h-8.5 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005496] transition-all"
+                className="w-full h-8.5 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#115eff] transition-all"
               />
             </div>
           </div>

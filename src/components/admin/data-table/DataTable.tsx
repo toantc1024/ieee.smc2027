@@ -141,7 +141,7 @@ export function DataTable<TData, TValue = unknown>({
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 pl-9 pr-7 text-xs bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#005496] focus:ring-1 focus:ring-[#005496]"
+              className="h-9 pl-9 pr-7 text-xs bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]"
             />
             {globalFilter && (
               <button
@@ -198,7 +198,7 @@ export function DataTable<TData, TValue = unknown>({
         {/* Selected row count & batch action bar */}
         {selectedRows.length > 0 && batchActions && (
           <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100">
-            <span className="text-xs font-semibold text-[#005496]">
+            <span className="text-xs font-semibold text-[#115eff]">
               {selectedRows.length} selected
             </span>
             {batchActions(selectedRows, clearSelection)}
@@ -211,15 +211,10 @@ export function DataTable<TData, TValue = unknown>({
         className={cn(
           "relative bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300",
           loading
-            ? "shadow-lg shadow-slate-200/90 ring-1 ring-[#005496]/15"
+            ? "shadow-lg shadow-slate-200/80"
             : "shadow-xs"
         )}
       >
-        {/* Animated accent shimmer progress bar when loading */}
-        {loading && (
-          <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#005496] to-transparent animate-pulse z-20" />
-        )}
-
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200">
@@ -251,9 +246,9 @@ export function DataTable<TData, TValue = unknown>({
                             </span>
                             <span className="text-slate-400 group-hover:text-slate-700">
                               {sortDirection === "asc" ? (
-                                <ChevronUp className="size-3.5 text-[#005496]" />
+                                <ChevronUp className="size-3.5 text-[#115eff]" />
                               ) : sortDirection === "desc" ? (
-                                <ChevronDown className="size-3.5 text-[#005496]" />
+                                <ChevronDown className="size-3.5 text-[#115eff]" />
                               ) : (
                                 <ChevronsUpDown className="size-3 opacity-40 group-hover:opacity-100" />
                               )}
@@ -316,7 +311,7 @@ export function DataTable<TData, TValue = unknown>({
                         <button
                           type="button"
                           onClick={clearAllFilters}
-                          className="text-xs text-[#005496] hover:underline cursor-pointer"
+                          className="text-xs text-[#115eff] hover:underline cursor-pointer"
                         >
                           Clear current filters
                         </button>

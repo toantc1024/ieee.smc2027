@@ -70,15 +70,15 @@ export const CONFERENCE_INFO = {
   visaUrl: "https://evisa.gov.vn",
   website: "https://ieee-smc2027.org",
   contactEmail: "ieeesmc2027@hcmute.edu.vn",
-  hotline: "+84 981 479 507 (Vu Van Phong)",
+  hotline: "+84 981 479 507 (Van-Phong Vu)",
   hotlineRaw: "+84981479507",
-  submissionSystem: "Online Submission System",
-  submissionStatus: "Online submission link will be coming shortly",
+  submissionSystem: "PaperCept Submission System",
+  submissionStatus: "PaperCept submission link will be coming shortly",
   submissionPortal: "#cfp",
   cfpPdfUrl: "/cfp-ieee-smc-2027.pdf",
   submissionDeadlineIso: "2027-04-08T23:59:59+07:00",
   submissionNotice:
-    "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the online submission system link (will be coming shortly).",
+    "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
   ieeeXploreNotice:
     "Accepted and presented papers will be copyrighted to IEEE and published in conference proceedings, which will be eligible for inclusion in the IEEE Xplore® Digital Library, once it meets the requirements of an IEEE quality review.",
   description:
@@ -287,6 +287,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
   {
     groupName: "Steering Committee",
     members: [
+      { name: "Dimitar Filev", role: "Steering Committee", country: "USA" },
       { name: "Sam Kwong", role: "Steering Committee", country: "China" },
       { name: "Imre Rudas", role: "Steering Committee", country: "Hungary" },
       { name: "Adrian Stoica", role: "Steering Committee", country: "USA" },
@@ -309,19 +310,20 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
         country: "Taiwan",
         affiliation: "National Taipei University of Technology",
       },
-      { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
       { name: "Philip Chen", role: "General Co-Chair", country: "China" },
       { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
+      { name: "Thanh-Hai Quach", role: "General Co-Chair", country: "Vietnam" },
     ],
   },
   {
     groupName: "Program Chairs & Co-Chairs",
     members: [
-      { name: "Van-Phong Vu", role: "Program Chair", country: "Vietnam" },
       { name: "Shun-Feng Su", role: "Program Chair", country: "Taiwan" },
+      { name: "Van-Phong Vu", role: "Program Chair", country: "Vietnam" },
+      { name: "An-Quoc Hoang", role: "Program Co-Chair", country: "Vietnam" },
       { name: "Li-Wei Ko", role: "Program Co-Chair", country: "Taiwan" },
       { name: "Van-Chung Nguyen", role: "Program Co-Chair", country: "Vietnam" },
-      { name: "An-Quoc Hoang", role: "Program Co-Chair", country: "Vietnam" },
+      { name: "Tong Zhang", role: "Program Co-Chair", country: "China" },
     ],
   },
   {
@@ -347,9 +349,10 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
       { name: "Philip Chen", role: "Best Paper Award Chair", country: "China" },
       { name: "Tom Gedeon", role: "Best Paper Award Chair", country: "Australia" },
       { name: "Robert Kozma", role: "Best Paper Award Chair", country: "USA" },
+      { name: "Jay Wang", role: "Best Paper Award Chair", country: "USA" },
       { name: "Ngoc-Thin Chau", role: "Web Chair", country: "Vietnam" },
       { name: "Thi-Hien Truong", role: "Financial Chair", country: "Vietnam" },
-      { name: "Jay Wang", role: "Financial Chair", country: "USA" },
+      { name: "Jiacun Wang", role: "Financial Chair", country: "USA" },
       { name: "Meng-Yun Chung", role: "Publicity Chair", country: "Taiwan" },
       { name: "Do Thanh Trung", role: "Publicity Chair", country: "Vietnam" },
       { name: "Dinh-Nhon Truong", role: "Publicity Chair", country: "Vietnam" },
@@ -359,22 +362,22 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     groupName: "Industrial Chairs",
     members: [
       { name: "Ngoc-Son Pham", role: "Industrial Exhibition Chair", country: "Vietnam" },
-      { name: "Vi-Do Tran", role: "Industrial Exhibition Chair", country: "Vietnam" },
       { name: "Duc-Thien Tran", role: "Industrial Exhibition Chair", country: "Vietnam" },
-      { name: "Foun-Yuan Liu", role: "Industrial Coordinator Chair", country: "Taiwan" },
+      { name: "Vi-Do Tran", role: "Industrial Exhibition Chair", country: "Vietnam" },
       { name: "Chien-Hsun Chen", role: "Industrial Coordinator Chair", country: "Taiwan" },
+      { name: "Foun-Yuan Liu", role: "Industrial Coordinator Chair", country: "Taiwan" },
     ],
   },
   {
     groupName: "Local Organizing Committee",
     members: [
       { name: "Ngoc-Thin Chau", role: "Local Organizing Committee", country: "Vietnam" },
-      { name: "Dang-Nam Nguyen", role: "Local Organizing Committee", country: "Vietnam" },
       { name: "Bao-Huy Dinh", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Pham-Viet-Anh-Thu Le", role: "Local Organizing Committee", country: "Vietnam" },
+      { name: "Dang-Nam Nguyen", role: "Local Organizing Committee", country: "Vietnam" },
       { name: "Van-Nguyen Nguyen", role: "Local Organizing Committee", country: "Vietnam" },
       { name: "Phuong-Thu-Thuy Phung", role: "Local Organizing Committee", country: "Vietnam" },
       { name: "Thi-Thanh-Truc Tran", role: "Local Organizing Committee", country: "Vietnam" },
-      { name: "Pham-Viet-Anh-Thu Le", role: "Local Organizing Committee", country: "Vietnam" },
     ],
   },
 ];
@@ -384,7 +387,7 @@ export const FAQS: FaqItem[] = [
     category: "Submission",
     question: "What is the official submission system and format?",
     answer:
-      "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the official online submission system link (will be coming shortly).",
+      "All submissions must be in English. The full papers are to be submitted electronically in PDF format via the PaperCept submission system link (will be coming shortly).",
   },
   {
     category: "Submission",

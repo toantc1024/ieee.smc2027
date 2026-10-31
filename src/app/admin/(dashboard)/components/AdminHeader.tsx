@@ -40,19 +40,19 @@ export function AdminHeader({ user: _user }: AdminHeaderProps) {
         <nav className="flex items-center gap-1.5 text-xs">
           <Link
             href="/admin"
-            className="text-slate-500 hover:text-[#005496] transition-colors font-medium"
+            className="text-slate-500 hover:text-[#115eff] transition-colors font-medium"
           >
             Console
           </Link>
           <ChevronRight className="size-3.5 text-slate-400" />
           <span className="text-slate-500 hidden sm:inline">{breadcrumb.category}</span>
           <ChevronRight className="size-3.5 text-slate-400 hidden sm:inline" />
-          <span className="font-bold text-[#005496]">{breadcrumb.title}</span>
+          <span className="font-bold text-[#115eff]">{breadcrumb.title}</span>
         </nav>
       </div>
 
       <div className="flex items-center gap-2.5">
-        <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-[#005496] border border-blue-100 text-[11px] font-semibold">
+        <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-[#115eff] border border-blue-100 text-[11px] font-semibold">
           <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
           <Database className="size-3" />
           <span>PostgreSQL + MinIO Live</span>
@@ -61,7 +61,7 @@ export function AdminHeader({ user: _user }: AdminHeaderProps) {
         <Link
           href="/"
           target="_blank"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#005496] bg-white hover:bg-slate-50 border border-slate-200 rounded-md transition-colors shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#115eff] bg-white hover:bg-slate-50 border border-slate-200 rounded-md transition-colors shadow-2xs"
         >
           <span className="hidden sm:inline">Conference Website</span>
           <ExternalLink className="size-3 text-slate-400" />

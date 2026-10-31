@@ -26,7 +26,7 @@ export function DigitalBadgePassCard({
 
   return (
     <Card className="items-center text-center">
-      <div className="w-full bg-[#005496] text-white rounded-xl p-4">
+      <div className="w-full bg-[#115eff] text-white rounded-xl p-4">
         <p className="text-[10px] font-bold uppercase tracking-widest text-blue-200">
           IEEE SMC 2027 · Ho Chi Minh City
         </p>
@@ -57,7 +57,7 @@ export function DigitalBadgePassCard({
         />
       )}
 
-      <div className="text-sm font-black text-[#005496] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
+      <div className="text-sm font-black text-[#115eff] bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-200">
         {regData.registrationCode}
       </div>
     </Card>
