@@ -271,16 +271,16 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     groupName: "Honorary Chairs",
     members: [
       {
-        name: "Hieu-Giang Le",
-        role: "Honorary Chair",
-        country: "Vietnam",
-        affiliation: "Acting President, HCM-UTE",
-      },
-      {
         name: "Saeid Nahavandi",
         role: "Honorary Chair",
         country: "Australia",
         affiliation: "President, IEEE SMC Society • Swinburne Univ.",
+      },
+      {
+        name: "Hieu-Giang Le",
+        role: "Honorary Chair",
+        country: "Vietnam",
+        affiliation: "Acting President, HCM-UTE",
       },
     ],
   },
@@ -299,16 +299,16 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     groupName: "General Chairs & Co-Chairs",
     members: [
       {
-        name: "Dinh-Thanh Chau",
-        role: "General Chair",
-        country: "Vietnam",
-        affiliation: "Vice President, HCM-UTE",
-      },
-      {
         name: "Yo-Ping Huang",
         role: "General Chair",
         country: "Taiwan",
         affiliation: "National Taipei University of Technology",
+      },
+      {
+        name: "Dinh-Thanh Chau",
+        role: "General Chair",
+        country: "Vietnam",
+        affiliation: "Vice President, HCM-UTE",
       },
       { name: "Philip Chen", role: "General Co-Chair", country: "China" },
       { name: "Levente Kovacs", role: "General Co-Chair", country: "Hungary" },
@@ -320,10 +320,10 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     members: [
       { name: "Shun-Feng Su", role: "Program Chair", country: "Taiwan" },
       { name: "Van-Phong Vu", role: "Program Chair", country: "Vietnam" },
-      { name: "An-Quoc Hoang", role: "Program Co-Chair", country: "Vietnam" },
       { name: "Li-Wei Ko", role: "Program Co-Chair", country: "Taiwan" },
-      { name: "Van-Chung Nguyen", role: "Program Co-Chair", country: "Vietnam" },
       { name: "Tong Zhang", role: "Program Co-Chair", country: "China" },
+      { name: "An-Quoc Hoang", role: "Program Co-Chair", country: "Vietnam" },
+      { name: "Van-Chung Nguyen", role: "Program Co-Chair", country: "Vietnam" },
     ],
   },
   {
@@ -351,8 +351,8 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
       { name: "Robert Kozma", role: "Best Paper Award Chair", country: "USA" },
       { name: "Jay Wang", role: "Best Paper Award Chair", country: "USA" },
       { name: "Ngoc-Thin Chau", role: "Web Chair", country: "Vietnam" },
-      { name: "Thi-Hien Truong", role: "Financial Chair", country: "Vietnam" },
       { name: "Jiacun Wang", role: "Financial Chair", country: "USA" },
+      { name: "Thi-Hien Truong", role: "Financial Chair", country: "Vietnam" },
       { name: "Meng-Yun Chung", role: "Publicity Chair", country: "Taiwan" },
       { name: "Do Thanh Trung", role: "Publicity Chair", country: "Vietnam" },
       { name: "Dinh-Nhon Truong", role: "Publicity Chair", country: "Vietnam" },

@@ -14,13 +14,6 @@ export interface ChairMember {
 
 export const CHAIR_MEMBERS: ChairMember[] = [
   {
-    name: "Assoc. Prof. Dinh-Thanh Chau",
-    role: "General Chair",
-    affiliation: "Vice President, HCM-UTE",
-    country: "Vietnam",
-    image: "/chairs/prof-dinh-thanh-chau.png",
-  },
-  {
     name: "Prof. Yo-Ping Huang",
     role: "General Chair",
     affiliation: "National Taipei University of Technology",
@@ -28,11 +21,11 @@ export const CHAIR_MEMBERS: ChairMember[] = [
     image: "/chairs/prof-yo-ping-huang.png",
   },
   {
-    name: "Assoc. Prof. Hieu-Giang Le",
-    role: "Honorary Chair",
-    affiliation: "Acting President, HCM-UTE",
+    name: "Assoc. Prof. Dinh-Thanh Chau",
+    role: "General Chair",
+    affiliation: "Vice President, HCM-UTE",
     country: "Vietnam",
-    image: "/chairs/prof-hieu-giang-le.png",
+    image: "/chairs/prof-dinh-thanh-chau.png",
   },
   {
     name: "Prof. Saeid Nahavandi",
@@ -40,6 +33,13 @@ export const CHAIR_MEMBERS: ChairMember[] = [
     affiliation: "President, IEEE SMC Society • Swinburne Univ.",
     country: "Australia",
     image: "/chairs/prof-saeid-nahavandi.png",
+  },
+  {
+    name: "Assoc. Prof. Hieu-Giang Le",
+    role: "Honorary Chair",
+    affiliation: "Acting President, HCM-UTE",
+    country: "Vietnam",
+    image: "/chairs/prof-hieu-giang-le.png",
   },
 ];
 
