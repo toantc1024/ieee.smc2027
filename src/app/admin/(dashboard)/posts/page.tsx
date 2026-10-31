@@ -366,7 +366,7 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-2.5 max-w-full rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={cat}
                   >
                     <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
@@ -405,7 +405,7 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-2.5 max-w-full rounded-lg text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={status}
                   >
                     <span className="flex items-center gap-1.5 min-w-0 truncate">
