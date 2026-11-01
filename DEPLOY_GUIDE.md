@@ -122,5 +122,34 @@ Dự án tích hợp endpoint tạo ảnh mạng xã hội tự động tại:
   - **Cột trái**: Logo UTE + IEEE SMC 2027, Badge chuyên mục (Call for Papers, Keynotes...), Tiêu đề lớn in đậm nổi bật, Mô tả ngắn và thời gian địa điểm.
   - **Cột phải**: Card thẻ nổi 3D bo góc tròn màu xanh hoàng gia (`#115eff`), hiệu ứng ánh sáng gradient và ảnh đại diện bài viết.
 - **Tùy biến linh hoạt qua tham số URL**:
-  - `https://your-domain.com/api/og?title=Call+for+Papers&badge=AUTHOR+GUIDELINES`
+  - `https://ieee-smc2027.org/api/og?title=Call+for+Papers&badge=AUTHOR+GUIDELINES`
   - Tự động gắn vào thẻ `<meta property="og:image">` trong `layout.tsx` và trang chi tiết bài viết.
+
+---
+
+## 5. Bảng Cấu Hình DNS Vietnix & Tên Miền CDN Chuẩn
+
+Tên miền chính thức của hội nghị là: **`ieee-smc2027.org`**
+
+### A. Tên miền CDN chuẩn:
+👉 **`cdn.ieee-smc2027.org`**  
+*(Lưu ý: Tên miền phải có đuôi `.org`, không được để `cdn.ieee-smc-2027` vì thiếu TLD internet)*
+
+### B. Bảng Cấu Hình DNS Cần Nhập Vào Quản Trị Vietnix:
+
+| Tên (Name) | Loại (Type) | Giá Trị / Nội Dung (Content) | TTL | Mục Đích |
+|------------|-------------|------------------------------|-----|----------|
+| `@` hoặc `ieee-smc2027.org` | **A** | `216.198.79.1` | 1 minute | Trỏ website chính về Vercel Edge Server |
+| `www` | **CNAME** | `7b4007f29af0207d.vercel-dns-017.com` | 1 minute | Tên miền phụ www trỏ về Vercel |
+| `cdn` | **A** | `14.225.254.3` | 1 minute | Trỏ CDN / MinIO Object Storage về VPS Vietnix |
+
+> **Lưu ý**: Nếu bạn muốn chạy toàn bộ cả website chính và CDN trực tiếp trên VPS `14.225.254.3` (không dùng Vercel), hãy đổi bản ghi `@` thành IP `14.225.254.3`.
+
+### C. Quy Trình Auto-Push & Auto-Build:
+1. **Với Vercel (Khuyến nghị cho Frontend)**:
+   - Khi bạn chạy `git push origin main`, Vercel tự động phát hiện commit mới, build dự án và deploy lên `https://ieee-smc2027.org` trong ~1 phút.
+   - Vercel tự động cấp và gia hạn SSL Let's Encrypt miễn phí.
+2. **Với VPS 14.225.254.3 (Cho CDN & MinIO Storage)**:
+   - File cấu hình Caddy tự động cấp SSL đã được chuẩn bị tại `docker/Caddyfile`.
+   - File cấu hình Nginx đã được chuẩn bị tại `docker/nginx-cdn.conf`.
+   - GitHub Actions workflow `.github/workflows/deploy.yml` tự động kết nối qua SSH vào IP `14.225.254.3` khi bạn push code.
