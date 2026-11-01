@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { LinkModal } from "./tiptap/LinkModal";
 import { ImageInsertModal } from "./tiptap/ImageInsertModal";
 
@@ -43,6 +44,9 @@ interface TiptapEditorProps {
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: string;
+  documentStyle?: boolean;
+  className?: string;
+  toolbarExtra?: React.ReactNode;
 }
 
 export function TiptapEditor({
@@ -50,6 +54,9 @@ export function TiptapEditor({
   onChange,
   placeholder = "Write article content here...",
   minHeight = "360px",
+  documentStyle = false,
+  className,
+  toolbarExtra,
 }: TiptapEditorProps) {
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -84,7 +91,9 @@ export function TiptapEditor({
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: `prose max-w-none focus:outline-none p-5 text-slate-800 text-sm leading-relaxed min-h-[${minHeight}]`,
+        class: documentStyle
+          ? "prose prose-slate max-w-none focus:outline-none text-slate-800 dark:text-slate-200 text-sm leading-relaxed min-h-[600px]"
+          : `prose max-w-none focus:outline-none p-5 text-slate-800 text-sm leading-relaxed min-h-[${minHeight}]`,
       },
     },
     onUpdate: ({ editor }) => {
@@ -164,9 +173,20 @@ export function TiptapEditor({
   };
 
   return (
-    <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+    <div
+      className={
+        documentStyle
+          ? cn("flex flex-col w-full h-full min-h-0 overflow-hidden bg-background", className)
+          : cn("border border-slate-200 rounded-xl overflow-hidden bg-white", className)
+      }
+    >
       {/* ── Main Toolbar ── */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50/80 border-b border-slate-200 text-slate-700">
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-1 p-2 bg-slate-50/80 border-b border-slate-200 text-slate-700",
+          documentStyle && "sticky top-0 z-10 bg-white shadow-none"
+        )}
+      >
         {/* Paragraph / Heading Selector */}
         <select
           value={getHeadingValue()}
@@ -381,6 +401,12 @@ export function TiptapEditor({
         >
           <Redo2 className="size-3.5" />
         </button>
+
+        {toolbarExtra && (
+          <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-2">
+            {toolbarExtra}
+          </div>
+        )}
       </div>
 
       {/* ── Contextual Table Toolbar (When inside table) ── */}
@@ -430,9 +456,24 @@ export function TiptapEditor({
       )}
 
       {/* ── Editor Editable Area ── */}
-      <div className="tiptap-content-wrapper min-h-[360px] bg-white">
-        <EditorContent editor={editor} />
-      </div>
+      {documentStyle ? (
+        <div className="flex-1 min-h-0 overflow-y-auto bg-slate-100/70 dark:bg-[#070b14] p-4 sm:p-6 md:p-8 flex justify-center">
+          <div
+            className="relative w-full max-w-[850px] bg-white dark:bg-card text-card-foreground border border-slate-200/90 dark:border-slate-800 rounded-xl min-h-[900px] p-8 sm:p-12 md:p-16 shadow-none cursor-text flex flex-col"
+            onClick={(e) => {
+              if (e.target === e.currentTarget && editor && !editor.isFocused) {
+                editor.commands.focus("end");
+              }
+            }}
+          >
+            <EditorContent editor={editor} className="flex-1 flex flex-col tiptap-content-wrapper" />
+          </div>
+        </div>
+      ) : (
+        <div className="tiptap-content-wrapper min-h-[360px] bg-white">
+          <EditorContent editor={editor} />
+        </div>
+      )}
 
       {/* Link Dialog Modal */}
       {linkModalOpen && (

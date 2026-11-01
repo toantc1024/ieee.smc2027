@@ -527,7 +527,7 @@ export default function PostsManagementPage() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push(`/admin/posts/${item.id}`);
+                  router.push(`/admin/posts/${item.id}/edit`);
                 }}
                 className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 title="Edit post in full editor"

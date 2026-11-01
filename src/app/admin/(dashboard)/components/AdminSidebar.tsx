@@ -431,7 +431,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     <SidebarMenuButton
                       asChild
                       tooltip="Visit Homepage"
-                      className="relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem border w-full border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground shadow-2xs hover:shadow-xs cursor-pointer"
+                      className="relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem border w-full border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground cursor-pointer shadow-none"
                     >
                       <Link
                         href="/"
@@ -466,10 +466,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                           tooltip={item.title}
                           data-active-item={active ? "true" : undefined}
                           className={cn(
-                            "relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem border w-full",
+                            "relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem border w-full shadow-none",
                             active
                               ? "sidebar-nav-active font-semibold text-primary-foreground"
-                              : "border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground shadow-2xs hover:shadow-xs"
+                              : "border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground"
                           )}
                         >
                           <Link
@@ -551,7 +551,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* ── Sidebar Footer: Collapse Toggle & Logout Action ── */}
       <SidebarFooter
         className={cn(
-          "relative z-10 bg-white dark:bg-card border-t border-sidebar-border shrink-0 shadow-[0_-2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.25)]",
+          "relative z-10 bg-white dark:bg-card border-t border-sidebar-border shrink-0 shadow-none",
           state === "collapsed" ? "p-0 py-2 flex flex-col items-center justify-center gap-1.5 w-full" : "p-2"
         )}
       >
@@ -565,7 +565,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   onClick={toggleSidebar}
                   data-testid="sidebar-collapse-toggle"
                   aria-label="Expand sidebar"
-                  className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-foreground/80 hover:bg-primary/10 hover:border-primary/40 hover:text-primary dark:hover:bg-primary/20 dark:hover:border-primary/50 group/toggle shadow-2xs"
+                  className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-foreground/80 hover:bg-primary/10 hover:border-primary/40 hover:text-primary dark:hover:bg-primary/20 dark:hover:border-primary/50 group/toggle shadow-none"
                 >
                   <ChevronRight className="size-4 stroke-[2.2] transition-transform duration-200 group-hover/toggle:translate-x-0.5 text-muted-foreground group-hover/toggle:text-primary shrink-0" />
                 </button>
@@ -584,7 +584,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   <button
                     type="submit"
                     aria-label="Log out"
-                    className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-transparent hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/60 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 group/logout"
+                    className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-transparent hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/60 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 group/logout shadow-none"
                   >
                     <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-slate-500 dark:text-slate-400 group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400 shrink-0" />
                   </button>
@@ -604,8 +604,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 data-testid="sidebar-collapse-toggle"
                 tooltip="Collapse sidebar"
                 className={cn(
-                  "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/collapse",
-                  "bg-slate-50/80 dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-800/80 text-foreground/80 font-medium shadow-2xs",
+                  "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/collapse shadow-none",
+                  "bg-slate-50/80 dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-800/80 text-foreground/80 font-medium",
                   "hover:bg-primary/10 hover:border-primary/40 hover:text-primary dark:hover:bg-primary/20 dark:hover:border-primary/50"
                 )}
               >
@@ -627,9 +627,9 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   type="submit"
                   tooltip="Log out"
                   className={cn(
-                    "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/logout",
+                    "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/logout shadow-none",
                     "bg-transparent border-transparent text-muted-foreground font-medium",
-                    "hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:border-red-900/60 dark:hover:text-red-400 hover:shadow-2xs"
+                    "hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:border-red-900/60 dark:hover:text-red-400"
                   )}
                 >
                   <div className="size-5 flex items-center justify-center shrink-0">
@@ -750,7 +750,7 @@ function NavGroup({ group, isActive }: NavGroupProps) {
               className={cn(
                 "relative size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square",
                 hasActiveChild
-                  ? "sidebar-nav-active text-primary-foreground shadow-2xs hover:brightness-95"
+                  ? "sidebar-nav-active text-primary-foreground shadow-none hover:brightness-95"
                   : "hover:bg-primary/10 text-muted-foreground hover:text-primary"
               )}
             >
@@ -793,7 +793,7 @@ function NavGroup({ group, isActive }: NavGroupProps) {
                     className={cn(
                       "flex items-center gap-2.5 px-2.5 py-1.5 text-xs rounded-lg w-full transition-colors",
                       active
-                        ? "bg-primary text-white font-semibold shadow-xs hover:bg-primary/90 hover:text-white focus:bg-primary/90 focus:text-white"
+                        ? "bg-primary text-white font-semibold shadow-none hover:bg-primary/90 hover:text-white focus:bg-primary/90 focus:text-white"
                         : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
                     )}
                   >
@@ -827,7 +827,7 @@ function NavGroup({ group, isActive }: NavGroupProps) {
             <CollapsibleTrigger asChild>
               <SidebarMenuButton
                 className={cn(
-                  "relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem min-w-0 border cursor-pointer w-full",
+                  "relative overflow-hidden rounded-xl px-2.5 py-2 h-auto flex items-center gap-3 transition-all duration-200 group/navitem min-w-0 border cursor-pointer w-full shadow-none",
                   hasActiveChild
                     ? "sidebar-nav-active font-semibold text-primary-foreground"
                     : "border-transparent hover:border-primary/45 dark:hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-foreground/80 hover:text-foreground"
@@ -861,10 +861,10 @@ function NavGroup({ group, isActive }: NavGroupProps) {
                 </span>
                 <div
                   className={cn(
-                    "relative z-1 size-5.5 rounded-full flex items-center justify-center shrink-0 ml-auto border transition-all duration-200 group-data-[collapsible=icon]:hidden",
+                    "relative z-1 size-5.5 rounded-full flex items-center justify-center shrink-0 ml-auto border transition-all duration-200 group-data-[collapsible=icon]:hidden shadow-none",
                     hasActiveChild
-                      ? "bg-white/20 backdrop-blur-xs border-white/35 text-primary-foreground shadow-2xs"
-                      : "bg-background border-border text-muted-foreground group-hover/navitem:bg-muted/80 group-hover/navitem:text-primary group-hover/navitem:border-primary/30 shadow-2xs"
+                      ? "bg-white/20 backdrop-blur-xs border-white/35 text-primary-foreground"
+                      : "bg-background border-border text-muted-foreground group-hover/navitem:bg-muted/80 group-hover/navitem:text-primary group-hover/navitem:border-primary/30"
                   )}
                 >
                   <ChevronRight className="size-3 stroke-[2.4] shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -887,9 +887,9 @@ function NavGroup({ group, isActive }: NavGroupProps) {
                         isActive={active}
                         data-active-item={active ? "true" : undefined}
                         className={cn(
-                          "w-full h-auto relative overflow-hidden rounded-lg px-2.5 py-1.5 min-w-0 transition-all duration-200 text-xs border group/subitem translate-x-0",
+                          "w-full h-auto relative overflow-hidden rounded-lg px-2.5 py-1.5 min-w-0 transition-all duration-200 text-xs border group/subitem translate-x-0 shadow-none",
                           active
-                            ? "sidebar-nav-active font-semibold text-primary-foreground shadow-xs"
+                            ? "sidebar-nav-active font-semibold text-primary-foreground"
                             : "border-transparent hover:border-primary/35 hover:bg-primary/6 text-foreground/80 hover:text-foreground"
                         )}
                       >
@@ -910,7 +910,7 @@ function NavGroup({ group, isActive }: NavGroupProps) {
                               className={cn(
                                 "size-3.5 shrink-0 transition-colors duration-200",
                                 active
-                                  ? "!text-white text-primary-foreground drop-shadow-xs"
+                                  ? "!text-white text-primary-foreground"
                                   : "text-muted-foreground group-hover/subitem:text-primary"
                               )}
                             />

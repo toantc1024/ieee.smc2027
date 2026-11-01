@@ -18,9 +18,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
 
   const isFullBleed = useMemo(() => {
     return (
-      (pathname.startsWith("/admin/posts/") &&
-        pathname !== "/admin/posts" &&
-        pathname !== "/admin/posts/new") ||
+      (pathname.startsWith("/admin/posts/") && pathname !== "/admin/posts") ||
       (pathname.startsWith("/admin/pages/") && pathname !== "/admin/pages")
     );
   }, [pathname]);
