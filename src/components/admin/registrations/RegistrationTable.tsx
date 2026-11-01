@@ -48,7 +48,7 @@ export function RegistrationTable({
   onDelete,
 }: RegistrationTableProps) {
   return (
-    <Card className="p-5 space-y-4">
+    <Card className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 space-y-4 shadow-none">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5">
           {["ALL", "PAID", "PENDING"].map((st) => (
@@ -56,7 +56,7 @@ export function RegistrationTable({
               key={st}
               type="button"
               onClick={() => onStatusFilterChange(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+              className={`h-8 px-3 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                 statusFilter === st
                   ? "bg-[#115eff] text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -67,13 +67,13 @@ export function RegistrationTable({
           ))}
         </div>
 
-        <div className="relative w-72">
-          <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full sm:w-72">
+          <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <Input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search code, name, email, PaperCept ID..."
-            className="h-9 pl-8 text-xs"
+            className="h-8 pl-8.5 pr-3 text-xs bg-slate-50 border-slate-200 rounded-lg focus:bg-white"
           />
         </div>
       </div>
@@ -103,19 +103,19 @@ export function RegistrationTable({
           ))}
         </div>
       ) : registrations.length === 0 ? (
-        <div className="py-14 text-center text-xs text-slate-400">
+        <div className="py-14 text-center text-xs text-slate-400 font-medium">
           No registrations found matching current filter.
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold">
-                <th className="py-3 px-3">Delegate</th>
-                <th className="py-3 px-3">Category & PaperCept</th>
-                <th className="py-3 px-3">Payoo & Fee</th>
-                <th className="py-3 px-3">Proof & Visa Flow</th>
-                <th className="py-3 px-3 text-right">Workflow Actions</th>
+              <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase text-xs font-semibold tracking-wider">
+                <th className="py-3 px-4">Delegate</th>
+                <th className="py-3 px-4">Category & PaperCept</th>
+                <th className="py-3 px-4">Payoo & Fee</th>
+                <th className="py-3 px-4">Proof & Visa Flow</th>
+                <th className="py-3 px-4 text-right">Workflow Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -129,8 +129,8 @@ export function RegistrationTable({
                   (reg.needsVisaSupport ? "PENDING_APPROVAL" : "NOT_REQUESTED");
 
                 return (
-                  <tr key={reg.id} className="hover:bg-slate-50/80">
-                    <td className="py-3.5 px-3">
+                  <tr key={reg.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         {reg.avatarUrl ? (
                           <img
@@ -145,31 +145,31 @@ export function RegistrationTable({
                         )}
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-slate-900">
+                            <span className="font-semibold text-slate-900 text-sm">
                               {reg.fullName}
                             </span>
-                            <span className="text-[10px] font-bold text-[#004776] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
+                            <span className="text-[11px] font-medium text-[#004776] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
                               {reg.registrationCode}
                             </span>
                           </div>
-                          <p className="text-slate-500 text-[11px]">
+                          <p className="text-slate-500 text-xs">
                             {reg.email} · {reg.country}
                           </p>
                         </div>
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-3">
-                      <Badge variant="ute">{reg.participantType}</Badge>
+                    <td className="py-3.5 px-4">
+                      <Badge variant="ute" className="font-medium text-xs">{reg.participantType}</Badge>
                       {(reg.paperId || form.paperId) && (
-                        <p className="text-[11px] text-slate-600 mt-1 font-semibold">
+                        <p className="text-xs text-slate-600 mt-1 font-medium">
                           PaperCept: {reg.paperId || form.paperId}
                         </p>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-3">
-                      <div className="font-bold text-slate-900">
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-slate-900 text-sm">
                         {reg.currency === "VND"
                           ? formatVND(reg.feeAmount)
                           : formatUSD(reg.feeAmount)}
@@ -179,16 +179,17 @@ export function RegistrationTable({
                           variant={
                             reg.paymentStatus === "PAID" ? "success" : "warning"
                           }
+                          className="font-medium text-[11px]"
                         >
                           {reg.paymentStatus}
                         </Badge>
-                        <span className="text-[10px] text-slate-400">
+                        <span className="text-[11px] text-slate-400 font-medium">
                           {reg.paymentMethod || "PAYOO"}
                         </span>
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-3 space-y-1">
+                    <td className="py-3.5 px-4 space-y-1">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <Badge
                           variant={
@@ -198,20 +199,21 @@ export function RegistrationTable({
                                 ? "warning"
                                 : "secondary"
                           }
+                          className="font-medium text-[11px]"
                         >
                           Visa: {visaStatus}
                         </Badge>
                         {form.proofVerified && (
-                          <Badge variant="success">Proof Verified</Badge>
+                          <Badge variant="success" className="font-medium text-[11px]">Proof Verified</Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-[11px]">
+                      <div className="flex items-center gap-2 text-xs">
                         {form.proofDocumentUrl && (
                           <a
                             href={form.proofDocumentUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[#115eff] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            className="text-[#115eff] font-medium hover:underline inline-flex items-center gap-0.5"
                           >
                             Proof File <ExternalLink className="size-3" />
                           </a>
@@ -221,7 +223,7 @@ export function RegistrationTable({
                             href={form.passportScanUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[#115eff] font-semibold hover:underline inline-flex items-center gap-0.5"
+                            className="text-[#115eff] font-medium hover:underline inline-flex items-center gap-0.5"
                           >
                             Passport Scan <ExternalLink className="size-3" />
                           </a>
@@ -229,13 +231,14 @@ export function RegistrationTable({
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-3 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
                         {reg.paymentStatus !== "PAID" && (
                           <Button
                             type="button"
                             variant="ute"
                             size="sm"
+                            className="h-8 px-2.5 text-xs font-medium"
                             onClick={() => onConfirmPayoo(reg)}
                           >
                             <CreditCard className="size-3.5" />
@@ -248,6 +251,7 @@ export function RegistrationTable({
                             type="button"
                             variant="outline"
                             size="sm"
+                            className="h-8 px-2.5 text-xs font-medium"
                             onClick={() => onApproveVisa(reg)}
                           >
                             <Plane className="size-3.5" />
@@ -259,6 +263,7 @@ export function RegistrationTable({
                           type="button"
                           variant="outline"
                           size="sm"
+                          className="h-8 px-2.5 text-xs font-medium"
                           onClick={() => onVerifyProof(reg)}
                         >
                           <ShieldCheck className="size-3.5" />
@@ -269,6 +274,7 @@ export function RegistrationTable({
                           type="button"
                           variant="secondary"
                           size="sm"
+                          className="h-8 px-2.5 text-xs font-medium"
                           onClick={() => onInspectJson(reg)}
                         >
                           <Code2 className="size-3.5" />
@@ -278,7 +284,7 @@ export function RegistrationTable({
                         <button
                           type="button"
                           onClick={() => onDelete(reg)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 cursor-pointer"
+                          className="size-8 inline-flex items-center justify-center text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                           title="Delete"
                         >
                           <Trash2 className="size-4" />

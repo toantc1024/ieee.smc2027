@@ -8,6 +8,7 @@ import {
   Plus,
   Eye,
   Edit2,
+  CopyPlus,
   Trash2,
   FileText,
   ImageIcon,
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/admin/data-table/DataTable";
-import { PostPreviewDialog } from "@/components/admin/posts/PostPreviewDialog";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
 import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
@@ -100,10 +100,10 @@ export default function PostsManagementPage() {
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Dialog states (only Preview and Delete; Editing/Creation use dedicated Tiptap page)
-  const [previewOpen, setPreviewOpen] = useState(false);
+  // Dialog states (only Delete confirmation dialog is kept for safety)
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [activePost, setActivePost] = useState<PostItem | null>(null);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -288,8 +288,7 @@ export default function PostsManagementPage() {
                 alt={item.title}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setActivePost(item);
-                  setPreviewOpen(true);
+                  router.push(`/admin/posts/${item.id}`);
                 }}
               />
             </div>
@@ -330,7 +329,7 @@ export default function PostsManagementPage() {
               {/* Slug tag with safe truncation */}
               <div className="pt-0.5 min-w-0 max-w-full overflow-hidden">
                 <span
-                  className="text-[11px] font-mono text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
+                  className="text-[11px] font-normal text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
                   title={`/${item.slug}`}
                 >
                   /{item.slug}
@@ -503,26 +502,29 @@ export default function PostsManagementPage() {
       {
         id: "actions",
         header: "Actions",
-        size: 100,
+        size: 130,
         cell: ({ row }) => {
           const item = row.original;
+          const isDuplicating = duplicatingId === item.id;
           return (
             <div
               className="flex items-center justify-center gap-1 shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* 1. Direct Post Detail View (No modal) */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setActivePost(item);
-                  setPreviewOpen(true);
+                  router.push(`/admin/posts/${item.id}`);
                 }}
                 className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                title="Preview post"
+                title="View post detail page"
               >
                 <Eye className="size-4" />
               </button>
+
+              {/* 2. Direct Edit in Full Editor */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -534,6 +536,39 @@ export default function PostsManagementPage() {
               >
                 <Edit2 className="size-4" />
               </button>
+
+              {/* 3. Real Duplicate & Edit Action */}
+              <button
+                type="button"
+                disabled={isDuplicating}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  setDuplicatingId(item.id);
+                  try {
+                    toast.loading("Duplicating post...", { id: "dup-post" });
+                    const res = await fetch(`/api/admin/posts/${item.id}/duplicate`, {
+                      method: "POST",
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || "Failed to duplicate post");
+                    toast.success("Post duplicated! Opening editor...", { id: "dup-post" });
+                    router.push(`/admin/posts/${data.post.id}/edit`);
+                  } catch (err: unknown) {
+                    toast.error(
+                      err instanceof Error ? err.message : "Failed to duplicate post",
+                      { id: "dup-post" }
+                    );
+                  } finally {
+                    setDuplicatingId(null);
+                  }
+                }}
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                title="Duplicate & edit post"
+              >
+                <CopyPlus className="size-4" />
+              </button>
+
+              {/* 4. Delete Post */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -552,7 +587,7 @@ export default function PostsManagementPage() {
         enableSorting: false,
       },
     ],
-    [router, handleQuickStatusChange, handleQuickCategoryChange]
+    [router, duplicatingId, handleQuickStatusChange, handleQuickCategoryChange]
   );
 
   return (
@@ -629,12 +664,7 @@ export default function PostsManagementPage() {
         )}
       />
 
-      {/* ── Preview Dialog ── */}
-      <PostPreviewDialog
-        open={previewOpen}
-        onOpenChange={setPreviewOpen}
-        post={activePost}
-      />
+
 
       {/* ── Delete Confirmation Dialog ── */}
       <PostDeleteDialog

@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Search,
   X,
@@ -14,6 +16,7 @@ import {
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export interface NewsItem {
@@ -29,11 +32,19 @@ export interface NewsItem {
   image?: string;
   viewCount?: number;
   externalUrl?: string;
+  slug?: string;
+}
+
+export function getNewsDetailUrl(news: NewsItem): string {
+  if (news.slug) return `/news/${news.slug}`;
+  if (news.id === "news-host-hcmute") return `/news/hcm-ute-to-host-ieee-smc-2027-vietnam`;
+  return `/news/${news.id}`;
 }
 
 export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   {
     id: "news-cfp-2027",
+    slug: "news-cfp-2027",
     title: "IEEE SMC 2027 Call for Papers Officially Released – Human-AI Symbiosis",
     date: "01/15/2027",
     day: "15",
@@ -48,6 +59,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-proposals-deadline",
+    slug: "news-proposals-deadline",
     title: "Call for Special Sessions, Tutorials and Workshops Proposals Due February 15, 2027",
     date: "01/25/2027",
     day: "25",
@@ -62,6 +74,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-paper-submission-deadline",
+    slug: "news-paper-submission-deadline",
     title: "Paper Submission Deadline for Workshops, Regular and Special Sessions: April 08, 2027",
     date: "02/05/2027",
     day: "05",
@@ -76,6 +89,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-venue-sheraton",
+    slug: "news-venue-sheraton",
     title: "Sheraton Saigon Grand Opera Hotel Confirmed as Official Conference Headquarters",
     date: "02/15/2027",
     day: "15",
@@ -90,6 +104,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-visa-portal",
+    slug: "news-visa-portal",
     title: "Official Vietnam Electronic Visa (e-Visa) Application Portal Guide for Attendees",
     date: "02/28/2027",
     day: "28",
@@ -104,6 +119,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-technical-pillars",
+    slug: "news-technical-pillars",
     title: "IEEE SMC 2027 Unveils 68+ Technical Tracks Across SSE, CYB, and HMS",
     date: "03/10/2027",
     day: "10",
@@ -118,6 +134,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-industry-partnerships",
+    slug: "news-industry-partnerships",
     title: "Call for Industry Exhibition & Partnership Sponsorships Open for IEEE SMC 2027",
     date: "03/20/2027",
     day: "20",
@@ -132,6 +149,7 @@ export const DEFAULT_NEWS_ITEMS: NewsItem[] = [
   },
   {
     id: "news-host-hcmute",
+    slug: "hcm-ute-to-host-ieee-smc-2027-vietnam",
     title: "HCM-UTE to Host IEEE SMC 2027 – Vietnam's Premier Systems & AI Gathering",
     date: "04/01/2027",
     day: "01",
@@ -157,11 +175,10 @@ export function NewsList({
   subtitle = "Stay updated with the latest milestones, partnership alerts, and program schedules",
   items: initialItems = DEFAULT_NEWS_ITEMS,
 }: NewsListProps) {
+  const router = useRouter();
   const [items, setItems] = useState<NewsItem[]>(initialItems);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -204,6 +221,7 @@ export function NewsList({
                 image: p.coverImage || "/news/keynote-hoi-thao.jpg",
                 viewCount: p.views || 0,
                 externalUrl: p.slug ? `#${p.slug}` : undefined,
+                slug: p.slug || p.id,
               };
             }
           );
@@ -416,8 +434,7 @@ export function NewsList({
   const handleShare = (news: NewsItem) => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(`${window.location.origin}/#news-${news.id}`);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+      toast.success("Link copied to clipboard");
     }
   };
 
@@ -624,184 +641,115 @@ export function NewsList({
               className="flex items-stretch gap-5 sm:gap-6 overflow-x-auto scrollbar-none py-3 px-4 sm:px-6 cursor-grab active:cursor-grabbing select-none touch-pan-x"
               style={{ scrollBehavior: isDraggingCards.current ? "auto" : "smooth" }}
             >
-              {filteredAndSortedItems.map((news) => (
-                <article
-                  key={news.id}
-                  onClick={() => {
-                    if (hasDraggedCards.current) return;
-                    setSelectedNews(news);
-                  }}
-                  className="w-[85vw] sm:w-[350px] lg:w-[380px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-xl bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
-                >
-                  {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
-                  <GridPattern
-                    width={32}
-                    height={32}
-                    className="pointer-events-none absolute inset-0 z-[1] stroke-white/0 fill-transparent transition-colors duration-200 group-hover:stroke-white/[0.08] group-hover/card:stroke-white/[0.08] [mask-image:radial-gradient(ellipse_75%_65%_at_bottom_right,white_40%,transparent_100%)]"
-                  />
+              {filteredAndSortedItems.map((news) => {
+                const detailUrl = getNewsDetailUrl(news);
 
-                  {/* UTE Flower watermark — appears subtle at bottom right on hover without rotation */}
-                  <Image
-                    src="/assets/flower-ute-white.png"
-                    alt=""
-                    width={260}
-                    height={260}
-                    unoptimized
-                    className="pointer-events-none absolute -bottom-16 -right-16 z-[1] select-none opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-[0.14] group-hover/card:opacity-[0.14]"
-                    aria-hidden="true"
-                  />
+                return (
+                  <article
+                    key={news.id}
+                    onClick={() => {
+                      if (hasDraggedCards.current) return;
+                      router.push(detailUrl);
+                    }}
+                    className="w-[85vw] sm:w-[350px] lg:w-[380px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-xl bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
+                  >
+                    {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
+                    <GridPattern
+                      width={32}
+                      height={32}
+                      className="pointer-events-none absolute inset-0 z-[1] stroke-white/0 fill-transparent transition-colors duration-200 group-hover:stroke-white/[0.08] group-hover/card:stroke-white/[0.08] [mask-image:radial-gradient(ellipse_75%_65%_at_bottom_right,white_40%,transparent_100%)]"
+                    />
 
-                  {/* Padded Image Container with aspect-[16/9] (hcmute-website style) */}
-                  <div className="relative z-[2] overflow-hidden p-2 sm:p-2.5">
-                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-slate-100">
-                      {news.image ? (
-                        <Image
-                          src={news.image}
-                          alt={news.title}
-                          fill
-                          unoptimized
-                          className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-105 group-hover/card:scale-105"
-                          sizes="(max-width: 640px) 85vw, (max-width: 1024px) 350px, 380px"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#115eff] to-[#004776]">
-                          <span className="text-xl font-bold text-white/30">IEEE SMC</span>
-                        </div>
-                      )}
+                    {/* UTE Flower watermark — appears subtle at bottom right on hover without rotation */}
+                    <Image
+                      src="/assets/flower-ute-white.png"
+                      alt=""
+                      width={260}
+                      height={260}
+                      unoptimized
+                      className="pointer-events-none absolute -bottom-16 -right-16 z-[1] select-none opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-[0.14] group-hover/card:opacity-[0.14]"
+                      aria-hidden="true"
+                    />
 
-                      {/* Category Badge on Bottom-Right of Image — NOT rounded-full (rounded-[var(--radius-sm)]), No shadow, inverts on card hover */}
-                      <span className="news-card-badge absolute bottom-2.5 right-2.5 z-10 inline-flex items-center rounded-[var(--radius-sm)] bg-[#115eff] text-white border border-[#115eff]/20 backdrop-blur-xs px-2.5 py-1 text-xs font-semibold leading-normal group-hover:bg-white group-hover:!text-[#115eff] group-hover:border-white group-hover/card:bg-white group-hover/card:!text-[#115eff] group-hover/card:border-white transition-colors duration-200">
-                        <span className="leading-normal py-0.5">{news.category}</span>
-                      </span>
+                    {/* Padded Image Container with aspect-[16/9] (hcmute-website style) */}
+                    <div className="relative z-[2] overflow-hidden p-2 sm:p-2.5">
+                      <Link
+                        href={detailUrl}
+                        onClick={(e) => {
+                          if (hasDraggedCards.current) e.preventDefault();
+                        }}
+                        className="block relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-slate-100"
+                      >
+                        {news.image ? (
+                          <Image
+                            src={news.image}
+                            alt={news.title}
+                            fill
+                            unoptimized
+                            className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-105 group-hover/card:scale-105"
+                            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 350px, 380px"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#115eff] to-[#004776]">
+                            <span className="text-xl font-bold text-white/30">IEEE SMC</span>
+                          </div>
+                        )}
+                      </Link>
                     </div>
-                  </div>
 
-                  {/* Card Content Area: Title, Date & Views, Summary */}
-                  <div className="relative z-[2] flex flex-1 flex-col px-5 pb-5 pt-1 justify-between">
-                    <div className="space-y-3">
-                      {/* Title: Dark blue-black unhovered, crisp white on hover */}
-                      <h3 className="news-card-title line-clamp-2 text-base sm:text-lg font-bold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
-                        {news.title}
-                      </h3>
+                    {/* Card Content Area: Title, Summary, and Bigger Post Detail Button */}
+                    <div className="relative z-[2] flex flex-1 flex-col px-5 pb-5 pt-2 justify-between gap-4">
+                      <div className="space-y-2.5">
+                        {/* Title: Dark blue-black unhovered, crisp white on hover */}
+                        <Link
+                          href={detailUrl}
+                          onClick={(e) => {
+                            if (hasDraggedCards.current) e.preventDefault();
+                          }}
+                          className="block"
+                        >
+                          <h3 className="news-card-title line-clamp-2 text-base sm:text-lg font-bold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
+                            {news.title}
+                          </h3>
+                        </Link>
 
-                      {/* Date Row: Clean typography, no icon */}
-                      <div className="news-card-date flex items-center gap-3 text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200">
-                        <span>{news.date}</span>
+                        {/* Summary text: Slate-600 unhovered, white/80 on hover */}
+                        {news.summary && (
+                          <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200">
+                            {news.summary}
+                          </p>
+                        )}
                       </div>
 
-                      {/* Summary text: Slate-600 unhovered, white/80 on hover */}
-                      {news.summary && (
-                        <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200">
-                          {news.summary}
-                        </p>
-                      )}
+                      {/* Bottom Action Row: Date + Bigger Post Detail Button with NO WRAP TEXT */}
+                      <div className="pt-3 border-t border-slate-100 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
+                        <span className="news-card-date text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200 whitespace-nowrap">
+                          {news.date}
+                        </span>
+
+                        <Link
+                          href={detailUrl}
+                          onClick={(e) => {
+                            if (hasDraggedCards.current) {
+                              e.preventDefault();
+                              return;
+                            }
+                            e.stopPropagation();
+                          }}
+                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
+                        >
+                          <span>View Details</span>
+                          <ChevronRight className="size-4" />
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           </div>
         )}
       </div>
-
-      {/* Modal Dialog for Full Story */}
-      {selectedNews && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-xl w-full p-6 sm:p-7 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setSelectedNews(null)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Modal Image if available */}
-            {selectedNews.image && (
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-100 mb-5">
-                <Image
-                  src={selectedNews.image}
-                  alt={selectedNews.title}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-flex items-center px-2.5 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-xs font-semibold text-[#115eff]">
-                {selectedNews.category}
-              </span>
-              <span className="text-xs text-slate-400">•</span>
-              <span className="text-xs sm:text-sm text-slate-600 font-medium">
-                {selectedNews.date}
-              </span>
-              {selectedNews.viewCount && selectedNews.viewCount > 0 && (
-                <>
-                  <span className="text-xs text-slate-400">•</span>
-                  <span className="text-xs sm:text-sm text-slate-600 font-medium">
-                    {selectedNews.viewCount.toLocaleString()} views
-                  </span>
-                </>
-              )}
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug mb-4">
-              {selectedNews.title}
-            </h3>
-
-            <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-700 leading-relaxed space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
-              {selectedNews.content.includes("<") && selectedNews.content.includes(">") ? (
-                <div
-                  className="prose prose-sm max-w-none text-slate-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: selectedNews.content }}
-                />
-              ) : (
-                <p>{selectedNews.content}</p>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-              <button
-                onClick={() => handleShare(selectedNews)}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#115eff] px-3.5 py-2 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                {copiedLink ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-semibold">Link Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="w-4 h-4" />
-                    <span>Copy Link</span>
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center gap-2">
-                {selectedNews.externalUrl && (
-                  <a
-                    href={selectedNews.externalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-[#115eff] border border-slate-200 text-xs sm:text-sm font-bold rounded-full transition-colors"
-                  >
-                    <span>View Official Site</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
-                <button
-                  onClick={() => setSelectedNews(null)}
-                  className="px-5 py-2 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-bold rounded-full transition-all shadow-xs cursor-pointer"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </SectionContainer>
   );
 }

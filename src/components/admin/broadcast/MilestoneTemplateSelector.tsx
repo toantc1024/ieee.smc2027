@@ -41,7 +41,7 @@ export function MilestoneTemplateSelector({
   return (
     <div className="space-y-6">
       <Card className="p-4 space-y-2">
-        <h3 className="text-sm font-extrabold text-slate-900 px-1">
+        <h3 className="text-sm font-semibold text-slate-900 px-1">
           Conference Milestone Templates
         </h3>
         <div className="space-y-1.5">
@@ -78,7 +78,7 @@ export function MilestoneTemplateSelector({
       <Card className="p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Mail className="size-4 text-[#115eff]" />
-          <h3 className="text-sm font-extrabold text-slate-900">
+          <h3 className="text-sm font-semibold text-slate-900">
             Dispatch Milestone Broadcast
           </h3>
         </div>

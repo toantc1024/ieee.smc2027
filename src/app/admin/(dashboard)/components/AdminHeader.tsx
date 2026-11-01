@@ -121,7 +121,7 @@ export function AdminHeader() {
                       </BreadcrumbLink>
                     ) : (
                       <BreadcrumbPage
-                        className="font-semibold text-foreground max-w-[200px] truncate block"
+                        className="font-normal text-foreground max-w-[200px] truncate block"
                         title={item.label}
                       >
                         {item.label}

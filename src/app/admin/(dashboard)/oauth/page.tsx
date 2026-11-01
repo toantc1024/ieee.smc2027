@@ -154,7 +154,7 @@ export default function AdminOAuthPage() {
             <div className="w-9 h-9 rounded-lg bg-[#115eff]/10 text-[#115eff] flex items-center justify-center font-bold">
               <KeyRound className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#004776] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#004776] tracking-tight">
               OAuth 2.0 &amp; AI Agent Configuration
             </h1>
           </div>
@@ -187,7 +187,7 @@ export default function AdminOAuthPage() {
               <Bot className="w-4 h-4 text-amber-300" />
               <span>Autonomous Agent Ready</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
               Authentication Integration for Autonomous Agents
             </h2>
             <p className="text-sm text-white/90 max-w-2xl leading-relaxed">
@@ -215,7 +215,7 @@ export default function AdminOAuthPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
               <div className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-[#115eff]" />
-                <h3 className="font-extrabold text-[#004776] text-base sm:text-lg">
+                <h3 className="font-semibold text-[#004776] text-base sm:text-lg">
                   Authorized JavaScript Origins
                 </h3>
               </div>
@@ -289,7 +289,7 @@ export default function AdminOAuthPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
               <div className="flex items-center gap-2">
                 <Server className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-extrabold text-[#004776] text-base sm:text-lg">
+                <h3 className="font-semibold text-[#004776] text-base sm:text-lg">
                   Authorized Redirect URIs
                 </h3>
               </div>
@@ -526,7 +526,7 @@ export default function AdminOAuthPage() {
 
       {/* 5. Visual Step-by-Step Instructions */}
       <div className="bg-slate-50/70 border border-slate-200 rounded-2xl p-6 sm:p-7 space-y-4">
-        <h3 className="font-extrabold text-[#004776] text-base sm:text-lg flex items-center gap-2">
+        <h3 className="font-semibold text-[#004776] text-base sm:text-lg flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-[#115eff]" />
           <span>Setup Guide for Google Cloud Console Credentials</span>
         </h3>

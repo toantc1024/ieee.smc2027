@@ -83,15 +83,15 @@ export default async function AdminDashboardPage() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 flex-row items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white shadow-none">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Delegates
             </span>
-            <div className="text-2xl font-black text-slate-900 mt-1">{totalRegs}</div>
+            <div className="text-2xl font-bold text-[#004776] mt-1">{totalRegs}</div>
             <Link
               href="/admin/registrations"
-              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-medium hover:underline mt-1 block"
             >
               Inspect JSON formData →
             </Link>
@@ -101,30 +101,30 @@ export default async function AdminDashboardPage() {
           </div>
         </Card>
 
-        <Card className="p-5 flex-row items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white shadow-none">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Payoo Verified Paid
             </span>
-            <div className="text-2xl font-black text-emerald-600 mt-1">{paidRegs}</div>
-            <span className="text-xs text-slate-400 mt-1 block">
+            <div className="text-2xl font-bold text-emerald-600 mt-1">{paidRegs}</div>
+            <span className="text-xs text-slate-400 mt-1 block font-medium">
               Checked-in: {checkedInRegs}
             </span>
           </div>
-          <div className="size-10 rounded-xl bg-slate-100 text-emerald-700 border border-slate-200 flex items-center justify-center">
+          <div className="size-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
             <QrCode className="size-5" />
           </div>
         </Card>
 
-        <Card className="p-5 flex-row items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white shadow-none">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Database Users
             </span>
-            <div className="text-2xl font-black text-slate-900 mt-1">{totalUsers}</div>
+            <div className="text-2xl font-bold text-[#004776] mt-1">{totalUsers}</div>
             <Link
               href="/admin/users"
-              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-medium hover:underline mt-1 block"
             >
               Manage ADMIN / USER roles →
             </Link>
@@ -134,15 +134,15 @@ export default async function AdminDashboardPage() {
           </div>
         </Card>
 
-        <Card className="p-5 flex-row items-center justify-between">
+        <Card className="p-5 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white shadow-none">
           <div>
-            <span className="text-xs font-bold uppercase text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Media Library Files
             </span>
-            <div className="text-2xl font-black text-slate-900 mt-1">{totalMedia}</div>
+            <div className="text-2xl font-bold text-[#004776] mt-1">{totalMedia}</div>
             <Link
               href="/admin/media"
-              className="text-xs text-[#115eff] font-semibold hover:underline mt-1 block"
+              className="text-xs text-[#115eff] font-medium hover:underline mt-1 block"
             >
               Open Media Manager →
             </Link>
@@ -155,54 +155,54 @@ export default async function AdminDashboardPage() {
 
       {/* Quick Modules */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <Card className="justify-between">
+        <Card className="justify-between rounded-2xl border border-slate-200 bg-white shadow-none p-5">
           <div className="space-y-2">
             <Badge variant="ute">Milestone Emails</Badge>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900">
               Email Templates & Broadcasts
             </h2>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
               Customize HTML templates for Email Link OTP, CFP, PaperCept Acceptance, Registration, Payoo Receipt, and Visa Support Letters.
             </p>
           </div>
           <Link href="/admin/broadcast">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full h-8 text-xs font-medium">
               <Send className="size-3.5" />
               Open Milestone Templates
             </Button>
           </Link>
         </Card>
 
-        <Card className="justify-between">
+        <Card className="justify-between rounded-2xl border border-slate-200 bg-white shadow-none p-5">
           <div className="space-y-2">
             <Badge variant="ute">MinIO + DB Catalog</Badge>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900">
               Media Upload Library
             </h2>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
               Centralized storage for delegate avatars, passport scans, IEEE/student proofs, and CMS news graphics.
             </p>
           </div>
           <Link href="/admin/media">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full h-8 text-xs font-medium">
               <FolderOpen className="size-3.5" />
               Browse Media Library
             </Button>
           </Link>
         </Card>
 
-        <Card className="justify-between">
+        <Card className="justify-between rounded-2xl border border-slate-200 bg-white shadow-none p-5">
           <div className="space-y-2">
             <Badge variant="ute">CMS Hierarchy</Badge>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900">
               Page Tree & Visual Builder
             </h2>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
               Manage {pages.length} hierarchical conference pages and dynamic content blocks stored in PostgreSQL.
             </p>
           </div>
           <Link href="/admin/pages">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full h-8 text-xs font-medium">
               <Layers className="size-3.5" />
               Open Page Hierarchy
             </Button>
@@ -211,11 +211,11 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Pages Table Overview */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50/60 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-none overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Website Pages</h3>
-            <p className="text-xs text-slate-400">Active pages in PostgreSQL CMS</p>
+            <h3 className="text-sm font-semibold text-slate-900">Website Pages</h3>
+            <p className="text-xs text-slate-400 font-normal">Active pages in PostgreSQL CMS</p>
           </div>
           <Link
             href="/admin/pages"

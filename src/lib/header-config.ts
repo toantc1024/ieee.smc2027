@@ -230,65 +230,6 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
       },
     },
     {
-      id: "nav-registration",
-      name: "Registration",
-      href: "/registration",
-      type: "mega",
-      columns: [
-        {
-          id: "col-reg-fees",
-          title: "Registration & Portal",
-          links: [
-            {
-              id: "sub-reg-online",
-              title: "Online Delegate Registration",
-              href: "/registration",
-              description: "Registration form, fee categories, and instant QR / card payment",
-              icon: "CreditCard",
-              badge: "Open",
-            },
-            {
-              id: "sub-reg-portal",
-              title: "Delegate Portal & Digital Badge",
-              href: "/portal",
-              description: "View registration status, badge QR code, e-Receipt & Visa Support Letter",
-              icon: "User",
-              badge: "Portal",
-            },
-          ],
-        },
-        {
-          id: "col-reg-pay",
-          title: "Payment Gateways",
-          links: [
-            {
-              id: "sub-reg-vietqr",
-              title: "VietQR Instant Domestic Transfer",
-              href: "/registration",
-              description: "Direct zero-fee mobile bank transfer with instant confirmation",
-              icon: "QrCode",
-              badge: "VietQR",
-            },
-            {
-              id: "sub-reg-swift",
-              title: "International SWIFT Bank Wire",
-              href: "/#registration",
-              description: "Official university bank transfer details for international delegates",
-              icon: "Landmark",
-            },
-          ],
-        },
-      ],
-      promoCard: {
-        title: "Online Registration Portal",
-        description: "Register for IEEE SMC 2027 with automated VietQR and international payment options.",
-        image: "/assets/cta-background.webp",
-        href: "/registration",
-        badge: "Register Now",
-        ctaText: "Register",
-      },
-    },
-    {
       id: "nav-travel",
       name: "Travel & Accommodation",
       href: "/travel",

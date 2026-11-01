@@ -18,8 +18,9 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
 
   const isFullBleed = useMemo(() => {
     return (
-      (pathname.startsWith("/admin/posts/") && pathname !== "/admin/posts") ||
-      (pathname.startsWith("/admin/pages/") && pathname !== "/admin/pages")
+      (pathname.startsWith("/admin/pages/") && pathname !== "/admin/pages") ||
+      pathname === "/admin/posts/create" ||
+      (pathname.startsWith("/admin/posts/") && pathname.endsWith("/edit"))
     );
   }, [pathname]);
 
@@ -34,7 +35,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
             className={
               isFullBleed
                 ? "relative flex-1 min-h-0 overflow-hidden p-0"
-                : "relative flex-1 min-h-0 overflow-y-auto p-4 md:px-6 md:pb-8 md:pt-6"
+                : "relative flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8"
             }
           >
             <div className={isFullBleed ? "h-full w-full" : "max-w-7xl mx-auto w-full"}>

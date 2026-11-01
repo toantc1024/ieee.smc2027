@@ -39,7 +39,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
-import { PostPreviewDialog } from "@/components/admin/posts/PostPreviewDialog";
 import { ImageInsertModal } from "@/components/admin/tiptap/ImageInsertModal";
 import { POST_CATEGORIES } from "@/app/admin/(dashboard)/posts/page";
 import { cn } from "@/lib/utils";
@@ -95,7 +94,6 @@ export function PostEditorForm({
 
   // Modals
   const [showCoverModal, setShowCoverModal] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showDirtyBackDialog, setShowDirtyBackDialog] = useState(false);
 
   // Track initial state for dirty detection
@@ -288,17 +286,25 @@ export function PostEditorForm({
 
           {/* Header Action Buttons */}
           <div className="flex items-center gap-1.5 shrink-0 ml-auto">
-            {/* Preview Button */}
+            {/* Direct Preview to Full Post Page (No modal dialog) */}
             <Button
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => setShowPreviewModal(true)}
-              className="h-8 gap-1.5 cursor-pointer text-xs font-medium shrink-0 bg-white hover:bg-slate-50 border-slate-200 shadow-none"
-              title="Preview post"
+              onClick={() => {
+                if (initialData?.id) {
+                  window.open(`/admin/posts/${initialData.id}`, "_blank");
+                } else if (slug) {
+                  window.open(`/news/${slug}`, "_blank");
+                } else {
+                  toast.info("Please enter a title or save draft first to preview.");
+                }
+              }}
+              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-none"
+              title="Open full post page in new tab"
             >
-              <Eye className="size-3.5" />
-              <span className="hidden md:inline">Preview</span>
+              <Eye className="size-4 text-[#115eff]" />
+              <span>View Page</span>
             </Button>
 
             {/* Save Draft Button */}
@@ -308,13 +314,13 @@ export function PostEditorForm({
               variant="outline"
               onClick={() => handleSave("DRAFT")}
               disabled={isSaving}
-              className="h-8 gap-1.5 cursor-pointer text-xs font-medium shrink-0 bg-white hover:bg-slate-50 border-slate-200 shadow-none text-slate-700"
+              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 shadow-none text-slate-700"
             >
-              <Save className="size-3.5" />
+              <Save className="size-4" />
               <span>Save Draft</span>
             </Button>
 
-            {/* Publish / Unpublish Button */}
+            {/* Publish / Unpublish Button (Red for Unpublish, Blue for Publish - No Yellow) */}
             {status === "PUBLISHED" ? (
               <Button
                 type="button"
@@ -322,9 +328,9 @@ export function PostEditorForm({
                 variant="outline"
                 onClick={() => handleSave("DRAFT")}
                 disabled={isSaving}
-                className="h-8 gap-1.5 cursor-pointer text-xs font-medium shrink-0 border-amber-300 bg-amber-50/80 text-amber-700 hover:bg-amber-100 hover:text-amber-800 shadow-none"
+                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:text-rose-800 shadow-none"
               >
-                <EyeOff className="size-3.5" />
+                <EyeOff className="size-4" />
                 <span>Unpublish</span>
               </Button>
             ) : (
@@ -333,9 +339,9 @@ export function PostEditorForm({
                 size="sm"
                 onClick={() => handleSave("PUBLISHED")}
                 disabled={isSaving}
-                className="h-8 gap-1.5 cursor-pointer text-xs font-semibold shrink-0 bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none"
+                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none"
               >
-                <Rocket className="size-3.5" />
+                <Rocket className="size-4" />
                 <span>Publish Post</span>
               </Button>
             )}
@@ -764,26 +770,7 @@ export function PostEditorForm({
         />
       )}
 
-      {/* ── Preview Dialog Modal ── */}
-      {showPreviewModal && (
-        <PostPreviewDialog
-          open={showPreviewModal}
-          onOpenChange={setShowPreviewModal}
-          post={{
-            id: initialData?.id || "preview-post",
-            title: title || "Untitled Post",
-            slug: slug || "preview",
-            summary,
-            content,
-            coverImage,
-            category,
-            status,
-            views: 0,
-            createdAt: new Date().toISOString(),
-            author: { name: "Author" },
-          }}
-        />
-      )}
+
 
       {/* ── Dirty Navigation Confirmation Dialog ── */}
       {showDirtyBackDialog && (

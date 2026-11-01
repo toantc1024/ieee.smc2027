@@ -225,37 +225,92 @@ export function DataTable<TData, TValue = unknown>({
                     return (
                       <TableHead
                         key={header.id}
-                        className="text-center align-middle"
+                        className={cn(
+                          "align-middle select-none",
+                          (() => {
+                            const colId = header.column.id.toLowerCase();
+                            const customAlign = (header.column.columnDef as any).align || (header.column.columnDef.meta as any)?.align;
+                            if (customAlign) {
+                              return customAlign === "center" ? "text-center" : customAlign === "right" ? "text-right" : "text-left";
+                            }
+                            if (
+                              colId === "select" ||
+                              colId === "actions" ||
+                              colId === "status" ||
+                              colId === "role" ||
+                              colId === "provider" ||
+                              colId === "cover" ||
+                              colId === "coverimage" ||
+                              colId === "createdat" ||
+                              colId === "joineddate" ||
+                              colId === "date" ||
+                              colId === "views"
+                            ) {
+                              return "text-center";
+                            }
+                            return "text-left";
+                          })()
+                        )}
                         style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         {header.isPlaceholder ? null : canSort ? (
-                          <div
-                            onClick={header.column.getToggleSortingHandler()}
-                            className="flex items-center justify-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors group mx-auto text-center"
-                          >
-                            <span>
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </span>
-                            <span className="text-slate-400 group-hover:text-slate-700">
-                              {sortDirection === "asc" ? (
-                                <ChevronUp className="size-3.5 text-[#115eff]" />
-                              ) : sortDirection === "desc" ? (
-                                <ChevronDown className="size-3.5 text-[#115eff]" />
-                              ) : (
-                                <ChevronsUpDown className="size-3 opacity-40 group-hover:opacity-100" />
-                              )}
-                            </span>
-                          </div>
+                          (() => {
+                            const colId = header.column.id.toLowerCase();
+                            const customAlign = (header.column.columnDef as any).align || (header.column.columnDef.meta as any)?.align;
+                            const isCenter = customAlign ? customAlign === "center" : [
+                              "select", "actions", "status", "role", "provider",
+                              "cover", "coverimage", "createdat", "joineddate", "date", "views"
+                            ].includes(colId);
+                            const isRight = customAlign === "right";
+
+                            return (
+                              <div
+                                onClick={header.column.getToggleSortingHandler()}
+                                className={cn(
+                                  "flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors group",
+                                  isCenter ? "justify-center mx-auto text-center" : isRight ? "justify-end ml-auto text-right" : "justify-start text-left"
+                                )}
+                              >
+                                <span>
+                                  {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                  )}
+                                </span>
+                                <span className="text-slate-400 group-hover:text-slate-700 shrink-0">
+                                  {sortDirection === "asc" ? (
+                                    <ChevronUp className="size-3.5 text-[#115eff]" />
+                                  ) : sortDirection === "desc" ? (
+                                    <ChevronDown className="size-3.5 text-[#115eff]" />
+                                  ) : (
+                                    <ChevronsUpDown className="size-3 opacity-40 group-hover:opacity-100" />
+                                  )}
+                                </span>
+                              </div>
+                            );
+                          })()
                         ) : (
-                          <div className="flex items-center justify-center text-center mx-auto">
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </div>
+                          (() => {
+                            const colId = header.column.id.toLowerCase();
+                            const customAlign = (header.column.columnDef as any).align || (header.column.columnDef.meta as any)?.align;
+                            const isCenter = customAlign ? customAlign === "center" : [
+                              "select", "actions", "status", "role", "provider",
+                              "cover", "coverimage", "createdat", "joineddate", "date", "views"
+                            ].includes(colId);
+                            const isRight = customAlign === "right";
+
+                            return (
+                              <div className={cn(
+                                "flex items-center",
+                                isCenter ? "justify-center text-center mx-auto" : isRight ? "justify-end text-right" : "justify-start text-left"
+                              )}>
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                              </div>
+                            );
+                          })()
                         )}
                       </TableHead>
                     );
@@ -328,7 +383,32 @@ export function DataTable<TData, TValue = unknown>({
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className="align-middle"
+                        className={cn(
+                          "align-middle",
+                          (() => {
+                            const colId = cell.column.id.toLowerCase();
+                            const customAlign = (cell.column.columnDef as any).align || (cell.column.columnDef.meta as any)?.align;
+                            if (customAlign) {
+                              return customAlign === "center" ? "text-center" : customAlign === "right" ? "text-right" : "text-left";
+                            }
+                            if (
+                              colId === "select" ||
+                              colId === "actions" ||
+                              colId === "status" ||
+                              colId === "role" ||
+                              colId === "provider" ||
+                              colId === "cover" ||
+                              colId === "coverimage" ||
+                              colId === "createdat" ||
+                              colId === "joineddate" ||
+                              colId === "date" ||
+                              colId === "views"
+                            ) {
+                              return "text-center";
+                            }
+                            return "text-left";
+                          })()
+                        )}
                         style={{
                           width: cell.column.getSize() !== 150 ? cell.column.getSize() : undefined,
                           maxWidth: cell.column.getSize() !== 150 ? cell.column.getSize() : undefined,

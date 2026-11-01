@@ -997,11 +997,11 @@ export default function HeaderEditorPage() {
             <div className="px-4 sm:px-6 py-3 flex items-center justify-between border-b border-slate-100 relative">
               {/* Brand Logo */}
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#115eff] text-white flex items-center justify-center font-extrabold text-xs shadow-xs">
+                <div className="w-8 h-8 rounded-lg bg-[#115eff] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                   SMC
                 </div>
                 <div>
-                  <div className="font-extrabold text-slate-900 text-xs sm:text-sm">
+                  <div className="font-bold text-[#004776] text-xs sm:text-sm">
                     {data.brand.conferenceTitle}
                   </div>
                   <div className="text-[10px] text-slate-500 hidden sm:block">
@@ -1071,7 +1071,7 @@ export default function HeaderEditorPage() {
                   {previewColumns.map((col, idx) => (
                     <div key={col.id || idx} className="flex-1 p-5 min-w-0">
                       <div className="relative pb-2 mb-3">
-                        <h4 className="text-xs font-extrabold text-slate-900 tracking-normal">
+                        <h4 className="text-xs font-bold text-[#004776] tracking-normal">
                           {col.title}
                         </h4>
                         <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200 rounded-full" />

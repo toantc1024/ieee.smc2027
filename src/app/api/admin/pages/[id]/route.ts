@@ -6,6 +6,7 @@ import {
   apiSuccess,
   apiError,
 } from "@/lib";
+import { STANDARD_CONFERENCE_PAGES } from "../route";
 
 export async function GET(
   request: Request,
@@ -13,10 +14,25 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const page = await cmsService.getPageByIdOrSlug(id);
+    let page = await cmsService.getPageByIdOrSlug(id);
 
     if (!page) {
-      return apiError("Page not found", 404);
+      const stdPage = STANDARD_CONFERENCE_PAGES.find(
+        (p) => p.id === id || p.slug === id
+      );
+      if (stdPage) {
+        page = await cmsService.upsertPage({
+          id: stdPage.id,
+          slug: stdPage.slug,
+          title: stdPage.title,
+          blocks: stdPage.blocks,
+          isPublished: true,
+          metaTitle: stdPage.metaTitle,
+          metaDescription: stdPage.metaDescription,
+        });
+      } else {
+        return apiError("Page not found", 404);
+      }
     }
 
     return NextResponse.json({ page });
@@ -37,9 +53,31 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const existing = await prisma.page.findUnique({ where: { id } });
+    let existing = await prisma.page.findFirst({
+      where: {
+        OR: [{ id }, { slug: id }],
+      },
+    });
+
     if (!existing) {
-      return apiError("Page not found", 404);
+      const stdPage = STANDARD_CONFERENCE_PAGES.find(
+        (p) => p.id === id || p.slug === id
+      );
+      if (stdPage) {
+        existing = await prisma.page.create({
+          data: {
+            id: stdPage.id,
+            slug: stdPage.slug,
+            title: stdPage.title,
+            blocks: stdPage.blocks,
+            isPublished: true,
+            metaTitle: stdPage.metaTitle,
+            metaDescription: stdPage.metaDescription,
+          },
+        });
+      } else {
+        return apiError("Page not found", 404);
+      }
     }
 
     const updated = await cmsService.upsertPage({

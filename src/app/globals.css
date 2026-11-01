@@ -391,13 +391,16 @@ article:hover .news-card-badge,
   color: #115eff !important;
 }
 
-/* Customized prominent button heights (avoiding cramped default shadcn heights on public pages) */
-a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]),
-button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]) {
+/* Customized prominent button heights (avoiding cramped default shadcn heights on public marketing pages only) */
+body:not(:has(.admin-page-root)) a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]),
+body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]) {
   min-height: 2.75rem; /* at least 44px height */
 }
 
-/* Ensure shadcn sidebar controls stay perfectly sized */
+/* Ensure shadcn admin and sidebar controls stay perfectly sized */
+.admin-page-root button,
+.admin-page-root a.inline-flex,
+.admin-page-root [data-slot="button"],
 [data-sidebar] button,
 [data-sidebar] a,
 [data-sidebar="menu-button"],
@@ -616,21 +619,27 @@ body.no-page-borders::after {
   scrollbar-width: none;
 }
 
-/* Fix Vietnamese diacritics clipping in inputs matching HCMUTE DESIGN-GUIDE */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="search"],
-input[type="tel"],
-input[type="url"],
-input[type="number"],
-input:not([type]),
-textarea,
-select {
+/* Fix Vietnamese diacritics clipping in inputs matching HCMUTE DESIGN-GUIDE on public forms */
+body:not(:has(.admin-page-root)) input[type="text"],
+body:not(:has(.admin-page-root)) input[type="email"],
+body:not(:has(.admin-page-root)) input[type="password"],
+body:not(:has(.admin-page-root)) input[type="search"],
+body:not(:has(.admin-page-root)) input[type="tel"],
+body:not(:has(.admin-page-root)) input[type="url"],
+body:not(:has(.admin-page-root)) input[type="number"],
+body:not(:has(.admin-page-root)) input:not([type]),
+body:not(:has(.admin-page-root)) textarea,
+body:not(:has(.admin-page-root)) select {
   line-height: 2.05 !important;
   overflow: visible !important;
   text-overflow: clip !important;
   min-height: 0.2rem !important;
+}
+
+.admin-page-root input,
+.admin-page-root select,
+.admin-page-root textarea {
+  line-height: normal !important;
 }
 
 /* ── Advanced Tiptap Editor & Prose styling matching HCMUTE ── */
@@ -639,10 +648,17 @@ select {
   caret-color: auto;
 }
 
-.tiptap p {
+.tiptap p,
+.post-reader p {
   margin-top: 0.75em;
-  margin-bottom: 0.75em;
-  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+}
+
+.tiptap p:empty,
+.post-reader p:empty {
+  min-height: 1.75em;
+  display: block;
 }
 
 .tiptap h1 {

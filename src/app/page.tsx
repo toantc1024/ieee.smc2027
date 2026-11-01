@@ -20,7 +20,6 @@ import { FAQ } from "@/components/sections/FAQ";
 import { Sponsors } from "@/components/sections/Sponsors";
 import { Keynotes } from "@/components/sections/Keynotes";
 import { CommitteesSection } from "@/components/sections/CommitteesSection";
-import { PaymentMethods } from "@/components/sections/PaymentMethods";
 
 export const dynamic = "force-dynamic";
 
@@ -67,8 +66,6 @@ function renderBlock(block: PageBlockItem) {
       return <Venue key={block.id} />;
     case "CommitteesSection":
       return <CommitteesSection key={block.id} {...block.props} />;
-    case "PaymentMethods":
-      return <PaymentMethods key={block.id} {...block.props} />;
     case "FAQ":
       return <FAQ key={block.id} />;
     case "Keynotes":
@@ -115,7 +112,6 @@ export default async function Home() {
         <ImportantDates />
         <ConferenceVideo />
         <CommitteesSection />
-        <PaymentMethods />
         <Venue />
         <ContactCards />
       </div>

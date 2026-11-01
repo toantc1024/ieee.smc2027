@@ -169,7 +169,7 @@ export default function AdminCheckInPage() {
               </div>
 
               <div className="space-y-1 grow">
-                <h4 className="text-base font-black">
+                <h4 className="text-base font-bold">
                   {feedback.type === "SUCCESS"
                     ? "CHECK-IN SUCCESSFUL"
                     : feedback.type === "ALREADY"

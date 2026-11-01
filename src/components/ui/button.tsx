@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant =
@@ -51,7 +52,7 @@ export function buttonVariants({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2",
+    "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl font-semibold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2",
     variantClasses[variant],
     sizeClasses[size],
     className
@@ -64,19 +65,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant = "default",
       size = "default",
+      asChild = false,
       children,
       ...props
     },
     ref
   ) => {
+    const Comp = asChild ? Slot : "button";
     return (
-      <button
-        ref={ref}
+      <Comp
+        ref={ref as any}
         data-slot="button"
         className={buttonVariants({ variant, size, className })}
         {...props}
       >
-        {variant === "ute" ? (
+        {variant === "ute" && !asChild ? (
           <>
             <span
               className="pointer-events-none absolute -right-4 -bottom-4 z-0 h-20 w-20 bg-contain bg-right-bottom bg-no-repeat opacity-25 transition-all duration-700 ease-out group-hover:scale-150 group-hover:rotate-12 group-hover:opacity-40"
@@ -91,7 +94,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           children
         )}
-      </button>
+      </Comp>
     );
   }
 );

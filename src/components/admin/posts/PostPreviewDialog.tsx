@@ -97,7 +97,7 @@ export function PostPreviewDialog({
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight leading-snug">
               {post.title}
             </h1>
 

@@ -12,20 +12,18 @@ import {
   Rocket,
   ExternalLink,
   Copy,
+  CopyPlus,
   Trash2,
   RefreshCw,
-  FolderOpen,
   Calendar,
   Clock,
   User,
   Link as LinkIcon,
-  Quote,
-  FileText,
+  ChevronRight,
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
@@ -73,6 +71,7 @@ export default function PostDetailPage({
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
   const [coverImgError, setCoverImgError] = useState(false);
 
   const fetchPost = useCallback(
@@ -143,6 +142,28 @@ export default function PostDetailPage({
     }
   };
 
+  const handleDuplicatePost = async () => {
+    if (!post) return;
+    setIsDuplicating(true);
+    try {
+      toast.loading("Duplicating post...", { id: "dup-post" });
+      const res = await fetch(`/api/admin/posts/${post.id}/duplicate`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to duplicate post");
+      toast.success("Post duplicated! Opening editor...", { id: "dup-post" });
+      router.push(`/admin/posts/${data.post.id}/edit`);
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to duplicate post",
+        { id: "dup-post" }
+      );
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
   const handleDeletePost = async () => {
     setIsDeleting(true);
     try {
@@ -162,27 +183,43 @@ export default function PostDetailPage({
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col overflow-hidden bg-background">
-        <div className="h-13 min-h-[52px] border-b border-border/80 px-4 flex items-center justify-between bg-white dark:bg-card">
+      <div className="space-y-6 font-sans">
+        {/* Top Header Skeleton */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-none">
           <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-lg" />
-            <Skeleton className="h-5 w-64 rounded-md" />
+            <Skeleton className="size-9 rounded-lg" />
+            <Skeleton className="h-5 w-56 rounded-md" />
           </div>
-          <Skeleton className="h-7 w-20 rounded-md" />
-        </div>
-        <div className="h-12 border-b border-border/70 px-4 flex items-center gap-2 bg-slate-50/60 dark:bg-muted/10">
-          <Skeleton className="h-8 w-28 rounded-lg" />
-          <Skeleton className="h-8 w-24 rounded-lg" />
-          <Skeleton className="h-8 w-28 rounded-lg" />
-        </div>
-        <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-96 w-full rounded-xl" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
           </div>
-          <div className="space-y-4">
-            <Skeleton className="h-64 w-full rounded-xl" />
-            <Skeleton className="h-44 w-full rounded-xl" />
+        </div>
+
+        {/* Article Reader Skeleton */}
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-none">
+          <div className="border-b border-slate-100 bg-slate-50/70 px-6 py-3.5 flex items-center gap-2">
+            <Skeleton className="h-4 w-12 rounded" />
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-4 w-48 rounded" />
+          </div>
+          <div className="max-w-4xl mx-auto px-6 sm:px-10 py-10 space-y-6">
+            <div className="flex gap-3">
+              <Skeleton className="h-4 w-20 rounded" />
+              <Skeleton className="h-4 w-28 rounded" />
+              <Skeleton className="h-4 w-32 rounded" />
+            </div>
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-3/4 rounded-md" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="aspect-[16/9] w-full rounded-2xl" />
+            <div className="space-y-3 pt-4">
+              <Skeleton className="h-4 w-full rounded" />
+              <Skeleton className="h-4 w-full rounded" />
+              <Skeleton className="h-4 w-5/6 rounded" />
+              <Skeleton className="h-4 w-4/6 rounded" />
+            </div>
           </div>
         </div>
       </div>
@@ -191,17 +228,17 @@ export default function PostDetailPage({
 
   if (!post) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-background">
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-none space-y-4 max-w-md mx-auto my-12">
+        <p className="text-base font-semibold text-slate-800">
           Post not found
         </p>
-        <p className="text-xs text-muted-foreground mb-4">
+        <p className="text-xs text-slate-500">
           The requested article does not exist or may have been deleted.
         </p>
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/admin/posts">
-            <ArrowLeft className="size-3.5 mr-1.5" />
-            Back to Posts
+        <Button variant="outline" size="sm" asChild className="h-9 px-3.5 text-xs font-semibold">
+          <Link href="/admin/posts" className="inline-flex items-center gap-1.5">
+            <ArrowLeft className="size-4 shrink-0" />
+            <span>Back to Posts</span>
           </Link>
         </Button>
       </div>
@@ -209,58 +246,50 @@ export default function PostDetailPage({
   }
 
   const publicUrl = `/news/${post.slug}`;
+  const formattedDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : new Date(post.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-background font-sans select-none">
-      {/* ── 1. Top Header Bar ── */}
-      <header className="shrink-0 bg-white dark:bg-card border-b border-border/80 z-20">
-        <div className="flex items-center gap-3 px-4 h-13 min-h-[52px]">
+    <div className="space-y-6 font-sans">
+      {/* ── 1. Top Admin Action Rail (Single-line, h-9 standardized buttons, NO badge) ── */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-none">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="size-9 shrink-0 cursor-pointer"
+            className="size-9 shrink-0 cursor-pointer text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg inline-flex items-center justify-center"
             asChild
             title="Back to Posts"
           >
-            <Link href="/admin/posts">
-              <ArrowLeft className="size-4" />
+            <Link href="/admin/posts" className="inline-flex items-center justify-center size-9 shrink-0">
+              <ArrowLeft className="size-4 shrink-0" />
             </Link>
           </Button>
 
-          <div className="flex-1 min-w-0">
-            <h1 className="text-base font-semibold tracking-tight text-foreground line-clamp-1">
+          {/* Breadcrumb — strictly non-bold for all */}
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 min-w-0 overflow-hidden font-normal">
+            <Link href="/admin/posts" className="hover:text-[#115eff] transition-colors shrink-0 font-normal">
+              Posts
+            </Link>
+            <ChevronRight className="size-3.5 shrink-0 text-slate-400" />
+            <span className="text-[#004776] font-normal truncate min-w-0">
               {post.title}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Badge
-              variant="outline"
-              className="text-xs font-semibold rounded-md border-primary/30 text-primary bg-primary/5"
-            >
-              {post.category}
-            </Badge>
-
-            <Badge
-              variant={post.status === "PUBLISHED" ? "default" : "secondary"}
-              className={cn(
-                "text-xs font-semibold rounded-md",
-                post.status === "PUBLISHED"
-                  ? "bg-[#115eff] text-white hover:bg-[#115eff]"
-                  : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-              )}
-            >
-              {post.status === "PUBLISHED" ? "Published" : "Draft"}
-            </Badge>
+            </span>
           </div>
         </div>
-      </header>
 
-      {/* ── 2. Action Rail (Horizontal Action Bar like HCMUTE) ── */}
-      <div className="shrink-0 bg-slate-50/70 dark:bg-muted/10 border-b border-border/70 px-4 py-2 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Publish / Unpublish Toggle Button */}
+        {/* Action Buttons — HCMUTE Standard h-9, px-3.5/px-4, single-line flex */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {post.status === "PUBLISHED" ? (
             <Button
               type="button"
@@ -268,10 +297,10 @@ export default function PostDetailPage({
               size="sm"
               onClick={handleTogglePublish}
               disabled={isUpdatingStatus}
-              className="h-8.5 px-3 text-xs font-medium border-amber-300 bg-amber-50/80 text-amber-700 hover:bg-amber-100 hover:text-amber-800 shadow-none cursor-pointer"
+              className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:text-rose-800 shadow-none inline-flex flex-row items-center"
             >
-              <EyeOff className="size-3.5 mr-1.5" />
-              <span>Unpublish Post</span>
+              <EyeOff className="size-4 shrink-0" />
+              <span className="whitespace-nowrap shrink-0">Unpublish</span>
             </Button>
           ) : (
             <Button
@@ -279,255 +308,252 @@ export default function PostDetailPage({
               size="sm"
               onClick={handleTogglePublish}
               disabled={isUpdatingStatus}
-              className="h-8.5 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none cursor-pointer"
+              className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none inline-flex flex-row items-center"
             >
-              <Rocket className="size-3.5 mr-1.5" />
-              <span>Publish Post</span>
+              <Rocket className="size-4 shrink-0" />
+              <span className="whitespace-nowrap shrink-0">Publish Post</span>
             </Button>
           )}
 
-          {/* Edit Post Button (Goes to full-screen editor) */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             asChild
-            className="h-8.5 px-3 text-xs font-medium bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-none cursor-pointer"
+            className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-none inline-flex flex-row items-center"
           >
-            <Link href={`/admin/posts/${post.id}/edit`}>
-              <Edit className="size-3.5 mr-1.5 text-primary" />
-              <span>Edit Post</span>
+            <Link href={`/admin/posts/${post.id}/edit`} className="inline-flex flex-row items-center gap-1.5 whitespace-nowrap shrink-0">
+              <Edit className="size-4 text-[#115eff] shrink-0" />
+              <span className="whitespace-nowrap shrink-0">Edit Post</span>
             </Link>
           </Button>
 
-          {/* Open Public Post */}
+          {/* Real Duplicate & Edit Action */}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleDuplicatePost}
+            disabled={isDuplicating}
+            className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-none inline-flex flex-row items-center"
+            title="Duplicate as draft and edit"
+          >
+            <CopyPlus className="size-4 text-[#115eff] shrink-0" />
+            <span className="whitespace-nowrap shrink-0">Duplicate &amp; Edit</span>
+          </Button>
+
           <Button
             type="button"
             variant="outline"
             size="sm"
             asChild
-            className="h-8.5 px-3 text-xs font-medium bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-none cursor-pointer"
+            className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-blue-50/60 hover:bg-blue-100/70 border border-[#115eff]/30 text-[#115eff] shadow-none inline-flex flex-row items-center"
           >
-            <a href={publicUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="size-3.5 mr-1.5" />
-              <span>View Public Post</span>
+            <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="inline-flex flex-row items-center gap-1.5 whitespace-nowrap shrink-0">
+              <ExternalLink className="size-4 shrink-0" />
+              <span className="whitespace-nowrap shrink-0">View Public</span>
             </a>
           </Button>
 
-          {/* Copy Public Link */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleCopyLink}
-            className="h-8.5 px-3 text-xs font-medium bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-none cursor-pointer"
+            className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-none inline-flex flex-row items-center"
           >
-            <Copy className="size-3.5 mr-1.5" />
-            <span>Copy Link</span>
+            <Copy className="size-4 shrink-0" />
+            <span className="whitespace-nowrap shrink-0">Copy Link</span>
           </Button>
-        </div>
 
-        <div className="flex items-center gap-1.5 ml-auto">
-          {/* Refresh Data */}
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => fetchPost(true)}
             disabled={refreshing}
-            className="h-8.5 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+            className="size-9 p-0 cursor-pointer text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg inline-flex items-center justify-center shrink-0"
             title="Refresh post details"
           >
-            <RefreshCw className={cn("size-3.5", refreshing && "animate-spin")} />
+            <RefreshCw className={cn("size-4 shrink-0", refreshing && "animate-spin")} />
           </Button>
 
-          {/* Delete Post */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowDeleteDialog(true)}
-            className="h-8.5 px-2.5 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"
+            className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap text-rose-600 hover:text-rose-700 hover:bg-rose-50 inline-flex flex-row items-center"
             title="Delete post"
           >
-            <Trash2 className="size-3.5 mr-1.5" />
-            <span>Delete</span>
+            <Trash2 className="size-4 shrink-0" />
+            <span className="whitespace-nowrap shrink-0">Delete</span>
           </Button>
         </div>
       </div>
 
-      {/* ── 3. Scrollable 2-Column Detail View Layout ── */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50/50 dark:bg-[#070b14]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left 2 Columns: Summary & Formatted Reading Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Excerpt Callout (if summary exists) */}
-            {post.summary && (
-              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 sm:p-5">
-                <div className="flex items-start gap-3">
-                  <div className="size-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5 text-primary">
-                    <Quote className="size-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
-                      Post Summary / Excerpt
-                    </p>
-                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
-                      {post.summary}
-                    </p>
-                  </div>
+      {/* ── 2. Authentic HCMUTE Post Reader Layout (100% Public/HCMUTE Parity) ── */}
+      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-none">
+        {/* Top Breadcrumb Bar (Non-bold for all) */}
+        <div className="w-full border-b border-slate-100 bg-slate-50/70 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center gap-2 text-xs sm:text-sm text-slate-500 overflow-x-auto scrollbar-none font-normal">
+          <Link href="/" target="_blank" className="hover:text-[#115eff] transition-colors shrink-0 font-normal">
+            Home
+          </Link>
+          <ChevronRight className="size-3.5 shrink-0 text-slate-400" />
+          <Link href="/news" target="_blank" className="hover:text-[#115eff] transition-colors shrink-0 font-normal">
+            News &amp; Announcements
+          </Link>
+          <ChevronRight className="size-3.5 shrink-0 text-slate-400" />
+          <span className="text-slate-600 font-normal truncate shrink-0 max-w-[280px] sm:max-w-md">
+            {post.title}
+          </span>
+        </div>
+
+        {/* Article Container */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-10 pt-8 sm:pt-12 pb-12 sm:pb-16 space-y-6">
+          {/* Back link */}
+          <Link
+            href="/admin/posts"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-normal text-[#115eff] hover:text-[#004776] transition-colors group mb-2"
+          >
+            <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to all announcements</span>
+          </Link>
+
+          {/* Category & Metadata Row */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-500">
+            <span className="font-bold uppercase tracking-wider text-[#115eff] text-xs">
+              {post.category}
+            </span>
+            <span className="text-slate-300">•</span>
+            <div className="flex items-center gap-1.5 font-normal text-slate-600">
+              <Calendar className="size-3.5 text-slate-400" />
+              <span>{formattedDate}</span>
+            </div>
+            {post.views > 0 && (
+              <>
+                <span className="text-slate-300">•</span>
+                <div className="flex items-center gap-1.5 font-normal text-slate-600">
+                  <Eye className="size-3.5 text-slate-400" />
+                  <span>{post.views.toLocaleString("en-US")} views</span>
                 </div>
-              </div>
+              </>
             )}
-
-            {/* Article Content Viewer Card */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-card p-6 sm:p-10 shadow-none">
-              <div className="border-b border-slate-100 dark:border-slate-800 pb-4 mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  <FileText className="size-4 text-primary" />
-                  <span>Article Content</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="h-7 text-xs text-primary hover:bg-primary/10"
-                >
-                  <Link href={`/admin/posts/${post.id}/edit`}>
-                    <Edit className="size-3 mr-1" />
-                    Edit Content
-                  </Link>
-                </Button>
-              </div>
-
-              {/* Formatted Reader HTML */}
-              <div
-                className="tiptap prose max-w-none text-slate-800 dark:text-slate-100 leading-relaxed font-sans"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+            <span className="text-slate-300">•</span>
+            <div className="flex items-center gap-1.5 font-normal text-slate-600">
+              <User className="size-3.5 text-slate-400" />
+              <span>{post.author?.name || post.author?.email || "IEEE SMC 2027 Organizing Committee"}</span>
             </div>
           </div>
 
-          {/* Right Column: Metadata Sidebar Card */}
-          <div className="space-y-6">
-            {/* Card 1: Cover Image & Quick Overview */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-card p-4 sm:p-5 space-y-4 shadow-none">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Cover Image
-              </h3>
+          {/* Article Main Headline (HCMUTE Style) */}
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.65rem] font-extrabold text-[#004776] tracking-tight leading-[1.25]">
+            {post.title}
+          </h1>
 
-              {post.coverImage && !coverImgError ? (
-                <div className="aspect-[16/9] w-full relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
-                  <Image
-                    src={post.coverImage}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                    onError={() => setCoverImgError(true)}
-                  />
-                </div>
-              ) : (
-                <div className="aspect-[16/9] w-full rounded-lg border border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center text-slate-400 gap-1.5">
-                  <FileText className="size-6 text-slate-300" />
-                  <span className="text-xs font-medium">No cover image</span>
+          {/* Excerpt / Summary Callout with Royal Blue left bar */}
+          {post.summary && (
+            <div className="rounded-xl border-l-4 border-[#115eff] bg-blue-50/50 p-4 sm:p-5 mt-4">
+              <p className="text-sm sm:text-base md:text-lg font-normal text-slate-700 leading-relaxed italic">
+                &ldquo;{post.summary}&rdquo;
+              </p>
+            </div>
+          )}
+
+          {/* Featured Cover Image */}
+          {post.coverImage && !coverImgError && (
+            <div className="pt-2">
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-slate-200/90 shadow-none bg-slate-100">
+                <Image
+                  src={post.coverImage}
+                  alt={post.title}
+                  fill
+                  unoptimized
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 896px"
+                  onError={() => setCoverImgError(true)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Main Body Content (Strict HCMUTE Reader Style: line-height 1.8) */}
+          <article className="pt-4">
+            <div
+              className="tiptap post-reader prose prose-slate sm:prose-lg max-w-none text-slate-800 leading-[1.8] font-sans prose-headings:font-bold prose-headings:text-[#004776] prose-headings:tracking-tight prose-a:text-[#115eff] prose-a:font-semibold hover:prose-a:underline prose-img:rounded-xl prose-img:border prose-img:border-slate-200 prose-blockquote:border-l-[#115eff] prose-blockquote:bg-blue-50/40 prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-table:border prose-table:border-slate-200"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          </article>
+        </div>
+
+        {/* ── 3. Administrative Status & Metadata Dock (Bottom Rail) ── */}
+        <div className="border-t border-slate-200 bg-slate-50/80 px-4 sm:px-8 py-5">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-slate-600">
+              {/* Status */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-400 font-normal">Status:</span>
+                <span
+                  className={cn(
+                    "font-semibold px-2 py-0.5 rounded-md text-[11px]",
+                    post.status === "PUBLISHED"
+                      ? "bg-blue-50 text-[#115eff] border border-blue-200"
+                      : "bg-slate-100 text-slate-700 border border-slate-200"
+                  )}
+                >
+                  {post.status === "PUBLISHED" ? "Published" : "Draft"}
+                </span>
+              </div>
+
+              {/* Public URL Slug */}
+              <div className="flex items-center gap-1.5 font-normal text-[11px] text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-md">
+                <LinkIcon className="size-3 text-[#115eff]" />
+                <span className="truncate max-w-[200px]">/news/{post.slug}</span>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="text-[#115eff] hover:underline font-sans text-xs font-semibold ml-1 cursor-pointer"
+                >
+                  Copy
+                </button>
+              </div>
+
+              {/* Published Date */}
+              {post.publishedAt && (
+                <div className="flex items-center gap-1.5 text-slate-500 font-normal">
+                  <Clock className="size-3 text-slate-400" />
+                  <span>Published: {new Date(post.publishedAt).toLocaleDateString()}</span>
                 </div>
               )}
+            </div>
 
-              {/* Metadata Details */}
-              <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3 text-xs">
-                {/* Category */}
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <FolderOpen className="size-3.5 text-primary" />
-                    Category
-                  </span>
-                  <Badge variant="secondary" className="font-medium text-xs">
-                    {post.category}
-                  </Badge>
-                </div>
-
-                {/* Status */}
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Check className="size-3.5 text-primary" />
-                    Status
-                  </span>
-                  <Badge
-                    variant={post.status === "PUBLISHED" ? "default" : "outline"}
-                    className={cn(
-                      "text-[11px] font-semibold",
-                      post.status === "PUBLISHED"
-                        ? "bg-[#115eff] text-white hover:bg-[#115eff]"
-                        : "text-slate-600"
-                    )}
-                  >
-                    {post.status === "PUBLISHED" ? "Published" : "Draft"}
-                  </Badge>
-                </div>
-
-                {/* Published Date */}
-                {post.publishedAt && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground flex items-center gap-1.5">
-                      <Clock className="size-3.5" />
-                      Published Date
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                )}
-
-                {/* Created Date */}
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Calendar className="size-3.5" />
-                    Created Date
-                  </span>
-                  <span className="font-medium text-foreground">
-                    {new Date(post.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-
-                {/* Author */}
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <User className="size-3.5" />
-                    Author
-                  </span>
-                  <span className="font-medium text-foreground">
-                    {post.author?.name || post.author?.email || "Admin"}
-                  </span>
-                </div>
-
-                {/* URL Slug */}
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <LinkIcon className="size-3.5" />
-                    URL Slug
-                  </span>
-                  <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 dark:bg-muted/40 font-mono text-[11px] text-slate-700 dark:text-slate-300">
-                    <span className="truncate">/news/{post.slug}</span>
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className="text-primary hover:underline shrink-0 font-sans text-xs"
-                      title="Copy slug"
-                    >
-                      Copy
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {/* Quick Actions */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                asChild
+                className="h-8 px-3 gap-1.5 cursor-pointer text-xs font-semibold bg-white border-slate-200 text-slate-700"
+              >
+                <Link href={`/admin/posts/${post.id}/edit`}>
+                  <Edit className="size-3.5 text-[#115eff]" />
+                  <span>Edit Content</span>
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                asChild
+                className="h-8 px-3 gap-1.5 cursor-pointer text-xs font-semibold bg-white border-slate-200 text-[#115eff]"
+              >
+                <a href={publicUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="size-3.5" />
+                  <span>View Public Page</span>
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -536,7 +562,7 @@ export default function PostDetailPage({
       {/* ── 4. Delete Confirmation Dialog ── */}
       {showDeleteDialog && (
         <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <AlertDialogContent>
+          <AlertDialogContent className="rounded-2xl">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete this post?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -545,11 +571,13 @@ export default function PostDetailPage({
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeleting} className="h-8 text-xs">
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeletePost}
                 disabled={isDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-red-600 hover:bg-red-700 text-white h-8 text-xs font-semibold"
               >
                 {isDeleting ? "Deleting..." : "Delete Post"}
               </AlertDialogAction>

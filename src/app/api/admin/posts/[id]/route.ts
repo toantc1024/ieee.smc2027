@@ -51,16 +51,37 @@ export async function PATCH(
     const { title, slug, summary, content, coverImage, category, status } = body;
 
     const data: Record<string, unknown> = {};
-    if (title !== undefined) data.title = title;
-    if (slug !== undefined) data.slug = slug;
-    if (summary !== undefined) data.summary = summary;
+    if (title !== undefined) data.title = title.trim();
+    if (slug !== undefined && slug.trim()) {
+      const cleanSlug = slug.trim().toLowerCase();
+      const existing = await prisma.post.findFirst({
+        where: {
+          slug: cleanSlug,
+          NOT: { id },
+        },
+      });
+      if (existing) {
+        return apiError(
+          "A post with this URL slug already exists. Please choose a different slug.",
+          400
+        );
+      }
+      data.slug = cleanSlug;
+    }
+    if (summary !== undefined) data.summary = summary ? summary.trim() : null;
     if (content !== undefined) data.content = content;
-    if (coverImage !== undefined) data.coverImage = coverImage;
+    if (coverImage !== undefined) data.coverImage = coverImage || null;
     if (category !== undefined) data.category = category;
     if (status !== undefined) {
       if (status === "PUBLISHED") {
         data.status = PostStatus.PUBLISHED;
-        data.publishedAt = new Date();
+        const currentPost = await prisma.post.findUnique({
+          where: { id },
+          select: { publishedAt: true },
+        });
+        if (!currentPost?.publishedAt) {
+          data.publishedAt = new Date();
+        }
       } else if (status === "ARCHIVED") {
         data.status = PostStatus.ARCHIVED;
       } else {
@@ -76,7 +97,7 @@ export async function PATCH(
     return apiSuccess({ post: updated });
   } catch (error: unknown) {
     console.error("Error updating post:", error);
-    return apiError(error, 500);
+    return apiError(error, 500, "Failed to update post");
   }
 }
 
