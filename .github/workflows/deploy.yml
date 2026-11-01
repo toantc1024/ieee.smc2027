@@ -61,17 +61,23 @@ jobs:
           script_stop: true
           script: |
             echo "🚀 Starting automated deployment for IEEE SMC 2027..."
-            cd ${{ secrets.DEPLOY_PATH || '/var/www/ieee-smc-2027' }}
+            cd ${{ secrets.DEPLOY_PATH || '/root/projects/ieee-smc-2027' }}
 
             # 1. Pull latest code
             echo "📥 Pulling latest git changes..."
             git pull origin main
 
-            # 2. Write environment variables if updated
+            # 2. Ensure .env exists and safely update secrets without wiping configuration
+            if [ ! -f .env ]; then
+              cp .env.production.example .env
+            fi
             if [ -n "${{ secrets.DATABASE_URL }}" ]; then
-              echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+              sed -i '/^DATABASE_URL=/d' .env
+              echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" >> .env
+            fi
+            if [ -n "${{ secrets.JWT_SECRET }}" ]; then
+              sed -i '/^JWT_SECRET=/d' .env
               echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
-              echo "NODE_ENV=\"production\"" >> .env
             fi
 
             # 3. Build & start docker containers
