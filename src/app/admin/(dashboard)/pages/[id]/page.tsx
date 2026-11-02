@@ -37,9 +37,12 @@ import {
   Code2,
   ExternalLink,
   Layers,
+  LayoutGrid,
+  Info,
   Sliders,
   Upload,
   ImageIcon,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -693,6 +696,8 @@ export default function PageBuilderRoute({
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [paletteSearch, setPaletteSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
+  const [sidebarTab, setSidebarTab] = useState<"blocks" | "layers" | "settings">("blocks");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -917,14 +922,14 @@ export default function PageBuilderRoute({
         <div className="flex items-center gap-3">
           <Link
             href="/admin/pages"
-            className="p-1.5 rounded-sm border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+            className="p-1.5 rounded-sm border border-slate-200 hover:bg-slate-50 text-[#004776] transition-colors"
             title="Back to Pages List"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+              <h1 className="text-sm sm:text-base font-bold text-[#004776] leading-tight">
                 {page?.title || "Page Editor"}
               </h1>
               <span className="text-[11px] px-2 py-0.5 rounded-sm bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
@@ -984,7 +989,7 @@ export default function PageBuilderRoute({
               setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
               toast.success("Loaded all 19 conference blocks to canvas");
             }}
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             title="Reset canvas with complete standard conference blocks"
           >
             <Layers className="size-3.5 text-[#115eff]" />
@@ -994,11 +999,36 @@ export default function PageBuilderRoute({
           <Link
             href={page?.slug === "home" ? "/" : `/${page?.slug}`}
             target="_blank"
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             <span>Live</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </Link>
+
+          {/* Preview Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setViewMode(viewMode === "preview" ? "edit" : "preview")}
+            className={cn(
+              "h-8 px-3 rounded-sm text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer",
+              viewMode === "preview"
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : "bg-white border border-slate-200 text-[#004776] hover:bg-blue-50 hover:text-[#115eff]"
+            )}
+            title={viewMode === "preview" ? "Exit preview mode" : "Preview page canvas"}
+          >
+            {viewMode === "preview" ? (
+              <>
+                <EyeOff className="w-3.5 h-3.5" />
+                <span>Exit Preview</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3.5 h-3.5 text-[#115eff]" />
+                <span>Preview</span>
+              </>
+            )}
+          </button>
 
           {/* Save Button */}
           <button
@@ -1022,67 +1052,187 @@ export default function PageBuilderRoute({
         </div>
       </div>
 
-      {/* ── Main 3-Column Studio Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 flex-1 min-h-[calc(100vh-65px)]">
-        {/* ── Left Column: Component Palette (3 cols) ── */}
-        <div className="lg:col-span-3 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-65px)]">
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-[#004776]">
-              <Layers className="w-4 h-4 text-[#115eff]" />
-              <span>Component Library</span>
-            </div>
-            <p className="text-[11px] text-slate-500 font-normal">
-              Click &ldquo;+ Add Block&rdquo; to insert into the page
-            </p>
-          </div>
+      {/* ── Main Studio Body (Col 1 Left Panel 308px | Col 2 Center Canvas 1fr | Col 3 Right Inspector 320px) ── */}
+      <div className="flex-1 min-h-[calc(100vh-65px)] flex relative overflow-hidden bg-slate-50">
+        {/* ── Left Column: Component Palette / Layers / Settings (308px) ── */}
+        {viewMode !== "preview" && (
+          <aside className="w-[308px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-[calc(100vh-65px)] select-none z-20">
+            {/* Top Navigation Tabs: 3 navigation icons matching HCMUTE */}
+            <nav
+              aria-label="Builder Sidebar Navigation"
+              className="p-2 border-b border-slate-200 bg-slate-50/80 shrink-0"
+            >
+              <div className="flex items-center bg-slate-200/70 p-1 rounded-sm gap-1">
+                {[
+                  { id: "blocks", label: "Component Library", icon: LayoutGrid },
+                  { id: "layers", label: "Page Structure", icon: Layers },
+                  { id: "settings", label: "Page Info", icon: Info },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = sidebarTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setSidebarTab(tab.id as any)}
+                      className={cn(
+                        "flex-1 py-1.5 rounded-sm flex items-center justify-center transition-all cursor-pointer",
+                        isActive
+                          ? "bg-white text-[#115eff] shadow-xs font-bold"
+                          : "text-slate-500 hover:text-[#004776] hover:bg-white/50"
+                      )}
+                      title={tab.label}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  );
+                })}
+              </div>
+            </nav>
 
-          {/* Search Palette */}
-          <div>
-            <input
-              type="text"
-              value={paletteSearch}
-              onChange={(e) => setPaletteSearch(e.target.value)}
-              placeholder="Search blocks (Committees, FAQ...)"
-              className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-sm focus:outline-none focus:bg-white focus:border-[#115eff]"
-            />
-          </div>
-
-          {/* Blocks List */}
-          <div className="space-y-2.5">
-            {filteredPalette.map((b) => (
-              <div
-                key={b.type}
-                className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-sm transition-all group flex flex-col justify-between gap-2 shadow-2xs"
-              >
+            {/* Tab 1: Component Library */}
+            {sidebarTab === "blocks" && (
+              <div className="flex-1 p-3.5 space-y-3 overflow-y-auto">
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#115eff] transition-colors">
-                      {b.title}
-                    </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-slate-200 text-slate-700 font-semibold">
-                      {b.category}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-1 leading-snug line-clamp-2 font-normal">
-                    {b.description}
-                  </p>
+                  <input
+                    type="text"
+                    value={paletteSearch}
+                    onChange={(e) => setPaletteSearch(e.target.value)}
+                    placeholder="Search blocks (Committees, FAQ...)"
+                    className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-sm focus:outline-none focus:bg-white focus:border-[#115eff] text-[#004776]"
+                  />
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => addBlock(b.type)}
-                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-sm transition-all cursor-pointer shadow-2xs active:scale-95"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Block</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+                <div className="space-y-2">
+                  {filteredPalette.map((b) => (
+                    <div
+                      key={b.type}
+                      className="p-2.5 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-sm transition-all group flex flex-col justify-between gap-1.5 shadow-2xs"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#004776] group-hover:text-[#115eff] transition-colors">
+                            {b.title}
+                          </span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
+                            {b.category}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-1 leading-snug line-clamp-2 font-normal">
+                          {b.description}
+                        </p>
+                      </div>
 
-        {/* ── Center Column: Live Drag-and-Drop Canvas with MagicUI Dot-Pattern (6 cols) ── */}
-        <div className="relative lg:col-span-6 bg-slate-100/90 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-65px)] flex flex-col items-center">
+                      <button
+                        type="button"
+                        onClick={() => addBlock(b.type)}
+                        className="w-full inline-flex items-center justify-center gap-1 py-1 px-3 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-sm transition-all cursor-pointer shadow-2xs active:scale-95"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Block</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Page Layers Structure */}
+            {sidebarTab === "layers" && (
+              <div className="flex-1 p-3.5 space-y-2 overflow-y-auto">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <span className="text-xs font-bold text-[#004776]">Blocks in Canvas ({blocks.length})</span>
+                </div>
+                <div className="space-y-1.5">
+                  {blocks.map((block, idx) => {
+                    const meta = AVAILABLE_BLOCKS.find((b) => b.type === block.type);
+                    const isSelected = selectedBlockId === block.id;
+                    return (
+                      <div
+                        key={block.id}
+                        onClick={() => setSelectedBlockId(block.id)}
+                        className={cn(
+                          "p-2 rounded-sm border text-xs flex items-center justify-between gap-2 transition-all cursor-pointer",
+                          isSelected
+                            ? "bg-blue-50 border-blue-300 text-[#115eff] font-bold"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        )}
+                      >
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="text-[10px] text-slate-400 font-mono">#{idx + 1}</span>
+                          <span className="truncate">{meta?.title || block.type}</span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleHideBlock(idx);
+                            }}
+                            className="p-1 hover:text-[#115eff]"
+                            title={block.hidden ? "Show" : "Hide"}
+                          >
+                            {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-500" /> : <Eye className="w-3.5 h-3.5 text-slate-400" />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeBlock(idx);
+                            }}
+                            className="p-1 text-slate-400 hover:text-rose-600"
+                            title="Remove"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Tab 3: Page Settings */}
+            {sidebarTab === "settings" && (
+              <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-[#004776]">Page Information</span>
+                  <p className="text-[11px] text-slate-500">Metadata and publication path</p>
+                </div>
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <label className="block text-[#004776] font-bold mb-1">Page Title</label>
+                    <input
+                      type="text"
+                      value={page?.title || ""}
+                      readOnly
+                      className="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-sm text-slate-700 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#004776] font-bold mb-1">URL Path / Slug</label>
+                    <input
+                      type="text"
+                      value={`/${page?.slug || ""}`}
+                      readOnly
+                      className="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-sm text-slate-700 font-mono text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#004776] font-bold mb-1">Status</label>
+                    <span className="inline-block px-2.5 py-1 rounded-sm bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
+                      PUBLISHED
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </aside>
+        )}
+
+        {/* ── Center Column: Live Drag-and-Drop Canvas with MagicUI Dot-Pattern ── */}
+        <main className="flex-1 min-w-0 bg-slate-100/90 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-65px)] flex flex-col items-center relative">
           {/* Subtle Dot Matrix Background Texture */}
           <DotPattern
             width={20}
@@ -1104,9 +1254,9 @@ export default function PageBuilderRoute({
             {blocks.length === 0 ? (
               <div className="p-12 text-center bg-white rounded-sm border-2 border-dashed border-slate-300 space-y-3">
                 <Layers className="size-10 text-slate-300 mx-auto" />
-                <h3 className="text-sm font-bold text-slate-800">Canvas is Empty</h3>
+                <h3 className="text-sm font-bold text-[#004776]">Canvas is Empty</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Click &ldquo;Load All Current Blocks&rdquo; above to load the 19 standard conference blocks, or select blocks from the library on the left.
+                  Click &ldquo;Load All Current Blocks&rdquo; above to load conference blocks, or select blocks from the library on the left.
                 </p>
                 <button
                   type="button"
@@ -1153,25 +1303,35 @@ export default function PageBuilderRoute({
               </DndContext>
             )}
           </div>
-        </div>
+        </main>
 
-        {/* ── Right Column: Field-by-Field Detailed Component Inspector (3 cols) ── */}
-        <div className="lg:col-span-3 bg-white border-l border-slate-200 p-4 space-y-5 overflow-y-auto max-h-[calc(100vh-65px)]">
-          {selectedBlock ? (
+        {/* ── Right Column: Field-by-Field Detailed Component Inspector (320px) ── */}
+        {viewMode !== "preview" && selectedBlock && (
+          <aside className="w-[320px] shrink-0 bg-white border-l border-slate-200 p-4 space-y-5 overflow-y-auto max-h-[calc(100vh-65px)] select-none z-10">
             <div className="space-y-4">
-              {/* Header */}
+              {/* Header with Close X */}
               <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#115eff] block">
                     {selectedMeta?.category || "Block"}
                   </span>
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                  <h3 className="text-sm font-bold text-[#004776] leading-tight">
                     {selectedMeta?.title || selectedBlock.type}
                   </h3>
                 </div>
-                <span className="text-[11px] px-2 py-0.5 rounded-sm bg-slate-100 text-slate-600 font-semibold border border-slate-200">
-                  #{selectedBlockIndex + 1}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] px-2 py-0.5 rounded-sm bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+                    #{selectedBlockIndex + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBlockId(null)}
+                    className="size-7 rounded-sm border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-[#004776] transition-colors cursor-pointer"
+                    title="Close Inspector"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Block Visibility Toggle */}
@@ -2085,16 +2245,8 @@ export default function PageBuilderRoute({
                 </button>
               </div>
             </div>
-          ) : (
-            <div className="py-16 text-center text-slate-400 text-xs space-y-2">
-              <Sliders className="size-8 mx-auto text-slate-300" />
-              <p className="font-semibold text-slate-600">No Block Selected</p>
-              <p className="text-[11px] text-slate-400">
-                Click any component on the canvas to edit its properties and upload images.
-              </p>
-            </div>
-          )}
-        </div>
+          </aside>
+        )}
       </div>
     </div>
   );

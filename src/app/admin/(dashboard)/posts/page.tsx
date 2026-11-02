@@ -607,7 +607,8 @@ export default function PostsManagementPage() {
       <ManagementPageHeader
         title="Posts & News"
         description="Conference announcements, call for papers, and news updates"
-        actions={
+      />
+
       {/* ── Tabs Row & Top Actions (Matching HCMUTE Layout & Justification) ── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-wrap items-center justify-between gap-3 w-full">
