@@ -109,29 +109,50 @@ export async function PATCH(
       return apiError("User not found", 404);
     }
 
+    // Normalize role and status before any safety guards
+    const normalizedRole: Role | undefined =
+      typeof role === "string" && role.trim()
+        ? role.trim().toUpperCase() === "ADMIN"
+          ? Role.ADMIN
+          : Role.USER
+        : undefined;
+
+    const normalizedStatus: string | undefined =
+      typeof status === "string" && status.trim()
+        ? status.trim().toUpperCase()
+        : undefined;
+
     // Safety Guard 1: Cannot demote own active admin account
-    if (currentAdmin && currentAdmin.id === targetUser.id && role && role !== "ADMIN") {
+    if (currentAdmin && currentAdmin.id === targetUser.id && normalizedRole && normalizedRole !== Role.ADMIN) {
       return apiError("You cannot downgrade your own active administrator account", 400);
     }
 
-    // Safety Guard 2: Cannot block own active admin account
-    if (currentAdmin && currentAdmin.id === targetUser.id && status && status === "BLOCKED") {
-      return apiError("You cannot block your own active administrator account", 400);
+    // Safety Guard 2: Cannot deactivate or block own active admin account
+    if (currentAdmin && currentAdmin.id === targetUser.id && normalizedStatus && normalizedStatus !== "ACTIVE") {
+      return apiError("You cannot deactivate or block your own active administrator account", 400);
     }
 
-    // Safety Guard 3: Cannot demote or block the last remaining active ADMIN account in DB
-    if (targetUser.role === Role.ADMIN && (role === "USER" || status === "BLOCKED")) {
-      const totalAdmins = await prisma.user.count({
+    // Safety Guard 3: Cannot demote, deactivate, or block the last remaining active ADMIN account in DB
+    if (
+      targetUser.role === Role.ADMIN &&
+      targetUser.status === "ACTIVE" &&
+      (normalizedRole === Role.USER || (normalizedStatus && normalizedStatus !== "ACTIVE"))
+    ) {
+      const totalActiveAdmins = await prisma.user.count({
         where: { role: Role.ADMIN, status: "ACTIVE" },
       });
-      if (totalAdmins <= 1) {
-        return apiError("Cannot downgrade or block the last remaining active ADMIN account in the database", 400);
+      if (totalActiveAdmins <= 1) {
+        return apiError("Cannot downgrade, deactivate, or block the last remaining active ADMIN account in the database", 400);
       }
     }
 
     // Email uniqueness check if email being changed
     if (email && normalizeEmail(email) !== targetUser.email) {
       const cleanEmail = normalizeEmail(email);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanEmail)) {
+        return apiError("Invalid email format", 400);
+      }
       const existingEmailUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
       if (existingEmailUser) {
         return apiError("An account with this email address already exists", 409);
@@ -160,14 +181,17 @@ export async function PATCH(
       ...(profileData && typeof profileData === "object" ? profileData : {}),
     } as Prisma.InputJsonValue;
 
-    // If blocking user, automatically bump sessionVersion to revoke existing sessions immediately
-    const sessionVersionIncrement = status === "BLOCKED" ? { sessionVersion: { increment: 1 } } : {};
+    // If setting status to non-ACTIVE, automatically bump sessionVersion to revoke existing sessions immediately
+    const sessionVersionIncrement =
+      normalizedStatus && normalizedStatus !== "ACTIVE"
+        ? { sessionVersion: { increment: 1 } }
+        : {};
 
     const updated = await prisma.user.update({
       where: { id },
       data: {
-        ...(role ? { role: role === "ADMIN" ? Role.ADMIN : Role.USER } : {}),
-        ...(status ? { status: status.toUpperCase() } : {}),
+        ...(normalizedRole ? { role: normalizedRole } : {}),
+        ...(normalizedStatus ? { status: normalizedStatus } : {}),
         ...(typeof name === "string" && name.trim() ? { name: name.trim() } : {}),
         ...(email ? { email: normalizeEmail(email) } : {}),
         ...(avatar !== undefined ? { avatar } : {}),
@@ -221,12 +245,12 @@ export async function DELETE(
     }
 
     // Safety Guard 2: Cannot delete the last remaining active ADMIN account
-    if (targetUser.role === Role.ADMIN) {
-      const totalAdmins = await prisma.user.count({
-        where: { role: Role.ADMIN },
+    if (targetUser.role === Role.ADMIN && targetUser.status === "ACTIVE") {
+      const totalActiveAdmins = await prisma.user.count({
+        where: { role: Role.ADMIN, status: "ACTIVE" },
       });
-      if (totalAdmins <= 1) {
-        return apiError("Cannot delete the last remaining ADMIN account in the database", 400);
+      if (totalActiveAdmins <= 1) {
+        return apiError("Cannot delete the last remaining active ADMIN account in the database", 400);
       }
     }
 
