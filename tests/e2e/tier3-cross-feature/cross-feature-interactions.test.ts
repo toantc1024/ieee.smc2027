@@ -25,7 +25,8 @@ describe("Tier 3: Cross-Feature Interactions", { concurrency: 1 }, () => {
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
-    await adminClient.loginAsAdmin();
+    const loginRes = await adminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "Admin login in beforeEach must succeed");
   });
 
   afterEach(async () => {
@@ -88,36 +89,45 @@ describe("Tier 3: Cross-Feature Interactions", { concurrency: 1 }, () => {
   });
 
   test("T3.2: Pairwise: User profile update persists to DB and reflects in /api/auth/me", async () => {
-    const userPayload = createTestUserPayload("USER");
+    const uniqueEmail = `test_e2e_t3_2_${Date.now()}_${Math.random().toString(36).substring(2, 7)}@test-smc.org`;
+    const userPayload = createTestUserPayload("USER", uniqueEmail);
     const userClient = new TestHttpClient();
 
-    // Log in
+    // Log in (creates account on first login)
     const loginRes = await userClient.post("/api/auth/login-password", {
       email: userPayload.email,
       password: userPayload.password,
       name: userPayload.name,
     });
-    assert.strictEqual(loginRes.status, 200);
-    const userId = loginRes.data.user.id;
+    assert.strictEqual(loginRes.status, 200, "User login must return 200");
+    assert.ok(userClient.getCookie("admin_session"), "Session cookie must be attached");
+    const userId = loginRes.data?.user?.id;
+    assert.ok(userId, "User ID must be returned");
     createdUserIds.push(userId);
 
-    // Update profile via admin API or profile endpoint
+    // Verify user exists immediately in DB
+    const initialDbUser = await dbHelper.findUser(userPayload.email);
+    assert.ok(initialDbUser, "User must exist in DB immediately after login");
+
+    // Update profile via admin API
     const newAffiliation = "HCMUTE Artificial Intelligence Institute";
-    await adminClient.patch(`/api/admin/users/${userId}`, {
+    const patchRes = await adminClient.patch(`/api/admin/users/${userId}`, {
       profileData: {
         affiliation: newAffiliation,
         conferenceTrack: "SPEAKER",
       },
     });
+    assert.strictEqual(patchRes.status, 200, "Admin patch must succeed with 200");
 
     // Check /api/auth/me
     const meRes = await userClient.get("/api/auth/me");
-    assert.strictEqual(meRes.status, 200);
-    assert.strictEqual(meRes.data?.user?.email, userPayload.email);
+    assert.strictEqual(meRes.status, 200, "/api/auth/me must return 200");
+    assert.ok(meRes.data?.user, "User object must be present in /api/auth/me");
+    assert.strictEqual(meRes.data.user.email, userPayload.email.toLowerCase());
 
     // Verify DB reflects updated profile
     const dbUser = await dbHelper.findUser(userPayload.email);
-    assert.ok(dbUser);
+    assert.ok(dbUser, "dbUser must be found in database");
     const profile = dbUser.profileData as Record<string, unknown>;
     assert.strictEqual(profile.affiliation, newAffiliation);
   });
@@ -199,7 +209,7 @@ describe("Tier 3: Cross-Feature Interactions", { concurrency: 1 }, () => {
 
     // Create page
     const createRes = await adminClient.post("/api/admin/pages", pagePayload);
-    assert.ok([200, 201].includes(createRes.status));
+    assert.ok([200, 201].includes(createRes.status), "Page creation must succeed with 200 or 201");
 
     // Two parallel updates
     const update1 = adminClient.put(`/api/admin/pages/${testPageSlug}`, {
@@ -214,8 +224,8 @@ describe("Tier 3: Cross-Feature Interactions", { concurrency: 1 }, () => {
 
     const [res1, res2] = await Promise.all([update1, update2]);
     // Both should resolve cleanly without crashing
-    assert.ok([200, 409].includes(res1.status));
-    assert.ok([200, 409].includes(res2.status));
+    assert.ok([200, 409].includes(res1.status), `res1 expected 200 or 409, got ${res1.status}: ${res1.text}`);
+    assert.ok([200, 409].includes(res2.status), `res2 expected 200 or 409, got ${res2.status}: ${res2.text}`);
 
     // Final state must be valid
     const finalRes = await adminClient.get(`/api/admin/pages/${testPageSlug}`);

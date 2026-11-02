@@ -23,7 +23,8 @@ describe("Tier 4: Real-World Conference Management Scenarios", { concurrency: 1 
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
-    await adminClient.loginAsAdmin();
+    const loginRes = await adminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "Admin login in beforeEach must succeed");
   });
 
   afterEach(async () => {
@@ -183,50 +184,51 @@ describe("Tier 4: Real-World Conference Management Scenarios", { concurrency: 1 
   });
 
   test("T4.4: Scenario 4: Content Versioning, Multi-Revision Rollback & Disaster Recovery", async () => {
-    const slug = `__e2e_test_versioning_${Date.now()}`;
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const slug = `e2e-test-versioning-${uniqueId}`;
     createdPages.push(slug);
 
     // Revision 1: Initial page
     const v1Payload = {
       id: slug,
       slug,
-      title: "Conference Travel & Visa Guide (v1)",
+      title: `Conference Travel & Visa Guide (v1) ${uniqueId}`,
       blocks: [sampleBlocks.hero, sampleBlocks.cfp],
       is_published: true,
     };
     const r1 = await adminClient.post("/api/admin/pages", v1Payload);
-    assert.ok([200, 201].includes(r1.status));
+    assert.ok([200, 201].includes(r1.status), "Revision 1 creation must succeed");
 
     // Revision 2: Add ImportantDates
     const v2Payload = {
       ...v1Payload,
-      title: "Conference Travel & Visa Guide (v2 - Dates Added)",
+      title: `Conference Travel & Visa Guide (v2 - Dates Added) ${uniqueId}`,
       blocks: [sampleBlocks.hero, sampleBlocks.cfp, sampleBlocks.dates],
     };
     const r2 = await adminClient.put(`/api/admin/pages/${slug}`, v2Payload);
-    assert.strictEqual(r2.status, 200);
+    assert.strictEqual(r2.status, 200, "Revision 2 update must succeed");
 
     // Revision 3: Add Committees
     const v3Payload = {
       ...v2Payload,
-      title: "Conference Travel & Visa Guide (v3 - Full Guide)",
+      title: `Conference Travel & Visa Guide (v3 - Full Guide) ${uniqueId}`,
       blocks: [sampleBlocks.hero, sampleBlocks.cfp, sampleBlocks.dates, sampleBlocks.committees],
     };
     const r3 = await adminClient.put(`/api/admin/pages/${slug}`, v3Payload);
-    assert.strictEqual(r3.status, 200);
+    assert.strictEqual(r3.status, 200, "Revision 3 update must succeed");
 
     // Rollback: Restore Revision 1 content
     const rollbackRes = await adminClient.put(`/api/admin/pages/${slug}`, {
       ...v3Payload,
-      title: "Conference Travel & Visa Guide (Restored v1)",
+      title: `Conference Travel & Visa Guide (Restored v1) ${uniqueId}`,
       blocks: v1Payload.blocks, // Revert to only 2 blocks
     });
-    assert.strictEqual(rollbackRes.status, 200);
+    assert.strictEqual(rollbackRes.status, 200, "Rollback update must succeed");
 
     // Verify page in DB now has exactly 2 blocks (v1 restored cleanly)
     const dbPage = await dbHelper.findPage(slug);
-    assert.ok(dbPage);
-    const blocks = dbPage.blocks as any[];
+    assert.ok(dbPage, "Page must be found in database after rollback");
+    const blocks = (dbPage.blocks as any[]) || [];
     assert.strictEqual(blocks.length, 2, "Disaster recovery rollback should restore exact block count");
   });
 });

@@ -25,7 +25,8 @@ describe("Tier 1: User Management, Last Login & Profile Management", { concurren
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
-    await adminClient.loginAsAdmin();
+    const loginRes = await adminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "Admin login in beforeEach must succeed");
     testUserPayload = createTestUserPayload("USER");
   });
 
@@ -145,6 +146,10 @@ describe("Tier 1: User Management, Last Login & Profile Management", { concurren
         name: testUserPayload.name,
       },
     });
+    assert.strictEqual(loginRes.status, 200, "Login must succeed with HTTP 200");
+    const sessionCookie = userClient.getCookie("admin_session");
+    assert.ok(sessionCookie, "Session cookie must be set before accessing /api/profile");
+
     if (loginRes.data?.user?.id) {
       createdUserId = loginRes.data.user.id;
     }

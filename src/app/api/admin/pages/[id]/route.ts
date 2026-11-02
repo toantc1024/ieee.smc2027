@@ -93,6 +93,14 @@ export async function PUT(
     return apiSuccess({ page: updated });
   } catch (error: unknown) {
     console.error("Error updating page:", error);
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      ((error as { code: string }).code === "P2002" || (error as { code: string }).code === "P2034")
+    ) {
+      return apiError("Conflict during concurrent update", 409);
+    }
     return apiError(error, 500);
   }
 }

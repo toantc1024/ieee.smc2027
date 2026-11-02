@@ -20,7 +20,7 @@ import { Role } from "@prisma/client";
 // ============================================================================
 // SUITE 1: extractClientInfo Fuzzing & Multi-Proxy Headers
 // ============================================================================
-describe("Adversarial Suite 1: Client IP & User-Agent Extraction Fuzzing", () => {
+describe("Adversarial Suite 1: Client IP & User-Agent Extraction Fuzzing", { concurrency: 1 }, () => {
   test("ADV-IP.1: Extracts first client IP from multi-hop x-forwarded-for chain", () => {
     const headers = new Headers({
       "x-forwarded-for": "203.0.113.195, 70.41.3.18, 150.172.238.178",
@@ -85,32 +85,39 @@ describe("Adversarial Suite 1: Client IP & User-Agent Extraction Fuzzing", () =>
 // ============================================================================
 // SUITE 2: Session Revocation Empirical Testing
 // ============================================================================
-describe("Adversarial Suite 2: Session Revocation Empirical Verification", () => {
+describe("Adversarial Suite 2: Session Revocation Empirical Verification", { concurrency: 1 }, () => {
   let masterAdminClient: TestHttpClient;
 
   beforeEach(async () => {
     await dbHelper.ensureAdmins();
     masterAdminClient = new TestHttpClient();
-    await masterAdminClient.loginAsAdmin();
+    const loginRes = await masterAdminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "masterAdminClient must login successfully");
   });
 
   test("ADV-REV.1: Session Revocation via /api/admin/users/[id]/revoke-sessions immediately invalidates active JWT", async () => {
     const email = `rev1_${Date.now()}@test-smc.org`;
     const password = "Password123!Secure";
     const createRes = await masterAdminClient.post("/api/admin/users", { email, name: "Rev1 User", password });
+    assert.strictEqual(createRes.status, 200, "Target user must be created cleanly");
     const userId = createRes.data?.user?.id;
-    assert.ok(userId);
+    assert.ok(userId, "Target userId must exist");
+
+    // Double check DB existence to guarantee user is committed
+    const targetInDb = await prisma.user.findUnique({ where: { id: userId } });
+    assert.ok(targetInDb, "Target user must exist in database");
 
     const userClient = new TestHttpClient();
-    await userClient.post("/api/auth/login-password", { email, password });
+    const loginRes = await userClient.post("/api/auth/login-password", { email, password });
+    assert.strictEqual(loginRes.status, 200, "User login must succeed");
     const meBefore = await userClient.get("/api/auth/me");
     assert.strictEqual(meBefore.status, 200);
     assert.strictEqual(meBefore.data?.user?.email, email);
 
     // Revoke sessions
     const revokeRes = await masterAdminClient.post(`/api/admin/users/${userId}/revoke-sessions`);
-    assert.strictEqual(revokeRes.status, 200);
-    assert.strictEqual(revokeRes.data?.sessionVersion, 2);
+    assert.strictEqual(revokeRes.status, 200, "Revoke sessions must return HTTP 200");
+    assert.strictEqual(revokeRes.data?.sessionVersion, (targetInDb.sessionVersion || 1) + 1);
 
     const meAfter = await userClient.get("/api/auth/me");
     assert.strictEqual(meAfter.status, 200);
@@ -214,13 +221,14 @@ describe("Adversarial Suite 2: Session Revocation Empirical Verification", () =>
 // ============================================================================
 // SUITE 3: Self-Protection Guard Analysis
 // ============================================================================
-describe("Adversarial Suite 3: Self-Protection Guard Analysis", () => {
+describe("Adversarial Suite 3: Self-Protection Guard Analysis", { concurrency: 1 }, () => {
   let masterAdminClient: TestHttpClient;
 
   beforeEach(async () => {
     await dbHelper.ensureAdmins();
     masterAdminClient = new TestHttpClient();
-    await masterAdminClient.loginAsAdmin();
+    const loginRes = await masterAdminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "masterAdminClient must login successfully");
   });
 
   test("ADV-SELF.1: Self-downgrade via role: 'USER' is rejected with HTTP 400", async () => {
@@ -343,13 +351,14 @@ describe("Adversarial Suite 3: Self-Protection Guard Analysis", () => {
 // ============================================================================
 // SUITE 4: Last-Admin Protection Analysis
 // ============================================================================
-describe("Adversarial Suite 4: Last-Admin Protection Analysis", () => {
+describe("Adversarial Suite 4: Last-Admin Protection Analysis", { concurrency: 1 }, () => {
   let masterAdminClient: TestHttpClient;
 
   beforeEach(async () => {
     await dbHelper.ensureAdmins();
     masterAdminClient = new TestHttpClient();
-    await masterAdminClient.loginAsAdmin();
+    const loginRes = await masterAdminClient.loginAsAdmin();
+    assert.strictEqual(loginRes.status, 200, "masterAdminClient must login successfully");
   });
 
   test("ADV-LAST.1: Deleting a non-last admin account succeeds when other admins exist", async () => {
@@ -406,7 +415,7 @@ describe("Adversarial Suite 4: Last-Admin Protection Analysis", () => {
 // ============================================================================
 // SUITE 5: Profile & Password Adversarial Edge Cases
 // ============================================================================
-describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", () => {
+describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", { concurrency: 1 }, () => {
   let userClient: TestHttpClient;
   let testUserId: string | null = null;
   const userEmail = `profile_test_${Date.now()}@test-smc.org`;
@@ -419,6 +428,7 @@ describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", () =>
       email: userEmail,
       password: userPass,
     });
+    assert.strictEqual(res.status, 200, "userClient must login successfully");
     testUserId = res.data?.user?.id || null;
     assert.ok(testUserId);
   });
