@@ -150,108 +150,106 @@ export function NewsDetailToolbar({ title, slug, summary }: NewsDetailClientProp
         />
       </div>
 
-      {/* ── 2. Desktop Floating Action Dock (Left Rail) — Rounded-Full Pills matching HCMUTE ── */}
+      {/* ── 2. Desktop Floating Action Dock (Left Rail) — Minimal Radius Square with Solid Hover ── */}
       <aside
         aria-label="Article actions"
         className="hidden lg:flex flex-col gap-3 sticky top-28 lg:top-32 shrink-0 py-2 z-20 select-none"
       >
-        {/* Pill 1: Text Size Zoom Controls */}
-        <div className="w-12 flex flex-col rounded-full bg-white dark:bg-card text-primary shadow-md border border-slate-200/80 overflow-hidden box-border">
+        {/* Block 1: Text Size Zoom Controls */}
+        <div className="w-11 flex flex-col rounded-sm bg-white dark:bg-card text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={() => handleZoom("in")}
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             title="Zoom In (A+)"
             aria-label="Zoom in"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <ZoomIn className="w-5 h-5 relative z-[1]" />
+            <ZoomIn className="size-4.5" />
           </button>
-          <div className="h-px bg-slate-200/70 mx-2" />
+          <div className="h-px bg-slate-200/80 mx-1.5" />
           <button
             type="button"
             onClick={() => handleZoom("out")}
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             title="Zoom Out (A-)"
             aria-label="Zoom out"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <ZoomOut className="w-5 h-5 relative z-[1]" />
+            <ZoomOut className="size-4.5" />
           </button>
         </div>
 
-        {/* Pill 2: Share & Action Controls */}
-        <div className="w-12 flex flex-col rounded-full bg-white dark:bg-card text-primary shadow-md border border-slate-200/80 overflow-hidden box-border">
+        {/* Block 2: Share & Action Controls */}
+        <div className="w-11 flex flex-col rounded-sm bg-white dark:bg-card text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={handleNativeShare}
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             title="Share Announcement"
             aria-label="Share announcement"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <Share2 className="w-5 h-5 relative z-[1]" />
+            <Share2 className="size-4.5" />
           </button>
-          <div className="h-px bg-slate-200/70 mx-2" />
+          <div className="h-px bg-slate-200/80 mx-1.5" />
           <button
             type="button"
             onClick={handleCopyLink}
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className={cn(
+              "h-11 w-full flex items-center justify-center transition-colors cursor-pointer",
+              copied
+                ? "bg-primary text-white"
+                : "text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90"
+            )}
             title={copied ? "Copied" : "Copy Link"}
             aria-label="Copy link"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
             {copied ? (
-              <Check className="w-5 h-5 text-emerald-600 relative z-[1]" />
+              <Check className="size-4.5 text-white" />
             ) : (
-              <Copy className="w-5 h-5 relative z-[1]" />
+              <Copy className="size-4.5" />
             )}
           </button>
-          <div className="h-px bg-slate-200/70 mx-2" />
+          <div className="h-px bg-slate-200/80 mx-1.5" />
           <button
             type="button"
             onClick={handlePrint}
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             title="Print Announcement"
             aria-label="Print announcement"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <Printer className="w-5 h-5 relative z-[1]" />
+            <Printer className="size-4.5" />
           </button>
         </div>
 
-        {/* Pill 3: Scroll Navigation Controls (Top & Bottom) */}
-        <div className="w-12 flex flex-col rounded-full bg-white dark:bg-card text-primary shadow-md border border-slate-200/80 overflow-hidden box-border">
+        {/* Block 3: Scroll Navigation Controls (Top & Bottom) */}
+        <div className="w-11 flex flex-col rounded-sm bg-white dark:bg-card text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             onClick={scrollToTop}
             title="Back to Top"
             aria-label="Back to top"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <ArrowUp className="w-5 h-5 relative z-[1]" />
+            <ArrowUp className="size-4.5" />
           </button>
-          <div className="h-px bg-slate-200/70 mx-2" />
+          <div className="h-px bg-slate-200/80 mx-1.5" />
           <button
             type="button"
-            className="group/btn relative h-12 w-full flex items-center justify-center text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer overflow-hidden"
+            className="h-11 w-full flex items-center justify-center text-[#004776] hover:bg-primary hover:text-white active:bg-primary/90 transition-colors cursor-pointer"
             onClick={scrollToBottom}
             title="Scroll to Bottom"
             aria-label="Scroll to bottom"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-            <ArrowDown className="w-5 h-5 relative z-[1]" />
+            <ArrowDown className="size-4.5" />
           </button>
         </div>
       </aside>
 
-      {/* ── 3. Mobile Floating Bottom Action Dock — Rounded-Full Pill ── */}
+      {/* ── 3. Mobile Floating Bottom Action Dock — Square Minimal Radius ── */}
       <div className="lg:hidden fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md border border-slate-200/80 shadow-lg select-none">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/95 dark:bg-card/95 backdrop-blur-md border border-slate-200 shadow-md select-none">
           <Link
             href="/#news"
-            className="size-9 rounded-full flex items-center justify-center text-primary hover:text-white hover:bg-primary transition-colors"
+            className="size-9 rounded-sm flex items-center justify-center text-[#004776] hover:text-white hover:bg-primary transition-colors"
             title="Back to announcements"
           >
             <ArrowLeft className="size-4" />
@@ -262,7 +260,7 @@ export function NewsDetailToolbar({ title, slug, summary }: NewsDetailClientProp
           <button
             type="button"
             onClick={handleNativeShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer shadow-xs"
           >
             <Share2 className="size-3.5 text-white" />
             <span>Share</span>
@@ -271,11 +269,16 @@ export function NewsDetailToolbar({ title, slug, summary }: NewsDetailClientProp
           <button
             type="button"
             onClick={handleCopyLink}
-            className="size-9 rounded-full flex items-center justify-center text-primary hover:text-white hover:bg-primary transition-colors cursor-pointer"
+            className={cn(
+              "size-9 rounded-sm flex items-center justify-center transition-colors cursor-pointer",
+              copied
+                ? "bg-primary text-white"
+                : "text-[#004776] hover:text-white hover:bg-primary"
+            )}
             title="Copy Link"
           >
             {copied ? (
-              <Check className="size-4 text-emerald-600" />
+              <Check className="size-4 text-white" />
             ) : (
               <Copy className="size-4" />
             )}
@@ -287,7 +290,7 @@ export function NewsDetailToolbar({ title, slug, summary }: NewsDetailClientProp
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="size-9 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors cursor-pointer shadow-xs"
+                className="size-9 rounded-sm bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors cursor-pointer shadow-xs"
                 title="Back to Top"
               >
                 <ArrowUp className="size-4" />

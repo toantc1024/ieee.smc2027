@@ -45,6 +45,14 @@ async function getPostData(slug: string) {
     });
 
     if (post) {
+      // Real view tracking: Increment view count on each visit in PostgreSQL
+      prisma.post
+        .update({
+          where: { id: post.id },
+          data: { views: { increment: 1 } },
+        })
+        .catch(() => {});
+
       // Fetch 4 related posts
       const related = await prisma.post.findMany({
         where: {
@@ -74,7 +82,7 @@ async function getPostData(slug: string) {
           content: post.content,
           coverImage: post.coverImage,
           category: post.category,
-          views: post.views,
+          views: (post.views || 0) + 1,
           publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
           authorName: post.author?.name || "IEEE SMC 2027 Organizing Committee",
         },
