@@ -226,7 +226,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
         />
 
         <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center text-xs">
             {/* Breadcrumb Navigation (Strictly Non-Bold per HCMUTE guideline) */}
             <nav
               aria-label="Breadcrumbs"
@@ -252,14 +252,6 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                 {post.title}
               </span>
             </nav>
-
-            {/* University & Conference Crest Attribution */}
-            <div className="flex items-center gap-2 text-white/90 text-[11px] shrink-0">
-              <span className="inline-block size-2 rounded-xs bg-white animate-pulse" />
-              <span className="font-semibold text-white">IEEE SMC 2027</span>
-              <span className="text-white/50">•</span>
-              <span>Host: HCM-UTE, Ho Chi Minh City</span>
-            </div>
           </div>
         </div>
       </section>
