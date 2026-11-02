@@ -74,7 +74,7 @@ jobs:
 
             # 4. Launch containers in background
             echo "🚀 Launching application container in background..."
-            docker compose up -d --remove-orphans app minio
+            docker compose up -d --remove-orphans app minio postgres
 
             # 5. Clean up Docker build cache and dangling images to save disk space
             echo "🧹 Cleaning up Docker build cache and unused images..."
