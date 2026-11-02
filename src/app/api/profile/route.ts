@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import {
   getCurrentUser,
+  createSessionToken,
+  attachSessionCookie,
   prisma,
   hashPassword,
   verifyPassword,
@@ -130,7 +132,12 @@ export async function PATCH(request: NextRequest) {
       data: {
         ...(typeof name === "string" && name.trim() ? { name: name.trim() } : {}),
         ...(avatar !== undefined ? { avatar } : {}),
-        ...(updatedPasswordHash ? { passwordHash: updatedPasswordHash } : {}),
+        ...(updatedPasswordHash
+          ? {
+              passwordHash: updatedPasswordHash,
+              sessionVersion: { increment: 1 },
+            }
+          : {}),
         profileData: mergedProfileData,
       },
       select: {
@@ -141,6 +148,7 @@ export async function PATCH(request: NextRequest) {
         role: true,
         status: true,
         provider: true,
+        sessionVersion: true,
         lastLoginAt: true,
         lastLoginIp: true,
         lastLoginDevice: true,
@@ -149,9 +157,31 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
-    return apiSuccess({
+    let response = apiSuccess({
       user: updatedUser,
     });
+
+    // When password is changed, refresh session cookie with incremented sessionVersion
+    // so the current user stays logged in while all other concurrent sessions are invalidated
+    if (updatedPasswordHash) {
+      const newSessionToken = await createSessionToken({
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        avatar: updatedUser.avatar,
+        role: updatedUser.role as "ADMIN" | "USER",
+        status: updatedUser.status,
+        provider: updatedUser.provider,
+        sessionVersion: updatedUser.sessionVersion,
+        profileData:
+          updatedUser.profileData && typeof updatedUser.profileData === "object"
+            ? (updatedUser.profileData as Record<string, unknown>)
+            : {},
+      });
+      response = attachSessionCookie(response, newSessionToken);
+    }
+
+    return response;
   } catch (error: unknown) {
     console.error("Error updating profile:", error);
     return apiError(error, 500, "Failed to update delegate profile");
