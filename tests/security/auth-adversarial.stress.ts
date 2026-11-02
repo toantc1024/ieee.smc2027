@@ -9,10 +9,11 @@
  * - src/app/api/profile/route.ts (profile inspection and password change)
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, after } from "node:test";
 import assert from "node:assert/strict";
 import { extractClientInfo } from "../../src/lib/auth";
 import TestHttpClient from "../e2e/helpers/http-client";
+import { stopSpawnedServer } from "../e2e/helpers/server-manager";
 import dbHelper from "../e2e/helpers/db-helper";
 import prisma from "../../src/lib/prisma";
 import { Role } from "@prisma/client";
@@ -486,5 +487,9 @@ describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", { con
     // Active client stays authenticated because cookie was refreshed
     const profileCheck = await userClient.get("/api/profile");
     assert.strictEqual(profileCheck.status, 200, "Current user must remain logged in with updated cookie");
+  });
+
+  after(() => {
+    stopSpawnedServer();
   });
 });
