@@ -106,7 +106,7 @@ async function main() {
       console.log(`\n• Running suite: ${file}`);
 
       const start = Date.now();
-      const child = spawnSync("npx", ["tsx", "--test", fullPath], {
+      const child = spawnSync("npx", ["tsx", "--test", "--test-concurrency=1", fullPath], {
         cwd: process.cwd(),
         env: {
           ...process.env,

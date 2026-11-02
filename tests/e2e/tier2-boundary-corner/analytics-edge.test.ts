@@ -16,7 +16,7 @@ import TestHttpClient from "../helpers/http-client";
 
 const isStrict = process.env.STRICT_CONTRACT === "true";
 
-describe("Tier 2: Analytics Module Boundary & Corner Cases", () => {
+describe("Tier 2: Analytics Module Boundary & Corner Cases", { concurrency: 1 }, () => {
   let adminClient: TestHttpClient;
   let unauthClient: TestHttpClient;
 

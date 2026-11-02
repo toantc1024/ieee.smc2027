@@ -8,16 +8,20 @@
  * 5. Fetch and update self profile
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestUserPayload } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 1: User Management, Last Login & Profile Management", () => {
+describe("Tier 1: User Management, Last Login & Profile Management", { concurrency: 1 }, () => {
   let adminClient: TestHttpClient;
   let createdUserId: string | null = null;
   let testUserPayload: ReturnType<typeof createTestUserPayload>;
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
@@ -34,6 +38,9 @@ describe("Tier 1: User Management, Last Login & Profile Management", () => {
       }
       createdUserId = null;
     }
+  });
+
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 
@@ -130,7 +137,7 @@ describe("Tier 1: User Management, Last Login & Profile Management", () => {
 
   test("T1.3.5: Fetch and update self profile with academic affiliation", async () => {
     const userClient = new TestHttpClient();
-    await userClient.request("/api/auth/login-password", {
+    const loginRes = await userClient.request("/api/auth/login-password", {
       method: "POST",
       body: {
         email: testUserPayload.email,
@@ -138,6 +145,9 @@ describe("Tier 1: User Management, Last Login & Profile Management", () => {
         name: testUserPayload.name,
       },
     });
+    if (loginRes.data?.user?.id) {
+      createdUserId = loginRes.data.user.id;
+    }
 
     // Fetch self profile
     const profileRes = await userClient.get("/api/profile");

@@ -16,7 +16,7 @@ import TestHttpClient from "../helpers/http-client";
 
 const isStrict = process.env.STRICT_CONTRACT === "true";
 
-describe("Tier 1: Analytics Module", () => {
+describe("Tier 1: Analytics Module", { concurrency: 1 }, () => {
   let client: TestHttpClient;
 
   beforeEach(async () => {

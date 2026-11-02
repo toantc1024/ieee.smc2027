@@ -8,15 +8,19 @@
  * 5. Delete custom page cleanly
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestPagePayload, sampleBlocks } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 1: Page Editor / Website Builder Module", () => {
+describe("Tier 1: Page Editor / Website Builder Module", { concurrency: 1 }, () => {
   let client: TestHttpClient;
   let createdPageSlug: string | null = null;
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     client = new TestHttpClient();
@@ -32,6 +36,9 @@ describe("Tier 1: Page Editor / Website Builder Module", () => {
       }
       createdPageSlug = null;
     }
+  });
+
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 
@@ -118,6 +125,7 @@ describe("Tier 1: Page Editor / Website Builder Module", () => {
 
   test("T1.1.5: Delete custom page removes it cleanly from list and database", async () => {
     const payload = createTestPagePayload();
+    createdPageSlug = payload.slug;
     const createRes = await client.post("/api/admin/pages", payload);
     assert.ok([200, 201].includes(createRes.status));
 

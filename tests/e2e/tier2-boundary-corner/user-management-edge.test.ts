@@ -8,15 +8,19 @@
  * 5. Non-existent user ID returns 404
  */
 
-import test, { describe, beforeEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 2: User Management Boundary & Corner Cases", () => {
+describe("Tier 2: User Management Boundary & Corner Cases", { concurrency: 1 }, () => {
   let adminClient: TestHttpClient;
   let unauthClient: TestHttpClient;
   let adminUserRecord: any;
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
@@ -25,6 +29,10 @@ describe("Tier 2: User Management Boundary & Corner Cases", () => {
 
     // Find current admin's DB record
     adminUserRecord = await dbHelper.findUser("admin@hcmute.edu.vn");
+  });
+
+  after(async () => {
+    await dbHelper.cleanupTestData();
   });
 
   test("T2.3.1: Unauthenticated request to /api/admin/users returns 401/403", async () => {

@@ -8,15 +8,19 @@
  * 5. Published custom page dynamically renders on public route
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestPagePayload } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 1: Build & Route Verification", () => {
+describe("Tier 1: Build & Route Verification", { concurrency: 1 }, () => {
   let client: TestHttpClient;
   let createdSlug: string | null = null;
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(() => {
     client = new TestHttpClient();
@@ -33,6 +37,9 @@ describe("Tier 1: Build & Route Verification", () => {
       }
       createdSlug = null;
     }
+  });
+
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 

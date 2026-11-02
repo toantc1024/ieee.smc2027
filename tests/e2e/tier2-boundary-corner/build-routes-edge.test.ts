@@ -8,16 +8,20 @@
  * 5. Security headers and cookie security flags compliance
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestPagePayload } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 2: Build & Route Boundary & Corner Cases", () => {
+describe("Tier 2: Build & Route Boundary & Corner Cases", { concurrency: 1 }, () => {
   let client: TestHttpClient;
   let adminClient: TestHttpClient;
   let createdSlug: string | null = null;
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     client = new TestHttpClient();
@@ -34,6 +38,9 @@ describe("Tier 2: Build & Route Boundary & Corner Cases", () => {
       }
       createdSlug = null;
     }
+  });
+
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 
