@@ -752,6 +752,7 @@ body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*=
   bottom: 0;
   width: 1px;
   background: var(--border);
+  opacity: 0.35;
   z-index: 10;
   pointer-events: none;
 }
@@ -787,6 +788,7 @@ body.no-page-borders::after {
   bottom: 0;
   width: 1px;
   background: rgba(255, 255, 255, 0.15);
+  opacity: 0.45;
   z-index: 10;
   pointer-events: none;
 }
@@ -812,6 +814,7 @@ body.no-page-borders::after {
   bottom: 0;
   width: 1px;
   background: var(--border);
+  opacity: 0.35;
   z-index: 10;
   pointer-events: none;
 }
