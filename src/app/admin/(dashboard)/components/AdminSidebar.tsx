@@ -171,6 +171,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     const candidates = [
       ...quickNavItems.map((item) => item.href),
       ...sidebarMenuGroups.flatMap((group) => group.items.map((item) => item.href)),
+      "/admin/profile",
     ]
       .map(normalizeHref)
       .filter((href) => href !== "/admin")
@@ -183,6 +184,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
   }, [pathname]);
 
   const isActive = (href: string) => normalizeHref(href) === activeHref;
+  const isProfileActive =
+    pathname === "/admin/profile" || pathname.startsWith("/admin/profile/");
 
   const getUserInitials = () => {
     const rawName = user?.name || "Admin";
@@ -289,8 +292,17 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* ── Profile Greeting Card ── */}
       {state !== "collapsed" && (
         <div className="px-2 pt-4 pb-2 shrink-0 select-none">
-          <div
-            className="block relative overflow-hidden rounded-2xl text-white py-4.5 px-3.5 min-h-[92px] shadow-sm border border-white/20 bg-primary/20 backdrop-blur-md transition-all duration-200 group/greeting-card cursor-default"
+          <Link
+            href="/admin/profile"
+            prefetch={true}
+            onClick={handleItemClick}
+            className={cn(
+              "block relative overflow-hidden rounded-2xl text-white py-4.5 px-3.5 min-h-[92px] shadow-sm border border-white/20 bg-primary/20 backdrop-blur-md transition-all duration-200 group/greeting-card cursor-pointer",
+              isProfileActive
+                ? "ring-2 ring-white/50 bg-white/15 backdrop-blur-md shadow-md"
+                : "hover:border-white/35 hover:shadow-md active:scale-[0.99]"
+            )}
+            title="View Profile"
           >
             {/* Background Image Asset */}
             <div className="absolute inset-0 select-none pointer-events-none">
@@ -322,14 +334,19 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     <p className="text-[11.5px] font-medium text-white/80 leading-tight drop-shadow-xs">
                       {greeting}
                     </p>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-tight text-white truncate mt-0.5 drop-shadow-xs">
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-tight text-white truncate mt-0.5 drop-shadow-xs group-hover/greeting-card:text-white transition-colors">
                       {displayName}
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="size-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-200 shadow-2xs self-center opacity-0 translate-x-1 group-hover/greeting-card:opacity-100 group-hover/greeting-card:translate-x-0 bg-white/20 backdrop-blur-md border-white/35 text-white"
+                  className={cn(
+                    "size-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-200 shadow-2xs self-center",
+                    isProfileActive
+                      ? "opacity-100 bg-white/30 backdrop-blur-md border-white/55 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] ring-2 ring-white/35"
+                      : "opacity-0 translate-x-1 group-hover/greeting-card:opacity-100 group-hover/greeting-card:translate-x-0 bg-white/20 backdrop-blur-md border-white/35 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] group-hover/greeting-card:bg-white/30 group-hover/greeting-card:border-white/50"
+                  )}
                   aria-hidden="true"
                 >
                   <ChevronRight className="size-4 stroke-[2.4] shrink-0" />
@@ -350,7 +367,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 
@@ -682,13 +699,14 @@ function NavGroup({ group, isActive }: NavGroupProps) {
   const { state } = useSidebar();
   const hasActiveChild = group.items.some((item) => isActive(item.href));
   const [isOpen, setIsOpen] = useState(group.defaultOpen || hasActiveChild);
-  const contentRef = useRef<HTMLUListElement>(null);
-
-  useEffect(() => {
+  const [prevHasActiveChild, setPrevHasActiveChild] = useState(hasActiveChild);
+  if (hasActiveChild !== prevHasActiveChild) {
+    setPrevHasActiveChild(hasActiveChild);
     if (hasActiveChild) {
       setIsOpen(true);
     }
-  }, [hasActiveChild]);
+  }
+  const contentRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     if (hasActiveChild && isOpen) {
