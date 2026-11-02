@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef, use } from "react";
+import React, { useState, useEffect, useRef, use, useMemo, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   DndContext,
   closestCenter,
@@ -45,12 +46,13 @@ import {
   Info,
   Sliders,
   Upload,
-  ImageIcon,
+  FileEdit,
+  Paintbrush,
   X,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DotPattern } from "@/components/ui/dot-pattern";
 
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
@@ -178,97 +180,91 @@ const AVAILABLE_BLOCKS = [
   {
     type: "SubmissionCountdown",
     title: "Submission Countdown",
-    category: "Header & Hero",
-    description: "Live countdown timer to the Paper Submission deadline on April 08, 2027",
+    category: "Submissions",
+    description: "Live countdown timer to paper submission and camera-ready deadlines",
     defaultProps: {},
   },
   {
     type: "ConferenceHighlights",
     title: "Conference Highlights",
-    category: "Content",
-    description: "Key metrics featuring 68 research topics, 3 pillars, Scopus, and IEEE Xplore indexing",
+    category: "Overview",
+    description: "Key themes, attendee numbers, workshop slots, and keynote count highlights",
     defaultProps: {},
   },
   {
     type: "CallForPapers",
     title: "Call for Papers",
-    category: "Content",
-    description: "CFP overview with downloadable brochure, author guidelines, and submission policies",
+    category: "Submissions",
+    description: "Scope, submission instructions, IEEE Xplore indexing info, and proposal guidelines",
     defaultProps: {},
   },
   {
     type: "TracksExplorer",
-    title: "Research Tracks Explorer",
-    category: "Content",
-    description: "Interactive explorer for Systems Science, Cybernetics, and Human-Machine Systems",
+    title: "Technical Tracks Explorer",
+    category: "Submissions",
+    description: "Interactive selector for Cybernetics, Systems Science, and Human-Machine Systems",
     defaultProps: {},
   },
   {
     type: "ImportantDates",
-    title: "Important Dates Timeline",
-    category: "Content",
-    description: "9-stage conference milestone timeline with calendar export",
+    title: "Important Milestone Dates",
+    category: "Submissions",
+    description: "Timeline card for paper submission, notifications, and camera-ready deadlines",
     defaultProps: {},
   },
   {
     type: "About",
-    title: "About Conference & IEEE SMC",
-    category: "Content",
-    description: "Overview of HCMUTE and the IEEE Systems, Man, and Cybernetics Society",
+    title: "About HCMUTE & IEEE SMC",
+    category: "Overview",
+    description: "Host institution overview and IEEE Systems, Man, and Cybernetics Society intro",
     defaultProps: {},
   },
   {
     type: "Committee",
-    title: "Organizing Committee List",
+    title: "Key Leadership Chairs",
     category: "Organization",
-    description: "Structured list of General Chairs, Program Chairs, and international committee members",
+    description: "General Chairs, Steering Chairs, and Honorary Chairs portrait showcase",
     defaultProps: {},
   },
   {
     type: "Venue",
-    title: "Venue & Hospitality",
-    category: "Venue",
-    description: "Sheraton Saigon Grand Opera Hotel details and travel guide",
+    title: "Venue & Hotel Information",
+    category: "Overview",
+    description: "Sheraton Saigon Grand Opera Hotel, address, accommodation, and travel guidance",
     defaultProps: {},
   },
   {
     type: "FAQ",
     title: "Frequently Asked Questions",
-    category: "Support",
-    description: "Accordion answering common questions on visas, registration, and paper submissions",
+    category: "Content",
+    description: "Expandable accordion answers for authors, visa applicants, and delegates",
+    defaultProps: {},
+  },
+  {
+    type: "Sponsors",
+    title: "Sponsors & Academic Partners",
+    category: "Organization",
+    description: "IEEE SMC Society, HCMUTE, IEEE Vietnam Section, and corporate partner logos",
     defaultProps: {},
   },
   {
     type: "Keynotes",
     title: "Keynote Speakers",
     category: "Content",
-    description: "Plenary and keynote speaker spotlight section",
+    description: "Distinguished keynote addresses, speaker bios, and presentation titles",
     defaultProps: {},
-  },
-  {
-    type: "Sponsors",
-    title: "Sponsors & Institutional Partners",
-    category: "Partners",
-    description: "Logo grid of organizing institutions, technical sponsors, and partners",
-    defaultProps: {},
-  },
-  {
-    type: "CustomHTML",
-    title: "Custom HTML Embed",
-    category: "Advanced",
-    description: "Embed custom HTML markup, iframes, videos, or widgets",
-    defaultProps: {
-      content: "<div class='p-8 text-center bg-slate-100 rounded-sm'><h4>Custom HTML Block</h4><p>Edit the HTML code in the properties panel on the right.</p></div>",
-    },
   },
 ];
 
-// Full set of active conference page blocks matching home page
-export const DEFAULT_PAGE_BLOCKS: PageBlockItem[] = [
+const DEFAULT_PAGE_BLOCKS: PageBlockItem[] = [
   {
     id: "block-hero",
     type: "HeroCarousel",
-    props: { autoplayDuration: 7, showOverlayText: true, showIndicators: true },
+    props: {
+      autoplayDuration: 7,
+      showOverlayText: true,
+      showIndicators: true,
+    },
     hidden: false,
   },
   {
@@ -279,6 +275,7 @@ export const DEFAULT_PAGE_BLOCKS: PageBlockItem[] = [
       title: "Welcome Message from the General Chairs & Honorary Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
       theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
+      datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
     },
     hidden: false,
   },
@@ -289,12 +286,6 @@ export const DEFAULT_PAGE_BLOCKS: PageBlockItem[] = [
       title: "Conference News & Announcements",
       subtitle: "Stay updated with the latest milestones, partnership alerts, and program schedules",
     },
-    hidden: false,
-  },
-  {
-    id: "block-dates",
-    type: "ImportantDates",
-    props: {},
     hidden: false,
   },
   {
@@ -416,6 +407,7 @@ interface PageBlockItem {
   id: string;
   type: string;
   props?: Record<string, unknown>;
+  styles?: Record<string, unknown>;
   hidden?: boolean;
 }
 
@@ -488,7 +480,7 @@ function BlockImageField({
     <div className="space-y-1.5">
       <label className="block text-xs font-semibold text-slate-700">{label}</label>
       {value && (
-        <div className="relative aspect-[16/9] w-full rounded-sm overflow-hidden border border-slate-200 bg-slate-100 mb-1.5">
+        <div className="relative aspect-[16/9] w-full rounded-lg overflow-hidden border border-slate-200 bg-slate-100 mb-1.5 shadow-2xs">
           <Image src={value} alt="Preview" fill unoptimized className="object-cover" />
         </div>
       )}
@@ -498,7 +490,7 @@ function BlockImageField({
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           placeholder="/assets/image.jpg or URL"
-          className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
+          className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
         />
         <input
           ref={fileInputRef}
@@ -511,7 +503,7 @@ function BlockImageField({
           type="button"
           disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
-          className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#115eff] border border-blue-200 rounded-sm text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+          className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#115eff] border border-blue-200 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
           title="Upload image file"
         >
           {uploading ? (
@@ -574,180 +566,191 @@ function SortableBlockItem({
       style={style}
       onClick={onSelect}
       className={cn(
-        "group relative rounded-sm transition-all duration-200 border-2 select-none",
+        "group relative w-full transition-all duration-150 select-none",
         isSelected
-          ? "border-[#115eff] shadow-sm ring-1 ring-blue-500/20"
-          : "border-transparent hover:border-blue-300/80 shadow-2xs",
-        isDragging && "opacity-40 z-50 shadow-md scale-[0.99]",
-        block.hidden && "opacity-60 bg-slate-100/50"
+          ? "border-2 border-[#115eff] ring-2 ring-blue-500/20 shadow-[0_0_0_1px_rgba(17,94,255,0.2)]"
+          : "border-2 border-transparent hover:border-blue-400/60",
+        isDragging && "opacity-40 z-50 scale-[0.99]",
+        block.hidden && "opacity-50"
       )}
     >
-      {/* Top Floating Control Bar */}
-      <div
-        className={cn(
-          "absolute -top-3 left-4 z-30 flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all shadow-xs border border-slate-700/30",
-          isSelected
-            ? "bg-[#115eff] text-white opacity-100 scale-100"
-            : "bg-slate-800 text-slate-100 opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100"
-        )}
-      >
-        {/* Drag handle */}
+      {/* Top Floating Control Bar: matching HCMUTE sortable-block pill */}
+      {(isSelected || isDragging) && (
         <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-0.5 hover:text-blue-200"
-          title="Drag to reorder"
+          className="absolute top-2 left-2 z-50 flex items-center gap-1.5 h-8 bg-[#115eff] text-white rounded-lg px-2.5 py-1 shadow-lg shadow-blue-600/35 border border-blue-400/80 font-sans text-xs font-semibold whitespace-nowrap select-none"
+          onClick={(e) => e.stopPropagation()}
         >
-          <GripVertical className="w-3.5 h-3.5" />
+          {/* Drag handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="flex items-center gap-1.5 cursor-grab active:cursor-grabbing hover:text-blue-100"
+            title="Drag to reorder"
+          >
+            <GripVertical className="w-3.5 h-3.5 text-blue-100" />
+            <span className="text-xs font-bold font-sans">{blockMeta?.title || block.type}</span>
+          </div>
+
+          <div className="w-px h-3.5 bg-white/30 mx-0.5" />
+
+          {/* Move Up */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveUp();
+            }}
+            disabled={index === 0}
+            className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
+            title="Move up"
+          >
+            <ChevronUp className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Move Down */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveDown();
+            }}
+            disabled={index === totalBlocks - 1}
+            className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
+            title="Move down"
+          >
+            <ChevronDown className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Duplicate */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDuplicate();
+            }}
+            className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
+            title="Duplicate block"
+          >
+            <Copy className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Visibility */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleHide();
+            }}
+            className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
+            title={block.hidden ? "Show block" : "Hide block"}
+          >
+            {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-300" /> : <Eye className="w-3.5 h-3.5" />}
+          </button>
+
+          {/* Delete */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="p-1 hover:bg-rose-600 rounded transition-colors cursor-pointer"
+            title="Remove block"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </div>
+      )}
 
-        <span className="px-1 text-[11px] font-semibold">{blockMeta?.title || block.type}</span>
-
-        <div className="w-px h-3 bg-white/30 mx-0.5" />
-
-        {/* Move Up */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoveUp();
-          }}
-          disabled={index === 0}
-          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
-          title="Move up"
-        >
-          <ChevronUp className="w-3 h-3" />
-        </button>
-
-        {/* Move Down */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoveDown();
-          }}
-          disabled={index === totalBlocks - 1}
-          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
-          title="Move down"
-        >
-          <ChevronDown className="w-3 h-3" />
-        </button>
-
-        {/* Duplicate */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDuplicate();
-          }}
-          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 transition-colors cursor-pointer"
-          title="Duplicate block"
-        >
-          <Copy className="w-3 h-3" />
-        </button>
-
-        {/* Visibility */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleHide();
-          }}
-          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 transition-colors cursor-pointer"
-          title={block.hidden ? "Show block" : "Hide block"}
-        >
-          {block.hidden ? (
-            <EyeOff className="w-3 h-3 text-amber-300" />
-          ) : (
-            <Eye className="w-3 h-3" />
-          )}
-        </button>
-
-        {/* Remove */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="w-5 h-5 flex items-center justify-center rounded-sm text-rose-200 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer"
-          title="Delete block"
-        >
-          <Trash2 className="w-3 h-3" />
-        </button>
-      </div>
-
-      {/* Render Component Preview */}
-      <div className={cn("overflow-hidden rounded-sm", block.hidden && "opacity-60")}>
+      {/* Actual Block Content */}
+      <div className={cn("w-full", block.hidden && "grayscale-[30%]")}>
         {children}
       </div>
     </div>
   );
 }
 
-export default function PageBuilderRoute({
+export default function PageBlockEditor({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const { id } = use(params);
 
   const [page, setPage] = useState<WebsitePageRecord | null>(null);
+  const [pageTitle, setPageTitle] = useState("");
   const [blocks, setBlocks] = useState<PageBlockItem[]>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [hasUnsaved, setHasUnsaved] = useState(false);
+
+  // Inspector tabs: Content, Styles, JSON
+  const [inspectorTab, setInspectorTab] = useState<"content" | "styles" | "json">("content");
+  const [jsonText, setJsonText] = useState("");
+  const [jsonError, setJsonError] = useState<string | null>(null);
+
+  // Responsive Viewport and Zoom
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [zoom, setZoom] = useState<number>(100);
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
+
+  // Left Drawer Tabs: blocks, layers, settings
+  const [sidebarTab, setSidebarTab] = useState<"blocks" | "layers" | "settings">("blocks");
+  const [paletteSearch, setPaletteSearch] = useState("");
+
+  // Undo / Redo History
   const [history, setHistory] = useState<PageBlockItem[][]>([]);
   const [future, setFuture] = useState<PageBlockItem[][]>([]);
-  const [paletteSearch, setPaletteSearch] = useState("");
-  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
-  const [sidebarTab, setSidebarTab] = useState<"blocks" | "layers" | "settings">("blocks");
 
-  const pushHistory = (currentBlocks: PageBlockItem[]) => {
-    setHistory((prev) => [...prev.slice(-20), currentBlocks]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const pushState = (newBlocks: PageBlockItem[]) => {
+    setHistory((prev) => [...prev.slice(-25), blocks]);
     setFuture([]);
+    setBlocks(newBlocks);
+    setHasUnsaved(true);
   };
 
-  const handleUndo = () => {
+  const undo = () => {
     if (history.length === 0) return;
     const previous = history[history.length - 1];
-    setHistory((prev) => prev.slice(0, prev.length - 1));
     setFuture((prev) => [blocks, ...prev]);
+    setHistory((prev) => prev.slice(0, prev.length - 1));
     setBlocks(previous);
-    toast.info("Undone last change");
+    setHasUnsaved(true);
   };
 
-  const handleRedo = () => {
+  const redo = () => {
     if (future.length === 0) return;
     const next = future[0];
-    setFuture((prev) => prev.slice(1));
     setHistory((prev) => [...prev, blocks]);
+    setFuture((prev) => prev.slice(1));
     setBlocks(next);
-    toast.info("Redone change");
+    setHasUnsaved(true);
   };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 8,
       },
     })
   );
 
   useEffect(() => {
+    setLoading(true);
     fetch(`/api/admin/pages/${id}`)
       .then((res) => res.json())
       .then((res) => {
         if (res.page) {
           setPage(res.page);
-          let initialBlocks = Array.isArray(res.page.blocks) ? res.page.blocks : [];
-          // If empty blocks array (e.g. newly created page or unmigrated home page), default to full set
-          if (initialBlocks.length === 0) {
-            initialBlocks = DEFAULT_PAGE_BLOCKS;
-          }
+          setPageTitle(res.page.title || "");
+          const initialBlocks: PageBlockItem[] =
+            Array.isArray(res.page.blocks) && res.page.blocks.length > 0
+              ? res.page.blocks
+              : DEFAULT_PAGE_BLOCKS;
           setBlocks(initialBlocks);
           if (initialBlocks.length > 0) {
             setSelectedBlockId(initialBlocks[0].id);
@@ -761,122 +764,166 @@ export default function PageBuilderRoute({
       .finally(() => setLoading(false));
   }, [id]);
 
+  // Sync selected block JSON AST
+  useEffect(() => {
+    if (!selectedBlockId) return;
+    const current = blocks.find((b) => b.id === selectedBlockId);
+    if (current) {
+      setJsonText(JSON.stringify(current, null, 2));
+      setJsonError(null);
+    }
+  }, [selectedBlockId, blocks]);
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    pushHistory(blocks);
-    setBlocks((items) => {
-      const oldIndex = items.findIndex((i) => i.id === active.id);
-      const newIndex = items.findIndex((i) => i.id === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
-        return arrayMove(items, oldIndex, newIndex);
-      }
-      return items;
-    });
+    const oldIndex = blocks.findIndex((b) => b.id === active.id);
+    const newIndex = blocks.findIndex((b) => b.id === over.id);
+    if (oldIndex !== -1 && newIndex !== -1) {
+      pushState(arrayMove(blocks, oldIndex, newIndex));
+    }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    setSavedSuccess(false);
-    toast.loading("Saving page blocks...", { id: "page-save" });
+  const addBlock = (type: string) => {
+    const blockMeta = AVAILABLE_BLOCKS.find((b) => b.type === type);
+    const newBlock: PageBlockItem = {
+      id: generateBlockId(type),
+      type,
+      props: { ...(blockMeta?.defaultProps || {}) },
+      styles: {},
+      hidden: false,
+    };
+    pushState([...blocks, newBlock]);
+    setSelectedBlockId(newBlock.id);
+    toast.success(`Added ${blockMeta?.title || type}`);
+  };
 
+  const removeBlock = (index: number) => {
+    const removed = blocks[index];
+    const newBlocks = blocks.filter((_, i) => i !== index);
+    pushState(newBlocks);
+    if (selectedBlockId === removed.id) {
+      setSelectedBlockId(newBlocks[0]?.id || null);
+    }
+    toast.success("Block removed");
+  };
+
+  const duplicateBlock = (index: number) => {
+    const orig = blocks[index];
+    const dup: PageBlockItem = {
+      ...orig,
+      id: generateBlockId(orig.type),
+      props: JSON.parse(JSON.stringify(orig.props || {})),
+      styles: JSON.parse(JSON.stringify(orig.styles || {})),
+    };
+    const next = [...blocks];
+    next.splice(index + 1, 0, dup);
+    pushState(next);
+    setSelectedBlockId(dup.id);
+    toast.success("Block duplicated");
+  };
+
+  const toggleHideBlock = (index: number) => {
+    const next = [...blocks];
+    next[index] = { ...next[index], hidden: !next[index].hidden };
+    pushState(next);
+  };
+
+  const moveBlock = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= blocks.length) return;
+    pushState(arrayMove(blocks, fromIndex, toIndex));
+  };
+
+  const updateBlockProps = (blockId: string, newProps: Record<string, unknown>) => {
+    const next = blocks.map((b) => (b.id === blockId ? { ...b, props: newProps } : b));
+    setBlocks(next);
+    setHasUnsaved(true);
+  };
+
+  const updateBlockStyles = (blockId: string, newStyles: Record<string, unknown>) => {
+    const next = blocks.map((b) => (b.id === blockId ? { ...b, styles: newStyles } : b));
+    setBlocks(next);
+    setHasUnsaved(true);
+  };
+
+  const handleApplyJson = () => {
+    try {
+      const parsed = JSON.parse(jsonText);
+      if (selectedBlockId && parsed) {
+        const next = blocks.map((b) => (b.id === selectedBlockId ? parsed : b));
+        setBlocks(next);
+        setHasUnsaved(true);
+        setJsonError(null);
+        toast.success("Applied JSON AST changes");
+      }
+    } catch (err: unknown) {
+      setJsonError(err instanceof Error ? err.message : "Invalid JSON");
+    }
+  };
+
+  const savePage = async () => {
+    setSaving(true);
     try {
       const res = await fetch(`/api/admin/pages/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          title: pageTitle.trim() || page?.title,
           blocks,
         }),
       });
+
       if (res.ok) {
-        setSavedSuccess(true);
-        toast.success("Page blocks updated successfully!", { id: "page-save" });
-        setTimeout(() => setSavedSuccess(false), 3000);
+        toast.success("Page layout saved successfully!");
+        setHasUnsaved(false);
       } else {
-        throw new Error("Server returned error saving page");
+        const err = await res.json();
+        toast.error(err.error || "Failed to save page");
       }
     } catch {
-      toast.error("Failed to save page to database", { id: "page-save" });
+      toast.error("Network error while saving");
     } finally {
       setSaving(false);
     }
   };
 
-  const addBlock = (type: string) => {
-    pushHistory(blocks);
-    const meta = AVAILABLE_BLOCKS.find((b) => b.type === type);
-    const newBlock: PageBlockItem = {
-      id: generateBlockId(type),
-      type,
-      props: meta?.defaultProps ? { ...meta.defaultProps } : {},
-      hidden: false,
-    };
-    const next = [...blocks, newBlock];
-    setBlocks(next);
-    setSelectedBlockId(newBlock.id);
-    toast.success(`Added ${meta?.title || type} block`);
-  };
+  const selectedBlockIndex = blocks.findIndex((b) => b.id === selectedBlockId);
+  const selectedBlock = selectedBlockIndex !== -1 ? blocks[selectedBlockIndex] : null;
+  const selectedMeta = selectedBlock
+    ? AVAILABLE_BLOCKS.find((b) => b.type === selectedBlock.type)
+    : null;
 
-  const duplicateBlock = (index: number) => {
-    pushHistory(blocks);
-    const target = blocks[index];
-    const duplicated: PageBlockItem = {
-      ...target,
-      id: generateBlockId(target.type),
-      props: JSON.parse(JSON.stringify(target.props || {})),
-    };
-    const next = [...blocks];
-    next.splice(index + 1, 0, duplicated);
-    setBlocks(next);
-    setSelectedBlockId(duplicated.id);
-    toast.success("Block duplicated");
-  };
-
-  const removeBlock = (index: number) => {
-    pushHistory(blocks);
-    const next = blocks.filter((_, i) => i !== index);
-    setBlocks(next);
-    if (selectedBlockId === blocks[index]?.id) {
-      setSelectedBlockId(next[0]?.id || null);
-    }
-    toast.info("Block removed from canvas");
-  };
-
-  const toggleHideBlock = (index: number) => {
-    pushHistory(blocks);
-    const next = [...blocks];
-    next[index] = { ...next[index], hidden: !next[index].hidden };
-    setBlocks(next);
-    toast.info(next[index].hidden ? "Block hidden" : "Block visible");
-  };
-
-  const moveBlock = (fromIndex: number, toIndex: number) => {
-    if (toIndex < 0 || toIndex >= blocks.length) return;
-    pushHistory(blocks);
-    setBlocks((items) => arrayMove(items, fromIndex, toIndex));
-  };
-
-  const updateBlockProps = (blockId: string, newProps: Record<string, unknown>) => {
-    setBlocks((items) =>
-      items.map((item) => (item.id === blockId ? { ...item, props: newProps } : item))
+  const filteredPalette = useMemo(() => {
+    if (!paletteSearch.trim()) return AVAILABLE_BLOCKS;
+    const q = paletteSearch.toLowerCase();
+    return AVAILABLE_BLOCKS.filter(
+      (b) =>
+        b.title.toLowerCase().includes(q) ||
+        b.type.toLowerCase().includes(q) ||
+        b.category.toLowerCase().includes(q)
     );
-  };
+  }, [paletteSearch]);
 
+  // Desktop canonical width: 1240px (exact match to HCMUTE canonical desktop container)
+  const baseWidth = viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1240;
+
+  // Render Component onto Canvas
   const renderComponent = (block: PageBlockItem) => {
+    const p = block.props || {};
     switch (block.type) {
       case "HeroCarousel":
-        return <HeroCarousel {...block.props} />;
+        return <HeroCarousel />;
       case "WelcomeLetter":
-        return <WelcomeLetter {...block.props} />;
+        return <WelcomeLetter />;
       case "NewsList":
-        return <NewsList {...block.props} />;
+        return <NewsList />;
       case "ConferenceVideo":
-        return <ConferenceVideo {...block.props} />;
+        return <ConferenceVideo />;
       case "PaperTemplates":
-        return <PaperTemplates {...block.props} />;
+        return <PaperTemplates />;
       case "ContactCards":
-        return <ContactCards {...block.props} />;
+        return <ContactCards />;
       case "CfpSubscribe":
         return <CfpSubscribe />;
       case "SubmissionCountdown":
@@ -894,9 +941,9 @@ export default function PageBuilderRoute({
       case "Committee":
         return <Committee />;
       case "CommitteesSection":
-        return <CommitteesSection {...block.props} />;
+        return <CommitteesSection />;
       case "PaymentMethods":
-        return <PaymentMethods {...block.props} />;
+        return <PaymentMethods />;
       case "Venue":
         return <Venue />;
       case "FAQ":
@@ -905,302 +952,247 @@ export default function PageBuilderRoute({
         return <Sponsors />;
       case "Keynotes":
         return <Keynotes />;
-      case "CustomHTML":
-        return (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: (block.props?.content as string) || "",
-            }}
-          />
-        );
       default:
         return (
-          <div className="p-8 text-center text-slate-400 bg-white border border-dashed border-slate-300 rounded-sm">
-            Unknown Component: {block.type}
+          <div className="p-8 text-center bg-slate-50 border border-slate-200">
+            <span className="text-xs font-bold text-slate-700">Custom Component: {block.type}</span>
           </div>
         );
     }
   };
 
-  const selectedBlockIndex = blocks.findIndex((b) => b.id === selectedBlockId);
-  const selectedBlock = selectedBlockIndex !== -1 ? blocks[selectedBlockIndex] : null;
-  const selectedMeta = selectedBlock
-    ? AVAILABLE_BLOCKS.find((b) => b.type === selectedBlock.type)
-    : null;
-
-  const filteredPalette = AVAILABLE_BLOCKS.filter(
-    (b) =>
-      b.title.toLowerCase().includes(paletteSearch.toLowerCase()) ||
-      b.category.toLowerCase().includes(paletteSearch.toLowerCase()) ||
-      b.type.toLowerCase().includes(paletteSearch.toLowerCase())
-  );
-
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48 rounded-sm" />
-          <Skeleton className="h-8 w-32 rounded-sm" />
-        </div>
-        <div className="grid grid-cols-12 gap-6">
-          <Skeleton className="col-span-3 h-[600px] rounded-sm" />
-          <Skeleton className="col-span-6 h-[600px] rounded-sm" />
-          <Skeleton className="col-span-3 h-[600px] rounded-sm" />
+      <div className="h-full w-full flex items-center justify-center bg-slate-50 font-sans">
+        <div className="text-center space-y-3">
+          <Loader2 className="size-8 text-[#115eff] animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-slate-600">Loading Page Builder...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* ── Top Page Editor Action Rail ── */}
-      <div className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-40 shadow-2xs">
-        <div className="flex items-center gap-3">
+    <div className="h-full w-full flex flex-col overflow-hidden bg-slate-100 font-sans select-none">
+      {/* ── Top Header (Matching HCMUTE BuilderHeader) ── */}
+      <header className="h-14 border-b border-slate-200 bg-white/95 backdrop-blur px-3 sm:px-4 flex items-center justify-between gap-3 select-none z-30 shrink-0 text-slate-900 font-sans">
+        {/* Left section: Back & Title */}
+        <div className="flex items-center gap-2.5 min-w-0">
           <Link
             href="/admin/pages"
-            className="p-1.5 rounded-sm border border-slate-200 hover:bg-slate-50 text-[#004776] transition-colors"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
             title="Back to Pages List"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-[#004776] leading-tight">
-                {page?.title || "Page Editor"}
-              </h1>
-              <span className="text-[11px] px-2 py-0.5 rounded-sm bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
-                /{page?.slug}
+
+          <div className="h-5 w-px bg-slate-200 shrink-0" />
+
+          <div className="flex flex-col min-w-0">
+            <input
+              type="text"
+              value={pageTitle}
+              onChange={(e) => {
+                setPageTitle(e.target.value);
+                setHasUnsaved(true);
+              }}
+              placeholder="Page title..."
+              className="bg-transparent text-xs sm:text-sm font-bold text-slate-900 hover:bg-slate-100 focus:bg-white px-1.5 py-0.5 rounded-lg border border-transparent focus:border-[#115eff]/50 focus:outline-none transition-all truncate max-w-[180px] sm:max-w-[240px]"
+            />
+            {page?.slug && (
+              <span className="text-[10px] text-slate-500 px-1.5 truncate leading-tight font-mono">
+                /{page.slug === "home" ? "" : page.slug}
               </span>
-            </div>
-            <p className="text-[11px] text-slate-500 font-normal">
-              Visual Page Builder • {blocks.length} active blocks
-            </p>
+            )}
           </div>
+
+          {/* Status Badge */}
+          <span
+            className={cn(
+              "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border shadow-2xs leading-none",
+              hasUnsaved
+                ? "bg-amber-50 text-amber-700 border-amber-200"
+                : "bg-emerald-50 text-emerald-700 border-emerald-200"
+            )}
+          >
+            {saving ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#115eff]" />
+                Saving…
+              </>
+            ) : hasUnsaved ? (
+              "Unsaved Changes"
+            ) : (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                Saved
+              </>
+            )}
+          </span>
         </div>
 
-        {/* Viewport Toggles, Scale Zoom & Quick Actions Matching HCMUTE Layout */}
-        <div className="flex items-center gap-2">
-          {/* Viewport Switcher */}
-          <div className="hidden md:flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200">
+        {/* Center section: Viewport Switcher & Undo/Redo */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Undo / Redo */}
+          <div className="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5 shadow-2xs">
             <button
               type="button"
-              onClick={() => setViewport("desktop")}
-              className={cn(
-                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
-                viewport === "desktop" && "bg-white text-[#115eff] shadow-2xs font-semibold"
-              )}
-              title="Desktop viewport"
-            >
-              <Monitor className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewport("tablet")}
-              className={cn(
-                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
-                viewport === "tablet" && "bg-white text-[#115eff] shadow-2xs font-semibold"
-              )}
-              title="Tablet viewport"
-            >
-              <Tablet className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewport("mobile")}
-              className={cn(
-                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
-                viewport === "mobile" && "bg-white text-[#115eff] shadow-2xs font-semibold"
-              )}
-              title="Mobile viewport"
-            >
-              <Smartphone className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Canvas Scale Zoom Selector (Matching HCMUTE Standardized h-8 bar) */}
-          <div className="hidden lg:flex h-8 items-center gap-1 bg-slate-100 p-0.5 px-2 rounded-sm border border-slate-200 text-xs text-slate-700 select-none">
-            <span className="text-[11px] font-semibold text-[#004776] mr-0.5">Zoom:</span>
-            <button
-              type="button"
-              onClick={() => setZoom(100)}
-              className={cn(
-                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
-                zoom === 100
-                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
-                  : "text-slate-500 hover:text-[#004776]"
-              )}
-              title="Auto (100%)"
-            >
-              Auto
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoom(50)}
-              className={cn(
-                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
-                zoom === 50
-                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
-                  : "text-slate-500 hover:text-[#004776]"
-              )}
-              title="50%"
-            >
-              50%
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoom(75)}
-              className={cn(
-                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
-                zoom === 75
-                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
-                  : "text-slate-500 hover:text-[#004776]"
-              )}
-              title="75%"
-            >
-              75%
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoom(100)}
-              className={cn(
-                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
-                zoom === 100
-                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
-                  : "text-slate-500 hover:text-[#004776]"
-              )}
-              title="100%"
-            >
-              100%
-            </button>
-
-            <div className="h-3.5 w-px bg-slate-300 mx-0.5" />
-
-            <button
-              type="button"
-              onClick={() => setZoom((prev) => Math.max(25, prev - 10))}
-              className="h-6 w-6 flex items-center justify-center rounded-sm text-slate-500 hover:text-[#004776] hover:bg-white transition-all cursor-pointer"
-              title="Zoom Out (-10%)"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoom((prev) => Math.min(150, prev + 10))}
-              className="h-6 w-6 flex items-center justify-center rounded-sm text-slate-500 hover:text-[#004776] hover:bg-white transition-all cursor-pointer"
-              title="Zoom In (+10%)"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Undo / Redo Actions (Matching HCMUTE) */}
-          <div className="hidden sm:flex h-8 items-center gap-0.5 bg-slate-100 rounded-sm p-0.5 border border-slate-200">
-            <button
-              type="button"
-              onClick={handleUndo}
+              onClick={undo}
               disabled={history.length === 0}
-              className="h-7 w-7 flex items-center justify-center rounded-sm text-slate-600 hover:text-[#004776] disabled:opacity-25 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 disabled:opacity-25 transition-colors cursor-pointer"
               title="Undo (Ctrl+Z)"
             >
               <Undo2 className="w-3.5 h-3.5" />
             </button>
             <button
               type="button"
-              onClick={handleRedo}
+              onClick={redo}
               disabled={future.length === 0}
-              className="h-7 w-7 flex items-center justify-center rounded-sm text-slate-600 hover:text-[#004776] disabled:opacity-25 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 disabled:opacity-25 transition-colors cursor-pointer"
               title="Redo (Ctrl+Y)"
             >
               <Redo2 className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Load Full Home Blocks Button */}
-          <button
-            type="button"
-            onClick={() => {
-              pushHistory(blocks);
-              setBlocks(DEFAULT_PAGE_BLOCKS);
-              setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
-              toast.success("Loaded all 19 conference blocks to canvas");
-            }}
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white hover:border-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs group"
-            title="Reset canvas with complete standard conference blocks"
-          >
-            <Layers className="size-3.5 text-[#115eff] group-hover:text-white transition-colors" />
-            <span className="hidden sm:inline">Load All Current Blocks</span>
-          </button>
+          {/* Viewport Breakpoints */}
+          <div className="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setViewport("desktop")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer",
+                viewport === "desktop"
+                  ? "bg-white text-[#115eff] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              )}
+              title="Desktop Screen (1240px)"
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Desktop</span>
+            </button>
 
-          <Link
-            href={page?.slug === "home" ? "/" : `/${page?.slug}`}
-            target="_blank"
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white hover:border-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs group"
-          >
-            <span>Live</span>
-            <ExternalLink className="w-3.5 h-3.5 text-[#115eff] group-hover:text-white transition-colors" />
-          </Link>
+            <button
+              type="button"
+              onClick={() => setViewport("tablet")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer",
+                viewport === "tablet"
+                  ? "bg-white text-[#115eff] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              )}
+              title="Tablet Screen (768px)"
+            >
+              <Tablet className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Tablet</span>
+            </button>
 
-          {/* Preview Toggle Button ("Xem" / "Thoát xem" Matching HCMUTE) */}
+            <button
+              type="button"
+              onClick={() => setViewport("mobile")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer",
+                viewport === "mobile"
+                  ? "bg-white text-[#115eff] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              )}
+              title="Mobile Screen (390px)"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Mobile</span>
+            </button>
+          </div>
+
+          {/* Zoom controls */}
+          <div className="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5 shadow-2xs text-xs">
+            <button
+              type="button"
+              onClick={() => setZoom((z) => Math.max(50, z - 10))}
+              className="p-1 text-slate-500 hover:text-slate-900 cursor-pointer"
+              title="Zoom out"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <span className="px-1.5 text-[11px] font-bold text-slate-700 min-w-[36px] text-center">
+              {zoom}%
+            </span>
+            <button
+              type="button"
+              onClick={() => setZoom((z) => Math.min(150, z + 10))}
+              className="p-1 text-slate-500 hover:text-slate-900 cursor-pointer"
+              title="Zoom in"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Right section: Preview Toggle & Save Button */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Preview Toggle Button */}
           <button
             type="button"
             onClick={() => setViewMode(viewMode === "preview" ? "edit" : "preview")}
             className={cn(
-              "h-8 px-3 rounded-sm text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer",
+              "px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer",
               viewMode === "preview"
                 ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
-                : "bg-white border border-slate-200 text-[#004776] hover:bg-[#115eff] hover:text-white hover:border-[#115eff] group"
+                : "bg-white border border-slate-200 text-slate-700 hover:text-[#115eff] hover:border-blue-300"
             )}
-            title={viewMode === "preview" ? "Exit preview mode" : "Preview page canvas"}
+            title={viewMode === "preview" ? "Exit Preview" : "Live Preview"}
           >
             {viewMode === "preview" ? (
               <>
                 <EyeOff className="w-3.5 h-3.5" />
-                <span>Thoát xem</span>
+                <span>Exit Preview</span>
               </>
             ) : (
               <>
-                <Eye className="w-3.5 h-3.5 text-[#115eff] group-hover:text-white transition-colors" />
-                <span>Xem</span>
+                <Eye className="w-3.5 h-3.5 text-[#115eff]" />
+                <span>Preview</span>
               </>
             )}
           </button>
 
-          {/* Save Button (Primary Blue) */}
+          {/* Save Button */}
           <button
             type="button"
-            onClick={handleSave}
+            onClick={savePage}
             disabled={saving}
-            className="h-8 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs rounded-sm shadow-2xs transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            className={cn(
+              "relative px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer disabled:opacity-50",
+              hasUnsaved
+                ? "bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-blue-600/25 ring-2 ring-blue-400/30"
+                : "bg-slate-900 hover:bg-slate-800 text-white"
+            )}
+            title="Save Page (Cmd+S / Ctrl+S)"
           >
-            {savedSuccess ? (
+            {saving ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Saved!</span>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-3.5 h-3.5" />
-                <span>{saving ? "Saving..." : "Save Page"}</span>
+                <span>{hasUnsaved ? "Save Changes" : "Saved"}</span>
               </>
             )}
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* ── Main Studio Body (Col 1 Left Panel 308px | Col 2 Center Canvas 1fr | Col 3 Right Inspector 320px) ── */}
-      <div className="flex-1 min-h-[calc(100vh-65px)] flex relative overflow-hidden bg-slate-50">
-        {/* ── Left Column: Component Palette / Layers / Settings (308px) ── */}
+      {/* ── Main Body: 3-Column Layout (Palette, Canvas, Inspector) ── */}
+      <div className="flex-1 min-h-0 flex overflow-hidden">
+        {/* ── Column 1: Left Drawer (284px) matching HCMUTE ── */}
         {viewMode !== "preview" && (
-          <aside className="w-[308px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-[calc(100vh-65px)] select-none z-20">
-            {/* Top Navigation Tabs: 3 navigation icons matching HCMUTE */}
-            <nav
-              aria-label="Builder Sidebar Navigation"
-              className="p-2 border-b border-slate-200 bg-slate-50/80 shrink-0"
-            >
-              <div className="flex items-center bg-slate-200/70 p-1 rounded-sm gap-1">
+          <aside className="w-[284px] shrink-0 bg-white border-r border-slate-200 flex flex-col overflow-hidden select-none z-10">
+            {/* Drawer Header Tabs */}
+            <div className="p-2 border-b border-slate-200 bg-slate-50/80 shrink-0">
+              <div className="flex items-center bg-slate-200/70 p-1 rounded-xl gap-1">
                 {[
-                  { id: "blocks", label: "Component Library", icon: LayoutGrid },
-                  { id: "layers", label: "Page Structure", icon: Layers },
+                  { id: "blocks", label: "Block Library", icon: LayoutGrid },
+                  { id: "layers", label: "Page Layers", icon: Layers },
                   { id: "settings", label: "Page Info", icon: Info },
                 ].map((tab) => {
                   const Icon = tab.icon;
@@ -1209,12 +1201,12 @@ export default function PageBuilderRoute({
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setSidebarTab(tab.id as any)}
+                      onClick={() => setSidebarTab(tab.id as typeof sidebarTab)}
                       className={cn(
-                        "flex-1 py-1.5 rounded-sm flex items-center justify-center transition-all cursor-pointer",
+                        "flex-1 py-1.5 rounded-lg flex items-center justify-center transition-all cursor-pointer",
                         isActive
                           ? "bg-white text-[#115eff] shadow-xs font-bold"
-                          : "text-slate-500 hover:text-[#004776] hover:bg-white/50"
+                          : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
                       )}
                       title={tab.label}
                     >
@@ -1223,33 +1215,31 @@ export default function PageBuilderRoute({
                   );
                 })}
               </div>
-            </nav>
+            </div>
 
             {/* Tab 1: Component Library */}
             {sidebarTab === "blocks" && (
-              <div className="flex-1 p-3.5 space-y-3 overflow-y-auto">
-                <div>
-                  <input
-                    type="text"
-                    value={paletteSearch}
-                    onChange={(e) => setPaletteSearch(e.target.value)}
-                    placeholder="Search blocks (Committees, FAQ...)"
-                    className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-sm focus:outline-none focus:bg-white focus:border-[#115eff] text-[#004776]"
-                  />
-                </div>
+              <div className="flex-1 p-3 space-y-3 overflow-y-auto">
+                <input
+                  type="text"
+                  value={paletteSearch}
+                  onChange={(e) => setPaletteSearch(e.target.value)}
+                  placeholder="Search blocks (Committees, FAQ...)"
+                  className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-[#115eff] text-slate-800 shadow-2xs"
+                />
 
                 <div className="space-y-2">
                   {filteredPalette.map((b) => (
                     <div
                       key={b.type}
-                      className="p-2.5 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-sm transition-all group flex flex-col justify-between gap-1.5 shadow-2xs"
+                      className="p-2.5 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-xl transition-all group flex flex-col justify-between gap-1.5 shadow-2xs"
                     >
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-[#004776] group-hover:text-[#115eff] transition-colors">
+                          <span className="text-xs font-bold text-slate-800 group-hover:text-[#115eff] transition-colors">
                             {b.title}
                           </span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
                             {b.category}
                           </span>
                         </div>
@@ -1261,7 +1251,7 @@ export default function PageBuilderRoute({
                       <button
                         type="button"
                         onClick={() => addBlock(b.type)}
-                        className="w-full inline-flex items-center justify-center gap-1 py-1 px-3 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-sm transition-all cursor-pointer shadow-2xs active:scale-95"
+                        className="w-full inline-flex items-center justify-center gap-1 py-1 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Add Block</span>
@@ -1274,9 +1264,11 @@ export default function PageBuilderRoute({
 
             {/* Tab 2: Page Layers Structure */}
             {sidebarTab === "layers" && (
-              <div className="flex-1 p-3.5 space-y-2 overflow-y-auto">
+              <div className="flex-1 p-3 space-y-2 overflow-y-auto">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <span className="text-xs font-bold text-[#004776]">Blocks in Canvas ({blocks.length})</span>
+                  <span className="text-xs font-bold text-slate-800">
+                    Blocks on Page ({blocks.length})
+                  </span>
                 </div>
                 <div className="space-y-1.5">
                   {blocks.map((block, idx) => {
@@ -1287,7 +1279,7 @@ export default function PageBuilderRoute({
                         key={block.id}
                         onClick={() => setSelectedBlockId(block.id)}
                         className={cn(
-                          "p-2 rounded-sm border text-xs flex items-center justify-between gap-2 transition-all cursor-pointer",
+                          "p-2 rounded-lg border text-xs flex items-center justify-between gap-2 transition-all cursor-pointer shadow-2xs",
                           isSelected
                             ? "bg-blue-50 border-blue-300 text-[#115eff] font-bold"
                             : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
@@ -1307,7 +1299,11 @@ export default function PageBuilderRoute({
                             className="p-1 hover:text-[#115eff]"
                             title={block.hidden ? "Show" : "Hide"}
                           >
-                            {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-500" /> : <Eye className="w-3.5 h-3.5 text-slate-400" />}
+                            {block.hidden ? (
+                              <EyeOff className="w-3.5 h-3.5 text-amber-500" />
+                            ) : (
+                              <Eye className="w-3.5 h-3.5 text-slate-400" />
+                            )}
                           </button>
                           <button
                             type="button"
@@ -1330,33 +1326,36 @@ export default function PageBuilderRoute({
 
             {/* Tab 3: Page Settings */}
             {sidebarTab === "settings" && (
-              <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+              <div className="flex-1 p-3.5 space-y-4 overflow-y-auto">
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-[#004776]">Page Information</span>
+                  <span className="text-xs font-bold text-slate-800">Page Information</span>
                   <p className="text-[11px] text-slate-500">Metadata and publication path</p>
                 </div>
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="block text-[#004776] font-bold mb-1">Page Title</label>
+                    <label className="block text-slate-700 font-bold mb-1">Page Title</label>
                     <input
                       type="text"
-                      value={page?.title || ""}
-                      readOnly
-                      className="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-sm text-slate-700 text-xs"
+                      value={pageTitle}
+                      onChange={(e) => {
+                        setPageTitle(e.target.value);
+                        setHasUnsaved(true);
+                      }}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-800 text-xs shadow-2xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-[#004776] font-bold mb-1">URL Path / Slug</label>
+                    <label className="block text-slate-700 font-bold mb-1">URL Path / Slug</label>
                     <input
                       type="text"
                       value={`/${page?.slug || ""}`}
                       readOnly
-                      className="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-sm text-slate-700 font-mono text-xs"
+                      className="w-full px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-[#004776] font-bold mb-1">Status</label>
-                    <span className="inline-block px-2.5 py-1 rounded-sm bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
+                    <label className="block text-slate-700 font-bold mb-1">Status</label>
+                    <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
                       PUBLISHED
                     </span>
                   </div>
@@ -1366,1029 +1365,630 @@ export default function PageBuilderRoute({
           </aside>
         )}
 
-        {/* ── Center Column: Live Drag-and-Drop Canvas with MagicUI Dot-Pattern ── */}
-        <main className="flex-1 min-w-0 bg-slate-100/90 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-65px)] flex flex-col items-center relative">
-          {/* Subtle Dot Matrix Background Texture */}
-          <DotPattern
-            width={20}
-            height={20}
-            cx={1.2}
-            cy={1.2}
-            cr={1.2}
-            className="opacity-40 pointer-events-none fill-slate-400"
-          />
-
-          <div
-            className={cn(
-              "relative z-10 w-full transition-all duration-300 space-y-6",
-              viewport === "desktop" && "max-w-full",
-              viewport === "tablet" && "max-w-[768px]",
-              viewport === "mobile" && "max-w-[390px]"
-            )}
-            style={
-              zoom !== 100
-                ? {
-                    transform: `scale(${zoom / 100})`,
-                    transformOrigin: "top center",
-                    transition: "transform 0.2s ease-out",
-                  }
-                : undefined
-            }
-          >
-            {blocks.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-sm border-2 border-dashed border-slate-300 space-y-3">
-                <Layers className="size-10 text-slate-300 mx-auto" />
-                <h3 className="text-sm font-bold text-[#004776]">Canvas is Empty</h3>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Click &ldquo;Load All Current Blocks&rdquo; above to load conference blocks, or select blocks from the library on the left.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBlocks(DEFAULT_PAGE_BLOCKS);
-                    setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
-                    toast.success("Loaded all 19 conference blocks");
-                  }}
-                  className="px-4 py-2 bg-[#115eff] text-white text-xs font-bold rounded-sm shadow-2xs cursor-pointer"
-                >
-                  Load All Conference Blocks
-                </button>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={blocks.map((b) => b.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-6">
-                    {blocks.map((block, idx) => (
-                      <SortableBlockItem
-                        key={block.id}
-                        block={block}
-                        index={idx}
-                        totalBlocks={blocks.length}
-                        isSelected={selectedBlockId === block.id}
-                        onSelect={() => setSelectedBlockId(block.id)}
-                        onRemove={() => removeBlock(idx)}
-                        onDuplicate={() => duplicateBlock(idx)}
-                        onToggleHide={() => toggleHideBlock(idx)}
-                        onMoveUp={() => moveBlock(idx, idx - 1)}
-                        onMoveDown={() => moveBlock(idx, idx + 1)}
-                      >
-                        {renderComponent(block)}
-                      </SortableBlockItem>
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </div>
-        </main>
-
-        {/* ── Right Column: Field-by-Field Detailed Component Inspector (320px) ── */}
-        {viewMode !== "preview" && selectedBlock && (
-          <aside className="w-[320px] shrink-0 bg-white border-l border-slate-200 p-4 space-y-5 overflow-y-auto max-h-[calc(100vh-65px)] select-none z-10">
-            <div className="space-y-4">
-              {/* Header with Close X */}
-              <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#115eff] block">
-                    {selectedMeta?.category || "Block"}
-                  </span>
-                  <h3 className="text-sm font-bold text-[#004776] leading-tight">
-                    {selectedMeta?.title || selectedBlock.type}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] px-2 py-0.5 rounded-sm bg-slate-100 text-slate-600 font-semibold border border-slate-200">
-                    #{selectedBlockIndex + 1}
-                  </span>
+        {/* ── Column 2: Center Canvas (Infinite Dot Matrix + True Desktop Size Frame) ── */}
+        <div
+          ref={scrollContainerRef}
+          onClick={() => setSelectedBlockId(null)}
+          className="flex-1 overflow-auto flex flex-col min-w-0 bg-[#edf2f7] dark:bg-[#0b0f19] bg-[radial-gradient(#94a3b8_1.25px,transparent_1.25px)] dark:bg-[radial-gradient(#334155_1.25px,transparent_1.25px)] [background-size:24px_24px] bg-fixed select-none relative"
+        >
+          {/* Centering Wrapper: allows wide artboard without clipping */}
+          <div className="min-w-full w-max flex flex-col items-center justify-start min-h-full py-8 px-6 box-border">
+            {/* Sized Visual Artboard Frame: true 1240px desktop width */}
+            <div
+              style={{
+                width: `${baseWidth}px`,
+                minWidth: `${baseWidth}px`,
+                maxWidth: `${baseWidth}px`,
+                transform: zoom !== 100 ? `scale(${zoom / 100})` : undefined,
+                transformOrigin: "top center",
+                backgroundColor: "#ffffff",
+              }}
+              className="flex flex-col min-h-[900px] rounded-xl border border-slate-300/90 dark:border-zinc-800 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.05)] ring-1 ring-slate-900/5 overflow-visible transition-all duration-150"
+            >
+              {blocks.length === 0 ? (
+                <div className="p-12 text-center bg-white rounded-xl space-y-3 m-auto">
+                  <Layers className="size-10 text-slate-300 mx-auto" />
+                  <h3 className="text-sm font-bold text-slate-800">Canvas is Empty</h3>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Click below to load all official conference blocks, or pick blocks from the library on the left.
+                  </p>
                   <button
                     type="button"
-                    onClick={() => setSelectedBlockId(null)}
-                    className="size-7 rounded-sm border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-[#004776] transition-colors cursor-pointer"
-                    title="Close Inspector"
+                    onClick={() => {
+                      setBlocks(DEFAULT_PAGE_BLOCKS);
+                      setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
+                      setHasUnsaved(true);
+                      toast.success("Loaded all conference blocks");
+                    }}
+                    className="px-4 py-2 bg-[#115eff] text-white text-xs font-bold rounded-lg shadow-2xs cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    Load All Conference Blocks
                   </button>
                 </div>
-              </div>
-
-              {/* Block Visibility Toggle */}
-              <div className="flex items-center justify-between p-2.5 rounded-sm bg-slate-50 border border-slate-200">
-                <span className="text-xs font-semibold text-slate-700">Display on Page</span>
-                <button
-                  type="button"
-                  onClick={() => toggleHideBlock(selectedBlockIndex)}
-                  className={cn(
-                    "px-2.5 py-1 rounded-sm text-xs font-bold transition-colors cursor-pointer",
-                    selectedBlock.hidden
-                      ? "bg-slate-200 text-slate-600"
-                      : "bg-[#115eff] text-white"
-                  )}
+              ) : (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  {selectedBlock.hidden ? "Hidden" : "Visible"}
-                </button>
-              </div>
+                  <SortableContext
+                    items={blocks.map((b) => b.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {/* Continuous seamless page content: NO space-y-6 breaking gaps */}
+                    <div className="w-full flex flex-col min-h-full pb-8">
+                      {blocks.map((block, idx) => (
+                        <SortableBlockItem
+                          key={block.id}
+                          block={block}
+                          index={idx}
+                          totalBlocks={blocks.length}
+                          isSelected={selectedBlockId === block.id}
+                          onSelect={() => setSelectedBlockId(block.id)}
+                          onRemove={() => removeBlock(idx)}
+                          onDuplicate={() => duplicateBlock(idx)}
+                          onToggleHide={() => toggleHideBlock(idx)}
+                          onMoveUp={() => moveBlock(idx, idx - 1)}
+                          onMoveDown={() => moveBlock(idx, idx + 1)}
+                        >
+                          {renderComponent(block)}
+                        </SortableBlockItem>
+                      ))}
 
-              {/* ── Field-by-Field Property Editors ── */}
-
-              {/* 1. HeroCarousel Inspector */}
-              {selectedBlock.type === "HeroCarousel" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Hero Carousel Settings
-                  </span>
-
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">
-                      Autoplay Duration (seconds)
-                    </label>
-                    <input
-                      type="number"
-                      min={3}
-                      max={30}
-                      value={Number(selectedBlock.props?.autoplayDuration ?? 7)}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          autoplayDuration: Number(e.target.value),
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-1">
-                    <label className="text-slate-600 text-xs font-medium">Show Overlay Text</label>
-                    <input
-                      type="checkbox"
-                      checked={Boolean(selectedBlock.props?.showOverlayText ?? true)}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          showOverlayText: e.target.checked,
-                        })
-                      }
-                      className="rounded-sm text-[#115eff] focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-1">
-                    <label className="text-slate-600 text-xs font-medium">Show Slide Indicators</label>
-                    <input
-                      type="checkbox"
-                      checked={Boolean(selectedBlock.props?.showIndicators ?? true)}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          showIndicators: e.target.checked,
-                        })
-                      }
-                      className="rounded-sm text-[#115eff] focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <BlockImageField
-                    label="Slide 1 Background Image"
-                    value={String(selectedBlock.props?.slide1Image ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        slide1Image: url,
-                      })
-                    }
-                  />
-
-                  <BlockImageField
-                    label="Slide 2 Background Image"
-                    value={String(selectedBlock.props?.slide2Image ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        slide2Image: url,
-                      })
-                    }
-                  />
-                </div>
+                      {/* Bottom Add Block Pill: matching HCMUTE */}
+                      {viewMode !== "preview" && (
+                        <div className="pt-8 pb-4 flex items-center justify-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => addBlock("NewsList")}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs border border-slate-200 shadow-2xs hover:border-blue-400 hover:text-[#115eff] transition-all cursor-pointer"
+                          >
+                            <Plus className="w-4 h-4 text-[#115eff]" />
+                            <span>Add block to end of page</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )}
-
-              {/* 2. WelcomeLetter Inspector */}
-              {selectedBlock.type === "WelcomeLetter" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Welcome Letter Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Heading</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.heading ?? "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          heading: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Main Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Welcome Message from the General Chairs & Honorary Chairs")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Salutation</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.salutation ?? "Dear Colleagues & Honored Participants,")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          salutation: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Theme</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.theme ?? "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          theme: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Dates &amp; Location Line</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.datesLocation ?? "October 6–10, 2027 • Ho Chi Minh City, Vietnam")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          datesLocation: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Chairs Signature / Portrait Image"
-                    value={String(selectedBlock.props?.signatureImage ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        signatureImage: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 3. NewsList Inspector */}
-              {selectedBlock.type === "NewsList" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    News Section Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Conference News & Announcements")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Stay updated with the latest milestones, partnership alerts, and program schedules")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 4. ConferenceVideo Inspector */}
-              {selectedBlock.type === "ConferenceVideo" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Video Spotlight Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Spotlight Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "IEEE SMC 2027 Comes to Ho Chi Minh City")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">YouTube Video Embed URL</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.videoUrl ?? "https://www.youtube.com/embed/vTwRHpRNtls")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          videoUrl: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Venue Name</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.venueName ?? "Sheraton Saigon Grand Opera Hotel")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          venueName: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Video Cover / Poster Image"
-                    value={String(selectedBlock.props?.posterImage ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        posterImage: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 5. PaperTemplates Inspector */}
-              {selectedBlock.type === "PaperTemplates" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Author Templates Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Author Submission Templates & Guidelines")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 6. CommitteesSection Inspector */}
-              {selectedBlock.type === "CommitteesSection" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Committees Carousel Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Organizing & Technical Committees")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Distinguished leadership and academic committee chairs driving IEEE SMC 2027")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Badge Label</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.badge ?? "Leadership & Organization")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          badge: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Auto-scroll Delay (ms)</label>
-                    <input
-                      type="number"
-                      min={1000}
-                      max={10000}
-                      step={500}
-                      value={Number(selectedBlock.props?.autoplayDelay ?? 3500)}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          autoplayDelay: Number(e.target.value),
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 7. PaymentMethods Inspector */}
-              {selectedBlock.type === "PaymentMethods" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Payment Methods Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Registration & Payment Methods")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Badge</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.badge ?? "Registration Guide")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          badge: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="VietQR Code Image"
-                    value={String(selectedBlock.props?.qrImage ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        qrImage: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 8. ContactCards Inspector */}
-              {selectedBlock.type === "ContactCards" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Contact Cards Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Contact the Organizing Secretariat")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Secretariat Email</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.email ?? "ieeesmc2027@hcmute.edu.vn")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          email: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Physical Location</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.location ?? "Ho Chi Minh City, Vietnam")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          location: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Venue Hotel</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.venue ?? "Sheraton Saigon Grand Opera Hotel")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          venue: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Website</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.website ?? "https://ieee-smc2027.org")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          website: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 9. Venue Inspector */}
-              {selectedBlock.type === "Venue" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Venue Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Venue Name</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.venueName ?? "Sheraton Saigon Grand Opera Hotel")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          venueName: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Address</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.address ?? "88 Dong Khoi Street, District 1, Ho Chi Minh City, Vietnam")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          address: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Venue Hero Photo"
-                    value={String(selectedBlock.props?.venueImage ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        venueImage: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 10. CallForPapers Inspector */}
-              {selectedBlock.type === "CallForPapers" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Call for Papers Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Call for Papers")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Theme</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.theme ?? "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          theme: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 11. TracksExplorer Inspector */}
-              {selectedBlock.type === "TracksExplorer" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Technical Tracks Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Technical Tracks & Topics")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Explore technical tracks across Systems Science, Cybernetics, and Human-Machine Systems")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 12. ImportantDates Inspector */}
-              {selectedBlock.type === "ImportantDates" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Important Dates Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Important Deadlines & Milestones")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "Mark your calendars for key submission and registration deadlines")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 13. SubmissionCountdown Inspector */}
-              {selectedBlock.type === "SubmissionCountdown" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Countdown Timer Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Milestone Headline</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.headline ?? "Full Paper Submission Deadline")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          headline: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Target Date (YYYY-MM-DD)</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.targetDate ?? "2027-04-08")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          targetDate: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 14. Keynotes Inspector */}
-              {selectedBlock.type === "Keynotes" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    Keynote Speakers Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "Plenary & Keynote Speakers")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "World-renowned leaders and pioneers shaping the future of AI & cybernetics")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Featured Keynote Photo"
-                    value={String(selectedBlock.props?.featuredSpeakerPhoto ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        featuredSpeakerPhoto: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 15. About Inspector */}
-              {selectedBlock.type === "About" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    About Section Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Section Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "About HCM-UTE & IEEE SMC")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Host Campus Photo"
-                    value={String(selectedBlock.props?.campusImage ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        campusImage: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* 16. CustomHTML Inspector */}
-              {selectedBlock.type === "CustomHTML" && (
-                <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    HTML / Embed Code
-                  </span>
-                  <textarea
-                    rows={8}
-                    value={String(selectedBlock.props?.content ?? "")}
-                    onChange={(e) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        content: e.target.value,
-                      })
-                    }
-                    className="w-full px-2.5 py-2 font-mono text-[11px] bg-white border border-slate-300 rounded-sm focus:outline-none focus:border-[#115eff]"
-                    placeholder="<div>Enter HTML here...</div>"
-                  />
-                </div>
-              )}
-
-              {/* Fallback field editor for any other block */}
-              {!["HeroCarousel", "WelcomeLetter", "NewsList", "ConferenceVideo", "PaperTemplates", "CommitteesSection", "PaymentMethods", "ContactCards", "Venue", "CallForPapers", "TracksExplorer", "ImportantDates", "SubmissionCountdown", "Keynotes", "About", "CustomHTML"].includes(selectedBlock.type) && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
-                  <span className="font-bold text-slate-800 block text-xs">
-                    {selectedMeta?.title || selectedBlock.type} Settings
-                  </span>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Title</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.title ?? "")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          title: e.target.value,
-                        })
-                      }
-                      placeholder={selectedMeta?.title}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 text-xs mb-1 font-medium">Subtitle</label>
-                    <input
-                      type="text"
-                      value={String(selectedBlock.props?.subtitle ?? "")}
-                      onChange={(e) =>
-                        updateBlockProps(selectedBlock.id, {
-                          ...selectedBlock.props,
-                          subtitle: e.target.value,
-                        })
-                      }
-                      placeholder="Optional subtitle..."
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
-                    />
-                  </div>
-                  <BlockImageField
-                    label="Block Featured Image"
-                    value={String(selectedBlock.props?.image ?? "")}
-                    onChange={(url) =>
-                      updateBlockProps(selectedBlock.id, {
-                        ...selectedBlock.props,
-                        image: url,
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              {/* Quick Actions (Duplicate / Delete) */}
-              <div className="pt-2 flex flex-col gap-2">
-                <button
-                  type="button"
-                  onClick={() => duplicateBlock(selectedBlockIndex)}
-                  className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Duplicate Block</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => removeBlock(selectedBlockIndex)}
-                  className="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete Block</span>
-                </button>
-              </div>
             </div>
+          </div>
+        </div>
+
+        {/* ── Column 3: Right Inspector (320px) matching HCMUTE PropertyInspector ── */}
+        {viewMode !== "preview" && (
+          <aside className="w-[320px] shrink-0 bg-white border-l border-slate-200 flex flex-col overflow-hidden select-none z-10 text-slate-900 font-sans min-w-0">
+            {!selectedBlock ? (
+              /* Empty Selection State */
+              <div className="w-full h-full p-6 flex flex-col items-center justify-center text-center select-none bg-white">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#115eff] mb-3 shadow-xs">
+                  <Sliders className="w-6 h-6" />
+                </div>
+                <p className="font-bold text-slate-800 text-sm mb-1">No Block Selected</p>
+                <p className="text-xs leading-relaxed max-w-[220px] text-slate-500">
+                  Click any block on the canvas or layers tree to customize its content and styles.
+                </p>
+              </div>
+            ) : (
+              /* Active Block Property Inspector */
+              <div className="w-full h-full flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="p-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 min-w-0 gap-2 shrink-0">
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="text-[13px] font-bold text-slate-800 truncate">
+                      {selectedMeta?.title || selectedBlock.type}
+                    </p>
+                    <p className="text-[11px] text-slate-400 font-mono truncate">
+                      #{selectedBlock.id}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => toggleHideBlock(selectedBlockIndex)}
+                      className={cn(
+                        "px-2 py-1 rounded-lg border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+                        selectedBlock.hidden
+                          ? "bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                      )}
+                      title={selectedBlock.hidden ? "Block is hidden" : "Hide block"}
+                    >
+                      {selectedBlock.hidden ? (
+                        <EyeOff className="w-3.5 h-3.5 text-amber-600" />
+                      ) : (
+                        <Eye className="w-3.5 h-3.5 text-slate-500" />
+                      )}
+                      <span>{selectedBlock.hidden ? "Hidden" : "Visible"}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setInspectorTab(inspectorTab === "json" ? "content" : "json")
+                      }
+                      className={cn(
+                        "p-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+                        inspectorTab === "json"
+                          ? "bg-blue-50 border-blue-200 text-[#115eff]"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                      )}
+                      title="Edit raw JSON AST"
+                    >
+                      <Code2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBlockId(null)}
+                      className="size-7 rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition-colors cursor-pointer"
+                      title="Close Inspector"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tabs: Content, Styles */}
+                <div className="flex border-b border-slate-200 p-1.5 bg-slate-100/60 gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setInspectorTab("content")}
+                    className={cn(
+                      "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer",
+                      inspectorTab === "content"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                    )}
+                  >
+                    <FileEdit className="w-3.5 h-3.5" />
+                    <span>Content</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInspectorTab("styles")}
+                    className={cn(
+                      "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer",
+                      inspectorTab === "styles"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                    )}
+                  >
+                    <Paintbrush className="w-3.5 h-3.5" />
+                    <span>Styles</span>
+                  </button>
+                </div>
+
+                {/* Tab Content Panels */}
+                <div className="flex-1 overflow-y-auto p-3.5 space-y-4 min-w-0">
+                  {/* JSON Editor Tab */}
+                  {inspectorTab === "json" && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800">Raw Block AST</span>
+                        <button
+                          type="button"
+                          onClick={handleApplyJson}
+                          className="px-2.5 py-1 bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold rounded-md shadow-2xs cursor-pointer"
+                        >
+                          Apply JSON
+                        </button>
+                      </div>
+                      {jsonError && (
+                        <p className="text-[11px] text-rose-600 font-semibold">{jsonError}</p>
+                      )}
+                      <textarea
+                        rows={16}
+                        value={jsonText}
+                        onChange={(e) => setJsonText(e.target.value)}
+                        className="w-full p-2 bg-slate-900 text-slate-100 font-mono text-[11px] rounded-lg focus:outline-none"
+                      />
+                    </div>
+                  )}
+
+                  {/* Styles Tab */}
+                  {inspectorTab === "styles" && (
+                    <div className="space-y-4 text-xs">
+                      {/* Display toggle */}
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                        <div>
+                          <span className="font-bold text-slate-800 block">Display on Page</span>
+                          <span className="text-[10px] text-slate-500">
+                            {selectedBlock.hidden ? "Currently hidden" : "Visible to attendees"}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleHideBlock(selectedBlockIndex)}
+                          className={cn(
+                            "px-2.5 py-1 rounded-md text-xs font-bold transition-colors cursor-pointer",
+                            selectedBlock.hidden
+                              ? "bg-slate-200 text-slate-600"
+                              : "bg-[#115eff] text-white"
+                          )}
+                        >
+                          {selectedBlock.hidden ? "Hidden" : "Visible"}
+                        </button>
+                      </div>
+
+                      {/* Background Style Preset */}
+                      <div className="space-y-1.5">
+                        <label className="font-semibold text-slate-700 block">
+                          Background Style
+                        </label>
+                        <select
+                          value={String(selectedBlock.styles?.bgPreset || "default")}
+                          onChange={(e) =>
+                            updateBlockStyles(selectedBlock.id, {
+                              ...selectedBlock.styles,
+                              bgPreset: e.target.value,
+                            })
+                          }
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
+                        >
+                          <option value="default">Default Component Theme</option>
+                          <option value="white">Pure White (#ffffff)</option>
+                          <option value="slate-50">Light Slate (#f8fafc)</option>
+                          <option value="royal-blue">Royal Blue Theme (#004776)</option>
+                          <option value="dark">Dark Theme (#0f172a)</option>
+                        </select>
+                      </div>
+
+                      {/* Padding Top */}
+                      <div className="space-y-1.5">
+                        <label className="font-semibold text-slate-700 block">
+                          Padding Top (px)
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          max={200}
+                          value={Number(selectedBlock.styles?.paddingTop ?? 0)}
+                          onChange={(e) =>
+                            updateBlockStyles(selectedBlock.id, {
+                              ...selectedBlock.styles,
+                              paddingTop: Number(e.target.value),
+                            })
+                          }
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
+                        />
+                      </div>
+
+                      {/* Padding Bottom */}
+                      <div className="space-y-1.5">
+                        <label className="font-semibold text-slate-700 block">
+                          Padding Bottom (px)
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          max={200}
+                          value={Number(selectedBlock.styles?.paddingBottom ?? 0)}
+                          onChange={(e) =>
+                            updateBlockStyles(selectedBlock.id, {
+                              ...selectedBlock.styles,
+                              paddingBottom: Number(e.target.value),
+                            })
+                          }
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Content Tab: Specific Component Props */}
+                  {inspectorTab === "content" && (
+                    <div className="space-y-4 text-xs">
+                      {/* HeroCarousel Inspector */}
+                      {selectedBlock.type === "HeroCarousel" && (
+                        <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl shadow-2xs">
+                          <span className="font-bold text-slate-800 block text-xs">
+                            Hero Carousel Settings
+                          </span>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">
+                              Autoplay Duration (seconds)
+                            </label>
+                            <input
+                              type="number"
+                              min={3}
+                              max={30}
+                              value={Number(selectedBlock.props?.autoplayDuration ?? 7)}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  autoplayDuration: Number(e.target.value),
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1">
+                            <label className="text-slate-600 font-medium">Show Overlay Text</label>
+                            <input
+                              type="checkbox"
+                              checked={Boolean(selectedBlock.props?.showOverlayText ?? true)}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  showOverlayText: e.target.checked,
+                                })
+                              }
+                              className="rounded text-[#115eff] focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1">
+                            <label className="text-slate-600 font-medium">Show Slide Indicators</label>
+                            <input
+                              type="checkbox"
+                              checked={Boolean(selectedBlock.props?.showIndicators ?? true)}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  showIndicators: e.target.checked,
+                                })
+                              }
+                              className="rounded text-[#115eff] focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <BlockImageField
+                            label="Slide 1 Background Image"
+                            value={String(selectedBlock.props?.slide1Image ?? "")}
+                            onChange={(url) =>
+                              updateBlockProps(selectedBlock.id, {
+                                ...selectedBlock.props,
+                                slide1Image: url,
+                              })
+                            }
+                          />
+
+                          <BlockImageField
+                            label="Slide 2 Background Image"
+                            value={String(selectedBlock.props?.slide2Image ?? "")}
+                            onChange={(url) =>
+                              updateBlockProps(selectedBlock.id, {
+                                ...selectedBlock.props,
+                                slide2Image: url,
+                              })
+                            }
+                          />
+                        </div>
+                      )}
+
+                      {/* WelcomeLetter Inspector */}
+                      {selectedBlock.type === "WelcomeLetter" && (
+                        <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl shadow-2xs">
+                          <span className="font-bold text-slate-800 block text-xs">
+                            Welcome Letter Settings
+                          </span>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Section Heading</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.heading ?? "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  heading: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Main Title</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.title ?? "Welcome Message from the General Chairs & Honorary Chairs")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  title: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Salutation</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.salutation ?? "Dear Colleagues & Honored Participants,")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  salutation: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Theme</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.theme ?? "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  theme: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Dates &amp; Location Line</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.datesLocation ?? "October 6–10, 2027 • Ho Chi Minh City, Vietnam")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  datesLocation: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* NewsList Inspector */}
+                      {selectedBlock.type === "NewsList" && (
+                        <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl shadow-2xs">
+                          <span className="font-bold text-slate-800 block text-xs">
+                            News Section Settings
+                          </span>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Section Title</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.title ?? "Conference News & Announcements")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  title: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Subtitle</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.subtitle ?? "Stay updated with the latest milestones, partnership alerts, and program schedules")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  subtitle: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* ConferenceVideo Inspector */}
+                      {selectedBlock.type === "ConferenceVideo" && (
+                        <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl shadow-2xs">
+                          <span className="font-bold text-slate-800 block text-xs">
+                            Video Spotlight Settings
+                          </span>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Spotlight Title</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.title ?? "IEEE SMC 2027 Comes to Ho Chi Minh City")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  title: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">Subtitle</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.subtitle ?? "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  subtitle: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-600 mb-1 font-medium">YouTube Video Embed URL</label>
+                            <input
+                              type="text"
+                              value={String(selectedBlock.props?.videoUrl ?? "https://www.youtube.com/embed/vTwRHpRNtls")}
+                              onChange={(e) =>
+                                updateBlockProps(selectedBlock.id, {
+                                  ...selectedBlock.props,
+                                  videoUrl: e.target.value,
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg font-mono text-[11px] focus:outline-none focus:border-[#115eff]"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Generic Prop Editor for other blocks */}
+                      {!["HeroCarousel", "WelcomeLetter", "NewsList", "ConferenceVideo"].includes(
+                        selectedBlock.type
+                      ) && (
+                        <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl shadow-2xs">
+                          <span className="font-bold text-slate-800 block text-xs">
+                            {selectedMeta?.title || selectedBlock.type} Properties
+                          </span>
+                          {Object.keys(selectedBlock.props || {}).length === 0 ? (
+                            <p className="text-[11px] text-slate-500">
+                              This block renders dynamically from the conference database and requires no extra configuration.
+                            </p>
+                          ) : (
+                            Object.entries(selectedBlock.props || {}).map(([key, val]) => (
+                              <div key={key}>
+                                <label className="block text-slate-600 mb-1 font-medium capitalize">
+                                  {key.replace(/([A-Z])/g, " $1")}
+                                </label>
+                                {typeof val === "boolean" ? (
+                                  <input
+                                    type="checkbox"
+                                    checked={val}
+                                    onChange={(e) =>
+                                      updateBlockProps(selectedBlock.id, {
+                                        ...selectedBlock.props,
+                                        [key]: e.target.checked,
+                                      })
+                                    }
+                                    className="rounded text-[#115eff]"
+                                  />
+                                ) : typeof val === "number" ? (
+                                  <input
+                                    type="number"
+                                    value={val}
+                                    onChange={(e) =>
+                                      updateBlockProps(selectedBlock.id, {
+                                        ...selectedBlock.props,
+                                        [key]: Number(e.target.value),
+                                      })
+                                    }
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg"
+                                  />
+                                ) : (
+                                  <input
+                                    type="text"
+                                    value={String(val || "")}
+                                    onChange={(e) =>
+                                      updateBlockProps(selectedBlock.id, {
+                                        ...selectedBlock.props,
+                                        [key]: e.target.value,
+                                      })
+                                    }
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg"
+                                  />
+                                )}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </aside>
         )}
       </div>
