@@ -12,7 +12,7 @@ let spawnedProcess: ChildProcess | null = null;
 export async function isServerRunning(baseUrl: string = E2E_CONFIG.baseUrl): Promise<boolean> {
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 2000);
+    const timer = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(`${baseUrl}/api/admin/pages`, {
       signal: controller.signal,
     });
