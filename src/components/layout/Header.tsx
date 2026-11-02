@@ -300,15 +300,21 @@ export function Header() {
 
   const [headerConfig, setHeaderConfig] = useState<HeaderConfig>(DEFAULT_HEADER_DATA);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ role?: string; name?: string } | null>(null);
 
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      setIsLoggedIn(
-        document.cookie
-          .split(";")
-          .some((c) => c.trim().startsWith("admin_session="))
-      );
-    }
+    fetch("/api/auth/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) {
+          setIsLoggedIn(true);
+          setCurrentUser(data.user);
+        } else {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => null);
   }, []);
 
   useEffect(() => {
@@ -687,13 +693,15 @@ export function Header() {
               {/* Actions on Far Right: Login + CTA Button */}
               <div className="flex items-center gap-2 xl:gap-2.5 shrink-0">
                 <Link
-                  href={isLoggedIn ? "/admin" : "/admin/login"}
+                  href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={closeMenu}
                   className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-3.5 text-[13px] xl:text-[14px] font-semibold text-[#004776] hover:text-[#115eff] bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-200 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
-                  title={isLoggedIn ? "Admin Dashboard" : "Portal Login"}
+                  title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
                 >
                   <User className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
-                  <span>{isLoggedIn ? "Dashboard" : "Login"}</span>
+                  <span>
+                    {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
+                  </span>
                 </Link>
 
                 {showCta && (
@@ -901,12 +909,18 @@ export function Header() {
               {/* Mobile CTA and Quick Contacts */}
               <div className="p-4 space-y-2.5 bg-slate-50/60">
                 <Link
-                  href={isLoggedIn ? "/admin" : "/admin/login"}
+                  href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-slate-100 text-[#004776] border border-slate-200 hover:border-slate-300 font-bold text-sm sm:text-base rounded-lg transition-colors shadow-2xs"
                 >
                   <User className="w-4 h-4 text-[#115eff]" />
-                  <span>{isLoggedIn ? "Admin Dashboard" : "Sign In / Login"}</span>
+                  <span>
+                    {!isLoggedIn
+                      ? "Sign In / Register"
+                      : currentUser?.role === "ADMIN"
+                      ? "Admin Dashboard"
+                      : "Delegate Portal"}
+                  </span>
                 </Link>
 
                 {showCta && (

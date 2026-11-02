@@ -90,7 +90,7 @@ export async function ensureDatabaseAdmins(): Promise<void> {
           email: "tctoan1024@gmail.com",
           name: "Toan Tran",
           role: Role.ADMIN,
-          provider: "google",
+          provider: "email",
           passwordHash: defaultPasswordHash,
           profileData: {
             affiliation: "HCMUTE",
@@ -158,7 +158,7 @@ export async function createSessionToken(user: SessionUser): Promise<string> {
     name: user.name,
     avatar: user.avatar,
     role: user.role,
-    provider: user.provider || "email_link",
+    provider: user.provider || "email",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -175,7 +175,7 @@ export async function verifySessionToken(token: string): Promise<SessionUser | n
       name: payload.name as string,
       avatar: (payload.avatar as string) || null,
       role: (payload.role as "ADMIN" | "USER") || "USER",
-      provider: (payload.provider as string) || "email_link",
+      provider: (payload.provider as string) || "email",
     };
   } catch {
     return null;
@@ -261,7 +261,7 @@ export async function upsertUser(user: {
       name: existing?.name && !user.name ? existing.name : finalName,
       avatar: user.avatar !== undefined ? user.avatar : existing?.avatar || null,
       role: finalRole,
-      provider: user.provider || existing?.provider || "email_link",
+      provider: user.provider || existing?.provider || "email",
       profileData: mergedProfileData,
       updatedAt: new Date(),
     },
@@ -271,7 +271,7 @@ export async function upsertUser(user: {
       name: finalName,
       avatar: user.avatar || null,
       role: finalRole,
-      provider: user.provider || "email_link",
+      provider: user.provider || "email",
       profileData: mergedProfileData,
     },
   });

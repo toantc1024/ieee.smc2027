@@ -32,28 +32,6 @@ import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
 
 
-function GoogleIcon({ className = "size-3.5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24">
-      <path
-        fill="#4285F4"
-        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.13z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
-      />
-    </svg>
-  );
-}
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
@@ -112,6 +90,7 @@ export default function AdminUsersPage() {
     role: "ADMIN" | "USER";
     password: string;
     avatar: string;
+    profileData?: Record<string, unknown>;
   }) => {
     setCreating(true);
     setAlert(null);
@@ -431,30 +410,40 @@ export default function AdminUsersPage() {
         },
       },
       {
-        accessorKey: "provider",
-        header: "Provider",
+        id: "conferenceRole",
+        header: "Conference Track",
         cell: ({ row }) => {
-          const provider = (row.getValue("provider") as string) || "email";
-          const provLower = provider.toLowerCase();
+          const profile = row.original.profileData || {};
+          const confRole = String(profile.conferenceRole || "").toUpperCase();
+
+          if (confRole === "SPEAKER") {
+            return (
+              <div className="flex items-center justify-center">
+                <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  Speaker
+                </span>
+              </div>
+            );
+          }
+
+          if (confRole === "SUBMITTER") {
+            return (
+              <div className="flex items-center justify-center">
+                <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                  <span className="size-1.5 rounded-full bg-blue-500" />
+                  Submitter
+                </span>
+              </div>
+            );
+          }
 
           return (
             <div className="flex items-center justify-center">
-              {provLower.includes("google") ? (
-                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
-                  <GoogleIcon className="size-3.5 shrink-0" />
-                  <span>Google</span>
-                </div>
-              ) : provLower.includes("password") ? (
-                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
-                  <KeyRound className="size-3.5 text-slate-400 shrink-0" />
-                  <span>Password</span>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs text-slate-700 font-medium border border-slate-200 bg-slate-50/90 shadow-2xs">
-                  <Mail className="size-3.5 text-slate-400 shrink-0" />
-                  <span>Email</span>
-                </div>
-              )}
+              <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                <span className="size-1.5 rounded-full bg-slate-400" />
+                Attendee
+              </span>
             </div>
           );
         },

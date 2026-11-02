@@ -115,14 +115,34 @@ function PortalContent() {
     }
 
     setLoading(true);
-    fetch("/api/registration?mine=1")
+    fetch("/api/profile")
       .then((res) => (res.ok ? res.json() : null))
       .then(async (json) => {
         if (json?.success && json.data) {
-          if (json.data.user) setSessionUser(json.data.user);
-          if (json.data.registration) {
-            setSearchCode(json.data.registration.registrationCode);
-            await hydrateStateFromRegistration(json.data.registration);
+          if (json.data.user) {
+            setSessionUser(json.data.user);
+            const u = json.data.user;
+            const p = (u.profileData && typeof u.profileData === "object" ? u.profileData : {}) as Record<string, any>;
+            setEditBasic({
+              fullName: u.name || "",
+              phone: String(p.phone || ""),
+              affiliation: String(p.affiliation || ""),
+              country: String(p.country || ""),
+              avatarUrl: u.avatar || "",
+            });
+            setEditJson((prev) => ({
+              ...prev,
+              conferenceRole: p.conferenceRole || "SUBMITTER",
+              paperId: p.paperId || "",
+              paperTitle: p.paperTitle || "",
+              bio: p.bio || "",
+              ...p,
+            }));
+          }
+          if (json.data.registrations && json.data.registrations.length > 0) {
+            const reg = json.data.registrations[0];
+            setSearchCode(reg.registrationCode);
+            await hydrateStateFromRegistration(reg);
           }
         }
       })
@@ -132,39 +152,14 @@ function PortalContent() {
 
   const handleSaveProfileAndJson = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regData) return;
 
     setSaving(true);
     setErrorMsg("");
     setSuccessMsg("");
 
     try {
-      const res = await fetch(`/api/registration/${regData.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          registrationCode: regData.registrationCode,
-          fullName: editBasic.fullName,
-          phone: editBasic.phone,
-          affiliation: editBasic.affiliation,
-          country: editBasic.country,
-          avatarUrl: editBasic.avatarUrl || null,
-          dietaryRequirement: editJson.dietaryRequirement,
-          travelNotes: editJson.travelNotes,
-          needsVisaSupport: editJson.needsVisaSupport,
-          passportNumber: editJson.passportNumber,
-          paperId: editJson.paperId,
-          paperTitle: editJson.paperTitle,
-          formData: editJson,
-        }),
-      });
-
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || "Failed to update profile");
-      }
-
-      fetch("/api/profile", {
+      // 1. Save directly to user profile
+      const profRes = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -177,12 +172,48 @@ function PortalContent() {
             ...editJson,
           },
         }),
-      }).catch(() => null);
+      });
 
-      await hydrateStateFromRegistration(json.data.registration);
-      setSuccessMsg("Delegate profile and JSON formData saved to PostgreSQL.");
+      const profJson = await profRes.json();
+      if (!profRes.ok || !profJson.success) {
+        throw new Error(profJson.error || "Failed to update profile");
+      }
+
+      if (profJson.data?.user) {
+        setSessionUser(profJson.data.user);
+      }
+
+      // 2. If registration record exists, sync it too
+      if (regData?.id) {
+        const regRes = await fetch(`/api/registration/${regData.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            registrationCode: regData.registrationCode,
+            fullName: editBasic.fullName,
+            phone: editBasic.phone,
+            affiliation: editBasic.affiliation,
+            country: editBasic.country,
+            avatarUrl: editBasic.avatarUrl || null,
+            dietaryRequirement: editJson.dietaryRequirement,
+            travelNotes: editJson.travelNotes,
+            needsVisaSupport: editJson.needsVisaSupport,
+            passportNumber: editJson.passportNumber,
+            paperId: editJson.paperId,
+            paperTitle: editJson.paperTitle,
+            formData: editJson,
+          }),
+        });
+
+        const regJson = await regRes.json();
+        if (regRes.ok && regJson.success) {
+          await hydrateStateFromRegistration(regJson.data.registration);
+        }
+      }
+
+      setSuccessMsg("Conference profile updated successfully.");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Failed to save changes");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to save profile changes");
     } finally {
       setSaving(false);
     }
@@ -280,18 +311,53 @@ function PortalContent() {
           </div>
         )}
 
-        {!regData && !loading && (
+        {!regData && !loading && sessionUser && (
+          <div className="space-y-6">
+            <Card className="p-6 bg-white border border-slate-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-slate-900">
+                      Welcome, {sessionUser.name}
+                    </h2>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[#115eff] border border-blue-200">
+                      {String(editJson.conferenceRole || "SUBMITTER")} Track
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Update your profile information, track details, and paper presentation details below.
+                  </p>
+                </div>
+                <Link href="/registration">
+                  <Button variant="ute" size="sm">
+                    Register for Conference Pass
+                    <ChevronRight className="size-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+
+            <PortalProfileJsonEditor
+              editBasic={editBasic}
+              editJson={editJson}
+              saving={saving}
+              onChangeBasic={setEditBasic}
+              onChangeJson={setEditJson}
+              onSubmit={handleSaveProfileAndJson}
+            />
+          </div>
+        )}
+
+        {!regData && !loading && !sessionUser && (
           <Card className="p-10 text-center max-w-2xl mx-auto items-center my-6">
             <div className="size-16 rounded-2xl bg-blue-50 text-[#115eff] flex items-center justify-center">
               <QrCode className="size-8" />
             </div>
             <h3 className="text-xl font-bold text-slate-900">
-              {sessionUser
-                ? `Welcome, ${sessionUser.name}. No registration linked yet.`
-                : "Enter your registration code to view your badge"}
+              Enter your registration code to view your badge
             </h3>
             <p className="text-sm text-slate-500 max-w-md">
-              Complete the conference registration form to generate your unique SMC27 delegate code, or sign in via Email Link / Google OAuth.
+              Complete the conference registration form to generate your unique SMC27 delegate code, or sign in to manage your profile.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link href="/registration">
@@ -300,11 +366,9 @@ function PortalContent() {
                   <ChevronRight className="size-4" />
                 </Button>
               </Link>
-              {!sessionUser && (
-                <Link href="/admin/login">
-                  <Button variant="outline">Sign In with Email Link / Google</Button>
-                </Link>
-              )}
+              <Link href="/admin/login">
+                <Button variant="outline">Sign In / Register</Button>
+              </Link>
             </div>
           </Card>
         )}

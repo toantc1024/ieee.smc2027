@@ -30,8 +30,9 @@ interface CreateUserModalProps {
     role: "ADMIN" | "USER";
     password: string;
     avatar: string;
+    profileData?: Record<string, unknown>;
   }) => Promise<void>;
-}
+} 
 
 export function CreateUserModal({
   open,
@@ -42,6 +43,8 @@ export function CreateUserModal({
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<"ADMIN" | "USER">("USER");
+  const [conferenceRole, setConferenceRole] = useState<"SUBMITTER" | "SPEAKER" | "ATTENDEE">("SUBMITTER");
+  const [affiliation, setAffiliation] = useState("");
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState("");
   const [error, setError] = useState("");
@@ -63,10 +66,16 @@ export function CreateUserModal({
         role,
         password: password.trim(),
         avatar: avatar.trim(),
+        profileData: {
+          conferenceRole,
+          affiliation: affiliation.trim(),
+        },
       });
       setEmail("");
       setName("");
       setRole("USER");
+      setConferenceRole("SUBMITTER");
+      setAffiliation("");
       setPassword("");
       setAvatar("");
       onClose();
@@ -115,16 +124,16 @@ export function CreateUserModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
+              placeholder="Nguyen Van A"
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
               required
             />
           </div>
 
-          {/* Role */}
+          {/* System Role */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
-              Role
+              System Role
             </Label>
             <Select
               value={role}
@@ -140,6 +149,40 @@ export function CreateUserModal({
             </Select>
           </div>
 
+          {/* Conference Track / Role */}
+          <div className="space-y-1.5">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Conference Track
+            </Label>
+            <Select
+              value={conferenceRole}
+              onValueChange={(val) => setConferenceRole(val as "SUBMITTER" | "SPEAKER" | "ATTENDEE")}
+            >
+              <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SUBMITTER">Submitter / Author</SelectItem>
+                <SelectItem value="SPEAKER">Speaker / Presenter</SelectItem>
+                <SelectItem value="ATTENDEE">Attendee</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Affiliation */}
+          <div className="space-y-1.5">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Affiliation
+            </Label>
+            <Input
+              type="text"
+              value={affiliation}
+              onChange={(e) => setAffiliation(e.target.value)}
+              placeholder="e.g. HCMUTE, IEEE"
+              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
+            />
+          </div>
+
           {/* Initial Password */}
           <div className="space-y-1.5">
             <Label className="font-semibold text-slate-700 normal-case tracking-normal">
@@ -153,7 +196,7 @@ export function CreateUserModal({
               className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             />
             <p className="text-[11px] text-slate-400">
-              If left empty, the user can log in via Google or Email OTP.
+              If left empty, the user can log in via Email Code.
             </p>
           </div>
 

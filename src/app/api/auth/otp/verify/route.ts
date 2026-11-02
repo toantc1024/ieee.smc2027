@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const user = await upsertUser({
       email,
-      provider: "email_otp",
+      provider: "email",
     });
 
     const token = await createSessionToken(user);

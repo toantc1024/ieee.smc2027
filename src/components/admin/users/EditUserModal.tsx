@@ -55,6 +55,7 @@ export function EditUserModal({
 }: EditUserModalProps) {
   const [name, setName] = useState("");
   const [role, setRole] = useState<"ADMIN" | "USER">("USER");
+  const [conferenceRole, setConferenceRole] = useState<"SUBMITTER" | "SPEAKER" | "ATTENDEE">("SUBMITTER");
   const [avatar, setAvatar] = useState("");
   const [password, setPassword] = useState("");
   const [affiliation, setAffiliation] = useState("");
@@ -68,6 +69,10 @@ export function EditUserModal({
       setAvatar(user.avatar || "");
       setPassword("");
       const profile = user.profileData || {};
+      const confRole = String(profile.conferenceRole || "").toUpperCase();
+      setConferenceRole(
+        confRole === "SPEAKER" ? "SPEAKER" : confRole === "ATTENDEE" ? "ATTENDEE" : "SUBMITTER"
+      );
       setAffiliation(String(profile.affiliation || ""));
       setCountry(String(profile.country || ""));
       setError("");
@@ -93,6 +98,7 @@ export function EditUserModal({
         ...(password.trim() ? { password: password.trim() } : {}),
         profileData: {
           ...(user.profileData || {}),
+          conferenceRole,
           affiliation: affiliation.trim(),
           country: country.trim(),
         },
@@ -149,6 +155,26 @@ export function EditUserModal({
               <SelectContent>
                 <SelectItem value="USER">Regular User</SelectItem>
                 <SelectItem value="ADMIN">Administrator</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Conference Track */}
+          <div className="space-y-1.5">
+            <Label className="font-semibold text-slate-700 normal-case tracking-normal">
+              Conference Track
+            </Label>
+            <Select
+              value={conferenceRole}
+              onValueChange={(val) => setConferenceRole(val as "SUBMITTER" | "SPEAKER" | "ATTENDEE")}
+            >
+              <SelectTrigger className="h-9 w-full bg-slate-50 border-slate-200 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SUBMITTER">Submitter / Author</SelectItem>
+                <SelectItem value="SPEAKER">Speaker / Presenter</SelectItem>
+                <SelectItem value="ATTENDEE">Attendee</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -74,6 +74,48 @@ export function PortalProfileJsonEditor({
           />
         </div>
 
+        {/* Conference Track Selector */}
+        <div className="space-y-2 pt-1 pb-2">
+          <Label className="text-xs font-bold text-slate-800">
+            Conference Participation Track
+          </Label>
+          <div className="grid grid-cols-3 gap-2.5 max-w-lg">
+            <button
+              type="button"
+              onClick={() => onChangeJson({ ...editJson, conferenceRole: "SUBMITTER" })}
+              className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                (editJson.conferenceRole || "SUBMITTER") === "SUBMITTER"
+                  ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+              }`}
+            >
+              Submitter
+            </button>
+            <button
+              type="button"
+              onClick={() => onChangeJson({ ...editJson, conferenceRole: "SPEAKER" })}
+              className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                editJson.conferenceRole === "SPEAKER"
+                  ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+              }`}
+            >
+              Speaker
+            </button>
+            <button
+              type="button"
+              onClick={() => onChangeJson({ ...editJson, conferenceRole: "ATTENDEE" })}
+              className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                editJson.conferenceRole === "ATTENDEE"
+                  ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+              }`}
+            >
+              Attendee
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div className="space-y-1.5">
             <Label>Full Name</Label>
@@ -111,6 +153,40 @@ export function PortalProfileJsonEditor({
               }
             />
           </div>
+
+          <div className="space-y-1.5">
+            <Label>Paper ID</Label>
+            <Input
+              placeholder="#SMC-1024"
+              value={editJson.paperId || ""}
+              onChange={(e) =>
+                onChangeJson({ ...editJson, paperId: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Paper / Presentation Title</Label>
+            <Input
+              placeholder="e.g. Robust Autonomous Cybernetic Systems"
+              value={editJson.paperTitle || ""}
+              onChange={(e) =>
+                onChangeJson({ ...editJson, paperTitle: e.target.value })
+              }
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5 pt-2">
+          <Label>Bio / Speaker Notes</Label>
+          <textarea
+            rows={3}
+            value={String(editJson.bio || "")}
+            onChange={(e) =>
+              onChangeJson({ ...editJson, bio: e.target.value })
+            }
+            placeholder="Brief bio or presentation summary..."
+            className="w-full text-xs p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-[#115eff]"
+          />
         </div>
       </Card>
 
