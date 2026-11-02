@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib";
 import { PostStatus } from "@prisma/client";
-import { DEFAULT_NEWS_ITEMS } from "@/components/sections/NewsList";
+import { DEFAULT_NEWS_ITEMS } from "@/data/news-data";
 import { NewsDetailClient } from "./news-detail-client";
 
 interface PageProps {
