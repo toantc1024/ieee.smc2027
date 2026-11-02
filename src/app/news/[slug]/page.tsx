@@ -192,8 +192,8 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
   return (
     <div className="w-full bg-[#f8fafc]/40 font-sans text-slate-800 min-h-screen">
-      {/* ── 1. HCMUTE Academic Top Banner with Royal Cobalt Blue & Dot Texture ── */}
-      <section className="relative w-full bg-[#004776] text-white overflow-hidden border-b border-[#00385e] shadow-xs">
+      {/* ── 1. HCMUTE Academic Top Banner with Royal Primary Blue & Dot Texture ── */}
+      <section className="relative w-full bg-primary text-white overflow-hidden border-t border-white/20 shadow-md">
         {/* Subtle HCMUTE Royal Blue Dot Pattern in Bottom-Right Corner */}
         <div
           className="pointer-events-none absolute bottom-0 right-0 h-full w-56 sm:w-80 md:w-96 select-none opacity-35 sm:opacity-40"
@@ -206,12 +206,12 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           aria-hidden="true"
         />
 
-        <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 relative z-10">
+        <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
             {/* Breadcrumb Navigation (Strictly Non-Bold per HCMUTE guideline) */}
             <nav
               aria-label="Breadcrumbs"
-              className="flex items-center gap-2 text-white/80 overflow-x-auto scrollbar-none font-normal"
+              className="flex items-center gap-2 text-white/90 overflow-x-auto scrollbar-none font-normal"
             >
               <Link
                 href="/"
@@ -219,26 +219,26 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               >
                 Home
               </Link>
-              <ChevronRight className="size-3.5 shrink-0 text-white/50" />
+              <ChevronRight className="size-3.5 shrink-0 text-white/60" />
               <Link
                 href="/#news"
                 className="hover:text-white transition-colors shrink-0 font-normal hover:underline"
               >
                 News &amp; Announcements
               </Link>
-              <ChevronRight className="size-3.5 shrink-0 text-white/50" />
-              <span className="text-[#a5cbf5] shrink-0 font-normal">{post.category}</span>
-              <ChevronRight className="size-3.5 shrink-0 text-white/50 hidden sm:inline" />
-              <span className="text-white/90 truncate max-w-[200px] sm:max-w-md hidden sm:inline font-normal">
+              <ChevronRight className="size-3.5 shrink-0 text-white/60" />
+              <span className="text-white/80 shrink-0 font-normal">{post.category}</span>
+              <ChevronRight className="size-3.5 shrink-0 text-white/60 hidden sm:inline" />
+              <span className="text-white truncate max-w-[200px] sm:max-w-md hidden sm:inline font-normal">
                 {post.title}
               </span>
             </nav>
 
             {/* University & Conference Crest Attribution */}
-            <div className="flex items-center gap-2 text-white/80 text-[11px] shrink-0">
-              <span className="inline-block size-2 rounded-xs bg-[#115eff] animate-pulse" />
+            <div className="flex items-center gap-2 text-white/90 text-[11px] shrink-0">
+              <span className="inline-block size-2 rounded-xs bg-white animate-pulse" />
               <span className="font-semibold text-white">IEEE SMC 2027</span>
-              <span className="text-white/40">•</span>
+              <span className="text-white/50">•</span>
               <span>Host: HCM-UTE, Ho Chi Minh City</span>
             </div>
           </div>
@@ -263,13 +263,13 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <Link
                 href="/#news"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#115eff] hover:text-[#004776] transition-colors group"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-foreground transition-colors group"
               >
                 <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-1" />
                 <span>All Announcements</span>
               </Link>
 
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-[#004776] bg-blue-50 border border-blue-200">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20">
                 {post.category}
               </span>
             </div>
@@ -282,33 +282,33 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             {/* Article Editorial Metadata Bar */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs text-slate-500 py-3 px-4 rounded-sm bg-slate-50/80 border border-slate-100">
               <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <Calendar className="size-3.5 text-[#115eff]" />
+                <Calendar className="size-3.5 text-primary" />
                 <span>{formattedDate}</span>
               </div>
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <Clock className="size-3.5 text-[#115eff]" />
+                <Clock className="size-3.5 text-primary" />
                 <span>{readingTimeMin} min read</span>
               </div>
               {post.views > 0 && (
                 <>
                   <span className="text-slate-300">•</span>
                   <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                    <Eye className="size-3.5 text-[#115eff]" />
+                    <Eye className="size-3.5 text-primary" />
                     <span>{post.views.toLocaleString("en-US")} views</span>
                   </div>
                 </>
               )}
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <User className="size-3.5 text-[#115eff]" />
+                <User className="size-3.5 text-primary" />
                 <span className="truncate max-w-[200px]">{post.authorName}</span>
               </div>
             </div>
 
             {/* Excerpt / Lead Summary Callout with Royal Blue Accent Border */}
             {post.summary && (
-              <div className="rounded-sm border-l-4 border-[#115eff] bg-blue-50/60 p-4 sm:p-5">
+              <div className="rounded-sm border-l-4 border-primary bg-primary/5 p-4 sm:p-5">
                 <p className="text-sm sm:text-base font-normal text-slate-700 leading-relaxed italic">
                   &ldquo;{post.summary}&rdquo;
                 </p>
@@ -318,7 +318,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             {/* Authentic HCMUTE Article Reader (Strict Line-Height 1.8 & Academic Typography) */}
             <article className="pt-2">
               <div
-                className="tiptap post-reader prose prose-slate sm:prose-lg max-w-none text-slate-800 leading-[1.8] font-sans prose-headings:font-bold prose-headings:text-[#004776] prose-headings:tracking-tight prose-a:text-[#115eff] prose-a:font-semibold hover:prose-a:underline prose-img:rounded-sm prose-img:border prose-img:border-slate-200 prose-blockquote:border-l-[#115eff] prose-blockquote:bg-blue-50/40 prose-blockquote:p-4 prose-blockquote:rounded-r-sm prose-table:border prose-table:border-slate-200 prose-th:bg-slate-50 prose-th:text-[#004776] prose-th:font-semibold"
+                className="tiptap post-reader prose prose-slate sm:prose-lg max-w-none text-slate-800 leading-[1.8] font-sans prose-headings:font-bold prose-headings:text-[#004776] prose-headings:tracking-tight prose-a:text-primary prose-a:font-semibold hover:prose-a:underline prose-img:rounded-sm prose-img:border prose-img:border-slate-200 prose-blockquote:border-l-primary prose-blockquote:bg-blue-50/40 prose-blockquote:p-4 prose-blockquote:rounded-r-sm prose-table:border prose-table:border-slate-200 prose-th:bg-slate-50 prose-th:text-[#004776] prose-th:font-semibold"
                 dangerouslySetInnerHTML={{
                   __html:
                     post.content.includes("<") && post.content.includes(">")
@@ -331,7 +331,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             {/* Article Subject Tags */}
             <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mr-2">
-                <Tag className="size-3.5 text-[#115eff]" />
+                <Tag className="size-3.5 text-primary" />
                 <span>Tags:</span>
               </div>
               {["IEEE SMC 2027", "HCMUTE", post.category, "Ho Chi Minh City", "Conference"].map(
@@ -349,7 +349,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             {/* Official University & Conference Signature Box */}
             <div className="rounded-sm border border-blue-100 bg-gradient-to-br from-blue-50/70 to-slate-50/60 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="size-11 rounded-sm bg-[#004776] text-white flex items-center justify-center shrink-0 shadow-2xs font-bold text-xs">
+                <div className="size-11 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-2xs font-bold text-xs">
                   SMC
                 </div>
                 <div>
@@ -360,14 +360,14 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                     Ho Chi Minh City University of Technology and Education (HCM-UTE)
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Contact: <span className="text-[#115eff] font-medium">smc2027@hcmute.edu.vn</span>
+                    Contact: <span className="text-primary font-medium">smc2027@hcmute.edu.vn</span>
                   </p>
                 </div>
               </div>
 
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-white border border-slate-200 text-xs font-semibold text-[#004776] hover:bg-slate-50 transition-colors shrink-0 shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-white border border-slate-200 text-xs font-semibold text-foreground hover:bg-slate-50 transition-colors shrink-0 shadow-2xs"
               >
                 <span>Contact Committee</span>
                 <ChevronRight className="size-3.5 text-slate-400" />
@@ -390,10 +390,10 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
-                  <Calendar className="size-4 text-[#115eff]" />
+                  <Calendar className="size-4 text-primary" />
                   <span>Important Dates</span>
                 </h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#115eff] bg-blue-50 px-2 py-0.5 rounded-sm border border-blue-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-sm border border-primary/20">
                   2027
                 </span>
               </div>
@@ -435,14 +435,14 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                   </span>
                   <span className="text-slate-600 flex items-center justify-between">
                     <span>Sheraton Saigon</span>
-                    <span className="font-bold text-[#115eff]">October 17–20, 2027</span>
+                    <span className="font-bold text-primary">October 17–20, 2027</span>
                   </span>
                 </div>
               </div>
 
               <Link
                 href="/#dates"
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-sm bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-semibold transition-colors shadow-2xs"
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-sm bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold transition-colors shadow-2xs"
               >
                 <span>View Full Timeline</span>
                 <ChevronRight className="size-3.5" />
@@ -454,7 +454,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-4">
                 <div className="border-b border-slate-100 pb-3">
                   <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
-                    <FileText className="size-4 text-[#115eff]" />
+                    <FileText className="size-4 text-primary" />
                     <span>Related News</span>
                   </h3>
                 </div>
@@ -464,13 +464,13 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                     <article key={item.id} className="py-3 first:pt-0 last:pb-0 group">
                       <Link href={`/news/${item.slug}`} className="block space-y-1.5">
                         <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                          <span className="font-bold uppercase tracking-wider text-[#115eff]">
+                          <span className="font-bold uppercase tracking-wider text-primary">
                             {item.category}
                           </span>
                           <span>•</span>
                           <span>{item.date}</span>
                         </div>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#115eff] transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                           {item.title}
                         </h4>
                       </Link>
@@ -483,7 +483,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             {/* ── Widget 3: Key Resources & Downloads ── */}
             <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-3">
               <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider border-b border-slate-100 pb-3 flex items-center gap-2">
-                <Download className="size-4 text-[#115eff]" />
+                <Download className="size-4 text-primary" />
                 <span>Conference Resources</span>
               </h3>
 
@@ -492,37 +492,37 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                   href="/CFP - IEEE SMC 2027 - 13.10.2026.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-[#115eff] hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex items-center gap-2.5 text-slate-700 font-medium">
-                    <FileText className="size-4 text-[#115eff]" />
+                    <FileText className="size-4 text-primary" />
                     <span>Call for Papers (PDF)</span>
                   </div>
-                  <Download className="size-3.5 text-slate-400 group-hover:text-[#115eff] transition-colors" />
+                  <Download className="size-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                 </a>
 
                 <Link
                   href="/travel"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-[#115eff] hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex items-center gap-2.5 text-slate-700 font-medium">
-                    <MapPin className="size-4 text-[#115eff]" />
+                    <MapPin className="size-4 text-primary" />
                     <span>Venue &amp; Travel Guide</span>
                   </div>
-                  <ChevronRight className="size-3.5 text-slate-400 group-hover:text-[#115eff] transition-colors" />
+                  <ChevronRight className="size-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                 </Link>
 
                 <a
                   href="https://hcmute.edu.vn"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-[#115eff] hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex items-center gap-2.5 text-slate-700 font-medium">
-                    <GraduationCap className="size-4 text-[#115eff]" />
+                    <GraduationCap className="size-4 text-primary" />
                     <span>HCM-UTE Portal</span>
                   </div>
-                  <ExternalLink className="size-3.5 text-slate-400 group-hover:text-[#115eff] transition-colors" />
+                  <ExternalLink className="size-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                 </a>
               </div>
             </div>
@@ -548,7 +548,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               </div>
               <Link
                 href="/#news"
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#115eff] hover:text-[#004776] transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary hover:text-foreground transition-colors"
               >
                 <span>View all announcements</span>
                 <ChevronRight className="size-4" />
@@ -559,7 +559,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               {relatedPosts.slice(0, 3).map((related) => (
                 <div
                   key={related.id}
-                  className="group flex flex-col justify-between rounded-sm bg-white border border-slate-200 hover:border-[#115eff] overflow-hidden transition-all duration-300 shadow-2xs hover:shadow-md"
+                  className="group flex flex-col justify-between rounded-sm bg-white border border-slate-200 hover:border-primary overflow-hidden transition-all duration-300 shadow-2xs hover:shadow-md"
                 >
                   <div>
                     {related.coverImage ? (
@@ -575,15 +575,15 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                       </div>
                     ) : (
                       <div className="aspect-[16/9] w-full bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center text-slate-400">
-                        <FileText className="size-8 text-[#115eff]/40" />
+                        <FileText className="size-8 text-primary/40" />
                       </div>
                     )}
 
                     <div className="p-5 space-y-2.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#115eff]">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
                         {related.category}
                       </span>
-                      <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#115eff] transition-colors line-clamp-2 leading-snug">
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {related.title}
                       </h4>
                       {related.summary && (
@@ -600,7 +600,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                     </span>
                     <Link
                       href={`/news/${related.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-[#115eff] hover:text-[#004776] whitespace-nowrap shrink-0"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-foreground whitespace-nowrap shrink-0"
                     >
                       <span>Read Announcement</span>
                       <ChevronRight className="size-3.5" />
