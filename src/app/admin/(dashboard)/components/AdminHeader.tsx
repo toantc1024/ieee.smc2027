@@ -78,6 +78,12 @@ function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
     return items;
   }
 
+  if (pathname.startsWith("/admin/oauth")) {
+    items.push({ label: "Administration" });
+    items.push({ label: "Google OAuth", href: "/admin/oauth" });
+    return items;
+  }
+
   items.push({ label: "Dashboard" });
   return items;
 }

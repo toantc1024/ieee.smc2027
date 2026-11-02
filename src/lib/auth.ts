@@ -149,7 +149,7 @@ export async function ensureDatabaseAdmins(): Promise<void> {
           email: "tctoan1024@gmail.com",
           name: "Toan Tran",
           role: Role.ADMIN,
-          provider: "email",
+          provider: "google",
           passwordHash: defaultPasswordHash,
           profileData: {
             affiliation: "HCMUTE",

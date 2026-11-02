@@ -699,7 +699,7 @@ export default function UserDetailPage() {
               />
               <InfoRow
                 icon={<KeyRound className="size-4" />}
-                label="System Identifier (UUID)"
+                label="System Identifier"
                 value={<span className="font-mono text-xs text-muted-foreground select-all">{user.id}</span>}
                 className="px-6"
               />

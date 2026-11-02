@@ -126,6 +126,12 @@ export const sidebarMenuGroups: SidebarMenuGroup[] = [
         href: "/admin/users",
         icon: Users,
       },
+      {
+        id: "oauth",
+        title: "Google OAuth",
+        href: "/admin/oauth",
+        icon: KeyRound,
+      },
     ],
   },
 ];
