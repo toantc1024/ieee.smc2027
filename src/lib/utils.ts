@@ -48,6 +48,23 @@ export function normalizeSlugPath(rawPath: string): string {
 }
 
 /**
+ * Universal slug normalizer with diacritic removal and hyphenation
+ */
+export function normalizeSlug(raw: string): string {
+  return raw
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "d")
+    .toLowerCase()
+    .trim()
+    .split("/")
+    .map((segment) => segment.replace(/[^a-z0-9-]/g, "-").replace(/^-+|-+$/g, ""))
+    .filter(Boolean)
+    .join("/");
+}
+
+/**
  * Sanitize uploaded file name into timestamped stem and lowercase extension
  */
 export function sanitizeFilename(filename: string): {

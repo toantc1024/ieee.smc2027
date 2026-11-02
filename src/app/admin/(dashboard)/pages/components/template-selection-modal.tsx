@@ -25,7 +25,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { normalizeSlug } from "@/app/api/admin/pages/route";
+import { normalizeSlug } from "@/lib/utils";
 
 export interface TemplatePreset {
   id: string;
