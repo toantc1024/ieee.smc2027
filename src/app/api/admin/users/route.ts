@@ -22,10 +22,14 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || "all";
     const role = searchParams.get("role") || "all";
     const conferenceRole = searchParams.get("conferenceRole") || "";
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const rawPage = parseInt(searchParams.get("page") || "1", 10);
+    const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
+
     // Default to 100 if pagination limit not explicitly passed, to safely include newly created users in list calls
     const defaultLimit = searchParams.has("limit") || searchParams.has("size") ? 20 : 100;
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || searchParams.get("size") || String(defaultLimit), 10)));
+    const rawLimitParam = searchParams.get("limit") || searchParams.get("size");
+    const rawLimit = rawLimitParam ? parseInt(rawLimitParam, 10) : defaultLimit;
+    const limit = Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(100, rawLimit) : defaultLimit;
     const sort = searchParams.get("sort") || "createdAt,desc";
 
     // Build dynamic where clause
