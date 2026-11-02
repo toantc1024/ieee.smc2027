@@ -194,10 +194,10 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
   return (
     <div className="w-full bg-[#f8fafc]/40 font-sans text-slate-800 min-h-screen">
-      {/* ── 0. High-Resolution Hero Cover Image (Above Breadcrumb Banner) ── */}
+      {/* ── 0. High-Resolution Hero Cover Image (Synchronized 16:9 Ratio with Post Cards) ── */}
       {coverImage && (
-        <section className="relative z-20 w-full overflow-hidden bg-slate-900 border-b border-slate-200">
-          <div className="relative w-full aspect-[16/9] sm:aspect-[2.4/1] max-h-[460px]">
+        <section className="relative z-20 w-full overflow-hidden bg-slate-950 border-0 p-0 m-0">
+          <div className="relative w-full aspect-[16/9] max-h-[75vh]">
             <Image
               src={coverImage}
               alt={post.title}
@@ -207,14 +207,12 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               className="object-cover w-full h-full"
               sizes="100vw"
             />
-            {/* Subtle bottom gradient shadow overlay for crisp separation */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none" />
           </div>
         </section>
       )}
 
-      {/* ── 1. HCMUTE Academic Top Banner with Royal Primary Blue & Dot Texture (Sticky on Scroll) ── */}
-      <section className="sticky top-16 sm:top-[72px] z-40 w-full bg-primary text-white overflow-hidden border-t border-white/20 shadow-md">
+      {/* ── 1. HCMUTE Academic Top Banner with Royal Primary Blue & Dot Texture (Sticky on Scroll, Seamless) ── */}
+      <section className="sticky top-16 sm:top-[72px] z-40 w-full bg-primary text-white overflow-hidden border-0 shadow-md">
         {/* Subtle HCMUTE Royal Blue Dot Pattern in Bottom-Right Corner */}
         <div
           className="pointer-events-none absolute bottom-0 right-0 h-full w-56 sm:w-80 md:w-96 select-none opacity-35 sm:opacity-40"
