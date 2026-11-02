@@ -289,7 +289,7 @@ describe("Adversarial Suite 3: Self-Protection Guard Analysis", () => {
     await prisma.user.deleteMany({ where: { id } });
   });
 
-  test("ADV-SELF.4 [VULNERABILITY REPRODUCED]: Lowercase status: 'blocked' bypasses self-block guard", async () => {
+  test("ADV-SELF.4: Lowercase status: 'blocked' is rejected by self-block guard with HTTP 400", async () => {
     const email = `self_admin_${Date.now()}@test-smc.org`;
     const password = "Password123!Secure";
     const createRes = await masterAdminClient.post("/api/admin/users", {
@@ -306,15 +306,15 @@ describe("Adversarial Suite 3: Self-Protection Guard Analysis", () => {
 
     // Attack: Send lowercase "blocked"
     const res = await client.patch(`/api/admin/users/${id}`, { status: "blocked" });
-    // In current implementation, returns 200 because status === "BLOCKED" does not match "blocked"
-    assert.strictEqual(res.status, 200, "Defect confirmed: lowercase 'blocked' bypassed guard and returned HTTP 200");
+    assert.strictEqual(res.status, 400, "Lowercase 'blocked' must be rejected with HTTP 400");
+    assert.ok(res.text.includes("block") || res.text.includes("administrator"));
     const inDb = await prisma.user.findUnique({ where: { id } });
-    assert.strictEqual(inDb?.status, "BLOCKED");
+    assert.strictEqual(inDb?.status, "ACTIVE");
 
     await prisma.user.deleteMany({ where: { id } });
   });
 
-  test("ADV-SELF.5 [VULNERABILITY REPRODUCED]: Status 'INACTIVE' bypasses self-block guard and deactivates admin", async () => {
+  test("ADV-SELF.5: Status 'INACTIVE' is rejected by self-deactivation guard with HTTP 400", async () => {
     const email = `self_admin_${Date.now()}@test-smc.org`;
     const password = "Password123!Secure";
     const createRes = await masterAdminClient.post("/api/admin/users", {
@@ -331,9 +331,10 @@ describe("Adversarial Suite 3: Self-Protection Guard Analysis", () => {
 
     // Attack: Send status: "INACTIVE"
     const res = await client.patch(`/api/admin/users/${id}`, { status: "INACTIVE" });
-    assert.strictEqual(res.status, 200, "Defect confirmed: status 'INACTIVE' bypassed guard and returned HTTP 200");
+    assert.strictEqual(res.status, 400, "Self-deactivation must be rejected with HTTP 400");
+    assert.ok(res.text.includes("deactivate") || res.text.includes("block"));
     const inDb = await prisma.user.findUnique({ where: { id } });
-    assert.strictEqual(inDb?.status, "INACTIVE");
+    assert.strictEqual(inDb?.status, "ACTIVE");
 
     await prisma.user.deleteMany({ where: { id } });
   });
@@ -367,30 +368,21 @@ describe("Adversarial Suite 4: Last-Admin Protection Analysis", () => {
     assert.strictEqual(delRes.status, 200);
   });
 
-  test("ADV-LAST.2 [VULNERABILITY REPRODUCED]: Demoting an admin via lowercase role: 'user' bypasses Safety Guard 3", async () => {
-    const email = `temp_admin_${Date.now()}@test-smc.org`;
-    const password = "Password123!Secure";
-    const createRes = await masterAdminClient.post("/api/admin/users", {
-      email,
-      name: "Target Admin",
-      role: "ADMIN",
-      password,
-    });
-    const id = createRes.data?.user?.id;
-    assert.ok(id);
+  test("ADV-LAST.2: Demoting admin account via lowercase role: 'user' is rejected with HTTP 400", async () => {
+    const meRes = await masterAdminClient.get("/api/auth/me");
+    const adminId = meRes.data?.user?.id;
+    assert.ok(adminId);
 
-    // Safety Guard 3 only checks `role === "USER"`, so lowercase `role: "user"` bypasses it
-    const patchRes = await masterAdminClient.patch(`/api/admin/users/${id}`, { role: "user" });
-    assert.strictEqual(patchRes.status, 200);
-    assert.strictEqual(patchRes.data?.user?.role, "USER");
-
-    const inDb = await prisma.user.findUnique({ where: { id } });
-    assert.strictEqual(inDb?.role, Role.USER);
-
-    await prisma.user.deleteMany({ where: { id } });
+    const patchRes = await masterAdminClient.patch(`/api/admin/users/${adminId}`, { role: "user" });
+    assert.strictEqual(patchRes.status, 400, "Demoting admin with lowercase 'user' must return 400");
+    assert.ok(patchRes.text.includes("downgrade") || patchRes.text.includes("last remaining"));
   });
 
-  test("ADV-LAST.3 [VULNERABILITY REPRODUCED]: DELETE endpoint counts BLOCKED admins, risking deletion of sole active admin", async () => {
+  test("ADV-LAST.3: DELETE endpoint protects active admin from deletion", async () => {
+    const meRes = await masterAdminClient.get("/api/auth/me");
+    const adminId = meRes.data?.user?.id;
+    assert.ok(adminId);
+
     const email = `blocked_admin_${Date.now()}@test-smc.org`;
     const password = "Password123!Secure";
     const createRes = await masterAdminClient.post("/api/admin/users", {
@@ -400,16 +392,14 @@ describe("Adversarial Suite 4: Last-Admin Protection Analysis", () => {
       status: "BLOCKED",
       password,
     });
-    const id = createRes.data?.user?.id;
-    assert.ok(id);
+    const blockedId = createRes.data?.user?.id;
+    assert.ok(blockedId);
 
-    const totalAdmins = await prisma.user.count({ where: { role: Role.ADMIN } });
-    const activeAdmins = await prisma.user.count({ where: { role: Role.ADMIN, status: "ACTIVE" } });
+    const delRes = await masterAdminClient.delete(`/api/admin/users/${adminId}`);
+    assert.strictEqual(delRes.status, 400, "Deleting active admin must return 400");
+    assert.ok(delRes.text.includes("delete") || delRes.text.includes("last remaining"));
 
-    // Confirmed: totalAdmins includes the BLOCKED admin
-    assert.ok(totalAdmins > activeAdmins);
-
-    await prisma.user.deleteMany({ where: { id } });
+    await prisma.user.deleteMany({ where: { id: blockedId } });
   });
 });
 
@@ -466,9 +456,9 @@ describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", () =>
     assert.ok(res.text.includes("at least 6 characters"));
   });
 
-  test("ADV-PROF.4 [DEFECT CONFIRMED]: Self-service password update does NOT increment sessionVersion", async () => {
+  test("ADV-PROF.4: Self-service password update increments sessionVersion and refreshes session cookie", async () => {
     const userBefore = await prisma.user.findUnique({ where: { id: testUserId! } });
-    const initialSessionVersion = userBefore?.sessionVersion;
+    const initialSessionVersion = userBefore?.sessionVersion ?? 1;
 
     const res = await userClient.patch("/api/profile", {
       currentPassword: userPass,
@@ -479,8 +469,12 @@ describe("Adversarial Suite 5: Profile & Password Adversarial Edge Cases", () =>
     const userAfter = await prisma.user.findUnique({ where: { id: testUserId! } });
     assert.strictEqual(
       userAfter?.sessionVersion,
-      initialSessionVersion,
-      "sessionVersion was NOT incremented on password update"
+      initialSessionVersion + 1,
+      "sessionVersion must be incremented on password update"
     );
+
+    // Active client stays authenticated because cookie was refreshed
+    const profileCheck = await userClient.get("/api/profile");
+    assert.strictEqual(profileCheck.status, 200, "Current user must remain logged in with updated cookie");
   });
 });
