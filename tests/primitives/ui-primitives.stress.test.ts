@@ -21,6 +21,7 @@ import {
   ChartTooltipContent,
   ChartLegendContent,
   ChartStyle,
+  ChartContext,
   type ChartConfig,
 } from "../../src/components/ui/chart";
 import {
@@ -80,62 +81,37 @@ describe("Primitive 1: chart.tsx Stress & Edge Testing", () => {
     assert.ok(!html.includes("<style>"));
   });
 
-  test("P1.3 [FAIL EXPECTED / BUG]: ChartContainer with undefined config throws TypeError in ChartStyle", () => {
-    let caught: any = null;
-    try {
-      renderToString(
-        React.createElement(ChartContainer as any, {
-          config: undefined,
-          children: React.createElement("div", null, "Undefined Config"),
-        })
-      );
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected undefined config to throw error");
-    assert.strictEqual(caught.name, "TypeError");
-    assert.ok(
-      caught.message.includes("Cannot convert undefined or null to object"),
-      `Expected Object.entries failure, got: ${caught.message}`
+  test("P1.3: ChartContainer with undefined config renders safely without throwing", () => {
+    const html = renderToString(
+      React.createElement(ChartContainer as any, {
+        config: undefined,
+        children: React.createElement("div", null, "Undefined Config"),
+      })
     );
+    assert.ok(html.includes("data-slot=\"chart\""));
+    assert.ok(!html.includes("<style>"));
   });
 
-  test("P1.4 [FAIL EXPECTED / BUG]: ChartContainer with null config throws TypeError in ChartStyle", () => {
-    let caught: any = null;
-    try {
-      renderToString(
-        React.createElement(ChartContainer as any, {
-          config: null,
-          children: React.createElement("div", null, "Null Config"),
-        })
-      );
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected null config to throw error");
-    assert.strictEqual(caught.name, "TypeError");
-    assert.ok(caught.message.includes("Cannot convert undefined or null to object"));
+  test("P1.4: ChartContainer with null config renders safely without throwing", () => {
+    const html = renderToString(
+      React.createElement(ChartContainer as any, {
+        config: null,
+        children: React.createElement("div", null, "Null Config"),
+      })
+    );
+    assert.ok(html.includes("data-slot=\"chart\""));
+    assert.ok(!html.includes("<style>"));
   });
 
-  test("P1.5 [FAIL EXPECTED / BUG]: ChartContainer with partially undefined entry throws TypeError in ChartStyle", () => {
-    let caught: any = null;
-    try {
-      renderToString(
-        React.createElement(ChartContainer as any, {
-          config: { views: undefined },
-          children: React.createElement("div", null, "Broken Config"),
-        })
-      );
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected undefined entry to throw error");
-    assert.strictEqual(caught.name, "TypeError");
-    assert.ok(
-      caught.message.includes("Cannot read properties of undefined") ||
-      caught.message.includes("reading 'theme'"),
-      `Expected property access failure on c.theme, got: ${caught.message}`
+  test("P1.5: ChartContainer with partially undefined entry renders safely without throwing", () => {
+    const html = renderToString(
+      React.createElement(ChartContainer as any, {
+        config: { views: undefined },
+        children: React.createElement("div", null, "Broken Config"),
+      })
     );
+    assert.ok(html.includes("data-slot=\"chart\""));
+    assert.ok(!html.includes("<style>"));
   });
 
   test("P1.6: ChartTooltipContent and ChartLegendContent throw when rendered outside ChartContainer", () => {
@@ -193,14 +169,27 @@ describe("Primitive 1: chart.tsx Stress & Edge Testing", () => {
     assert.ok(html.includes("--color-visitors: #60a5fa;"));
   });
 
-  test("P1.9 [FAIL EXPECTED / BUG]: ChartTooltipContent bypasses formatter if item.name is undefined", () => {
-    // In ChartTooltipContent line 197:
-    // {formatter && item?.value !== undefined && item.name ? (
-    // If a series uses dataKey="views" without an explicit name="views", item.name is undefined.
-    // Therefore formatter is bypassed completely even though formatter is provided!
-    const item = { dataKey: "views", value: 500, color: "#2563eb", name: undefined };
-    const canFormat = Boolean(item.value !== undefined && item.name);
-    assert.strictEqual(canFormat, false, "Demonstrates Recharts dataKey-only item cannot be formatted");
+  test("P1.9: ChartTooltipContent invokes formatter even when item.name is undefined using item.dataKey", () => {
+    let called = false;
+    let receivedName = "";
+    const html = renderToString(
+      React.createElement(
+        ChartContext.Provider,
+        { value: { config: { views: { label: "Page Views" } } } },
+        React.createElement(ChartTooltipContent as any, {
+          active: true,
+          payload: [{ dataKey: "views", value: 500, color: "#2563eb", name: undefined }],
+          formatter: (value: any, name: any) => {
+            called = true;
+            receivedName = name;
+            return React.createElement("span", null, `${name}: ${value}`);
+          },
+        })
+      )
+    );
+    assert.ok(called, "Formatter must be invoked for dataKey series when item.name is undefined");
+    assert.strictEqual(receivedName, "views");
+    assert.ok(html.includes("views: 500"));
   });
 });
 
@@ -318,39 +307,23 @@ describe("Primitive 2: date-range-picker.tsx Stress & Boundary Testing", () => {
     assert.ok(allHtml.includes("All time"));
   });
 
-  test("P2.6 [FAIL EXPECTED / BUG]: DateRangePicker crashes with RangeError when value.from is invalid Date", () => {
-    let caught: any = null;
-    try {
-      renderToString(
-        React.createElement(DateRangePicker, {
-          value: { from: new Date("invalid date string") },
-        })
-      );
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected invalid Date in value.from to throw error");
-    assert.strictEqual(caught.name, "RangeError");
-    assert.ok(
-      caught.message.includes("Invalid time value"),
-      `Expected RangeError: Invalid time value, got: ${caught.message}`
+  test("P2.6: DateRangePicker safely falls back to placeholder when value.from is invalid Date without RangeError", () => {
+    const html = renderToString(
+      React.createElement(DateRangePicker, {
+        value: { from: new Date("invalid date string") },
+      })
     );
+    assert.ok(html.includes("Select date range"));
   });
 
-  test("P2.7 [FAIL EXPECTED / BUG]: DateRangePicker crashes with RangeError when value.to is invalid Date", () => {
-    let caught: any = null;
-    try {
-      renderToString(
-        React.createElement(DateRangePicker, {
-          value: { from: new Date(2027, 0, 1), to: new Date(NaN) },
-        })
-      );
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected invalid Date in value.to to throw error");
-    assert.strictEqual(caught.name, "RangeError");
-    assert.ok(caught.message.includes("Invalid time value"));
+  test("P2.7: DateRangePicker safely renders from date when value.to is invalid Date without RangeError", () => {
+    const html = renderToString(
+      React.createElement(DateRangePicker, {
+        value: { from: new Date(2027, 0, 1), to: new Date(NaN) },
+      })
+    );
+    assert.ok(html.includes("01/01/2027"));
+    assert.ok(!html.includes("NaN"));
   });
 
   test("P2.8: DateRangePicker supports glass variant and custom styling", () => {
@@ -435,19 +408,16 @@ describe("Primitive 4: number-ticker.tsx Stress Testing", () => {
     assert.ok(html2Dec.includes(">99.50<"));
   });
 
-  test("P4.5 [FAIL EXPECTED / BUG]: NumberTicker crashes with RangeError when decimalPlaces is negative", () => {
-    let caught: any = null;
-    try {
-      renderToString(React.createElement(NumberTicker, { value: 50, decimalPlaces: -1 }));
-    } catch (err) {
-      caught = err;
-    }
-    assert.ok(caught !== null, "Expected negative decimalPlaces to throw error");
-    assert.strictEqual(caught.name, "RangeError");
-    assert.ok(
-      caught.message.includes("out of range"),
-      `Expected RangeError out of range, got: ${caught.message}`
+  test("P4.5: NumberTicker clamps negative and excessive decimalPlaces safely without RangeError", () => {
+    const htmlNegativeDec = renderToString(
+      React.createElement(NumberTicker, { value: 50, decimalPlaces: -1 })
     );
+    assert.ok(htmlNegativeDec.includes(">50<"));
+
+    const htmlExcessiveDec = renderToString(
+      React.createElement(NumberTicker, { value: 50, decimalPlaces: 99 })
+    );
+    assert.ok(htmlExcessiveDec.includes("50.00000000000000000000"));
   });
 
   test("P4.6: NumberTicker renders custom children override if provided", () => {

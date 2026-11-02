@@ -124,18 +124,29 @@ export function DateRangePicker({
   variant = "outline",
 }: DateRangePickerProps) {
   const [open, setOpen] = React.useState(false);
-  const [draftRange, setDraftRange] = React.useState<DateRange | undefined>(
-    value ? { from: value.from, to: value.to } : undefined,
+
+  const sanitizeRange = React.useCallback(
+    (range?: { from?: Date; to?: Date }): DateRange | undefined => {
+      if (!range?.from || !isValid(range.from)) return undefined;
+      const safeTo = range.to && isValid(range.to) ? range.to : undefined;
+      return { from: range.from, to: safeTo };
+    },
+    [],
+  );
+
+  const [draftRange, setDraftRange] = React.useState<DateRange | undefined>(() =>
+    sanitizeRange(value),
   );
 
   React.useEffect(() => {
-    setDraftRange(value ? { from: value.from, to: value.to } : undefined);
-  }, [value, open]);
+    setDraftRange(sanitizeRange(value));
+  }, [value, open, sanitizeRange]);
 
   const handleApply = () => {
-    if (draftRange?.from) {
+    if (draftRange?.from && isValid(draftRange.from)) {
       const from = startOfDay(draftRange.from);
-      const to = endOfDay(draftRange.to || draftRange.from);
+      const safeTo = draftRange.to && isValid(draftRange.to) ? draftRange.to : draftRange.from;
+      const to = endOfDay(safeTo);
       onChange?.({ from, to });
       if (onPresetChange) {
         onPresetChange("custom");
@@ -167,14 +178,14 @@ export function DateRangePicker({
   };
 
   const displayLabel = React.useMemo(() => {
-    if (!value?.from) {
+    if (!value?.from || !isValid(value.from)) {
       return placeholder;
     }
     const fromStr = format(value.from, "dd/MM/yyyy");
-    if (!value.to || value.from.getTime() === value.to.getTime()) {
+    const toDate = value.to && isValid(value.to) ? value.to : undefined;
+    if (!toDate || value.from.getTime() === toDate.getTime()) {
       return fromStr;
     }
-    const toDate = value.to;
     const toStr = format(toDate, "dd/MM/yyyy");
 
     if (presetKey === "all" || presetKey === "all_time") {
@@ -203,13 +214,20 @@ export function DateRangePicker({
   }, [value, placeholder, presetKey]);
 
   const fullRangeTitle = React.useMemo(() => {
-    if (!value?.from) return undefined;
+    if (!value?.from || !isValid(value.from)) return undefined;
     const fromStr = format(value.from, "dd/MM/yyyy");
-    const toStr = value.to ? format(value.to, "dd/MM/yyyy") : fromStr;
+    const toStr = value.to && isValid(value.to) ? format(value.to, "dd/MM/yyyy") : fromStr;
     return `${fromStr} - ${toStr}`;
   }, [value]);
 
+  const defaultMonth = React.useMemo(() => {
+    if (draftRange?.from && isValid(draftRange.from)) return draftRange.from;
+    if (value?.from && isValid(value.from)) return value.from;
+    return new Date();
+  }, [draftRange?.from, value?.from]);
+
   const isGlass = variant === "glass";
+  const hasValidValue = Boolean(value?.from && isValid(value.from));
 
   return (
     <div className={cn("inline-flex items-center min-w-0 max-w-full", className)}>
@@ -224,7 +242,7 @@ export function DateRangePicker({
               isGlass
                 ? "h-8 px-2.5 text-xs font-medium rounded-lg border border-white/20 bg-black/30 hover:bg-black/40 text-white backdrop-blur-md transition-all gap-1.5 max-w-full shadow-xs shrink-0 cursor-pointer"
                 : "h-9 px-3 text-xs font-medium rounded-xl border border-border/80 bg-background hover:bg-muted/70 text-foreground transition-all gap-2 max-w-full shadow-2xs shrink-0 cursor-pointer",
-              !value?.from && (isGlass ? "text-white/80" : "text-muted-foreground"),
+              !hasValidValue && (isGlass ? "text-white/80" : "text-muted-foreground"),
               triggerClassName,
             )}
           >
@@ -308,7 +326,7 @@ export function DateRangePicker({
                 <Calendar
                   initialFocus
                   mode="range"
-                  defaultMonth={draftRange?.from || value?.from || new Date()}
+                  defaultMonth={defaultMonth}
                   selected={draftRange}
                   onSelect={setDraftRange}
                   numberOfMonths={1}
@@ -327,7 +345,7 @@ export function DateRangePicker({
                       </span>
                     ) : (
                       <span>
-                        From {format(draftRange.from, "dd/MM/yyyy")} (select end date)
+                        From {format(draftRange.from, "dd/MM/yyyy")}
                       </span>
                     )
                   ) : (
@@ -349,7 +367,7 @@ export function DateRangePicker({
                     type="button"
                     variant="default"
                     size="sm"
-                    disabled={!draftRange?.from}
+                    disabled={!draftRange?.from || !isValid(draftRange.from)}
                     onClick={handleApply}
                     className="h-7 px-2.5 text-xs font-semibold shadow-xs cursor-pointer"
                   >

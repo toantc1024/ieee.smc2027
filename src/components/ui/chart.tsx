@@ -50,7 +50,7 @@ function ChartContainer({
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
 
   return (
-    <ChartContext.Provider value={{ config }}>
+    <ChartContext.Provider value={{ config: config || {} }}>
       <div
         data-slot="chart"
         data-chart={chartId}
@@ -70,8 +70,12 @@ function ChartContainer({
 }
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+  if (!config || typeof config !== "object") {
+    return null;
+  }
+
   const colorConfig = Object.entries(config).filter(
-    ([, c]) => c.theme || c.color
+    ([, c]) => c && (c.theme || c.color)
   );
 
   if (!colorConfig.length) {
@@ -88,8 +92,8 @@ ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color;
+      itemConfig?.theme?.[theme as keyof typeof itemConfig.theme] ||
+      itemConfig?.color;
     return color ? `  --color-${key}: ${color};` : null;
   })
   .filter(Boolean)
@@ -138,7 +142,7 @@ function ChartTooltipContent({
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
       !labelKey && typeof label === "string"
-        ? config[label as keyof typeof config]?.label || label
+        ? config?.[label as keyof typeof config]?.label || label
         : itemConfig?.label;
 
     if (labelFormatter) {
@@ -194,8 +198,8 @@ function ChartTooltipContent({
                   indicator === "dot" && "items-center"
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                {formatter && item?.value !== undefined && (item.name || item.dataKey) ? (
+                  formatter(item.value, item.name || item.dataKey, item, index, item.payload)
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -231,12 +235,16 @@ function ChartTooltipContent({
                       <div className="grid gap-1.5">
                         {nestLabel ? tooltipLabel : null}
                         <span className="text-muted-foreground">
-                          {itemConfig?.label || item.name}
+                          {itemConfig?.label || item.name || item.dataKey}
                         </span>
                       </div>
                       {item.value !== undefined && (
                         <span className="text-foreground font-mono font-medium tabular-nums">
-                          {Number(item.value).toLocaleString()}
+                          {typeof item.value === "number"
+                            ? item.value.toLocaleString()
+                            : !isNaN(Number(item.value))
+                              ? Number(item.value).toLocaleString()
+                              : String(item.value)}
                         </span>
                       )}
                     </div>
@@ -301,7 +309,7 @@ function ChartLegendContent({
                   }}
                 />
               )}
-              {itemConfig?.label}
+              {itemConfig?.label || item.value}
             </div>
           );
         })}
@@ -314,6 +322,10 @@ function getPayloadConfigFromPayload(
   payload: unknown,
   key: string
 ) {
+  if (!config || typeof config !== "object") {
+    return undefined;
+  }
+
   if (typeof payload !== "object" || payload === null) {
     return undefined;
   }
@@ -354,4 +366,6 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  ChartContext,
+  useChart,
 };

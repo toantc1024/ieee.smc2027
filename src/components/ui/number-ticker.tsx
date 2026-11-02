@@ -24,6 +24,7 @@ export function NumberTicker({
   ...props
 }: NumberTickerProps) {
   const ref = useRef<HTMLSpanElement>(null);
+  const safeDecimals = Math.max(0, Math.min(20, Math.floor(decimalPlaces || 0)));
   const motionValue = useMotionValue(direction === "down" ? value : startValue);
   const springValue = useSpring(motionValue, {
     damping: 60,
@@ -35,8 +36,8 @@ export function NumberTicker({
   useEffect(() => {
     if (isEditor && ref.current) {
       ref.current.textContent = Intl.NumberFormat("en-US", {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
+        minimumFractionDigits: safeDecimals,
+        maximumFractionDigits: safeDecimals,
       }).format(value);
       return;
     }
@@ -47,19 +48,19 @@ export function NumberTicker({
       }, delay * 1000);
       return () => clearTimeout(timer);
     }
-  }, [motionValue, isInView, delay, value, direction, startValue, isEditor, decimalPlaces]);
+  }, [motionValue, isInView, delay, value, direction, startValue, isEditor, safeDecimals]);
 
   useEffect(
     () =>
       springValue.on("change", (latest) => {
         if (ref.current) {
           ref.current.textContent = Intl.NumberFormat("en-US", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces)));
+            minimumFractionDigits: safeDecimals,
+            maximumFractionDigits: safeDecimals,
+          }).format(Number(latest.toFixed(safeDecimals)));
         }
       }),
-    [springValue, decimalPlaces]
+    [springValue, safeDecimals]
   );
 
   return (
@@ -73,8 +74,8 @@ export function NumberTicker({
     >
       {props.children ??
         Intl.NumberFormat("en-US", {
-          minimumFractionDigits: decimalPlaces,
-          maximumFractionDigits: decimalPlaces,
+          minimumFractionDigits: safeDecimals,
+          maximumFractionDigits: safeDecimals,
         }).format(value)}
     </span>
   );
