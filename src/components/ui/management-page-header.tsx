@@ -8,6 +8,7 @@ interface ManagementPageHeaderProps {
   description?: React.ReactNode;
   icon?: React.ReactNode;
   imageIcon?: string;
+  image3d?: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
@@ -20,12 +21,14 @@ export function ManagementPageHeader({
   description,
   icon,
   imageIcon,
+  image3d,
   children,
   actions,
   className,
   backgroundImage,
   hideBg = false,
 }: ManagementPageHeaderProps) {
+  const effectiveImageIcon = image3d || imageIcon;
   const contentActions = actions || children;
 
   if (hideBg) {
@@ -38,10 +41,10 @@ export function ManagementPageHeader({
       >
         <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 w-full min-w-0">
           <div className="flex items-center gap-4 min-w-0">
-            {imageIcon ? (
+            {effectiveImageIcon ? (
               <div className="relative size-12 sm:size-14 shrink-0 select-none">
                 <img
-                  src={imageIcon}
+                  src={effectiveImageIcon}
                   alt=""
                   className="size-full object-contain"
                 />
@@ -90,10 +93,10 @@ export function ManagementPageHeader({
 
       <div className="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 w-full min-w-0">
         <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-          {imageIcon ? (
+          {effectiveImageIcon ? (
             <div className="relative size-12 sm:size-14 shrink-0 select-none">
               <img
-                src={imageIcon}
+                src={effectiveImageIcon}
                 alt=""
                 className="size-full object-contain"
               />

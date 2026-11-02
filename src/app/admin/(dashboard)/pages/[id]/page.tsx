@@ -34,6 +34,10 @@ import {
   Monitor,
   Tablet,
   Smartphone,
+  Undo2,
+  Redo2,
+  ZoomIn,
+  ZoomOut,
   Code2,
   ExternalLink,
   Layers,
@@ -695,9 +699,35 @@ export default function PageBuilderRoute({
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [zoom, setZoom] = useState<number>(100);
+  const [history, setHistory] = useState<PageBlockItem[][]>([]);
+  const [future, setFuture] = useState<PageBlockItem[][]>([]);
   const [paletteSearch, setPaletteSearch] = useState("");
   const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [sidebarTab, setSidebarTab] = useState<"blocks" | "layers" | "settings">("blocks");
+
+  const pushHistory = (currentBlocks: PageBlockItem[]) => {
+    setHistory((prev) => [...prev.slice(-20), currentBlocks]);
+    setFuture([]);
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    const previous = history[history.length - 1];
+    setHistory((prev) => prev.slice(0, prev.length - 1));
+    setFuture((prev) => [blocks, ...prev]);
+    setBlocks(previous);
+    toast.info("Undone last change");
+  };
+
+  const handleRedo = () => {
+    if (future.length === 0) return;
+    const next = future[0];
+    setFuture((prev) => prev.slice(1));
+    setHistory((prev) => [...prev, blocks]);
+    setBlocks(next);
+    toast.info("Redone change");
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -735,6 +765,7 @@ export default function PageBuilderRoute({
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
+    pushHistory(blocks);
     setBlocks((items) => {
       const oldIndex = items.findIndex((i) => i.id === active.id);
       const newIndex = items.findIndex((i) => i.id === over.id);
@@ -773,6 +804,7 @@ export default function PageBuilderRoute({
   };
 
   const addBlock = (type: string) => {
+    pushHistory(blocks);
     const meta = AVAILABLE_BLOCKS.find((b) => b.type === type);
     const newBlock: PageBlockItem = {
       id: generateBlockId(type),
@@ -787,6 +819,7 @@ export default function PageBuilderRoute({
   };
 
   const duplicateBlock = (index: number) => {
+    pushHistory(blocks);
     const target = blocks[index];
     const duplicated: PageBlockItem = {
       ...target,
@@ -801,6 +834,7 @@ export default function PageBuilderRoute({
   };
 
   const removeBlock = (index: number) => {
+    pushHistory(blocks);
     const next = blocks.filter((_, i) => i !== index);
     setBlocks(next);
     if (selectedBlockId === blocks[index]?.id) {
@@ -810,6 +844,7 @@ export default function PageBuilderRoute({
   };
 
   const toggleHideBlock = (index: number) => {
+    pushHistory(blocks);
     const next = [...blocks];
     next[index] = { ...next[index], hidden: !next[index].hidden };
     setBlocks(next);
@@ -818,6 +853,7 @@ export default function PageBuilderRoute({
 
   const moveBlock = (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= blocks.length) return;
+    pushHistory(blocks);
     setBlocks((items) => arrayMove(items, fromIndex, toIndex));
   };
 
@@ -942,7 +978,7 @@ export default function PageBuilderRoute({
           </div>
         </div>
 
-        {/* Viewport Toggles & Quick Actions */}
+        {/* Viewport Toggles, Scale Zoom & Quick Actions Matching HCMUTE Layout */}
         <div className="flex items-center gap-2">
           {/* Viewport Switcher */}
           <div className="hidden md:flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200">
@@ -981,56 +1017,155 @@ export default function PageBuilderRoute({
             </button>
           </div>
 
+          {/* Canvas Scale Zoom Selector (Matching HCMUTE Standardized h-8 bar) */}
+          <div className="hidden lg:flex h-8 items-center gap-1 bg-slate-100 p-0.5 px-2 rounded-sm border border-slate-200 text-xs text-slate-700 select-none">
+            <span className="text-[11px] font-semibold text-[#004776] mr-0.5">Zoom:</span>
+            <button
+              type="button"
+              onClick={() => setZoom(100)}
+              className={cn(
+                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
+                zoom === 100
+                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
+                  : "text-slate-500 hover:text-[#004776]"
+              )}
+              title="Auto (100%)"
+            >
+              Auto
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoom(50)}
+              className={cn(
+                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
+                zoom === 50
+                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
+                  : "text-slate-500 hover:text-[#004776]"
+              )}
+              title="50%"
+            >
+              50%
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoom(75)}
+              className={cn(
+                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
+                zoom === 75
+                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
+                  : "text-slate-500 hover:text-[#004776]"
+              )}
+              title="75%"
+            >
+              75%
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoom(100)}
+              className={cn(
+                "h-6 px-1.5 rounded-sm text-[11px] transition-all cursor-pointer",
+                zoom === 100
+                  ? "bg-white text-[#115eff] shadow-2xs font-bold"
+                  : "text-slate-500 hover:text-[#004776]"
+              )}
+              title="100%"
+            >
+              100%
+            </button>
+
+            <div className="h-3.5 w-px bg-slate-300 mx-0.5" />
+
+            <button
+              type="button"
+              onClick={() => setZoom((prev) => Math.max(25, prev - 10))}
+              className="h-6 w-6 flex items-center justify-center rounded-sm text-slate-500 hover:text-[#004776] hover:bg-white transition-all cursor-pointer"
+              title="Zoom Out (-10%)"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoom((prev) => Math.min(150, prev + 10))}
+              className="h-6 w-6 flex items-center justify-center rounded-sm text-slate-500 hover:text-[#004776] hover:bg-white transition-all cursor-pointer"
+              title="Zoom In (+10%)"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Undo / Redo Actions (Matching HCMUTE) */}
+          <div className="hidden sm:flex h-8 items-center gap-0.5 bg-slate-100 rounded-sm p-0.5 border border-slate-200">
+            <button
+              type="button"
+              onClick={handleUndo}
+              disabled={history.length === 0}
+              className="h-7 w-7 flex items-center justify-center rounded-sm text-slate-600 hover:text-[#004776] disabled:opacity-25 transition-colors cursor-pointer"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleRedo}
+              disabled={future.length === 0}
+              className="h-7 w-7 flex items-center justify-center rounded-sm text-slate-600 hover:text-[#004776] disabled:opacity-25 transition-colors cursor-pointer"
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Load Full Home Blocks Button */}
           <button
             type="button"
             onClick={() => {
+              pushHistory(blocks);
               setBlocks(DEFAULT_PAGE_BLOCKS);
               setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
               toast.success("Loaded all 19 conference blocks to canvas");
             }}
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white hover:border-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs group"
             title="Reset canvas with complete standard conference blocks"
           >
-            <Layers className="size-3.5 text-[#115eff]" />
+            <Layers className="size-3.5 text-[#115eff] group-hover:text-white transition-colors" />
             <span className="hidden sm:inline">Load All Current Blocks</span>
           </button>
 
           <Link
             href={page?.slug === "home" ? "/" : `/${page?.slug}`}
             target="_blank"
-            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] text-[#004776] hover:text-white hover:border-[#115eff] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs group"
           >
             <span>Live</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3.5 h-3.5 text-[#115eff] group-hover:text-white transition-colors" />
           </Link>
 
-          {/* Preview Toggle Button */}
+          {/* Preview Toggle Button ("Xem" / "Thoát xem" Matching HCMUTE) */}
           <button
             type="button"
             onClick={() => setViewMode(viewMode === "preview" ? "edit" : "preview")}
             className={cn(
               "h-8 px-3 rounded-sm text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer",
               viewMode === "preview"
-                ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                : "bg-white border border-slate-200 text-[#004776] hover:bg-blue-50 hover:text-[#115eff]"
+                ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
+                : "bg-white border border-slate-200 text-[#004776] hover:bg-[#115eff] hover:text-white hover:border-[#115eff] group"
             )}
             title={viewMode === "preview" ? "Exit preview mode" : "Preview page canvas"}
           >
             {viewMode === "preview" ? (
               <>
                 <EyeOff className="w-3.5 h-3.5" />
-                <span>Exit Preview</span>
+                <span>Thoát xem</span>
               </>
             ) : (
               <>
-                <Eye className="w-3.5 h-3.5 text-[#115eff]" />
-                <span>Preview</span>
+                <Eye className="w-3.5 h-3.5 text-[#115eff] group-hover:text-white transition-colors" />
+                <span>Xem</span>
               </>
             )}
           </button>
 
-          {/* Save Button */}
+          {/* Save Button (Primary Blue) */}
           <button
             type="button"
             onClick={handleSave}
@@ -1250,6 +1385,15 @@ export default function PageBuilderRoute({
               viewport === "tablet" && "max-w-[768px]",
               viewport === "mobile" && "max-w-[390px]"
             )}
+            style={
+              zoom !== 100
+                ? {
+                    transform: `scale(${zoom / 100})`,
+                    transformOrigin: "top center",
+                    transition: "transform 0.2s ease-out",
+                  }
+                : undefined
+            }
           >
             {blocks.length === 0 ? (
               <div className="p-12 text-center bg-white rounded-sm border-2 border-dashed border-slate-300 space-y-3">

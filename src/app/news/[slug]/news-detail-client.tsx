@@ -184,11 +184,11 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         className="hidden xl:flex flex-col gap-3 sticky top-28 lg:top-32 shrink-0 py-2 z-20"
       >
         {/* Text Size Zoom Controls */}
-        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={() => handleZoom("in")}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Zoom In (A+)"
             aria-label="Zoom in font size"
           >
@@ -198,7 +198,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleZoom("out")}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Zoom Out (A-)"
             aria-label="Zoom out font size"
           >
@@ -207,11 +207,11 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         </div>
 
         {/* Share & Actions Controls */}
-        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={handleNativeShare}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Share Announcement"
             aria-label="Share article"
           >
@@ -225,7 +225,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
               "h-10 w-full flex items-center justify-center transition-colors cursor-pointer",
               copied
                 ? "bg-[#115eff] text-white"
-                : "text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6]"
+                : "text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6]"
             )}
             title={copied ? "Copied!" : "Copy Link"}
             aria-label="Copy article link"
@@ -240,7 +240,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handlePrint}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Print Announcement"
             aria-label="Print article"
           >
@@ -249,11 +249,11 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         </div>
 
         {/* Scroll Navigation Controls */}
-        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#004776] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={scrollToTop}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Scroll to Top"
             aria-label="Scroll to top"
           >
@@ -263,7 +263,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={scrollToBottom}
-            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            className="h-10 w-full flex items-center justify-center text-[#004776] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
             title="Scroll to Bottom"
             aria-label="Scroll to bottom"
           >
@@ -277,9 +277,9 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         {/* Back Link */}
         <Link
           href="/#news"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs sm:text-sm font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs w-fit group"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] text-xs sm:text-sm font-semibold text-[#004776] hover:text-white hover:border-[#115eff] transition-colors whitespace-nowrap shadow-2xs w-fit group"
         >
-          <ArrowLeft className="size-4 text-[#115eff] transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="size-4 text-[#115eff] group-hover:text-white transition-transform group-hover:-translate-x-0.5" />
           <span>Back to All Announcements</span>
         </Link>
 
@@ -311,7 +311,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("facebook")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] text-xs font-semibold text-[#004776] hover:text-white transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to Facebook"
           >
             <span>Facebook</span>
@@ -320,7 +320,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("linkedin")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] text-xs font-semibold text-[#004776] hover:text-white transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to LinkedIn"
           >
             <span>LinkedIn</span>
@@ -329,7 +329,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("twitter")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] text-xs font-semibold text-[#004776] hover:text-white transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to X"
           >
             <span>X / Twitter</span>
@@ -338,10 +338,10 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] text-xs font-semibold text-[#004776] hover:text-white transition-colors whitespace-nowrap shadow-2xs cursor-pointer group"
             title="Print announcement"
           >
-            <Printer className="size-4 text-[#115eff]" />
+            <Printer className="size-4 text-[#004776] group-hover:text-white transition-colors" />
             <span className="hidden sm:inline">Print</span>
           </button>
         </div>
@@ -372,7 +372,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handleCopyLink}
-            className="size-8 rounded-sm flex items-center justify-center text-[#115eff] hover:text-white hover:bg-[#115eff] transition-colors cursor-pointer"
+            className="size-8 rounded-sm flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] transition-colors cursor-pointer"
             title="Copy Link"
           >
             {copied ? (
