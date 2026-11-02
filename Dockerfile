@@ -68,7 +68,8 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+    adduser --system --uid 1001 nextjs && \
+    npm install -g prisma@6.19.3
 
 RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public/uploads
 

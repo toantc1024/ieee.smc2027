@@ -77,7 +77,7 @@ services:
       APP_ENV: production
       PORT: 3000
       HOSTNAME: 0.0.0.0
-      AUTO_MIGRATE: ${AUTO_MIGRATE:-false}
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
       DATABASE_URL: ${DOCKER_DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/ieee_smc_2027?schema=public}
       MINIO_ENDPOINT: ${DOCKER_MINIO_ENDPOINT:-minio}
       MINIO_PORT: ${MINIO_PORT:-9000}
