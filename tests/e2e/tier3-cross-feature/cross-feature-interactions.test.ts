@@ -8,16 +8,20 @@
  * 5. Concurrent page edit & version update handshake
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestUserPayload, createTestPagePayload, sampleBlocks } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 3: Cross-Feature Interactions", () => {
+describe("Tier 3: Cross-Feature Interactions", { concurrency: 1 }, () => {
   let adminClient: TestHttpClient;
-  let testUserId: string | null = null;
-  let testPageSlug: string | null = null;
+  let createdUserIds: string[] = [];
+  let createdPageSlugs: string[] = [];
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
@@ -25,22 +29,26 @@ describe("Tier 3: Cross-Feature Interactions", () => {
   });
 
   afterEach(async () => {
-    if (testUserId) {
+    for (const userId of createdUserIds) {
       try {
-        await adminClient.delete(`/api/admin/users/${testUserId}`);
+        await adminClient.delete(`/api/admin/users/${userId}`);
       } catch {
         // ignore
       }
-      testUserId = null;
     }
-    if (testPageSlug) {
+    createdUserIds = [];
+
+    for (const slug of createdPageSlugs) {
       try {
-        await adminClient.delete(`/api/admin/pages/${testPageSlug}`);
+        await adminClient.delete(`/api/admin/pages/${slug}`);
       } catch {
         // ignore
       }
-      testPageSlug = null;
     }
+    createdPageSlugs = [];
+  });
+
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 
@@ -64,7 +72,7 @@ describe("Tier 3: Cross-Feature Interactions", () => {
     });
 
     assert.strictEqual(loginRes.status, 200);
-    testUserId = loginRes.data.user.id;
+    createdUserIds.push(loginRes.data.user.id);
 
     // 2. Admin queries users list
     const listRes = await adminClient.get("/api/admin/users");
@@ -90,11 +98,12 @@ describe("Tier 3: Cross-Feature Interactions", () => {
       name: userPayload.name,
     });
     assert.strictEqual(loginRes.status, 200);
-    testUserId = loginRes.data.user.id;
+    const userId = loginRes.data.user.id;
+    createdUserIds.push(userId);
 
     // Update profile via admin API or profile endpoint
     const newAffiliation = "HCMUTE Artificial Intelligence Institute";
-    await adminClient.patch(`/api/admin/users/${testUserId}`, {
+    await adminClient.patch(`/api/admin/users/${userId}`, {
       profileData: {
         affiliation: newAffiliation,
         conferenceTrack: "SPEAKER",
@@ -115,7 +124,8 @@ describe("Tier 3: Cross-Feature Interactions", () => {
 
   test("T3.3: Pairwise: Page builder multi-block assembly -> publish -> public page inspection", async () => {
     const pagePayload = createTestPagePayload();
-    testPageSlug = pagePayload.slug;
+    const testPageSlug = pagePayload.slug;
+    createdPageSlugs.push(testPageSlug);
 
     // Include 4 distinct conference section blocks
     pagePayload.blocks = [
@@ -155,6 +165,7 @@ describe("Tier 3: Cross-Feature Interactions", () => {
     });
     assert.strictEqual(loginRes.status, 200);
     const userId = loginRes.data.user.id;
+    createdUserIds.push(userId);
 
     // User can access /api/auth/me
     const meResBefore = await userClient.get("/api/auth/me");
@@ -183,7 +194,8 @@ describe("Tier 3: Cross-Feature Interactions", () => {
 
   test("T3.5: Pairwise: Concurrent page updates retain consistency without corrupting blocks", async () => {
     const pagePayload = createTestPagePayload();
-    testPageSlug = pagePayload.slug;
+    const testPageSlug = pagePayload.slug;
+    createdPageSlugs.push(testPageSlug);
 
     // Create page
     const createRes = await adminClient.post("/api/admin/pages", pagePayload);

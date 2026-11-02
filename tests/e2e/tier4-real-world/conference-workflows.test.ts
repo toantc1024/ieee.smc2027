@@ -6,16 +6,20 @@
  * 4. Content Versioning, Audit Trail & Disaster Recovery
  */
 
-import test, { describe, beforeEach, afterEach } from "node:test";
+import test, { describe, beforeEach, afterEach, before, after } from "node:test";
 import assert from "node:assert/strict";
 import TestHttpClient from "../helpers/http-client";
 import { createTestUserPayload, createTestPagePayload, sampleBlocks } from "../helpers/test-fixtures";
 import dbHelper from "../helpers/db-helper";
 
-describe("Tier 4: Real-World Conference Management Scenarios", () => {
+describe("Tier 4: Real-World Conference Management Scenarios", { concurrency: 1 }, () => {
   let adminClient: TestHttpClient;
   let createdPages: string[] = [];
   let createdUsers: string[] = [];
+
+  before(async () => {
+    await dbHelper.cleanupTestData();
+  });
 
   beforeEach(async () => {
     adminClient = new TestHttpClient();
@@ -40,7 +44,9 @@ describe("Tier 4: Real-World Conference Management Scenarios", () => {
       }
     }
     createdUsers = [];
+  });
 
+  after(async () => {
     await dbHelper.cleanupTestData();
   });
 
