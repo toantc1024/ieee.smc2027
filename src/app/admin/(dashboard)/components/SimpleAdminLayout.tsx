@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import type { SessionUser } from "@/lib/auth";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";

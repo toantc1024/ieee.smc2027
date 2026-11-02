@@ -566,104 +566,121 @@ function SortableBlockItem({
       style={style}
       onClick={onSelect}
       className={cn(
-        "group relative w-full transition-all duration-150 select-none",
-        isSelected
-          ? "border-2 border-[#115eff] ring-2 ring-blue-500/20 shadow-[0_0_0_1px_rgba(17,94,255,0.2)]"
-          : "border-2 border-transparent hover:border-blue-400/60",
+        "group relative w-full transition-all duration-150 select-none cursor-pointer",
         isDragging && "opacity-40 z-50 scale-[0.99]",
         block.hidden && "opacity-50"
       )}
     >
-      {/* Top Floating Control Bar: matching HCMUTE sortable-block pill */}
-      {(isSelected || isDragging) && (
-        <div
-          className="absolute top-2 left-2 z-50 flex items-center gap-1.5 h-8 bg-[#115eff] text-white rounded-lg px-2.5 py-1 shadow-lg shadow-blue-600/35 border border-blue-400/80 font-sans text-xs font-semibold whitespace-nowrap select-none"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Drag handle */}
+      {/* ── Selection Indicator: Solid Left Blue Bar (No inner top/left padding!) ── */}
+      {isSelected && (
+        <>
+          {/* Left Solid Blue Bar */}
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#115eff] z-30 pointer-events-none rounded-l-[1px] shadow-xs" />
+
+          {/* Full Crisp Bounding Box */}
+          <div className="absolute inset-0 border-2 border-[#115eff] pointer-events-none z-30 shadow-xs" />
+
+          {/* 4 Figma Corner Handles */}
+          <div className="w-2.5 h-2.5 bg-white border-2 border-[#115eff] rounded-[1px] absolute -top-1.25 -left-1.25 shadow-md pointer-events-none z-40" />
+          <div className="w-2.5 h-2.5 bg-white border-2 border-[#115eff] rounded-[1px] absolute -top-1.25 -right-1.25 shadow-md pointer-events-none z-40" />
+          <div className="w-2.5 h-2.5 bg-white border-2 border-[#115eff] rounded-[1px] absolute -bottom-1.25 -left-1.25 shadow-md pointer-events-none z-40" />
+          <div className="w-2.5 h-2.5 bg-white border-2 border-[#115eff] rounded-[1px] absolute -bottom-1.25 -right-1.25 shadow-md pointer-events-none z-40" />
+
+          {/* Top Floating Control Bar: Positioned above the block so content is not obscured */}
           <div
-            {...attributes}
-            {...listeners}
-            className="flex items-center gap-1.5 cursor-grab active:cursor-grabbing hover:text-blue-100"
-            title="Drag to reorder"
+            className="absolute -top-8 left-0 z-50 flex items-center gap-1.5 h-7.5 bg-[#115eff] text-white rounded-t-lg rounded-br-lg px-2.5 py-1 shadow-lg shadow-blue-600/35 border border-blue-400/80 font-sans text-xs font-semibold whitespace-nowrap select-none"
+            onClick={(e) => e.stopPropagation()}
           >
-            <GripVertical className="w-3.5 h-3.5 text-blue-100" />
-            <span className="text-xs font-bold font-sans">{blockMeta?.title || block.type}</span>
+            {/* Drag handle */}
+            <div
+              {...attributes}
+              {...listeners}
+              className="flex items-center gap-1.5 cursor-grab active:cursor-grabbing hover:text-blue-100"
+              title="Drag to reorder"
+            >
+              <GripVertical className="w-3.5 h-3.5 text-blue-100" />
+              <span className="text-xs font-bold font-sans">{blockMeta?.title || block.type}</span>
+            </div>
+
+            <div className="w-px h-3.5 bg-white/30 mx-0.5" />
+
+            {/* Move Up */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveUp();
+              }}
+              disabled={index === 0}
+              className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
+              title="Move up"
+            >
+              <ChevronUp className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Move Down */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveDown();
+              }}
+              disabled={index === totalBlocks - 1}
+              className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
+              title="Move down"
+            >
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Duplicate */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate();
+              }}
+              className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
+              title="Duplicate block"
+            >
+              <Copy className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Visibility */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleHide();
+              }}
+              className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
+              title={block.hidden ? "Show block" : "Hide block"}
+            >
+              {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-300" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Delete */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              className="p-1 hover:bg-rose-600 rounded transition-colors cursor-pointer"
+              title="Remove block"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
           </div>
-
-          <div className="w-px h-3.5 bg-white/30 mx-0.5" />
-
-          {/* Move Up */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveUp();
-            }}
-            disabled={index === 0}
-            className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
-            title="Move up"
-          >
-            <ChevronUp className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Move Down */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveDown();
-            }}
-            disabled={index === totalBlocks - 1}
-            className="p-1 hover:bg-blue-700 rounded disabled:opacity-30 transition-colors cursor-pointer"
-            title="Move down"
-          >
-            <ChevronDown className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Duplicate */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicate();
-            }}
-            className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
-            title="Duplicate block"
-          >
-            <Copy className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Visibility */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleHide();
-            }}
-            className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
-            title={block.hidden ? "Show block" : "Hide block"}
-          >
-            {block.hidden ? <EyeOff className="w-3.5 h-3.5 text-amber-300" /> : <Eye className="w-3.5 h-3.5" />}
-          </button>
-
-          {/* Delete */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-            className="p-1 hover:bg-rose-600 rounded transition-colors cursor-pointer"
-            title="Remove block"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        </>
       )}
 
-      {/* Actual Block Content */}
-      <div className={cn("w-full", block.hidden && "grayscale-[30%]")}>
+      {/* Hover outline when not selected */}
+      {!isSelected && (
+        <div className="absolute inset-0 border border-transparent group-hover:border-blue-300/80 pointer-events-none transition-colors" />
+      )}
+
+      {/* Actual Block Content (zero padding added, totally unaltered) */}
+      <div className={cn("w-full relative", block.hidden && "grayscale-[30%]")}>
         {children}
       </div>
     </div>
@@ -691,9 +708,12 @@ export default function PageBlockEditor({
   const [jsonText, setJsonText] = useState("");
   const [jsonError, setJsonError] = useState<string | null>(null);
 
-  // Responsive Viewport and Zoom
+  // Responsive Viewport and Auto-Fit Zoom (matching HCMUTE BuilderCanvas)
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [zoom, setZoom] = useState<number>(100);
+  const [isAutoFit, setIsAutoFit] = useState<boolean>(true);
+  const [containerWidth, setContainerWidth] = useState<number>(1280);
+  const [frameHeight, setFrameHeight] = useState<number>(900);
   const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
 
   // Left Drawer Tabs: blocks, layers, settings
@@ -705,6 +725,33 @@ export default function PageBlockEditor({
   const [future, setFuture] = useState<PageBlockItem[][]>([]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+
+  // ResizeObserver to measure center canvas container width for responsive scaling
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const update = () => {
+      if (el) setContainerWidth(el.clientWidth);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // ResizeObserver to measure artboard frame height for proportional visual footprint
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+    const update = () => {
+      if (el) setFrameHeight(el.offsetHeight);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [blocks, viewport]);
 
   const pushState = (newBlocks: PageBlockItem[]) => {
     setHistory((prev) => [...prev.slice(-25), blocks]);
@@ -905,8 +952,14 @@ export default function PageBlockEditor({
     );
   }, [paletteSearch]);
 
-  // Desktop canonical width: 1240px (exact match to HCMUTE canonical desktop container)
+  // Canonical device base width: desktop = 1240px, tablet = 768px, mobile = 390px (matching HCMUTE)
   const baseWidth = viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1240;
+
+  // Auto-fit calculation: if page overflows the container (with 48px padding), scale it down
+  const autoFitRatio = Math.min(1, Math.max(280, containerWidth - 48) / baseWidth);
+  const activeScale = isAutoFit ? autoFitRatio : zoom / 100;
+  const visualWidth = Math.round(baseWidth * activeScale);
+  const visualHeight = Math.round(frameHeight * activeScale);
 
   // Render Component onto Canvas
   const renderComponent = (block: PageBlockItem) => {
@@ -1103,26 +1156,56 @@ export default function PageBlockEditor({
             </button>
           </div>
 
-          {/* Zoom controls */}
+          {/* Zoom controls with Auto-Fit */}
           <div className="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5 shadow-2xs text-xs">
             <button
               type="button"
-              onClick={() => setZoom((z) => Math.max(50, z - 10))}
+              onClick={() => {
+                setIsAutoFit(false);
+                setZoom((z) => Math.max(40, (isAutoFit ? Math.round(activeScale * 100) : z) - 10));
+              }}
               className="p-1 text-slate-500 hover:text-slate-900 cursor-pointer"
               title="Zoom out"
             >
               <ZoomOut className="w-3.5 h-3.5" />
             </button>
-            <span className="px-1.5 text-[11px] font-bold text-slate-700 min-w-[36px] text-center">
-              {zoom}%
-            </span>
             <button
               type="button"
-              onClick={() => setZoom((z) => Math.min(150, z + 10))}
+              onClick={() => setIsAutoFit(!isAutoFit)}
+              className={cn(
+                "px-2 py-0.5 text-[11px] font-bold rounded transition-colors cursor-pointer",
+                isAutoFit
+                  ? "bg-white text-[#115eff] shadow-2xs"
+                  : "text-slate-700 hover:bg-white"
+              )}
+              title={isAutoFit ? "Auto-fit enabled. Click to disable." : "Click to auto-fit"}
+            >
+              {isAutoFit ? `Auto (${Math.round(activeScale * 100)}%)` : `${zoom}%`}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsAutoFit(false);
+                setZoom((z) => Math.min(150, (isAutoFit ? Math.round(activeScale * 100) : z) + 10));
+              }}
               className="p-1 text-slate-500 hover:text-slate-900 cursor-pointer"
               title="Zoom in"
             >
               <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsAutoFit(false);
+                setZoom(100);
+              }}
+              className={cn(
+                "px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 hover:text-slate-900 cursor-pointer border-l border-slate-200 ml-0.5",
+                !isAutoFit && zoom === 100 && "text-[#115eff] font-bold"
+              )}
+              title="Reset to 100%"
+            >
+              100%
             </button>
           </div>
         </div>
@@ -1281,7 +1364,7 @@ export default function PageBlockEditor({
                         className={cn(
                           "p-2 rounded-lg border text-xs flex items-center justify-between gap-2 transition-all cursor-pointer shadow-2xs",
                           isSelected
-                            ? "bg-blue-50 border-blue-300 text-[#115eff] font-bold"
+                            ? "bg-blue-50/80 border-blue-300 text-[#115eff] font-bold border-l-4 border-l-[#115eff]"
                             : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
                         )}
                       >
@@ -1373,18 +1456,28 @@ export default function PageBlockEditor({
         >
           {/* Centering Wrapper: allows wide artboard without clipping */}
           <div className="min-w-full w-max flex flex-col items-center justify-start min-h-full py-8 px-6 box-border">
-            {/* Sized Visual Artboard Frame: true 1240px desktop width */}
+            {/* Scaled Wrapper Shell: occupies exact visual footprint so scrollbar and document flow match seamlessly */}
             <div
               style={{
-                width: `${baseWidth}px`,
-                minWidth: `${baseWidth}px`,
-                maxWidth: `${baseWidth}px`,
-                transform: zoom !== 100 ? `scale(${zoom / 100})` : undefined,
-                transformOrigin: "top center",
-                backgroundColor: "#ffffff",
+                width: `${visualWidth}px`,
+                height: frameHeight > 0 ? `${visualHeight}px` : "auto",
+                transition: "width 0.15s ease-out, height 0.15s ease-out",
               }}
-              className="flex flex-col min-h-[900px] rounded-xl border border-slate-300/90 dark:border-zinc-800 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.05)] ring-1 ring-slate-900/5 overflow-visible transition-all duration-150"
+              className="relative shrink-0"
             >
+              {/* Sized Visual Artboard Frame: baseWidth scaled by activeScale with transformOrigin 0 0 */}
+              <div
+                ref={frameRef}
+                style={{
+                  width: `${baseWidth}px`,
+                  minWidth: `${baseWidth}px`,
+                  maxWidth: `${baseWidth}px`,
+                  transform: `scale(${activeScale})`,
+                  transformOrigin: "0 0",
+                  backgroundColor: "#ffffff",
+                }}
+                className="absolute left-0 top-0 flex flex-col min-h-[900px] rounded-xl border border-slate-300/90 dark:border-zinc-800 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.05)] ring-1 ring-slate-900/5 overflow-visible transition-transform duration-150"
+              >
               {blocks.length === 0 ? (
                 <div className="p-12 text-center bg-white rounded-xl space-y-3 m-auto">
                   <Layers className="size-10 text-slate-300 mx-auto" />
@@ -1455,6 +1548,7 @@ export default function PageBlockEditor({
             </div>
           </div>
         </div>
+      </div>
 
         {/* ── Column 3: Right Inspector (320px) matching HCMUTE PropertyInspector ── */}
         {viewMode !== "preview" && (

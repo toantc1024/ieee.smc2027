@@ -39,6 +39,14 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 interface PageSummary {
@@ -810,122 +818,124 @@ export default function PagesManagementPage() {
       </div>
 
       {/* Create Page Modal */}
-      {createModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-5 shadow-xl border border-slate-200 animate-in fade-in duration-150 font-sans">
-            <h3 className="text-base font-bold text-slate-900 mb-1">
+      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
+        <DialogContent className="max-w-md font-sans p-6 rounded-xl border border-slate-200">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-slate-900">
               {parentSlug ? `Create Sub-Page Under "/${parentSlug}"` : "Create New Page"}
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
               {parentSlug
                 ? "The new page will inherit its URL hierarchy from the parent directory."
                 : "Top-level pages appear directly under the main conference domain."}
-            </p>
+            </DialogDescription>
+          </DialogHeader>
 
-            <form onSubmit={handleCreatePage} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block text-slate-700 font-semibold mb-1">
-                  Parent Page
-                </label>
-                <select
-                  value={parentSlug}
-                  onChange={(e) => setParentSlug(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff] text-xs text-slate-800 shadow-2xs"
-                >
-                  <option value="">[None - Root Page]</option>
-                  {pages.map((p) => (
-                    <option key={p.id} value={p.slug}>
-                      {p.title} (/{p.slug})
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <form onSubmit={handleCreatePage} className="space-y-3.5 text-xs mt-2">
+            <div>
+              <label className="block text-slate-700 font-semibold mb-1">
+                Parent Page
+              </label>
+              <select
+                value={parentSlug}
+                onChange={(e) => setParentSlug(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff] text-xs text-slate-800 shadow-2xs"
+              >
+                <option value="">[None - Root Page]</option>
+                {pages.map((p) => (
+                  <option key={p.id} value={p.slug}>
+                    {p.title} (/{p.slug})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div>
-                <label className="block text-slate-700 font-semibold mb-1">
-                  Page Title <span className="text-rose-500">*</span>
-                </label>
+            <div>
+              <label className="block text-slate-700 font-semibold mb-1">
+                Page Title <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={newTitle}
+                onChange={(e) => {
+                  setNewTitle(e.target.value);
+                  if (!newSlugPart) {
+                    setNewSlugPart(
+                      e.target.value
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .replace(/[^a-z0-9]+/g, "-")
+                        .replace(/^-+|-+$/g, "")
+                    );
+                  }
+                }}
+                placeholder="e.g., Special Sessions & Tutorials"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff] text-xs text-slate-900 shadow-2xs"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-700 font-semibold mb-1">
+                URL Slug
+              </label>
+              <div className="flex items-center">
+                <span className="bg-slate-100 border border-r-0 border-slate-300 px-2.5 py-2 rounded-l-lg text-slate-500 font-mono text-xs">
+                  /{parentSlug ? `${parentSlug}/` : ""}
+                </span>
                 <input
                   type="text"
                   required
-                  value={newTitle}
-                  onChange={(e) => {
-                    setNewTitle(e.target.value);
-                    if (!newSlugPart) {
-                      setNewSlugPart(
-                        e.target.value
-                          .toLowerCase()
-                          .normalize("NFD")
-                          .replace(/[\u0300-\u036f]/g, "")
-                          .replace(/[^a-z0-9]+/g, "-")
-                          .replace(/^-+|-+$/g, "")
-                      );
-                    }
-                  }}
-                  placeholder="e.g., Special Sessions &amp; Tutorials"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff] text-xs text-slate-900 shadow-2xs"
+                  value={newSlugPart}
+                  onChange={(e) => setNewSlugPart(e.target.value)}
+                  placeholder="special-sessions"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-r-lg focus:outline-none focus:border-[#115eff] font-mono text-xs text-slate-900 shadow-2xs"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-slate-700 font-semibold mb-1">
-                  URL Slug
-                </label>
-                <div className="flex items-center">
-                  <span className="bg-slate-100 border border-r-0 border-slate-300 px-2.5 py-2 rounded-l-lg text-slate-500 font-mono text-xs">
-                    /{parentSlug ? `${parentSlug}/` : ""}
-                  </span>
-                  <input
-                    type="text"
-                    required
-                    value={newSlugPart}
-                    onChange={(e) => setNewSlugPart(e.target.value)}
-                    placeholder="special-sessions"
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-r-lg focus:outline-none focus:border-[#115eff] font-mono text-xs text-slate-900 shadow-2xs"
-                  />
-                </div>
-              </div>
+            <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600">
+              <span className="text-slate-400">Live URL: </span>
+              <span className="font-mono text-slate-800 font-semibold">
+                https://ieee-smc2027.org/{parentSlug ? `${parentSlug}/` : ""}{newSlugPart || "slug"}
+              </span>
+            </div>
 
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600">
-                <span className="text-slate-400">Live URL: </span>
-                <span className="font-mono text-slate-800 font-semibold">
-                  https://ieee-smc2027.org/{parentSlug ? `${parentSlug}/` : ""}{newSlugPart || "slug"}
-                </span>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setCreateModalOpen(false)}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={creating}
-                  className="px-4 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold rounded-lg transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
-                >
-                  {creating ? "Creating..." : "Create Page"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <div className="pt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCreateModalOpen(false)}
+                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={creating}
+                className="px-4 py-1.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold rounded-lg transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
+              >
+                {creating ? "Creating..." : "Create Page"}
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Page Info Modal */}
-      {editModalOpen && editingPage && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-5 shadow-xl border border-slate-200 animate-in fade-in duration-150 font-sans">
-            <h3 className="text-base font-bold text-slate-900 mb-1">
-              Edit Page Info: {editingPage.title}
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="max-w-md font-sans p-6 rounded-xl border border-slate-200">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-slate-900">
+              Edit Page Info: {editingPage?.title}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
               Update the page title and route slug.
-            </p>
+            </DialogDescription>
+          </DialogHeader>
 
-            <form onSubmit={handleUpdatePageInfo} className="space-y-3.5 text-xs">
+          {editingPage && (
+            <form onSubmit={handleUpdatePageInfo} className="space-y-3.5 text-xs mt-2">
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
                   Page Title <span className="text-rose-500">*</span>
@@ -975,9 +985,9 @@ export default function PagesManagementPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
