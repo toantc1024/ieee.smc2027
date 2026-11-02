@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  BarChart3,
   FileText,
   Image as ImageIcon,
   Globe,
@@ -36,6 +37,12 @@ export const quickNavItems: SidebarMenuItem[] = [
     title: "Overview",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    id: "analytics",
+    title: "Analytics",
+    href: "/admin/analytics",
+    icon: BarChart3,
   },
 ];
 

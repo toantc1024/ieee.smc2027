@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Toaster } from "@/components/ui/sonner";
+import { UmamiTracker } from "@/modules/analytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -169,6 +170,7 @@ export default function RootLayout({
         <Footer />
 
         <Toaster position="top-right" richColors />
+        <UmamiTracker />
       </body>
     </html>
   );
