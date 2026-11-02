@@ -34,7 +34,7 @@ export function Committee() {
           <button
             key={group.groupName}
             onClick={() => setActiveGroupIndex(idx)}
-            className={`min-h-[44px] px-5 py-2.5 text-sm sm:text-base font-bold rounded-[0.26rem] transition-colors cursor-pointer ${
+            className={`min-h-[44px] px-5 py-2.5 text-sm sm:text-base font-bold rounded-sm transition-colors cursor-pointer ${
               activeGroupIndex === idx
                 ? "bg-[#115eff] text-white shadow-xs"
                 : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
@@ -51,7 +51,7 @@ export function Committee() {
           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             {activeGroup.groupName}
           </h3>
-          <span className="text-xs sm:text-sm font-bold text-slate-600 bg-slate-100 px-3.5 py-1 rounded-full">
+          <span className="text-xs sm:text-sm font-bold text-slate-600 bg-slate-100 px-3.5 py-1 rounded-sm">
             {activeGroup.members.length} Members
           </span>
         </div>
@@ -60,11 +60,11 @@ export function Committee() {
           {activeGroup.members.map((member, index) => (
             <div
               key={index}
-              className="p-5 bg-white border border-slate-200 rounded-md hover:border-[#115eff] hover:shadow-md transition-all flex flex-col justify-between"
+              className="p-5 bg-white border border-slate-200 rounded-sm hover:border-[#115eff] hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs sm:text-sm font-bold px-3 py-1 bg-blue-50 border border-blue-200/80 text-[#115eff] rounded">
+                  <span className="text-xs sm:text-sm font-bold px-3 py-1 bg-blue-50 border border-blue-200/80 text-[#115eff] rounded-sm">
                     {member.role}
                   </span>
                   <span className="text-xs sm:text-sm text-slate-500 font-semibold">

@@ -32,7 +32,7 @@ export function ManagementPageHeader({
     return (
       <div
         className={cn(
-          "relative bg-white rounded-2xl border border-slate-200 p-5 sm:p-6",
+          "relative bg-white rounded-sm border border-slate-200 p-5 sm:p-6",
           className
         )}
       >
@@ -47,7 +47,7 @@ export function ManagementPageHeader({
                 />
               </div>
             ) : icon ? (
-              <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#115eff] text-white">
+              <div className="grid size-11 shrink-0 place-items-center rounded-sm bg-[#115eff] text-white">
                 {icon}
               </div>
             ) : null}
@@ -75,7 +75,7 @@ export function ManagementPageHeader({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl bg-[#03142e] text-white border border-slate-800 py-4.5 px-5 sm:px-6 lg:px-7 min-h-[108px] sm:min-h-[114px] flex items-center justify-between gap-4",
+        "relative overflow-hidden rounded-sm bg-[#03142e] text-white border border-slate-800 py-4.5 px-5 sm:px-6 lg:px-7 min-h-[108px] sm:min-h-[114px] flex items-center justify-between gap-4",
         className
       )}
     >
@@ -99,7 +99,7 @@ export function ManagementPageHeader({
               />
             </div>
           ) : icon ? (
-            <div className="grid size-11 sm:size-12 shrink-0 place-items-center rounded-xl bg-white/10 text-white border border-white/20">
+            <div className="grid size-11 sm:size-12 shrink-0 place-items-center rounded-sm bg-white/10 text-white border border-white/20">
               {icon}
             </div>
           ) : null}

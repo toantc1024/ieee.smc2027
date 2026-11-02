@@ -130,7 +130,7 @@ export function WelcomeLetter({
                 {chairs.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}
-                    <div className="relative rounded-2xl bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
+                    <div className="relative rounded-sm bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
                       
                       {/* Top: Image Canvas with White Background (Hover: Solid Primary Blue) */}
                       <div className="relative w-full h-64 sm:h-72 bg-slate-50/70 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">

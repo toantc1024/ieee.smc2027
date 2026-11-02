@@ -112,7 +112,7 @@ export function Sponsors() {
         {/* Customized Taller Button with 25% Larger Text */}
         <a
           href={`mailto:${CONFERENCE_INFO.contactEmail}`}
-          className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
+          className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-sm transition-all shadow-sm hover:shadow-md"
         >
           <span>Download Sponsorship Prospectus</span>
           <ArrowUpRight className="w-4 h-4" />
@@ -123,7 +123,7 @@ export function Sponsors() {
       {/* Sponsors Grid: Content aligned with header */}
       <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {/* Official Society Co-Sponsorship Banner Lockup */}
-        <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-xl flex flex-col items-center justify-center text-center">
+        <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-sm flex flex-col items-center justify-center text-center">
           <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
             Official Technical Co-Sponsorship & Society Society Affiliation
           </span>
@@ -134,7 +134,7 @@ export function Sponsors() {
           {SPONSORS.map((s, index) => (
             <div
               key={index}
-              className="p-5 bg-slate-50/70 border border-slate-200 rounded-[0.35rem] text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
+              className="p-5 bg-slate-50/70 border border-slate-200 rounded-sm text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
             >
               <SponsorLogoBadge type={s.logoType} />
               

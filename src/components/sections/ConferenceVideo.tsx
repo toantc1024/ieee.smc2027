@@ -70,11 +70,11 @@ export function ConferenceVideo({
           </div>
 
           {/* China-Friendly QQ Video / International YouTube Switcher */}
-          <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white p-1 shadow-2xs shrink-0">
+          <div className="inline-flex items-center rounded-sm border border-slate-200 bg-white p-1 shadow-2xs shrink-0">
             <button
               type="button"
               onClick={() => setPlayerSource("YOUTUBE")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "YOUTUBE"
                   ? "bg-[#115eff] text-white"
                   : "text-slate-600 hover:text-slate-900"
@@ -86,7 +86,7 @@ export function ConferenceVideo({
             <button
               type="button"
               onClick={() => setPlayerSource("QQ_VIDEO")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "QQ_VIDEO"
                   ? "bg-[#115eff] text-white"
                   : "text-slate-600 hover:text-slate-900"
@@ -102,7 +102,7 @@ export function ConferenceVideo({
       <div className="relative overflow-hidden px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch relative z-10">
           <div className="lg:col-span-7 flex flex-col h-full">
-            <div className="relative w-full h-full min-h-[320px] aspect-video lg:aspect-auto rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
+            <div className="relative w-full h-full min-h-[320px] aspect-video lg:aspect-auto rounded-sm overflow-hidden border border-slate-200 bg-slate-900 shadow-md">
               <iframe
                 key={playerSource}
                 src={playerSource === "QQ_VIDEO" ? qqEmbedUrl : safeYoutubeUrl}
@@ -116,7 +116,7 @@ export function ConferenceVideo({
           </div>
 
           <div className="lg:col-span-5 flex flex-col h-full min-h-[280px] lg:min-h-0">
-            <div className="relative overflow-hidden p-6 sm:p-8 bg-white border border-slate-200 rounded-2xl shadow-2xs flex flex-col justify-between h-full">
+            <div className="relative overflow-hidden p-6 sm:p-8 bg-white border border-slate-200 rounded-sm shadow-2xs flex flex-col justify-between h-full">
               <div className="corner-dot-tr opacity-60 pointer-events-none" />
 
               <div className="relative z-10 space-y-4">

@@ -96,7 +96,7 @@ export function PaymentMethods({
 
       {/* 2. Fee Table */}
       <div className="px-4 sm:px-6 py-6 sm:py-8">
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+        <div className="bg-white border border-slate-200 rounded-sm overflow-hidden shadow-xs">
           <div className="p-5 sm:p-6 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-[#004776]">
@@ -107,7 +107,7 @@ export function PaymentMethods({
                 <strong>July 05, 2027</strong>
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded border border-emerald-200">
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-sm border border-emerald-200">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>IEEE Scopus & Xplore Proceedings Included</span>
             </div>
@@ -135,7 +135,7 @@ export function PaymentMethods({
                     <td className="py-4 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2 text-sm sm:text-base">
                       <span>{rate.category}</span>
                       {rate.popular && (
-                        <span className="px-2 py-0.5 rounded text-xs font-extrabold uppercase bg-[#115eff] text-white">
+                        <span className="px-2 py-0.5 rounded-sm text-xs font-extrabold uppercase bg-[#115eff] text-white">
                           Main
                         </span>
                       )}
@@ -166,9 +166,9 @@ export function PaymentMethods({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Channel 1: Domestic Wire / VietQR */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-lg bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
+              <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <Building2 className="w-6 h-6" />
               </div>
 
@@ -182,7 +182,7 @@ export function PaymentMethods({
                 For authors and delegates in Vietnam paying registration fees via VietQR or Napas 24/7 interbank transfer.
               </p>
 
-              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg p-3.5">
+              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-sm p-3.5">
                 <div>
                   <span className="text-slate-500 block text-xs">Beneficiary Organization:</span>
                   <span className="font-bold text-slate-900 leading-snug">
@@ -238,9 +238,9 @@ export function PaymentMethods({
           </div>
 
           {/* Channel 2: International Wire / SWIFT */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-lg bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
+              <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <Globe2 className="w-6 h-6" />
               </div>
 
@@ -254,7 +254,7 @@ export function PaymentMethods({
                 Recommended for international overseas wire payments in USD. All bank remittance charges must be borne by the sender.
               </p>
 
-              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg p-3.5">
+              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-sm p-3.5">
                 <div>
                   <span className="text-slate-500 block text-xs">Beneficiary Name:</span>
                   <span className="font-bold text-slate-900 leading-snug">
@@ -300,9 +300,9 @@ export function PaymentMethods({
           </div>
 
           {/* Channel 3: Online Card Portal */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-xl shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
-              <div className="w-12 h-12 rounded-lg bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
+              <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <CreditCard className="w-6 h-6" />
               </div>
 
@@ -316,7 +316,7 @@ export function PaymentMethods({
                 Instant confirmation using international credit cards (Visa, MasterCard, JCB, American Express) via the official payment gateway.
               </p>
 
-              <div className="p-4 bg-blue-50/60 border border-blue-100 rounded-lg space-y-2.5 text-sm">
+              <div className="p-4 bg-blue-50/60 border border-blue-100 rounded-sm space-y-2.5 text-sm">
                 <div className="flex items-center gap-2 text-[#004776] font-bold">
                   <FileCheck2 className="w-4.5 h-4.5 text-[#115eff]" />
                   <span>Instant Receipt & Confirmation</span>
@@ -325,13 +325,13 @@ export function PaymentMethods({
                   Upon completion, your registration is instantly confirmed and early-bird status is locked.
                 </p>
                 <div className="flex items-center gap-2 pt-1">
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700">
+                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
                     VISA
                   </span>
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700">
+                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
                     MasterCard
                   </span>
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700">
+                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
                     JCB
                   </span>
                 </div>
@@ -341,7 +341,7 @@ export function PaymentMethods({
             <div className="mt-6 pt-4 border-t border-slate-100">
               <a
                 href="#cfp"
-                className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
               >
                 <span>Access Payment Portal</span>
                 <ExternalLink className="w-4 h-4" />
@@ -353,9 +353,9 @@ export function PaymentMethods({
 
       {/* 4. VAT Invoice & Notes Notice Box */}
       <div className="px-4 sm:px-6 pb-12">
-        <div className="p-5 sm:p-7 bg-white border border-slate-200 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xs">
+        <div className="p-5 sm:p-7 bg-white border border-slate-200 rounded-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xs">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 rounded-lg bg-blue-50 text-[#115eff] border border-blue-100 shrink-0">
+            <div className="p-2.5 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 shrink-0">
               <Receipt className="w-6 h-6" />
             </div>
             <div>

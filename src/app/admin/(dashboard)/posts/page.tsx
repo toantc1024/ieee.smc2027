@@ -70,7 +70,7 @@ function PostCoverThumbnail({
     <button
       type="button"
       onClick={onClick}
-      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block"
+      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-sm overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block"
       title="Click to preview post"
     >
       {src && !imgError ? (
@@ -355,19 +355,19 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-sm text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={cat}
                   >
                     <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
                     <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white">
+                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-sm border border-slate-200 bg-white">
                   {POST_CATEGORIES.map((categoryOption) => (
                     <DropdownMenuItem
                       key={categoryOption}
                       onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
-                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
                     >
                       <span className="truncate" title={categoryOption}>{categoryOption}</span>
                       {cat === categoryOption && (
@@ -397,13 +397,13 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-sm text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
                     title={status}
                   >
                     <span className="flex items-center gap-1.5 min-w-0 truncate">
                       <span
                         className={cn(
-                          "size-1.5 rounded-full shrink-0",
+                          "size-1.5 rounded-xs shrink-0",
                           status === "PUBLISHED"
                             ? "bg-[#115eff]"
                             : "bg-slate-400"
@@ -420,13 +420,13 @@ export default function PostsManagementPage() {
                     <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-xl border border-slate-200 bg-white">
+                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-sm border border-slate-200 bg-white">
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-[#115eff]" />
+                      <span className="size-1.5 rounded-xs bg-[#115eff]" />
                       Published
                     </span>
                     {status === "PUBLISHED" && (
@@ -435,10 +435,10 @@ export default function PostsManagementPage() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-slate-400" />
+                      <span className="size-1.5 rounded-xs bg-slate-400" />
                       Draft
                     </span>
                     {status === "DRAFT" && (
@@ -447,10 +447,10 @@ export default function PostsManagementPage() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-slate-300" />
+                      <span className="size-1.5 rounded-xs bg-slate-300" />
                       Archived
                     </span>
                     {status === "ARCHIVED" && (
@@ -518,7 +518,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
                 title="View post detail page"
               >
                 <Eye className="size-4" />
@@ -531,7 +531,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}/edit`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
                 title="Edit post in full editor"
               >
                 <Edit2 className="size-4" />
@@ -562,7 +562,7 @@ export default function PostsManagementPage() {
                     setDuplicatingId(null);
                   }
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer disabled:opacity-50"
                 title="Duplicate & edit post"
               >
                 <CopyPlus className="size-4" />
@@ -576,7 +576,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
                 title="Delete post"
               >
                 <Trash2 className="size-4" />

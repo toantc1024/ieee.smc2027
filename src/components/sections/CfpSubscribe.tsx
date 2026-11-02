@@ -25,7 +25,7 @@ export function CfpSubscribe() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/20 text-sm font-semibold text-blue-200 rounded-full mb-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/20 text-sm font-semibold text-blue-200 rounded-sm mb-3">
                 <Bell className="w-4 h-4 text-blue-200" />
                 <span>Stay Informed • IEEE SMC 2027 Alerts</span>
               </div>
@@ -39,7 +39,7 @@ export function CfpSubscribe() {
 
           <div className="lg:col-span-5">
             {submitted ? (
-              <div className="p-6 bg-white/10 backdrop-blur-xs border border-white/25 rounded-md flex items-center gap-3.5">
+              <div className="p-6 bg-white/10 backdrop-blur-xs border border-white/25 rounded-sm flex items-center gap-3.5">
                 <CheckCircle2 className="w-6 h-6 text-emerald-300 shrink-0" />
                 <div className="text-sm text-blue-100">
                   <span className="font-bold text-white block text-base">Subscription Confirmed!</span>
@@ -54,11 +54,11 @@ export function CfpSubscribe() {
                   placeholder="Enter your email address..."
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="grow px-4 py-3.5 bg-white/15 backdrop-blur-xs border border-white/25 text-white text-sm sm:text-base rounded-[0.26rem] focus:outline-none focus:border-white focus:bg-white/20 placeholder:text-blue-200 min-h-[52px]"
+                  className="grow px-4 py-3.5 bg-white/15 backdrop-blur-xs border border-white/25 text-white text-sm sm:text-base rounded-sm focus:outline-none focus:border-white focus:bg-white/20 placeholder:text-blue-200 min-h-[52px]"
                 />
                 <button
                   type="submit"
-                  className="min-h-[52px] px-8 py-3.5 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-base rounded-[0.26rem] transition-all shadow-md hover:shadow-lg shrink-0 flex items-center justify-center gap-2.5"
+                  className="min-h-[52px] px-8 py-3.5 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-base rounded-sm transition-all shadow-md hover:shadow-lg shrink-0 flex items-center justify-center gap-2.5"
                 >
                   <span>Subscribe</span>
                   <ArrowRight className="w-4 h-4 text-[#115eff]" />

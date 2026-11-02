@@ -139,7 +139,7 @@ export function PostFormDialog({
         </DialogHeader>
 
         {error && (
-          <div className="p-3 text-xs bg-slate-50 border border-slate-200 text-slate-800 rounded-lg">
+          <div className="p-3 text-xs bg-slate-50 border border-slate-200 text-slate-800 rounded-sm">
             {error}
           </div>
         )}
@@ -155,7 +155,7 @@ export function PostFormDialog({
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Enter announcement or article title..."
-              className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
+              className="h-9 px-3 text-xs border-slate-200 rounded-sm bg-slate-50 focus:bg-white"
               required
             />
           </div>
@@ -171,7 +171,7 @@ export function PostFormDialog({
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="post-url-slug"
-                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
+                className="h-9 px-3 text-xs border-slate-200 rounded-sm bg-slate-50 focus:bg-white font-medium"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function PostFormDialog({
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
                 placeholder="/news/hcmute.jpg or image URL"
-                className="h-9 px-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium"
+                className="h-9 px-3 text-xs border-slate-200 rounded-sm bg-slate-50 focus:bg-white font-medium"
               />
             </div>
           </div>
@@ -241,7 +241,7 @@ export function PostFormDialog({
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Enter brief 1-2 sentence overview..."
-              className="min-h-[64px] p-2.5 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white resize-none"
+              className="min-h-[64px] p-2.5 text-xs border-slate-200 rounded-sm bg-slate-50 focus:bg-white resize-none"
             />
           </div>
 
@@ -255,7 +255,7 @@ export function PostFormDialog({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Enter post content (supports text or HTML formatting)..."
-              className="min-h-[160px] p-3 text-xs border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-medium leading-relaxed resize-y"
+              className="min-h-[160px] p-3 text-xs border-slate-200 rounded-sm bg-slate-50 focus:bg-white font-medium leading-relaxed resize-y"
               required
             />
           </div>

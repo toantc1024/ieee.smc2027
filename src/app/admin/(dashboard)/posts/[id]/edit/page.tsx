@@ -58,23 +58,23 @@ export default function EditPostPage({
       <div className="h-full flex flex-col overflow-hidden bg-background">
         <div className="h-13 min-h-[52px] border-b border-border/80 px-4 flex items-center justify-between bg-white dark:bg-card">
           <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-lg" />
-            <Skeleton className="h-6 w-72 rounded-md" />
+            <Skeleton className="size-8 rounded-sm" />
+            <Skeleton className="h-6 w-72 rounded-sm" />
           </div>
           <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-20 rounded-md" />
-            <Skeleton className="h-8 w-28 rounded-md" />
+            <Skeleton className="h-8 w-20 rounded-sm" />
+            <Skeleton className="h-8 w-28 rounded-sm" />
           </div>
         </div>
         <div className="flex-1 flex overflow-hidden">
           <div className="w-[380px] border-r border-border/80 p-4 space-y-4 bg-white dark:bg-card">
-            <Skeleton className="h-44 w-full rounded-xl" />
-            <Skeleton className="h-12 w-full rounded-lg" />
-            <Skeleton className="h-12 w-full rounded-lg" />
-            <Skeleton className="h-28 w-full rounded-lg" />
+            <Skeleton className="h-44 w-full rounded-sm" />
+            <Skeleton className="h-12 w-full rounded-sm" />
+            <Skeleton className="h-12 w-full rounded-sm" />
+            <Skeleton className="h-28 w-full rounded-sm" />
           </div>
           <div className="flex-1 bg-slate-100/70 dark:bg-[#070b14] p-8 flex justify-center overflow-y-auto">
-            <Skeleton className="w-full max-w-[850px] h-[900px] rounded-xl bg-white" />
+            <Skeleton className="w-full max-w-[850px] h-[900px] rounded-sm bg-white" />
           </div>
         </div>
       </div>

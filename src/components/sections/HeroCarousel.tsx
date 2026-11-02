@@ -257,7 +257,7 @@ export function HeroCarousel({
             <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
               <div className="max-w-3xl space-y-3.5 sm:space-y-4 pointer-events-auto">
                 {activeSlideData.badge && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#115eff]/85 text-white border border-white/20 text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-xs">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#115eff]/85 text-white border border-white/20 text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-xs">
                     <span>{activeSlideData.badge}</span>
                   </div>
                 )}
@@ -310,7 +310,7 @@ export function HeroCarousel({
             {/* Optional Circular Countdown Progress Indicators with Rotating Flower */}
             {showIndicators && (
               <div className="pointer-events-auto absolute left-4 sm:left-1/2 sm:-translate-x-1/2">
-                <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 backdrop-blur-md px-2.5 py-1.5 shadow-xl">
+                <div className="flex items-center gap-1.5 rounded-sm border border-white/20 bg-black/40 backdrop-blur-md px-2.5 py-1.5 shadow-xl">
                   {slides.map((_, index) => (
                     <button
                       key={index}
@@ -389,7 +389,7 @@ export function HeroCarousel({
                 }}
                 onMouseEnter={() => setIsAutoPlay(false)}
                 onMouseLeave={() => setIsAutoPlay(true)}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-sm bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/nav:-translate-x-0.5" />
@@ -402,7 +402,7 @@ export function HeroCarousel({
                 }}
                 onMouseEnter={() => setIsAutoPlay(false)}
                 onMouseLeave={() => setIsAutoPlay(true)}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-sm bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
                 aria-label="Next slide"
               >
                 <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/nav:translate-x-0.5" />

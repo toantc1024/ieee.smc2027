@@ -88,9 +88,9 @@ export function Venue() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
           {/* Left Column: Sheraton Saigon Grand Opera Hotel Narrative & Details */}
-          <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50/60 border border-slate-200 rounded-2xl flex flex-col justify-between space-y-6">
+          <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50/60 border border-slate-200 rounded-sm flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100">
+              <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3.5 py-1 rounded-sm border border-blue-100">
                 <span>Official Conference Hotel & Headquarters</span>
               </div>
 
@@ -139,7 +139,7 @@ export function Venue() {
                 href="https://www.marriott.com/en-us/hotels/sgnsi-sheraton-saigon-grand-opera-hotel/overview/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-md shadow-xs transition-all"
+                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm shadow-xs transition-all"
               >
                 <span>Explore Venue Details</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -149,7 +149,7 @@ export function Venue() {
                 href={CONFERENCE_INFO.visaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm sm:text-base rounded-md transition-all shadow-2xs"
+                className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm sm:text-base rounded-sm transition-all shadow-2xs"
               >
                 <span>Vietnam e-Visa Portal</span>
                 <ExternalLink className="w-4 h-4 text-slate-500" />
@@ -158,7 +158,7 @@ export function Venue() {
           </div>
 
           {/* Right Column: Clean, Unobstructed Photography of the Venue */}
-          <div className="lg:col-span-5 relative min-h-[340px] lg:min-h-full rounded-2xl overflow-hidden border border-slate-200 shadow-2xs group">
+          <div className="lg:col-span-5 relative min-h-[340px] lg:min-h-full rounded-sm overflow-hidden border border-slate-200 shadow-2xs group">
             <Image
               src="/images/sheraton-saigon-card.jpg"
               alt="Sheraton Saigon Grand Opera Hotel"
@@ -171,14 +171,14 @@ export function Venue() {
 
             {/* Top Badge */}
             <div className="absolute top-4 right-4 z-10">
-              <span className="text-xs font-semibold text-white bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
+              <span className="text-xs font-semibold text-white bg-black/50 backdrop-blur-md px-3 py-1 rounded-sm border border-white/20">
                 District 1 • HCMC
               </span>
             </div>
 
             {/* Bottom Caption Pill */}
             <div className="absolute bottom-4 left-4 right-4 z-10">
-              <div className="p-3.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 text-white">
+              <div className="p-3.5 rounded-sm bg-black/40 backdrop-blur-md border border-white/15 text-white">
                 <p className="text-[11px] uppercase tracking-wider text-blue-300 font-semibold mb-0.5">
                   Official Conference Venue
                 </p>
@@ -196,7 +196,7 @@ export function Venue() {
       <div className="px-4 sm:px-6 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1: Official Vietnam Visa Portal */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-sm flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
             <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
               <Image
@@ -228,7 +228,7 @@ export function Venue() {
         </div>
 
         {/* Card 2: International Flight Arrival */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-sm flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
             <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
               <Image
@@ -252,7 +252,7 @@ export function Venue() {
         </div>
 
         {/* Card 3: Downtown Location & Transit */}
-        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-md flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
+        <div className="p-6 sm:p-7 bg-white border border-slate-200 rounded-sm flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group">
           <div>
             <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4">
               <Image
@@ -289,12 +289,12 @@ export function Venue() {
             </p>
           </div>
 
-          {/* Completely Rounded Switcher */}
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-full shrink-0 border border-slate-200/80">
+          {/* Completely Square Switcher */}
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-sm shrink-0 border border-slate-200/80">
             <button
               type="button"
               onClick={() => setSelectedFilter("all")}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+              className={`px-4 py-1.5 text-xs font-semibold rounded-sm transition-all cursor-pointer ${
                 selectedFilter === "all"
                   ? "bg-white text-[#115eff] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
@@ -305,7 +305,7 @@ export function Venue() {
             <button
               type="button"
               onClick={() => setSelectedFilter("walk")}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+              className={`px-4 py-1.5 text-xs font-semibold rounded-sm transition-all cursor-pointer ${
                 selectedFilter === "walk"
                   ? "bg-white text-[#115eff] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
@@ -316,7 +316,7 @@ export function Venue() {
             <button
               type="button"
               onClick={() => setSelectedFilter("culture")}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+              className={`px-4 py-1.5 text-xs font-semibold rounded-sm transition-all cursor-pointer ${
                 selectedFilter === "culture"
                   ? "bg-white text-[#115eff] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
@@ -332,7 +332,7 @@ export function Venue() {
           {filteredAttractions.map((attraction) => (
             <div
               key={attraction.id}
-              className="group bg-white border border-slate-200 hover:border-[#115eff] rounded-xl overflow-hidden shadow-2xs hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              className="group bg-white border border-slate-200 hover:border-[#115eff] rounded-sm overflow-hidden shadow-2xs hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 {/* Photo with Badge & Overlay */}
@@ -348,7 +348,7 @@ export function Venue() {
                   
                   {/* Top Badge (Without #1 #2) */}
                   <div className="absolute top-2.5 left-2.5 z-10">
-                    <span className="text-[11px] font-bold text-white bg-slate-900/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20">
+                    <span className="text-[11px] font-bold text-white bg-slate-900/70 backdrop-blur-md px-2.5 py-0.5 rounded-sm border border-white/20">
                       {attraction.badge}
                     </span>
                   </div>
@@ -396,7 +396,7 @@ export function Venue() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md text-xs font-bold text-[#115eff] bg-white border border-blue-100 hover:bg-blue-50 transition-colors shadow-2xs"
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-sm text-xs font-bold text-[#115eff] bg-white border border-blue-100 hover:bg-blue-50 transition-colors shadow-2xs"
                 >
                   <MapPin className="w-3.5 h-3.5" />
                   <span>Google Maps</span>
@@ -414,7 +414,7 @@ export function Venue() {
           </p>
           <a
             href="/travel"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-lg shadow-xs transition-all shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-sm shadow-xs transition-all shrink-0"
           >
             <span>Open Dedicated Travel & Accommodation Page</span>
             <ArrowUpRight className="w-4 h-4" />

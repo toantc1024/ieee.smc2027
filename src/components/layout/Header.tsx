@@ -178,17 +178,17 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                               target={link.isExternal ? "_blank" : undefined}
                               rel={link.isExternal ? "noopener noreferrer" : undefined}
                               onClick={closeMenu}
-                              className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-xl hover:bg-slate-50 transition-all duration-150 cursor-pointer min-w-0"
+                              className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-sm hover:bg-slate-50 transition-all duration-150 cursor-pointer min-w-0"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
+                                <div className="w-9 h-9 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
                                   <IconComp className="w-4.5 h-4.5 text-[#115eff] group-hover/item:text-white transition-colors" />
                                 </div>
                                 <span className="text-base xl:text-[17.5px] font-bold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
                                   {link.title}
                                 </span>
                                 {link.badge && (
-                                  <span className="text-xs xl:text-[13px] px-2.5 py-0.5 rounded font-bold bg-blue-100 text-[#115eff]">
+                                  <span className="text-xs xl:text-[13px] px-2.5 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff]">
                                     {link.badge}
                                   </span>
                                 )}
@@ -226,7 +226,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                       target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
                       rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       onClick={closeMenu}
-                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
+                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
                     >
                       {/* Dot Pattern in Default state */}
                       <div
@@ -243,7 +243,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                           className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
                         />
                         {activeItem.promoCard.badge && (
-                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
+                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-3 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
                             {activeItem.promoCard.badge}
                           </div>
                         )}
@@ -666,7 +666,7 @@ export function Header() {
                           }
                         }}
                         className={cn(
-                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold uppercase text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold uppercase text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                           isMenuOpen
                             ? "bg-[#115eff] text-white shadow-xs"
                             : "text-[#004776] hover:bg-[#115eff] hover:text-white"
@@ -695,7 +695,7 @@ export function Header() {
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-3.5 text-[13px] xl:text-[14px] font-semibold text-[#004776] hover:text-[#115eff] bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-200 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-3.5 text-[13px] xl:text-[14px] font-semibold text-[#004776] hover:text-[#115eff] bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-200 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
                   title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
                 >
                   <User className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
@@ -708,7 +708,7 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={closeMenu}
-                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-lg shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
                   >
                     <FileText className="w-3.5 h-3.5 text-white shrink-0" />
                     <span>{ctaLabel}</span>
@@ -737,7 +737,7 @@ export function Header() {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="p-2 text-slate-600 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-slate-600 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
                   aria-label="Open search"
                 >
                   <Search className="w-5 h-5" />
@@ -746,7 +746,7 @@ export function Header() {
                   type="button"
                   onClick={() => setMobileMenuOpen((prev) => !prev)}
                   className={cn(
-                    "p-2 text-slate-700 hover:text-[#115eff] hover:bg-slate-100 rounded-lg transition-colors cursor-pointer",
+                    "p-2 text-slate-700 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer",
                     mobileMenuOpen && "text-[#115eff] bg-blue-50"
                   )}
                   aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -857,7 +857,7 @@ export function Header() {
                           <button
                             type="button"
                             onClick={() => setMobileExpandedId(isExpanded ? null : link.id)}
-                            className="p-2.5 text-slate-500 hover:text-[#115eff] cursor-pointer rounded-lg hover:bg-slate-50"
+                            className="p-2.5 text-slate-500 hover:text-[#115eff] cursor-pointer rounded-sm hover:bg-slate-50"
                             aria-label={`Toggle ${link.name} submenu`}
                           >
                             <ChevronDown
@@ -872,7 +872,7 @@ export function Header() {
 
                       {/* Submenu Accordion */}
                       {hasSubs && isExpanded && (
-                        <div className="pl-2 pr-1 py-2 mb-2 space-y-1.5 bg-slate-50/80 rounded-xl border border-slate-100">
+                        <div className="pl-2 pr-1 py-2 mb-2 space-y-1.5 bg-slate-50/80 rounded-sm border border-slate-100">
                           {allSubs.map((sub: NavSubItem) => {
                             const IconComp = getNavIcon(sub.icon);
                             return (
@@ -882,14 +882,14 @@ export function Header() {
                                 target={sub.isExternal ? "_blank" : undefined}
                                 rel={sub.isExternal ? "noopener noreferrer" : undefined}
                                 onClick={() => handleMobileNavClick(sub.href)}
-                                className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-[15px] sm:text-base text-slate-700 hover:text-[#115eff] hover:bg-white transition-colors"
+                                className="flex items-center gap-3 py-2.5 px-3 rounded-sm text-[15px] sm:text-base text-slate-700 hover:text-[#115eff] hover:bg-white transition-colors"
                               >
-                                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                                <div className="w-7 h-7 rounded-sm bg-blue-50 flex items-center justify-center shrink-0">
                                   <IconComp className="w-4 h-4 text-[#115eff]" />
                                 </div>
                                 <span className="font-semibold flex-1 leading-snug">{sub.title}</span>
                                 {sub.badge && (
-                                  <span className="text-xs px-2 py-0.5 rounded font-bold bg-blue-100 text-[#115eff]">
+                                  <span className="text-xs px-2 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff]">
                                     {sub.badge}
                                   </span>
                                 )}
@@ -911,7 +911,7 @@ export function Header() {
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-slate-100 text-[#004776] border border-slate-200 hover:border-slate-300 font-bold text-sm sm:text-base rounded-lg transition-colors shadow-2xs"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-slate-100 text-[#004776] border border-slate-200 hover:border-slate-300 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
                 >
                   <User className="w-4 h-4 text-[#115eff]" />
                   <span>
@@ -927,7 +927,7 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full inline-flex items-center justify-center gap-2.5 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-lg shadow-sm transition-colors cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2.5 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-sm shadow-sm transition-colors cursor-pointer"
                   >
                     <FileText className="w-4.5 h-4.5 text-white" />
                     <span>{ctaLabel}</span>
@@ -938,14 +938,14 @@ export function Header() {
                 <div className="grid grid-cols-2 gap-2.5 pt-1 text-sm">
                   <a
                     href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
                   >
                     <Phone className="w-4 h-4 text-[#115eff]" />
                     <span className="truncate">Hotline</span>
                   </a>
                   <a
                     href={`mailto:${email}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
                   >
                     <Mail className="w-4 h-4 text-[#115eff]" />
                     <span className="truncate">Email Us</span>
@@ -960,7 +960,7 @@ export function Header() {
       {/* ── Search Modal ── */}
       {searchOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-start justify-center pt-24 px-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+          <div className="bg-white rounded-sm max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
                 <Search className="w-5 h-5 text-[#115eff]" />
@@ -988,7 +988,7 @@ export function Header() {
                   router.push(`/#tracks`);
                 }
               }}
-              className="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:outline-none focus:border-[#115eff]"
+              className="w-full px-4 py-3 border border-slate-300 rounded-sm text-base focus:outline-none focus:border-[#115eff]"
               autoFocus
             />
 
@@ -1000,7 +1000,7 @@ export function Header() {
                   setSearchOpen(false);
                   router.push(`/#tracks`);
                 }}
-                className="px-4 py-1.5 bg-[#115eff] text-white font-bold text-sm rounded-lg hover:bg-[#0a4de6] cursor-pointer"
+                className="px-4 py-1.5 bg-[#115eff] text-white font-bold text-sm rounded-sm hover:bg-[#0a4de6] cursor-pointer"
               >
                 Go
               </button>

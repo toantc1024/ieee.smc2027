@@ -69,7 +69,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
   return (
     <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
       {/* The Card Box */}
-      <div className="relative rounded-2xl bg-white border border-slate-200 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
+      <div className="relative rounded-sm bg-white border border-slate-200 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
         {/* Top: Image Canvas with Slate/White Background (Hover: Solid Primary Blue #115eff) */}
         <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0 pointer-events-none select-none">
           {/* Clipped background elements (dots only) behind the cutout */}
@@ -111,7 +111,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5 pointer-events-none select-none">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-white/90 border border-blue-200/80 group-hover/card:border-white/40 flex items-center justify-center text-[#115eff] group-hover/card:text-white group-hover/card:bg-white/20 font-bold text-sm sm:text-lg md:text-2xl shadow-xs transition-all duration-300">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-sm bg-white/90 border border-blue-200/80 group-hover/card:border-white/40 flex items-center justify-center text-[#115eff] group-hover/card:text-white group-hover/card:bg-white/20 font-bold text-sm sm:text-lg md:text-2xl shadow-xs transition-all duration-300">
                   {member.name
                     .split(" ")
                     .map((n) => n[0])
@@ -337,7 +337,7 @@ function CommitteeGroupCarousel({
       {/* Group Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-[#115eff]/20 gap-2">
         <div className="flex items-center gap-3">
-          <div className="w-1.5 h-6 bg-[#115eff] rounded-full shrink-0" />
+          <div className="w-1.5 h-6 bg-[#115eff] rounded-xs shrink-0" />
           <h2 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight">
             {group.groupName}
           </h2>

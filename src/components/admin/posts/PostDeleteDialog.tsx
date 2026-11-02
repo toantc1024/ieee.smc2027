@@ -43,7 +43,7 @@ export function PostDeleteDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md font-sans p-6 shadow-none border border-slate-200">
         <DialogHeader className="space-y-3">
-          <div className="size-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+          <div className="size-10 rounded-sm bg-slate-100 text-slate-700 flex items-center justify-center">
             <AlertCircle className="size-5" />
           </div>
           <DialogTitle className="text-base font-bold text-slate-900">

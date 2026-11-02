@@ -251,7 +251,7 @@ const AVAILABLE_BLOCKS = [
     category: "Advanced",
     description: "Embed custom HTML markup, iframes, videos, or widgets",
     defaultProps: {
-      content: "<div class='p-8 text-center bg-slate-100 rounded-lg'><h4>Custom HTML Block</h4><p>Edit the HTML code in the properties panel on the right.</p></div>",
+      content: "<div class='p-8 text-center bg-slate-100 rounded-sm'><h4>Custom HTML Block</h4><p>Edit the HTML code in the properties panel on the right.</p></div>",
     },
   },
 ];
@@ -481,7 +481,7 @@ function BlockImageField({
     <div className="space-y-1.5">
       <label className="block text-xs font-semibold text-slate-700">{label}</label>
       {value && (
-        <div className="relative aspect-[16/9] w-full rounded-lg overflow-hidden border border-slate-200 bg-slate-100 mb-1.5">
+        <div className="relative aspect-[16/9] w-full rounded-sm overflow-hidden border border-slate-200 bg-slate-100 mb-1.5">
           <Image src={value} alt="Preview" fill unoptimized className="object-cover" />
         </div>
       )}
@@ -491,7 +491,7 @@ function BlockImageField({
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           placeholder="/assets/image.jpg or URL"
-          className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+          className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
         />
         <input
           ref={fileInputRef}
@@ -504,7 +504,7 @@ function BlockImageField({
           type="button"
           disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
-          className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#115eff] border border-blue-200 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+          className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#115eff] border border-blue-200 rounded-sm text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
           title="Upload image file"
         >
           {uploading ? (
@@ -567,18 +567,18 @@ function SortableBlockItem({
       style={style}
       onClick={onSelect}
       className={cn(
-        "group relative rounded-2xl transition-all duration-200 border-2 select-none",
+        "group relative rounded-sm transition-all duration-200 border-2 select-none",
         isSelected
-          ? "border-[#115eff] shadow-lg ring-2 ring-blue-500/20"
-          : "border-transparent hover:border-blue-300/80 shadow-xs",
-        isDragging && "opacity-40 z-50 shadow-2xl scale-[0.99]",
+          ? "border-[#115eff] shadow-sm ring-1 ring-blue-500/20"
+          : "border-transparent hover:border-blue-300/80 shadow-2xs",
+        isDragging && "opacity-40 z-50 shadow-md scale-[0.99]",
         block.hidden && "opacity-60 bg-slate-100/50"
       )}
     >
       {/* Top Floating Control Bar */}
       <div
         className={cn(
-          "absolute -top-3.5 left-4 z-30 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all shadow-md",
+          "absolute -top-3 left-4 z-30 flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all shadow-xs border border-slate-700/30",
           isSelected
             ? "bg-[#115eff] text-white opacity-100 scale-100"
             : "bg-slate-800 text-slate-100 opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100"
@@ -606,7 +606,7 @@ function SortableBlockItem({
             onMoveUp();
           }}
           disabled={index === 0}
-          className="w-5 h-5 flex items-center justify-center rounded text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
+          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
           title="Move up"
         >
           <ChevronUp className="w-3 h-3" />
@@ -620,7 +620,7 @@ function SortableBlockItem({
             onMoveDown();
           }}
           disabled={index === totalBlocks - 1}
-          className="w-5 h-5 flex items-center justify-center rounded text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
+          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 disabled:opacity-30 transition-colors cursor-pointer"
           title="Move down"
         >
           <ChevronDown className="w-3 h-3" />
@@ -633,7 +633,7 @@ function SortableBlockItem({
             e.stopPropagation();
             onDuplicate();
           }}
-          className="w-5 h-5 flex items-center justify-center rounded text-white hover:bg-white/20 transition-colors cursor-pointer"
+          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 transition-colors cursor-pointer"
           title="Duplicate block"
         >
           <Copy className="w-3 h-3" />
@@ -646,7 +646,7 @@ function SortableBlockItem({
             e.stopPropagation();
             onToggleHide();
           }}
-          className="w-5 h-5 flex items-center justify-center rounded text-white hover:bg-white/20 transition-colors cursor-pointer"
+          className="w-5 h-5 flex items-center justify-center rounded-sm text-white hover:bg-white/20 transition-colors cursor-pointer"
           title={block.hidden ? "Show block" : "Hide block"}
         >
           {block.hidden ? (
@@ -663,7 +663,7 @@ function SortableBlockItem({
             e.stopPropagation();
             onRemove();
           }}
-          className="w-5 h-5 flex items-center justify-center rounded text-rose-200 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer"
+          className="w-5 h-5 flex items-center justify-center rounded-sm text-rose-200 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer"
           title="Delete block"
         >
           <Trash2 className="w-3 h-3" />
@@ -671,7 +671,7 @@ function SortableBlockItem({
       </div>
 
       {/* Render Component Preview */}
-      <div className={cn("overflow-hidden rounded-xl", block.hidden && "opacity-60")}>
+      <div className={cn("overflow-hidden rounded-sm", block.hidden && "opacity-60")}>
         {children}
       </div>
     </div>
@@ -874,7 +874,7 @@ export default function PageBuilderRoute({
         );
       default:
         return (
-          <div className="p-8 text-center text-slate-400 bg-white border border-dashed border-slate-300 rounded-xl">
+          <div className="p-8 text-center text-slate-400 bg-white border border-dashed border-slate-300 rounded-sm">
             Unknown Component: {block.type}
           </div>
         );
@@ -898,13 +898,13 @@ export default function PageBuilderRoute({
     return (
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48 rounded" />
-          <Skeleton className="h-8 w-32 rounded" />
+          <Skeleton className="h-8 w-48 rounded-sm" />
+          <Skeleton className="h-8 w-32 rounded-sm" />
         </div>
         <div className="grid grid-cols-12 gap-6">
-          <Skeleton className="col-span-3 h-[600px] rounded-xl" />
-          <Skeleton className="col-span-6 h-[600px] rounded-xl" />
-          <Skeleton className="col-span-3 h-[600px] rounded-xl" />
+          <Skeleton className="col-span-3 h-[600px] rounded-sm" />
+          <Skeleton className="col-span-6 h-[600px] rounded-sm" />
+          <Skeleton className="col-span-3 h-[600px] rounded-sm" />
         </div>
       </div>
     );
@@ -917,7 +917,7 @@ export default function PageBuilderRoute({
         <div className="flex items-center gap-3">
           <Link
             href="/admin/pages"
-            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+            className="p-1.5 rounded-sm border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
             title="Back to Pages List"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -927,7 +927,7 @@ export default function PageBuilderRoute({
               <h1 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
                 {page?.title || "Page Editor"}
               </h1>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
+              <span className="text-[11px] px-2 py-0.5 rounded-sm bg-blue-50 text-[#115eff] font-semibold border border-blue-200">
                 /{page?.slug}
               </span>
             </div>
@@ -940,12 +940,12 @@ export default function PageBuilderRoute({
         {/* Viewport Toggles & Quick Actions */}
         <div className="flex items-center gap-2">
           {/* Viewport Switcher */}
-          <div className="hidden md:flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+          <div className="hidden md:flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200">
             <button
               type="button"
               onClick={() => setViewport("desktop")}
               className={cn(
-                "p-1.5 rounded-md text-slate-600 transition-all cursor-pointer",
+                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
                 viewport === "desktop" && "bg-white text-[#115eff] shadow-2xs font-semibold"
               )}
               title="Desktop viewport"
@@ -956,7 +956,7 @@ export default function PageBuilderRoute({
               type="button"
               onClick={() => setViewport("tablet")}
               className={cn(
-                "p-1.5 rounded-md text-slate-600 transition-all cursor-pointer",
+                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
                 viewport === "tablet" && "bg-white text-[#115eff] shadow-2xs font-semibold"
               )}
               title="Tablet viewport"
@@ -967,7 +967,7 @@ export default function PageBuilderRoute({
               type="button"
               onClick={() => setViewport("mobile")}
               className={cn(
-                "p-1.5 rounded-md text-slate-600 transition-all cursor-pointer",
+                "p-1.5 rounded-sm text-slate-600 transition-all cursor-pointer",
                 viewport === "mobile" && "bg-white text-[#115eff] shadow-2xs font-semibold"
               )}
               title="Mobile viewport"
@@ -984,18 +984,17 @@ export default function PageBuilderRoute({
               setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
               toast.success("Loaded all 19 conference blocks to canvas");
             }}
-            className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             title="Reset canvas with complete standard conference blocks"
           >
             <Layers className="size-3.5 text-[#115eff]" />
             <span className="hidden sm:inline">Load All Current Blocks</span>
           </button>
 
-
           <Link
             href={page?.slug === "home" ? "/" : `/${page?.slug}`}
             target="_blank"
-            className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+            className="h-8 px-2.5 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             <span>Live</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -1006,7 +1005,7 @@ export default function PageBuilderRoute({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="h-8 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs rounded-lg shadow-2xs transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            className="h-8 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs rounded-sm shadow-2xs transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
           >
             {savedSuccess ? (
               <>
@@ -1044,7 +1043,7 @@ export default function PageBuilderRoute({
               value={paletteSearch}
               onChange={(e) => setPaletteSearch(e.target.value)}
               placeholder="Search blocks (Committees, FAQ...)"
-              className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-[#115eff]"
+              className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-sm focus:outline-none focus:bg-white focus:border-[#115eff]"
             />
           </div>
 
@@ -1053,14 +1052,14 @@ export default function PageBuilderRoute({
             {filteredPalette.map((b) => (
               <div
                 key={b.type}
-                className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-xl transition-all group flex flex-col justify-between gap-2 shadow-2xs"
+                className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 rounded-sm transition-all group flex flex-col justify-between gap-2 shadow-2xs"
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900 group-hover:text-[#115eff] transition-colors">
                       {b.title}
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-semibold">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-slate-200 text-slate-700 font-semibold">
                       {b.category}
                     </span>
                   </div>
@@ -1072,7 +1071,7 @@ export default function PageBuilderRoute({
                 <button
                   type="button"
                   onClick={() => addBlock(b.type)}
-                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
+                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 bg-white hover:bg-[#115eff] text-slate-700 hover:text-white border border-slate-200 hover:border-[#115eff] text-xs font-bold rounded-sm transition-all cursor-pointer shadow-2xs active:scale-95"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Block</span>
@@ -1103,7 +1102,7 @@ export default function PageBuilderRoute({
             )}
           >
             {blocks.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-2xl border-2 border-dashed border-slate-300 space-y-3">
+              <div className="p-12 text-center bg-white rounded-sm border-2 border-dashed border-slate-300 space-y-3">
                 <Layers className="size-10 text-slate-300 mx-auto" />
                 <h3 className="text-sm font-bold text-slate-800">Canvas is Empty</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -1116,7 +1115,7 @@ export default function PageBuilderRoute({
                     setSelectedBlockId(DEFAULT_PAGE_BLOCKS[0].id);
                     toast.success("Loaded all 19 conference blocks");
                   }}
-                  className="px-4 py-2 bg-[#115eff] text-white text-xs font-bold rounded-lg shadow-2xs cursor-pointer"
+                  className="px-4 py-2 bg-[#115eff] text-white text-xs font-bold rounded-sm shadow-2xs cursor-pointer"
                 >
                   Load All Conference Blocks
                 </button>
@@ -1170,19 +1169,19 @@ export default function PageBuilderRoute({
                     {selectedMeta?.title || selectedBlock.type}
                   </h3>
                 </div>
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+                <span className="text-[11px] px-2 py-0.5 rounded-sm bg-slate-100 text-slate-600 font-semibold border border-slate-200">
                   #{selectedBlockIndex + 1}
                 </span>
               </div>
 
               {/* Block Visibility Toggle */}
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center justify-between p-2.5 rounded-sm bg-slate-50 border border-slate-200">
                 <span className="text-xs font-semibold text-slate-700">Display on Page</span>
                 <button
                   type="button"
                   onClick={() => toggleHideBlock(selectedBlockIndex)}
                   className={cn(
-                    "px-2.5 py-1 rounded-md text-xs font-bold transition-colors cursor-pointer",
+                    "px-2.5 py-1 rounded-sm text-xs font-bold transition-colors cursor-pointer",
                     selectedBlock.hidden
                       ? "bg-slate-200 text-slate-600"
                       : "bg-[#115eff] text-white"
@@ -1196,7 +1195,7 @@ export default function PageBuilderRoute({
 
               {/* 1. HeroCarousel Inspector */}
               {selectedBlock.type === "HeroCarousel" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Hero Carousel Settings
                   </span>
@@ -1216,7 +1215,7 @@ export default function PageBuilderRoute({
                           autoplayDuration: Number(e.target.value),
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
 
@@ -1231,7 +1230,7 @@ export default function PageBuilderRoute({
                           showOverlayText: e.target.checked,
                         })
                       }
-                      className="rounded text-[#115eff] focus:ring-blue-500"
+                      className="rounded-sm text-[#115eff] focus:ring-blue-500"
                     />
                   </div>
 
@@ -1246,7 +1245,7 @@ export default function PageBuilderRoute({
                           showIndicators: e.target.checked,
                         })
                       }
-                      className="rounded text-[#115eff] focus:ring-blue-500"
+                      className="rounded-sm text-[#115eff] focus:ring-blue-500"
                     />
                   </div>
 
@@ -1276,7 +1275,7 @@ export default function PageBuilderRoute({
 
               {/* 2. WelcomeLetter Inspector */}
               {selectedBlock.type === "WelcomeLetter" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Welcome Letter Settings
                   </span>
@@ -1291,7 +1290,7 @@ export default function PageBuilderRoute({
                           heading: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1305,7 +1304,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1319,7 +1318,7 @@ export default function PageBuilderRoute({
                           salutation: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1333,7 +1332,7 @@ export default function PageBuilderRoute({
                           theme: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1347,7 +1346,7 @@ export default function PageBuilderRoute({
                           datesLocation: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1365,7 +1364,7 @@ export default function PageBuilderRoute({
 
               {/* 3. NewsList Inspector */}
               {selectedBlock.type === "NewsList" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     News Section Settings
                   </span>
@@ -1380,7 +1379,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1394,7 +1393,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1402,7 +1401,7 @@ export default function PageBuilderRoute({
 
               {/* 4. ConferenceVideo Inspector */}
               {selectedBlock.type === "ConferenceVideo" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Video Spotlight Settings
                   </span>
@@ -1417,7 +1416,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1431,7 +1430,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1445,7 +1444,7 @@ export default function PageBuilderRoute({
                           videoUrl: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1459,7 +1458,7 @@ export default function PageBuilderRoute({
                           venueName: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1477,7 +1476,7 @@ export default function PageBuilderRoute({
 
               {/* 5. PaperTemplates Inspector */}
               {selectedBlock.type === "PaperTemplates" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Author Templates Settings
                   </span>
@@ -1492,7 +1491,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1506,7 +1505,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1514,7 +1513,7 @@ export default function PageBuilderRoute({
 
               {/* 6. CommitteesSection Inspector */}
               {selectedBlock.type === "CommitteesSection" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Committees Carousel Settings
                   </span>
@@ -1529,7 +1528,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1543,7 +1542,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1557,7 +1556,7 @@ export default function PageBuilderRoute({
                           badge: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1574,7 +1573,7 @@ export default function PageBuilderRoute({
                           autoplayDelay: Number(e.target.value),
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1582,7 +1581,7 @@ export default function PageBuilderRoute({
 
               {/* 7. PaymentMethods Inspector */}
               {selectedBlock.type === "PaymentMethods" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Payment Methods Settings
                   </span>
@@ -1597,7 +1596,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1611,7 +1610,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1625,7 +1624,7 @@ export default function PageBuilderRoute({
                           badge: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1643,7 +1642,7 @@ export default function PageBuilderRoute({
 
               {/* 8. ContactCards Inspector */}
               {selectedBlock.type === "ContactCards" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Contact Cards Settings
                   </span>
@@ -1658,7 +1657,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1672,7 +1671,7 @@ export default function PageBuilderRoute({
                           email: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1686,7 +1685,7 @@ export default function PageBuilderRoute({
                           location: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1700,7 +1699,7 @@ export default function PageBuilderRoute({
                           venue: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1714,7 +1713,7 @@ export default function PageBuilderRoute({
                           website: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1722,7 +1721,7 @@ export default function PageBuilderRoute({
 
               {/* 9. Venue Inspector */}
               {selectedBlock.type === "Venue" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Venue Settings
                   </span>
@@ -1737,7 +1736,7 @@ export default function PageBuilderRoute({
                           venueName: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1751,7 +1750,7 @@ export default function PageBuilderRoute({
                           address: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1769,7 +1768,7 @@ export default function PageBuilderRoute({
 
               {/* 10. CallForPapers Inspector */}
               {selectedBlock.type === "CallForPapers" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Call for Papers Settings
                   </span>
@@ -1784,7 +1783,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1798,7 +1797,7 @@ export default function PageBuilderRoute({
                           theme: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1806,7 +1805,7 @@ export default function PageBuilderRoute({
 
               {/* 11. TracksExplorer Inspector */}
               {selectedBlock.type === "TracksExplorer" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Technical Tracks Settings
                   </span>
@@ -1821,7 +1820,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1835,7 +1834,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1843,7 +1842,7 @@ export default function PageBuilderRoute({
 
               {/* 12. ImportantDates Inspector */}
               {selectedBlock.type === "ImportantDates" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Important Dates Settings
                   </span>
@@ -1858,7 +1857,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1872,7 +1871,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1880,7 +1879,7 @@ export default function PageBuilderRoute({
 
               {/* 13. SubmissionCountdown Inspector */}
               {selectedBlock.type === "SubmissionCountdown" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Countdown Timer Settings
                   </span>
@@ -1895,7 +1894,7 @@ export default function PageBuilderRoute({
                           headline: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1909,7 +1908,7 @@ export default function PageBuilderRoute({
                           targetDate: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                 </div>
@@ -1917,7 +1916,7 @@ export default function PageBuilderRoute({
 
               {/* 14. Keynotes Inspector */}
               {selectedBlock.type === "Keynotes" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     Keynote Speakers Settings
                   </span>
@@ -1932,7 +1931,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -1946,7 +1945,7 @@ export default function PageBuilderRoute({
                           subtitle: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1964,7 +1963,7 @@ export default function PageBuilderRoute({
 
               {/* 15. About Inspector */}
               {selectedBlock.type === "About" && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     About Section Settings
                   </span>
@@ -1979,7 +1978,7 @@ export default function PageBuilderRoute({
                           title: e.target.value,
                         })
                       }
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -1997,7 +1996,7 @@ export default function PageBuilderRoute({
 
               {/* 16. CustomHTML Inspector */}
               {selectedBlock.type === "CustomHTML" && (
-                <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     HTML / Embed Code
                   </span>
@@ -2010,7 +2009,7 @@ export default function PageBuilderRoute({
                         content: e.target.value,
                       })
                     }
-                    className="w-full px-2.5 py-2 font-mono text-[11px] bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#115eff]"
+                    className="w-full px-2.5 py-2 font-mono text-[11px] bg-white border border-slate-300 rounded-sm focus:outline-none focus:border-[#115eff]"
                     placeholder="<div>Enter HTML here...</div>"
                   />
                 </div>
@@ -2018,7 +2017,7 @@ export default function PageBuilderRoute({
 
               {/* Fallback field editor for any other block */}
               {!["HeroCarousel", "WelcomeLetter", "NewsList", "ConferenceVideo", "PaperTemplates", "CommitteesSection", "PaymentMethods", "ContactCards", "Venue", "CallForPapers", "TracksExplorer", "ImportantDates", "SubmissionCountdown", "Keynotes", "About", "CustomHTML"].includes(selectedBlock.type) && (
-                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-sm">
                   <span className="font-bold text-slate-800 block text-xs">
                     {selectedMeta?.title || selectedBlock.type} Settings
                   </span>
@@ -2034,7 +2033,7 @@ export default function PageBuilderRoute({
                         })
                       }
                       placeholder={selectedMeta?.title}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <div>
@@ -2049,7 +2048,7 @@ export default function PageBuilderRoute({
                         })
                       }
                       placeholder="Optional subtitle..."
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-[#115eff]"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-sm text-xs focus:outline-none focus:border-[#115eff]"
                     />
                   </div>
                   <BlockImageField
@@ -2070,7 +2069,7 @@ export default function PageBuilderRoute({
                 <button
                   type="button"
                   onClick={() => duplicateBlock(selectedBlockIndex)}
-                  className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Copy className="w-3.5 h-3.5" />
                   <span>Duplicate Block</span>
@@ -2079,7 +2078,7 @@ export default function PageBuilderRoute({
                 <button
                   type="button"
                   onClick={() => removeBlock(selectedBlockIndex)}
-                  className="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-sm text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete Block</span>

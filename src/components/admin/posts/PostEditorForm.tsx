@@ -388,12 +388,12 @@ export function PostEditorForm({
 
             {/* Tab switch */}
             <div className="px-3 py-1.5 border-b border-border/70 bg-muted/10 shrink-0">
-              <div className="grid grid-cols-2 p-0.5 rounded-lg bg-muted/60 text-xs">
+              <div className="grid grid-cols-2 p-0.5 rounded-sm bg-muted/60 text-xs">
                 <button
                   type="button"
                   onClick={() => setActiveTab("attributes")}
                   className={cn(
-                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-md font-medium transition-all cursor-pointer",
+                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-sm font-medium transition-all cursor-pointer",
                     activeTab === "attributes"
                       ? "bg-background text-foreground font-semibold shadow-none"
                       : "text-muted-foreground hover:text-foreground"
@@ -406,7 +406,7 @@ export function PostEditorForm({
                   type="button"
                   onClick={() => setActiveTab("files")}
                   className={cn(
-                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-md font-medium transition-all cursor-pointer",
+                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-sm font-medium transition-all cursor-pointer",
                     activeTab === "files"
                       ? "bg-background text-foreground font-semibold shadow-none"
                       : "text-muted-foreground hover:text-foreground"
@@ -425,7 +425,7 @@ export function PostEditorForm({
                   {/* Card 1: Cover Image */}
                   <div
                     id="post-sidebar-cover"
-                    className="rounded-xl border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-3"
+                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
@@ -437,13 +437,13 @@ export function PostEditorForm({
 
                     {coverImage && !coverImgError ? (
                       <div className="space-y-2">
-                        <div className="relative group overflow-hidden rounded-lg border border-border bg-slate-100">
+                        <div className="relative group overflow-hidden rounded-sm border border-border bg-slate-100">
                           <div className="aspect-[16/9] w-full relative">
                             <Image
                               src={coverImage}
                               alt="Cover preview"
                               fill
-                              className="object-cover rounded-lg"
+                              className="object-cover rounded-sm"
                               unoptimized
                               onError={() => setCoverImgError(true)}
                             />
@@ -495,9 +495,9 @@ export function PostEditorForm({
                         </div>
                       </div>
                     ) : (
-                      <div className="border border-dashed border-border rounded-lg p-4 text-center bg-white dark:bg-card">
+                      <div className="border border-dashed border-border rounded-sm p-4 text-center bg-white dark:bg-card">
                         <div className="flex flex-col items-center justify-center gap-2">
-                          <div className="size-10 rounded-full bg-slate-100 dark:bg-muted flex items-center justify-center text-muted-foreground">
+                          <div className="size-10 rounded-sm bg-slate-100 dark:bg-muted flex items-center justify-center text-muted-foreground">
                             <ImageIcon className="size-5" />
                           </div>
                           <div className="text-center">
@@ -546,7 +546,7 @@ export function PostEditorForm({
                   {/* Card 2: Category */}
                   <div
                     id="post-sidebar-category"
-                    className="rounded-xl border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
                   >
                     <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                       <FolderOpen className="size-4 text-primary" />
@@ -555,7 +555,7 @@ export function PostEditorForm({
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full h-8 px-2.5 text-xs bg-white dark:bg-card border border-border rounded-lg font-medium text-foreground focus:outline-none focus:border-primary cursor-pointer"
+                      className="w-full h-8 px-2.5 text-xs bg-white dark:bg-card border border-border rounded-sm font-medium text-foreground focus:outline-none focus:border-primary cursor-pointer"
                     >
                       {POST_CATEGORIES.map((cat) => (
                         <option key={cat} value={cat}>
@@ -568,7 +568,7 @@ export function PostEditorForm({
                   {/* Card 3: URL Slug */}
                   <div
                     id="post-sidebar-slug"
-                    className="rounded-xl border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
                   >
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
@@ -592,7 +592,7 @@ export function PostEditorForm({
                         Auto-generate
                       </button>
                     </div>
-                    <div className="flex items-center bg-white dark:bg-card border border-border rounded-lg px-2.5 h-8 text-xs text-muted-foreground">
+                    <div className="flex items-center bg-white dark:bg-card border border-border rounded-sm px-2.5 h-8 text-xs text-muted-foreground">
                       <span className="font-mono text-[11px] opacity-70">/news/</span>
                       <input
                         type="text"
@@ -607,7 +607,7 @@ export function PostEditorForm({
                   {/* Card 4: Summary / Excerpt */}
                   <div
                     id="post-sidebar-summary"
-                    className="rounded-xl border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
                   >
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
@@ -623,14 +623,14 @@ export function PostEditorForm({
                       value={summary}
                       onChange={(e) => setSummary(e.target.value)}
                       placeholder="Short description displayed on news feeds and SEO cards..."
-                      className="w-full p-2.5 text-xs text-foreground bg-white dark:bg-card border border-border rounded-lg focus:outline-none focus:border-primary resize-none leading-relaxed"
+                      className="w-full p-2.5 text-xs text-foreground bg-white dark:bg-card border border-border rounded-sm focus:outline-none focus:border-primary resize-none leading-relaxed"
                     />
                   </div>
                 </>
               ) : (
                 /* Media Quick Upload Tab */
                 <div className="space-y-3">
-                  <div className="border border-dashed border-border rounded-xl p-6 text-center bg-slate-50/50 dark:bg-muted/20">
+                  <div className="border border-dashed border-border rounded-sm p-6 text-center bg-slate-50/50 dark:bg-muted/20">
                     <ImageIcon className="size-8 mx-auto text-muted-foreground/60 mb-2" />
                     <p className="text-xs font-semibold text-foreground">Media & Attachments</p>
                     <p className="text-[11px] text-muted-foreground mt-1">
@@ -684,7 +684,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-cover")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                   >
                     <ImageIcon className="size-4" />
                   </button>
@@ -704,7 +704,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-category")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                   >
                     <FolderOpen className="size-4" />
                   </button>
@@ -724,7 +724,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-summary")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                   >
                     <FileText className="size-4" />
                   </button>

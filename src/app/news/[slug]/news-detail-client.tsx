@@ -10,7 +10,6 @@ import {
   Printer,
   ChevronUp,
   Type,
-  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -153,12 +152,12 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         />
       </div>
 
-      {/* ── 2. Desktop Floating Action Bar (Left Rail) ── */}
+      {/* ── 2. Desktop Floating Action Bar (Left Rail) with Minimal Sharp Radius ── */}
       <aside
         aria-label="Article actions"
-        className="hidden xl:flex flex-col items-center gap-2.5 sticky top-24 shrink-0 py-2"
+        className="hidden xl:flex flex-col items-center gap-2 sticky top-24 shrink-0 py-2"
       >
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
           Share
         </span>
 
@@ -166,7 +165,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={() => handleShareSocial("facebook")}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-[#1877F2] hover:bg-blue-50/50 flex items-center justify-center text-[#1877F2] transition-colors shadow-2xs cursor-pointer group"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#1877F2] hover:bg-blue-50/50 flex items-center justify-center text-[#1877F2] transition-colors shadow-2xs cursor-pointer group"
           title="Share to Facebook"
         >
           <span className="font-bold text-sm group-hover:scale-110 transition-transform">f</span>
@@ -176,7 +175,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={() => handleShareSocial("linkedin")}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-[#0A66C2] hover:bg-blue-50/50 flex items-center justify-center text-[#0A66C2] transition-colors shadow-2xs cursor-pointer group"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#0A66C2] hover:bg-blue-50/50 flex items-center justify-center text-[#0A66C2] transition-colors shadow-2xs cursor-pointer group"
           title="Share to LinkedIn"
         >
           <span className="font-bold text-xs group-hover:scale-110 transition-transform">in</span>
@@ -186,7 +185,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={() => handleShareSocial("twitter")}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-100 flex items-center justify-center text-slate-800 transition-colors shadow-2xs cursor-pointer group"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-100 flex items-center justify-center text-slate-800 transition-colors shadow-2xs cursor-pointer group"
           title="Share to X"
         >
           <span className="font-bold text-xs group-hover:scale-110 transition-transform">𝕏</span>
@@ -196,7 +195,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={handleCopyLink}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer"
           title="Copy article link"
         >
           {copied ? (
@@ -212,7 +211,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={cycleFontSize}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex flex-col items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer group"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex flex-col items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer group"
           title={`Adjust reading size (Current: ${fontSize})`}
         >
           <Type className="size-4" />
@@ -225,7 +224,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <button
           type="button"
           onClick={handlePrint}
-          className="size-10 rounded-xl bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-colors shadow-2xs cursor-pointer"
+          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-colors shadow-2xs cursor-pointer"
           title="Print announcement"
         >
           <Printer className="size-4" />
@@ -236,7 +235,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={scrollToTop}
-            className="size-10 rounded-xl bg-[#004776] text-white hover:bg-[#115eff] flex items-center justify-center transition-all shadow-xs cursor-pointer animate-in fade-in zoom-in-75 duration-200 mt-1"
+            className="size-9 rounded-sm bg-[#004776] text-white hover:bg-[#115eff] flex items-center justify-center transition-all shadow-2xs cursor-pointer animate-in fade-in zoom-in-75 duration-200 mt-1"
             title="Scroll to top"
           >
             <ChevronUp className="size-4" />
@@ -244,12 +243,12 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         )}
       </aside>
 
-      {/* ── 3. Bottom Inline Share Dock (Inside Article End) ── */}
+      {/* ── 3. Bottom Inline Share Dock (Inside Article End) with Minimal Sharp Radius ── */}
       <div className="mt-10 sm:mt-14 pt-6 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Back Link */}
         <Link
           href="/#news"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs w-fit group"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs w-fit group"
         >
           <ArrowLeft className="size-4 text-[#115eff] transition-transform group-hover:-translate-x-0.5" />
           <span>Back to All Announcements</span>
@@ -264,7 +263,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handleCopyLink}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Copy link"
           >
             {copied ? (
@@ -283,7 +282,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("facebook")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#1877F2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#1877F2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to Facebook"
           >
             <span>Facebook</span>
@@ -292,7 +291,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("linkedin")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#0A66C2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#0A66C2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to LinkedIn"
           >
             <span>LinkedIn</span>
@@ -301,7 +300,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("twitter")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-slate-900 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-slate-900 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to X"
           >
             <span>X / Twitter</span>
@@ -310,7 +309,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Print announcement"
           >
             <Printer className="size-4 text-slate-500" />
@@ -319,12 +318,12 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         </div>
       </div>
 
-      {/* ── 4. Mobile Floating Bottom Action Dock ── */}
+      {/* ── 4. Mobile Floating Bottom Action Dock with Minimal Sharp Radius ── */}
       <div className="xl:hidden fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-40">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xl">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/95 backdrop-blur-md border border-slate-200 shadow-md">
           <Link
             href="/#news"
-            className="size-9 rounded-full flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors"
+            className="size-8 rounded-sm flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors"
             title="Back to all news"
           >
             <ArrowLeft className="size-4" />
@@ -335,7 +334,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handleNativeShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold text-slate-700 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <Share2 className="size-3.5 text-[#115eff]" />
             <span>Share</span>
@@ -344,7 +343,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handleCopyLink}
-            className="size-9 rounded-full flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
+            className="size-8 rounded-sm flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
             title="Copy Link"
           >
             {copied ? (
@@ -360,7 +359,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="size-9 rounded-full bg-[#004776] text-white flex items-center justify-center hover:bg-[#115eff] transition-colors cursor-pointer"
+                className="size-8 rounded-sm bg-[#004776] text-white flex items-center justify-center hover:bg-[#115eff] transition-colors cursor-pointer"
                 title="Top"
               >
                 <ChevronUp className="size-4" />

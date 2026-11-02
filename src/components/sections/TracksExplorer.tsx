@@ -37,14 +37,14 @@ export function TracksExplorer() {
   const renderTopicCard = (topic: typeof filteredTopics[0], uniqueKey: string) => (
     <div
       key={uniqueKey}
-      className="p-5 sm:p-6 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-xl transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
+      className="p-5 sm:p-6 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-sm transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs sm:text-sm font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-md">
+          <span className="text-xs sm:text-sm font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-sm">
             {topic.code}
           </span>
-          <span className="text-xs sm:text-sm px-2.5 py-0.5 bg-white/15 text-blue-100 rounded font-semibold">
+          <span className="text-xs sm:text-sm px-2.5 py-0.5 bg-white/15 text-blue-100 rounded-sm font-semibold">
             {topic.category}
           </span>
         </div>
@@ -89,7 +89,7 @@ export function TracksExplorer() {
             placeholder="Search topics (e.g., Robotics, BCI, AI)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 text-sm sm:text-base bg-white/15 border border-white/30 rounded-xl focus:outline-none focus:bg-white/25 focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-white placeholder:text-blue-200"
+            className="w-full pl-11 pr-4 py-3 text-sm sm:text-base bg-white/15 border border-white/30 rounded-sm focus:outline-none focus:bg-white/25 focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-white placeholder:text-blue-200"
           />
         </div>
       </div>
@@ -117,7 +117,7 @@ export function TracksExplorer() {
                 <div className="flex items-center gap-2">
                   {getPillarIcon(pillar.id)}
                   <span
-                    className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-md ${
+                    className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-sm ${
                       isActive
                         ? "bg-white text-[#115eff] font-extrabold"
                         : "bg-white/20 text-white"
@@ -153,7 +153,7 @@ export function TracksExplorer() {
           </div>
         ) : (
           /* Scrollable Overflow Container with Natural Pure Gradient Fade */
-          <div className="relative z-10 overflow-hidden rounded-md">
+          <div className="relative z-10 overflow-hidden rounded-sm">
             {/* Natural Pure Gradient Color Fade Overlays (matching hcmute-website-frontend) */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] to-transparent z-30" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-[#115eff] to-transparent z-30" />

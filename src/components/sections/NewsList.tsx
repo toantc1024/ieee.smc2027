@@ -465,13 +465,13 @@ export function NewsList({
             placeholder="Search news, announcements, tracks, speakers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-[#115eff] !rounded-full text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
+            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-[#115eff] !rounded-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-sm hover:bg-slate-100 transition-colors cursor-pointer"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
@@ -486,7 +486,7 @@ export function NewsList({
             type="button"
             onClick={() => handleCategorySelect("All")}
             className={cn(
-              "shrink-0 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none",
+              "shrink-0 rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none",
               activeCategory === "All"
                 ? "bg-primary text-white shadow-xs"
                 : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
@@ -512,7 +512,7 @@ export function NewsList({
               <button
                 type="button"
                 onClick={() => scrollCategories("left")}
-                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="size-3.5 text-foreground/80" />
@@ -531,7 +531,7 @@ export function NewsList({
               <button
                 type="button"
                 onClick={() => scrollCategories("right")}
-                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="size-3.5 text-foreground/80" />
@@ -552,7 +552,7 @@ export function NewsList({
                   type="button"
                   onClick={() => handleCategorySelect(activeCategory === cat ? "All" : cat)}
                   className={cn(
-                    "shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                    "shrink-0 whitespace-nowrap rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer",
                     activeCategory === cat
                       ? "bg-primary text-white shadow-xs"
                       : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
@@ -574,7 +574,7 @@ export function NewsList({
       {/* ------------------------------------------------------------- */}
       <div className="relative w-full pt-1.5 sm:pt-2 pb-10 sm:pb-14 group/carousel">
         {filteredAndSortedItems.length === 0 ? (
-          <div className="mx-4 sm:mx-6 p-12 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 text-sm sm:text-base">
+          <div className="mx-4 sm:mx-6 p-12 text-center bg-slate-50 border border-slate-200 rounded-sm text-slate-500 text-sm sm:text-base">
             No announcements found matching your filter criteria.
           </div>
         ) : (
@@ -651,7 +651,7 @@ export function NewsList({
                       if (hasDraggedCards.current) return;
                       router.push(detailUrl);
                     }}
-                    className="w-[85vw] sm:w-[350px] lg:w-[380px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-xl bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
+                    className="w-[85vw] sm:w-[350px] lg:w-[380px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-sm bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
                   >
                     {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
                     <GridPattern
@@ -678,7 +678,7 @@ export function NewsList({
                         onClick={(e) => {
                           if (hasDraggedCards.current) e.preventDefault();
                         }}
-                        className="block relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-slate-100"
+                        className="block relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-slate-100"
                       >
                         {news.image ? (
                           <Image
@@ -736,7 +736,7 @@ export function NewsList({
                             }
                             e.stopPropagation();
                           }}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
+                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-bold rounded-sm transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
                         >
                           <span>View Details</span>
                           <ChevronRight className="size-4" />

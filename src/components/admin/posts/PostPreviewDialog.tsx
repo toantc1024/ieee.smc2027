@@ -56,7 +56,7 @@ export function PostPreviewDialog({
         <article className="space-y-5 pt-2">
           {/* Cover image with error fallback */}
           {post.coverImage && (
-            <div className="relative w-full h-56 sm:h-72 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+            <div className="relative w-full h-56 sm:h-72 rounded-sm overflow-hidden bg-slate-100 border border-slate-200">
               {!imgError ? (
                 <Image
                   src={post.coverImage}
