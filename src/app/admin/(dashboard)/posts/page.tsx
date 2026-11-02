@@ -14,6 +14,8 @@ import {
   ImageIcon,
   ChevronDown,
   Check,
+  Archive,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,6 +26,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
 import { ManagementPageHeader } from "@/components/ui/management-page-header";
@@ -99,11 +102,19 @@ export default function PostsManagementPage() {
   const router = useRouter();
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("all");
 
   // Dialog states (only Delete confirmation dialog is kept for safety)
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [activePost, setActivePost] = useState<PostItem | null>(null);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+
+  const displayedPosts = useMemo(() => {
+    if (activeTab === "published") return posts.filter((p) => p.status === "PUBLISHED");
+    if (activeTab === "draft") return posts.filter((p) => p.status === "DRAFT");
+    if (activeTab === "archived") return posts.filter((p) => p.status === "ARCHIVED");
+    return posts;
+  }, [posts, activeTab]);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -310,7 +321,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="font-semibold text-slate-900 hover:text-[#115eff] text-xs text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
+                className="font-bold text-[#004776] hover:text-[#115eff] text-xs text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
@@ -511,14 +522,14 @@ export default function PostsManagementPage() {
               className="flex items-center justify-center gap-1 shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 1. Direct Post Detail View (No modal) */}
+              {/* 1. Direct Post Detail View */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
                 title="View post detail page"
               >
                 <Eye className="size-4" />
@@ -531,7 +542,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}/edit`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
                 title="Edit post in full editor"
               >
                 <Edit2 className="size-4" />
@@ -562,7 +573,7 @@ export default function PostsManagementPage() {
                     setDuplicatingId(null);
                   }
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer disabled:opacity-50"
+                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer disabled:opacity-50 shadow-2xs"
                 title="Duplicate & edit post"
               >
                 <CopyPlus className="size-4" />
@@ -576,7 +587,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
+                className="size-8 inline-flex items-center justify-center text-rose-600 hover:text-white hover:bg-rose-600 hover:border-rose-600 border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
                 title="Delete post"
               >
                 <Trash2 className="size-4" />
@@ -597,72 +608,109 @@ export default function PostsManagementPage() {
         title="Posts & News"
         description="Conference announcements, call for papers, and news updates"
         actions={
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => router.push("/admin/posts/create")}
-            className="h-8 px-3.5 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
-          >
-            <Plus className="size-4 mr-1.5" />
-            New Post
-          </Button>
-        }
-      />
+      {/* ── Tabs Row & Top Actions (Matching HCMUTE Layout & Justification) ── */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-wrap items-center justify-between gap-3 w-full">
+          <TabsList className="h-9">
+            <TabsTrigger value="all" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
+              <FileText className="mr-1.5 size-4" />
+              <span>All Posts ({posts.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="published" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
+              <Check className="mr-1.5 size-4 text-[#115eff]" />
+              <span>Published ({posts.filter((p) => p.status === "PUBLISHED").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="draft" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
+              <Edit2 className="mr-1.5 size-4 text-slate-500" />
+              <span>Drafts ({posts.filter((p) => p.status === "DRAFT").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="archived" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
+              <Archive className="mr-1.5 size-4 text-slate-400" />
+              <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
+            </TabsTrigger>
+          </TabsList>
 
-      {/* ── Advanced Table ── */}
-      <DataTable
-        columns={columns}
-        data={posts}
-        loading={loading}
-        onRowClick={(item) => router.push(`/admin/posts/${item.id}`)}
-        searchPlaceholder="Search by title, slug, summary..."
-        filterColumns={[
-          {
-            id: "status",
-            title: "Status",
-            options: [
-              { label: "Published", value: "PUBLISHED" },
-              { label: "Draft", value: "DRAFT" },
-              { label: "Archived", value: "ARCHIVED" },
-            ],
-          },
-          {
-            id: "category",
-            title: "Category",
-            options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),
-          },
-        ]}
-        batchActions={(selected, clear) => (
-          <div className="flex items-center gap-1.5 ml-2">
+          {/* Top Right Action Buttons (New Post, Refresh) */}
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
             <Button
               type="button"
-              size="sm"
-              onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-              className="h-7 px-3 text-xs font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
+              className="h-9 gap-1.5 rounded-sm shadow-2xs font-semibold px-3.5 shrink-0 cursor-pointer whitespace-nowrap text-xs sm:text-sm bg-[#115eff] hover:bg-[#0a4de6] text-white"
+              onClick={() => router.push("/admin/posts/create")}
             >
-              Publish
+              <Plus className="size-4" />
+              <span>New Post</span>
             </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-none"
-            >
-              Set Draft
-            </Button>
+
             <Button
               type="button"
               variant="outline"
-              size="sm"
-              onClick={() => handleBatchDelete(selected, clear)}
-              className="h-7 px-3 text-xs font-medium bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900 shadow-none"
+              className="h-9 gap-1.5 text-slate-600 hover:text-[#004776] border-slate-200 rounded-sm shadow-2xs font-semibold px-3 shrink-0 cursor-pointer text-xs sm:text-sm"
+              onClick={fetchPosts}
+              disabled={loading}
+              title="Refresh"
             >
-              Delete selected
+              <RefreshCw className={cn("size-3.5 sm:size-4", loading && "animate-spin text-[#115eff]")} />
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
           </div>
-        )}
-      />
+        </div>
+
+        <TabsContent value={activeTab}>
+          <DataTable
+            columns={columns}
+            data={displayedPosts}
+            loading={loading}
+            onRowClick={(item) => router.push(`/admin/posts/${item.id}`)}
+            searchPlaceholder="Search by title, slug, summary..."
+            filterColumns={[
+              {
+                id: "status",
+                title: "Status",
+                options: [
+                  { label: "Published", value: "PUBLISHED" },
+                  { label: "Draft", value: "DRAFT" },
+                  { label: "Archived", value: "ARCHIVED" },
+                ],
+              },
+              {
+                id: "category",
+                title: "Category",
+                options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),
+              },
+            ]}
+            batchActions={(selected, clear) => (
+              <div className="flex items-center gap-1.5 ml-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
+                  className="h-7 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-sm shadow-none"
+                >
+                  Publish
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
+                  className="h-7 px-3 text-xs font-semibold bg-white text-[#004776] border-slate-200 hover:bg-slate-50 rounded-sm shadow-none"
+                >
+                  Set Draft
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBatchDelete(selected, clear)}
+                  className="h-7 px-3 text-xs font-semibold bg-white text-rose-600 border-slate-200 hover:bg-rose-50 hover:text-rose-700 rounded-sm shadow-none"
+                >
+                  Delete selected
+                </Button>
+              </div>
+            )}
+          />
+        </TabsContent>
+      </Tabs>
 
 
 
