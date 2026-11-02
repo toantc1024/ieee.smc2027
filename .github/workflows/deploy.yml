@@ -56,33 +56,34 @@ jobs:
           script_stop: true
           script: |
             set -e
-            echo "🚀 Starting automated deployment for IEEE SMC 2027..."
+            echo "🚀 Starting automated Docker deployment for IEEE SMC 2027..."
             cd ${{ secrets.DEPLOY_PATH || '/root/projects/ieee-smc-2027' }}
 
             # 1. Pull latest code from main
             echo "📥 Pulling latest git changes..."
             git pull origin main
 
-            # 2. Install dependencies & Prisma Client
-            echo "📦 Updating dependencies..."
-            npm ci --prefer-offline || npm install
+            # 2. Release host port 3002 from legacy PM2 process if present
+            echo "🛑 Ensuring host port 3002 is released for Docker..."
+            export PATH="/root/.nvm/versions/node/$(ls /root/.nvm/versions/node 2>/dev/null | tail -n 1)/bin:$PATH"
+            command -v pm2 >/dev/null 2>&1 && pm2 stop ieee-smc-2027 2>/dev/null || true
 
-            echo "🗄️ Generating Prisma Client & applying database schema..."
-            npx prisma generate
-            npx prisma migrate deploy || true
+            # 3. Build Docker container image
+            echo "🐳 Building Docker image..."
+            docker compose build app
 
-            # 3. Build standalone Next.js bundle
-            echo "🏗️ Building Next.js standalone bundle..."
-            npm run build
+            # 4. Launch containers in background
+            echo "🚀 Launching application container in background..."
+            docker compose up -d --remove-orphans app minio
 
-            # 4. Zero-downtime PM2 reload
-            echo "🔄 Reloading PM2 process..."
-            pm2 reload ieee-smc-2027 --update-env || pm2 restart ieee-smc-2027
-            pm2 save
+            # 5. Clean up Docker build cache and dangling images to save disk space
+            echo "🧹 Cleaning up Docker build cache and unused images..."
+            docker image prune -f
+            docker builder prune -f --keep-storage 1GB || true
 
-            # 5. Local healthcheck
+            # 6. Verify application health
             echo "🔍 Verifying application health..."
-            sleep 2
-            curl -s -f http://127.0.0.1:3002/api/admin/pages > /dev/null && echo "✅ Application is live and healthy!" || echo "⚠️ Warning: healthcheck endpoint returned non-200"
+            sleep 4
+            curl -s -f http://127.0.0.1:3002/api/admin/pages > /dev/null && echo "✅ Application is live and healthy in Docker!" || echo "⚠️ Warning: healthcheck endpoint returned non-200"
 
             echo "🎉 Automated deployment completed successfully!"
