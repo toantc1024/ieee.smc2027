@@ -300,6 +300,32 @@ h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emera
   pointer-events: none;
 }
 
+.corner-dot-dark-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18rem;
+  height: 18rem;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at bottom right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at bottom right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.corner-dot-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14rem;
+  height: 10rem;
+  background-image: radial-gradient(rgba(17, 94, 255, 0.18) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at bottom right, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at bottom right, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
 /* Continuous full-width borders with no gaps */
 .divider-full {
   width: 100%;

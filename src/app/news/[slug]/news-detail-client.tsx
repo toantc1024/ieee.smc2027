@@ -10,8 +10,13 @@ import {
   Printer,
   ChevronUp,
   Type,
+  ZoomIn,
+  ZoomOut,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface NewsDetailClientProps {
   title: string;
@@ -126,6 +131,27 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
     }
   }, []);
 
+  const handleZoom = useCallback((direction: "in" | "out") => {
+    setFontSize((prev) => {
+      if (direction === "in") {
+        if (prev === "normal") return "large";
+        return "xlarge";
+      } else {
+        if (prev === "xlarge") return "large";
+        return "normal";
+      }
+    });
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
   const cycleFontSize = useCallback(() => {
     setFontSize((prev) => {
       if (prev === "normal") return "large";
@@ -152,95 +178,98 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         />
       </div>
 
-      {/* ── 2. Desktop Floating Action Bar (Left Rail) with Minimal Sharp Radius ── */}
+      {/* ── 2. Desktop Floating Action Bar (Left Rail) Matching HCMUTE Exact Layout ── */}
       <aside
         aria-label="Article actions"
-        className="hidden xl:flex flex-col items-center gap-2 sticky top-24 shrink-0 py-2"
+        className="hidden xl:flex flex-col gap-3 sticky top-28 lg:top-32 shrink-0 py-2 z-20"
       >
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
-          Share
-        </span>
+        {/* Text Size Zoom Controls */}
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
+          <button
+            type="button"
+            onClick={() => handleZoom("in")}
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Zoom In (A+)"
+            aria-label="Zoom in font size"
+          >
+            <ZoomIn className="w-4 h-4" />
+          </button>
+          <div className="h-px bg-slate-200 mx-1.5" />
+          <button
+            type="button"
+            onClick={() => handleZoom("out")}
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Zoom Out (A-)"
+            aria-label="Zoom out font size"
+          >
+            <ZoomOut className="w-4 h-4" />
+          </button>
+        </div>
 
-        {/* Facebook */}
-        <button
-          type="button"
-          onClick={() => handleShareSocial("facebook")}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#1877F2] hover:bg-blue-50/50 flex items-center justify-center text-[#1877F2] transition-colors shadow-2xs cursor-pointer group"
-          title="Share to Facebook"
-        >
-          <span className="font-bold text-sm group-hover:scale-110 transition-transform">f</span>
-        </button>
+        {/* Share & Actions Controls */}
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
+          <button
+            type="button"
+            onClick={handleNativeShare}
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Share Announcement"
+            aria-label="Share article"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+          <div className="h-px bg-slate-200 mx-1.5" />
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className={cn(
+              "h-10 w-full flex items-center justify-center transition-colors cursor-pointer",
+              copied
+                ? "bg-[#115eff] text-white"
+                : "text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6]"
+            )}
+            title={copied ? "Copied!" : "Copy Link"}
+            aria-label="Copy article link"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-white animate-in zoom-in-75 duration-200" />
+            ) : (
+              <Copy className="w-4 h-4" />
+            )}
+          </button>
+          <div className="h-px bg-slate-200 mx-1.5" />
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Print Announcement"
+            aria-label="Print article"
+          >
+            <Printer className="w-4 h-4" />
+          </button>
+        </div>
 
-        {/* LinkedIn */}
-        <button
-          type="button"
-          onClick={() => handleShareSocial("linkedin")}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#0A66C2] hover:bg-blue-50/50 flex items-center justify-center text-[#0A66C2] transition-colors shadow-2xs cursor-pointer group"
-          title="Share to LinkedIn"
-        >
-          <span className="font-bold text-xs group-hover:scale-110 transition-transform">in</span>
-        </button>
-
-        {/* X / Twitter */}
-        <button
-          type="button"
-          onClick={() => handleShareSocial("twitter")}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-100 flex items-center justify-center text-slate-800 transition-colors shadow-2xs cursor-pointer group"
-          title="Share to X"
-        >
-          <span className="font-bold text-xs group-hover:scale-110 transition-transform">𝕏</span>
-        </button>
-
-        {/* Copy Link Button */}
-        <button
-          type="button"
-          onClick={handleCopyLink}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer"
-          title="Copy article link"
-        >
-          {copied ? (
-            <Check className="size-4 text-emerald-600 animate-in zoom-in-75 duration-200" />
-          ) : (
-            <Copy className="size-4" />
-          )}
-        </button>
-
-        <div className="w-6 border-t border-slate-200 my-1" />
-
-        {/* Font Size Toggle */}
-        <button
-          type="button"
-          onClick={cycleFontSize}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-[#115eff] hover:bg-blue-50/50 flex flex-col items-center justify-center text-slate-600 hover:text-[#115eff] transition-colors shadow-2xs cursor-pointer group"
-          title={`Adjust reading size (Current: ${fontSize})`}
-        >
-          <Type className="size-4" />
-          <span className="text-[8px] font-bold text-slate-400 group-hover:text-[#115eff]">
-            {fontSize === "normal" ? "A" : fontSize === "large" ? "A+" : "A++"}
-          </span>
-        </button>
-
-        {/* Print Button */}
-        <button
-          type="button"
-          onClick={handlePrint}
-          className="size-9 rounded-sm bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-colors shadow-2xs cursor-pointer"
-          title="Print announcement"
-        >
-          <Printer className="size-4" />
-        </button>
-
-        {/* Scroll To Top */}
-        {showScrollTop && (
+        {/* Scroll Navigation Controls */}
+        <div className="w-11 flex flex-col rounded-sm bg-white text-[#115eff] shadow-xs border border-slate-200 overflow-hidden box-border">
           <button
             type="button"
             onClick={scrollToTop}
-            className="size-9 rounded-sm bg-[#004776] text-white hover:bg-[#115eff] flex items-center justify-center transition-all shadow-2xs cursor-pointer animate-in fade-in zoom-in-75 duration-200 mt-1"
-            title="Scroll to top"
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Scroll to Top"
+            aria-label="Scroll to top"
           >
-            <ChevronUp className="size-4" />
+            <ArrowUp className="w-4 h-4" />
           </button>
-        )}
+          <div className="h-px bg-slate-200 mx-1.5" />
+          <button
+            type="button"
+            onClick={scrollToBottom}
+            className="h-10 w-full flex items-center justify-center text-[#115eff] hover:bg-[#115eff] hover:text-white active:bg-[#0a4de6] transition-colors cursor-pointer"
+            title="Scroll to Bottom"
+            aria-label="Scroll to bottom"
+          >
+            <ArrowDown className="w-4 h-4" />
+          </button>
+        </div>
       </aside>
 
       {/* ── 3. Bottom Inline Share Dock (Inside Article End) with Minimal Sharp Radius ── */}
@@ -248,7 +277,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         {/* Back Link */}
         <Link
           href="/#news"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs w-fit group"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs sm:text-sm font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs w-fit group"
         >
           <ArrowLeft className="size-4 text-[#115eff] transition-transform group-hover:-translate-x-0.5" />
           <span>Back to All Announcements</span>
@@ -256,24 +285,24 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
 
         {/* Share buttons group */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1 hidden md:inline">
+          <span className="text-xs font-bold text-[#004776] uppercase tracking-wider mr-1 hidden md:inline">
             Share:
           </span>
 
           <button
             type="button"
             onClick={handleCopyLink}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Copy link"
           >
             {copied ? (
               <>
-                <Check className="size-4 text-emerald-600" />
-                <span className="text-emerald-600 font-bold">Copied!</span>
+                <Check className="size-4 text-white" />
+                <span className="text-white font-bold">Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="size-4 text-[#115eff]" />
+                <Copy className="size-4 text-white" />
                 <span>Copy Link</span>
               </>
             )}
@@ -282,7 +311,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("facebook")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#1877F2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to Facebook"
           >
             <span>Facebook</span>
@@ -291,7 +320,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("linkedin")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#0A66C2] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to LinkedIn"
           >
             <span>LinkedIn</span>
@@ -300,7 +329,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={() => handleShareSocial("twitter")}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-slate-900 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Share to X"
           >
             <span>X / Twitter</span>
@@ -309,10 +338,10 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border border-slate-200 bg-white hover:bg-blue-50 text-xs font-semibold text-[#004776] hover:text-[#115eff] transition-colors whitespace-nowrap shadow-2xs cursor-pointer"
             title="Print announcement"
           >
-            <Printer className="size-4 text-slate-500" />
+            <Printer className="size-4 text-[#115eff]" />
             <span className="hidden sm:inline">Print</span>
           </button>
         </div>
@@ -323,7 +352,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/95 backdrop-blur-md border border-slate-200 shadow-md">
           <Link
             href="/#news"
-            className="size-8 rounded-sm flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors"
+            className="size-8 rounded-sm flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] transition-colors"
             title="Back to all news"
           >
             <ArrowLeft className="size-4" />
@@ -334,22 +363,22 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
           <button
             type="button"
             onClick={handleNativeShare}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold text-slate-700 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-[#115eff] text-white hover:bg-[#0a4de6] transition-colors cursor-pointer"
           >
-            <Share2 className="size-3.5 text-[#115eff]" />
+            <Share2 className="size-3.5 text-white" />
             <span>Share</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopyLink}
-            className="size-8 rounded-sm flex items-center justify-center text-slate-600 hover:text-[#115eff] hover:bg-slate-100 transition-colors cursor-pointer"
+            className="size-8 rounded-sm flex items-center justify-center text-[#115eff] hover:text-white hover:bg-[#115eff] transition-colors cursor-pointer"
             title="Copy Link"
           >
             {copied ? (
               <Check className="size-4 text-emerald-600" />
             ) : (
-              <Copy className="size-4 text-slate-600" />
+              <Copy className="size-4" />
             )}
           </button>
 
@@ -359,7 +388,7 @@ export function NewsDetailClient({ title, slug, summary }: NewsDetailClientProps
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="size-8 rounded-sm bg-[#004776] text-white flex items-center justify-center hover:bg-[#115eff] transition-colors cursor-pointer"
+                className="size-8 rounded-sm bg-[#115eff] text-white flex items-center justify-center hover:bg-[#0a4de6] transition-colors cursor-pointer"
                 title="Top"
               >
                 <ChevronUp className="size-4" />

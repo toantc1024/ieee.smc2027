@@ -194,8 +194,17 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
     <div className="w-full bg-[#f8fafc]/40 font-sans text-slate-800 min-h-screen">
       {/* ── 1. HCMUTE Academic Top Banner with Royal Cobalt Blue & Dot Texture ── */}
       <section className="relative w-full bg-[#004776] text-white overflow-hidden border-b border-[#00385e] shadow-xs">
-        {/* Subtle HCMUTE Royal Blue Dot Pattern in Top-Right Corner */}
-        <div className="corner-dot-tr opacity-25 pointer-events-none" />
+        {/* Subtle HCMUTE Royal Blue Dot Pattern in Bottom-Right Corner */}
+        <div
+          className="pointer-events-none absolute bottom-0 right-0 h-full w-56 sm:w-80 md:w-96 select-none opacity-35 sm:opacity-40"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.75) 1.2px, transparent 1.2px)",
+            backgroundSize: "13px 13px",
+            WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 100% 100%, black 20%, transparent 75%)",
+            maskImage: "radial-gradient(ellipse 90% 90% at 100% 100%, black 20%, transparent 75%)",
+          }}
+          aria-hidden="true"
+        />
 
         <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
@@ -303,21 +312,6 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                 <p className="text-sm sm:text-base font-normal text-slate-700 leading-relaxed italic">
                   &ldquo;{post.summary}&rdquo;
                 </p>
-              </div>
-            )}
-
-            {/* Hero Cover Image (if available) */}
-            {post.coverImage && (
-              <div className="relative aspect-[16/9] w-full rounded-sm overflow-hidden border border-slate-200/90 shadow-2xs bg-slate-100">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  unoptimized
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1280px) 100vw, 850px"
-                />
               </div>
             )}
 
