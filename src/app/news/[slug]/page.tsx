@@ -6,9 +6,7 @@ import { notFound } from "next/navigation";
 import {
   Calendar,
   Clock,
-  User,
   ChevronRight,
-  ArrowLeft,
   Eye,
   FileText,
   Download,
@@ -17,12 +15,12 @@ import {
   MapPin,
   ExternalLink,
   Tag,
-  CheckCircle2,
 } from "lucide-react";
 import { prisma } from "@/lib";
 import { PostStatus } from "@prisma/client";
 import { DEFAULT_NEWS_ITEMS } from "@/data/news-data";
-import { NewsDetailClient } from "./news-detail-client";
+import { NewsDetailToolbar, NewsDetailShareBar } from "./news-detail-client";
+import { GridPattern } from "@/components/ui/grid-pattern";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -194,7 +192,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
   return (
     <div className="w-full bg-[#f8fafc]/40 font-sans text-slate-800 min-h-screen">
-      {/* ── 0. High-Resolution Hero Cover Image (Synchronized 16:9 Ratio with Post Cards) ── */}
+      {/* ── 0. High-Resolution Hero Cover Image (Edge-to-Edge 16:9 Ratio) ── */}
       {coverImage && (
         <section className="relative z-20 w-full overflow-hidden bg-slate-950 border-0 p-0 m-0">
           <div className="relative w-full aspect-[16/9] max-h-[75vh]">
@@ -211,7 +209,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
         </section>
       )}
 
-      {/* ── 1. HCMUTE Academic Top Banner with Royal Primary Blue & Dot Texture (Sticky on Scroll, Seamless) ── */}
+      {/* ── 1. Sticky Breadcrumb Bar with Royal Primary Blue & Subtle Dot Pattern ── */}
       <section className="sticky top-16 sm:top-[72px] z-40 w-full bg-primary text-white overflow-hidden border-0 shadow-md">
         {/* Subtle HCMUTE Royal Blue Dot Pattern in Bottom-Right Corner */}
         <div
@@ -227,7 +225,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
         <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 relative z-10">
           <div className="flex items-center text-xs">
-            {/* Breadcrumb Navigation (Strictly Non-Bold per HCMUTE guideline) */}
+            {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumbs"
               className="flex items-center gap-2 text-white/90 overflow-x-auto scrollbar-none font-normal"
@@ -256,67 +254,79 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ── 2. Main 12-Column Responsive Editorial Grid ── */}
-      <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left Column (1 col): Floating Action Dock (Desktop XL only) */}
-          <div className="hidden xl:block xl:col-span-1">
-            <NewsDetailClient
-              title={post.title}
-              slug={post.slug}
-              summary={post.summary || ""}
-            />
+      {/* ── 2. Main Article Section with Full-Width Header & Clean Unbordered Layout ── */}
+      <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        {/* Full-Width Article Header */}
+        <div className="mb-6 lg:mb-8">
+          {/* Category Badge */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Link
+              href="/#news"
+              className="inline-flex items-center px-3.5 py-1 rounded-sm text-xs font-bold uppercase tracking-wide text-white bg-primary hover:bg-primary/90 shadow-xs transition-colors"
+            >
+              {post.category}
+            </Link>
           </div>
 
-          {/* Center Column (7-8 cols): Main Editorial Article */}
-          <main className="col-span-1 xl:col-span-8 bg-white rounded-sm border border-slate-200/90 p-5 sm:p-8 lg:p-10 shadow-2xs space-y-6 sm:space-y-8">
-            {/* Top Navigation & Category Pill */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <Link
-                href="/#news"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-foreground transition-colors group"
-              >
-                <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-1" />
-                <span>All Announcements</span>
-              </Link>
+          {/* Title - Full Width */}
+          <h1 className="w-full text-2xl sm:text-3xl lg:text-[2.6rem] uppercase font-bold tracking-tight text-[#004776] leading-tight mb-6">
+            {post.title}
+          </h1>
 
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20">
-                {post.category}
-              </span>
+          {/* Author & Meta Info Row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-slate-200/80">
+            {/* Author */}
+            <div className="flex items-center gap-3">
+              <div
+                className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-slate-200 shrink-0 shadow-xs font-bold text-sm uppercase"
+                style={{ borderRadius: "50%" }}
+              >
+                {post.authorName.trim().charAt(0)}
+              </div>
+              <div className="text-left">
+                <span className="block text-sm font-bold text-[#004776] leading-tight">
+                  {post.authorName}
+                </span>
+              </div>
             </div>
 
-            {/* Article Headline */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#004776] tracking-tight leading-[1.25]">
-              {post.title}
-            </h1>
-
-            {/* Article Editorial Metadata Bar */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs text-slate-500 py-3 px-4 rounded-sm bg-slate-50/80 border border-slate-100">
-              <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <Calendar className="size-3.5 text-primary" />
+            {/* Metadata Stats */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-slate-500 font-medium">
+              <div className="flex items-center gap-1.5 text-slate-700">
+                <Calendar className="size-4 text-primary" />
                 <span>{formattedDate}</span>
               </div>
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <Clock className="size-3.5 text-primary" />
-                <span>{readingTimeMin} min read</span>
-              </div>
+
               {post.views > 0 && (
                 <>
-                  <span className="text-slate-300">•</span>
-                  <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                    <Eye className="size-3.5 text-primary" />
+                  <div className="w-1 h-1 bg-slate-300 rounded-full hidden sm:block" />
+                  <div className="flex items-center gap-1.5 text-slate-700">
+                    <Eye className="size-4 text-primary" />
                     <span>{post.views.toLocaleString("en-US")} views</span>
                   </div>
                 </>
               )}
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1.5 font-normal text-slate-700">
-                <User className="size-3.5 text-primary" />
-                <span className="truncate max-w-[200px]">{post.authorName}</span>
+
+              <div className="w-1 h-1 bg-slate-300 rounded-full hidden sm:block" />
+              <div className="flex items-center gap-1.5 text-slate-700">
+                <Clock className="size-4 text-primary" />
+                <span>{readingTimeMin} min read</span>
               </div>
             </div>
+          </div>
+        </div>
 
+        {/* Main Content Row: Left Sticky Toolbar + Unbordered Clean Article */}
+        <div className="flex gap-6 lg:gap-10 items-start">
+          {/* Left Buttons - Sticky Toolbar (Rounded-full pills) */}
+          <NewsDetailToolbar
+            title={post.title}
+            slug={post.slug}
+            summary={post.summary || ""}
+          />
+
+          {/* Main Article Content - Takes Remaining Width, No Box Border! */}
+          <article className="post-public-article flex-1 min-w-0 w-full space-y-6 sm:space-y-8">
             {/* Excerpt / Lead Summary Callout with Royal Blue Accent Border */}
             {post.summary && (
               <div className="rounded-sm border-l-4 border-primary bg-primary/5 p-4 sm:p-5">
@@ -326,21 +336,19 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Authentic HCMUTE Article Reader (Strict Line-Height 1.8 & Academic Typography) */}
-            <article className="pt-2">
-              <div
-                className="tiptap post-reader prose prose-slate sm:prose-lg max-w-none text-slate-800 leading-[1.8] font-sans prose-headings:font-bold prose-headings:text-[#004776] prose-headings:tracking-tight prose-a:text-primary prose-a:font-semibold hover:prose-a:underline prose-img:rounded-sm prose-img:border prose-img:border-slate-200 prose-blockquote:border-l-primary prose-blockquote:bg-blue-50/40 prose-blockquote:p-4 prose-blockquote:rounded-r-sm prose-table:border prose-table:border-slate-200 prose-th:bg-slate-50 prose-th:text-[#004776] prose-th:font-semibold"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    post.content.includes("<") && post.content.includes(">")
-                      ? post.content
-                      : `<p>${post.content}</p>`,
-                }}
-              />
-            </article>
+            {/* Authentic Academic Article Reader (Strict Line-Height 1.8 & Academic Typography) */}
+            <div
+              className="tiptap post-reader prose prose-slate sm:prose-lg max-w-none text-slate-800 leading-[1.8] font-sans prose-headings:font-bold prose-headings:text-[#004776] prose-headings:tracking-tight prose-a:text-primary prose-a:font-semibold hover:prose-a:underline prose-img:rounded-sm prose-img:border prose-img:border-slate-200 prose-blockquote:border-l-primary prose-blockquote:bg-blue-50/40 prose-blockquote:p-4 prose-blockquote:rounded-r-sm prose-table:border prose-table:border-slate-200 prose-th:bg-slate-50 prose-th:text-[#004776] prose-th:font-semibold"
+              dangerouslySetInnerHTML={{
+                __html:
+                  post.content.includes("<") && post.content.includes(">")
+                    ? post.content
+                    : `<p>${post.content}</p>`,
+              }}
+            />
 
             {/* Article Subject Tags */}
-            <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center gap-2">
+            <div className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mr-2">
                 <Tag className="size-3.5 text-primary" />
                 <span>Tags:</span>
@@ -349,7 +357,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                 (tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                    className="inline-flex items-center px-3 py-1 rounded-sm text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
                     #{tag.replace(/\s+/g, "")}
                   </span>
@@ -385,22 +393,28 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               </Link>
             </div>
 
-            {/* Mobile / Inline Actions Dock rendered by client */}
-            <div className="xl:hidden">
-              <NewsDetailClient
-                title={post.title}
-                slug={post.slug}
-                summary={post.summary || ""}
-              />
-            </div>
-          </main>
+            {/* End-of-Article Share Dock */}
+            <NewsDetailShareBar
+              title={post.title}
+              slug={post.slug}
+              summary={post.summary || ""}
+            />
+          </article>
+        </div>
+      </div>
 
-          {/* Right Sidebar (3-4 cols): University / Conference widgets */}
-          <aside className="col-span-1 xl:col-span-3 space-y-6">
-            {/* ── Widget 1: Important Conference Milestones ── */}
-            <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-4">
+      {/* ── 3. Edge-to-Edge Full Viewport Divider ── */}
+      <div className="w-full border-t border-slate-200 my-8 lg:my-14" />
+
+      {/* ── 4. Full Width Sections Under the Post ── */}
+      <div className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24 space-y-12 sm:space-y-16">
+        {/* 2-Column Action Cards Block: Key Dates & Conference Resources */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Card 1: Important Conference Milestones */}
+          <div className="rounded-sm border border-slate-200/90 bg-white p-6 shadow-2xs flex flex-col justify-between gap-5">
+            <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
+                <h3 className="text-base font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
                   <Calendar className="size-4 text-primary" />
                   <span>Important Dates</span>
                 </h3>
@@ -409,38 +423,38 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                 </span>
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div className="p-2.5 rounded-sm bg-slate-50 border border-slate-100/90 flex flex-col gap-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
                   <span className="font-semibold text-slate-800">
                     Regular Paper Submission
                   </span>
                   <span className="text-slate-500 flex items-center justify-between">
                     <span>Deadline</span>
-                    <span className="font-semibold text-[#004776]">May 15, 2027</span>
+                    <span className="font-bold text-[#004776]">May 15, 2027</span>
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-sm bg-slate-50 border border-slate-100/90 flex flex-col gap-1">
+                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
                   <span className="font-semibold text-slate-800">
                     Acceptance Notification
                   </span>
                   <span className="text-slate-500 flex items-center justify-between">
                     <span>Notification</span>
-                    <span className="font-semibold text-[#004776]">July 15, 2027</span>
+                    <span className="font-bold text-[#004776]">July 15, 2027</span>
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-sm bg-slate-50 border border-slate-100/90 flex flex-col gap-1">
+                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
                   <span className="font-semibold text-slate-800">
                     Final Camera-Ready
                   </span>
                   <span className="text-slate-500 flex items-center justify-between">
                     <span>Final Submission</span>
-                    <span className="font-semibold text-[#004776]">August 15, 2027</span>
+                    <span className="font-bold text-[#004776]">August 15, 2027</span>
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-sm bg-blue-50/70 border border-blue-100 flex flex-col gap-1">
+                <div className="p-3 rounded-sm bg-blue-50/70 border border-blue-100 flex flex-col gap-1">
                   <span className="font-bold text-[#004776]">
                     Conference Main Dates
                   </span>
@@ -450,62 +464,35 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                   </span>
                 </div>
               </div>
-
-              <Link
-                href="/#dates"
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-sm bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold transition-colors shadow-2xs"
-              >
-                <span>View Full Timeline</span>
-                <ChevronRight className="size-3.5" />
-              </Link>
             </div>
 
-            {/* ── Widget 2: Related & Recent Announcements ── */}
-            {relatedPosts.length > 0 && (
-              <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-4">
-                <div className="border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
-                    <FileText className="size-4 text-primary" />
-                    <span>Related News</span>
-                  </h3>
-                </div>
+            <Link
+              href="/#dates"
+              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-sm bg-primary hover:bg-primary/90 text-white text-xs font-bold transition-colors shadow-2xs self-start"
+            >
+              <span>View Full Timeline</span>
+              <ChevronRight className="size-3.5" />
+            </Link>
+          </div>
 
-                <div className="divide-y divide-slate-100">
-                  {relatedPosts.map((item, idx) => (
-                    <article key={item.id} className="py-3 first:pt-0 last:pb-0 group">
-                      <Link href={`/news/${item.slug}`} className="block space-y-1.5">
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                          <span className="font-bold uppercase tracking-wider text-primary">
-                            {item.category}
-                          </span>
-                          <span>•</span>
-                          <span>{item.date}</span>
-                        </div>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                          {item.title}
-                        </h4>
-                      </Link>
-                    </article>
-                  ))}
-                </div>
+          {/* Card 2: Key Resources & Downloads */}
+          <div className="rounded-sm border border-slate-200/90 bg-white p-6 shadow-2xs flex flex-col justify-between gap-5">
+            <div className="space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="text-base font-bold text-[#004776] uppercase tracking-wider flex items-center gap-2">
+                  <Download className="size-4 text-primary" />
+                  <span>Conference Resources</span>
+                </h3>
               </div>
-            )}
 
-            {/* ── Widget 3: Key Resources & Downloads ── */}
-            <div className="rounded-sm border border-slate-200 bg-white p-5 shadow-2xs space-y-3">
-              <h3 className="text-sm font-bold text-[#004776] uppercase tracking-wider border-b border-slate-100 pb-3 flex items-center gap-2">
-                <Download className="size-4 text-primary" />
-                <span>Conference Resources</span>
-              </h3>
-
-              <div className="space-y-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <a
                   href="/CFP - IEEE SMC 2027 - 13.10.2026.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-3 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <FileText className="size-4 text-primary" />
                     <span>Call for Papers (PDF)</span>
                   </div>
@@ -514,9 +501,9 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
                 <Link
                   href="/travel"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-3 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <MapPin className="size-4 text-primary" />
                     <span>Venue &amp; Travel Guide</span>
                   </div>
@@ -527,30 +514,44 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
                   href="https://hcmute.edu.vn"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
+                  className="flex items-center justify-between p-3 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <GraduationCap className="size-4 text-primary" />
                     <span>HCM-UTE Portal</span>
                   </div>
                   <ExternalLink className="size-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                 </a>
+
+                <Link
+                  href="/#contact"
+                  className="flex items-center justify-between p-3 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <Building className="size-4 text-primary" />
+                    <span>Contact Committee</span>
+                  </div>
+                  <ChevronRight className="size-3.5 text-slate-400 group-hover:text-primary transition-colors" />
+                </Link>
               </div>
             </div>
-          </aside>
-        </div>
-      </div>
 
-      {/* ── 3. Edge-to-Edge Full Viewport Divider (Exact HCMUTE Specification) ── */}
-      <div className="w-full border-t border-slate-200 my-8 lg:my-14" />
+            <Link
+              href="/#contact"
+              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-sm border border-primary text-primary hover:bg-primary hover:text-white text-xs font-bold transition-colors shadow-2xs self-start"
+            >
+              <span>Get in Touch</span>
+              <ChevronRight className="size-3.5" />
+            </Link>
+          </div>
+        </section>
 
-      {/* ── 4. Bottom Announcements Archive Showcase ── */}
-      {relatedPosts.length > 0 && (
-        <section className="w-full max-w-[var(--site-width)] mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+        {/* Synced More Announcements & Updates Section (100% Identical to Home Page News Card) */}
+        {relatedPosts.length > 0 && (
+          <section className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight uppercase">
                   More Announcements &amp; Updates
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -566,63 +567,92 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.slice(0, 3).map((related) => (
-                <div
-                  key={related.id}
-                  className="group flex flex-col justify-between rounded-sm bg-white border border-slate-200 hover:border-primary overflow-hidden transition-all duration-300 shadow-2xs hover:shadow-md"
-                >
-                  <div>
-                    {related.coverImage ? (
-                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
-                        <Image
-                          src={related.coverImage}
-                          alt={related.title}
-                          fill
-                          unoptimized
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, 360px"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-[16/9] w-full bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center text-slate-400">
-                        <FileText className="size-8 text-primary/40" />
-                      </div>
-                    )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedPosts.slice(0, 3).map((news) => {
+                const detailUrl = `/news/${news.slug}`;
 
-                    <div className="p-5 space-y-2.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                        {related.category}
-                      </span>
-                      <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                        {related.title}
-                      </h4>
-                      {related.summary && (
-                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                          {related.summary}
-                        </p>
-                      )}
+                return (
+                  <article
+                    key={news.id}
+                    className="group group/card relative flex flex-col overflow-hidden rounded-sm bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
+                  >
+                    {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
+                    <GridPattern
+                      width={32}
+                      height={32}
+                      className="pointer-events-none absolute inset-0 z-[1] stroke-white/0 fill-transparent transition-colors duration-200 group-hover:stroke-white/[0.08] group-hover/card:stroke-white/[0.08] [mask-image:radial-gradient(ellipse_75%_65%_at_bottom_right,white_40%,transparent_100%)]"
+                    />
+
+                    {/* UTE Flower watermark — appears subtle at bottom right on hover without rotation */}
+                    <Image
+                      src="/assets/flower-ute-white.png"
+                      alt=""
+                      width={260}
+                      height={260}
+                      unoptimized
+                      className="pointer-events-none absolute -bottom-16 -right-16 z-[1] select-none opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-[0.14] group-hover/card:opacity-[0.14]"
+                      aria-hidden="true"
+                    />
+
+                    {/* Padded Image Container with aspect-[16/9] (hcmute-website style) */}
+                    <div className="relative z-[2] overflow-hidden p-2 sm:p-2.5">
+                      <Link
+                        href={detailUrl}
+                        className="block relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-slate-100"
+                      >
+                        {news.coverImage ? (
+                          <Image
+                            src={news.coverImage}
+                            alt={news.title}
+                            fill
+                            unoptimized
+                            className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-105 group-hover/card:scale-105"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#115eff] to-[#004776]">
+                            <span className="text-xl font-bold text-white/30">IEEE SMC</span>
+                          </div>
+                        )}
+                      </Link>
                     </div>
-                  </div>
 
-                  <div className="p-5 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-medium text-slate-500">
-                      {related.date}
-                    </span>
-                    <Link
-                      href={`/news/${related.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-foreground whitespace-nowrap shrink-0"
-                    >
-                      <span>Read Announcement</span>
-                      <ChevronRight className="size-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                    {/* Card Content Area: Title, Summary, and Post Detail Button */}
+                    <div className="relative z-[2] flex flex-1 flex-col px-5 pb-5 pt-2 justify-between gap-4">
+                      <div className="space-y-2.5">
+                        <Link href={detailUrl} className="block">
+                          <h4 className="news-card-title line-clamp-2 text-base sm:text-lg font-bold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
+                            {news.title}
+                          </h4>
+                        </Link>
+                        {news.summary && (
+                          <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200">
+                            {news.summary}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Bottom Action Row: Date + View Details Button */}
+                      <div className="pt-3 border-t border-slate-100 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
+                        <span className="news-card-date text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200 whitespace-nowrap">
+                          {news.date}
+                        </span>
+                        <Link
+                          href={detailUrl}
+                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-bold rounded-sm transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
+                        >
+                          <span>View Details</span>
+                          <ChevronRight className="size-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
+      </div>
     </div>
   );
 }
