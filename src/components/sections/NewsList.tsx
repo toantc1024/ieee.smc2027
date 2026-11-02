@@ -566,20 +566,20 @@ export function NewsList({
                           }}
                           className="block"
                         >
-                          <h3 className="news-card-title line-clamp-2 text-base sm:text-lg font-bold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
+                          <h3 className="news-card-title line-clamp-2 text-base sm:text-lg font-semibold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
                             {news.title}
                           </h3>
                         </Link>
 
                         {/* Summary text: Slate-600 unhovered, white/80 on hover */}
                         {news.summary && (
-                          <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200">
+                          <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200 font-normal">
                             {news.summary}
                           </p>
                         )}
                       </div>
 
-                      {/* Bottom Action Row: Date + Bigger Post Detail Button with NO WRAP TEXT */}
+                      {/* Bottom Action Row: Date + Post Detail Button */}
                       <div className="pt-3 border-t border-slate-100 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
                         <span className="news-card-date text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200 whitespace-nowrap">
                           {news.date}
@@ -594,7 +594,7 @@ export function NewsList({
                             }
                             e.stopPropagation();
                           }}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-bold rounded-sm transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
+                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-semibold rounded-sm transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
                         >
                           <span>View Details</span>
                           <ChevronRight className="size-4" />
