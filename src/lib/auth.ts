@@ -16,8 +16,67 @@ export interface SessionUser {
   name: string;
   avatar?: string | null;
   role: "ADMIN" | "USER";
+  status?: string;
   provider?: string;
+  sessionVersion?: number;
   profileData?: Record<string, unknown>;
+}
+
+// ============================================================
+// CLIENT IP & LOGIN TRACKING HELPERS
+// ============================================================
+
+export function extractClientInfo(request: Request | { headers: Headers; ip?: string }): {
+  ip: string;
+  device: string;
+} {
+  const headers = request.headers;
+  let ip = (request as { ip?: string }).ip;
+
+  if (!ip) {
+    const forwarded = headers.get("x-forwarded-for");
+    if (forwarded) {
+      ip = forwarded.split(",")[0].trim();
+    }
+  }
+
+  if (!ip) {
+    ip =
+      headers.get("x-real-ip") ||
+      headers.get("cf-connecting-ip") ||
+      headers.get("true-client-ip") ||
+      headers.get("fastly-client-ip") ||
+      headers.get("x-client-ip") ||
+      undefined;
+  }
+
+  if (!ip || ip === "::1" || ip === "::ffff:127.0.0.1") {
+    ip = "127.0.0.1";
+  }
+
+  const rawUserAgent = headers.get("user-agent") || "Unknown Device";
+  const device = rawUserAgent.length > 255 ? rawUserAgent.slice(0, 255) : rawUserAgent;
+
+  return { ip, device };
+}
+
+export async function recordLogin(
+  userId: string,
+  ip?: string | null,
+  device?: string | null
+): Promise<void> {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastLoginAt: new Date(),
+        ...(ip ? { lastLoginIp: ip } : {}),
+        ...(device ? { lastLoginDevice: device } : {}),
+      },
+    });
+  } catch (error) {
+    console.warn(`[auth] Failed to record login tracking for ${userId}:`, error);
+  }
 }
 
 // ============================================================
@@ -159,6 +218,7 @@ export async function createSessionToken(user: SessionUser): Promise<string> {
     avatar: user.avatar,
     role: user.role,
     provider: user.provider || "email",
+    sessionVersion: user.sessionVersion ?? 1,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -176,6 +236,8 @@ export async function verifySessionToken(token: string): Promise<SessionUser | n
       avatar: (payload.avatar as string) || null,
       role: (payload.role as "ADMIN" | "USER") || "USER",
       provider: (payload.provider as string) || "email",
+      sessionVersion:
+        typeof payload.sessionVersion === "number" ? payload.sessionVersion : 1,
     };
   } catch {
     return null;
@@ -191,11 +253,30 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     if (!sessionUser) return null;
 
     // Fetch live role and profile from PostgreSQL so DB role updates take effect immediately
-    const dbUser = await prisma.user.findUnique({
-      where: { email: normalizeEmail(sessionUser.email) },
+    const dbUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: sessionUser.id },
+          { email: normalizeEmail(sessionUser.email) },
+        ],
+      },
     });
 
-    if (!dbUser) return sessionUser;
+    // Revocation Bug Fix 1: User deleted from DB -> session is immediately invalidated
+    if (!dbUser) return null;
+
+    // Revocation Bug Fix 2: User blocked or inactive -> session is immediately invalidated
+    if (dbUser.status === "BLOCKED" || dbUser.status === "INACTIVE") {
+      return null;
+    }
+
+    // Revocation Bug Fix 3: Session revoked via sessionVersion bump -> invalidate
+    if (
+      sessionUser.sessionVersion !== undefined &&
+      dbUser.sessionVersion !== sessionUser.sessionVersion
+    ) {
+      return null;
+    }
 
     return {
       id: dbUser.id,
@@ -203,7 +284,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       name: dbUser.name,
       avatar: dbUser.avatar,
       role: dbUser.role as "ADMIN" | "USER",
+      status: dbUser.status,
       provider: dbUser.provider,
+      sessionVersion: dbUser.sessionVersion,
       profileData:
         dbUser.profileData && typeof dbUser.profileData === "object"
           ? (dbUser.profileData as Record<string, unknown>)
@@ -282,7 +365,9 @@ export async function upsertUser(user: {
     name: result.name,
     avatar: result.avatar,
     role: result.role as "ADMIN" | "USER",
+    status: result.status,
     provider: result.provider,
+    sessionVersion: result.sessionVersion,
     profileData:
       result.profileData && typeof result.profileData === "object"
         ? (result.profileData as Record<string, unknown>)

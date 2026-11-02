@@ -2,11 +2,14 @@ import { NextRequest } from "next/server";
 import {
   verifyOtp,
   upsertUser,
+  recordLogin,
+  extractClientInfo,
   createSessionToken,
   normalizeEmail,
   attachSessionCookie,
   apiSuccess,
   apiError,
+  prisma,
 } from "@/lib";
 
 export async function POST(req: NextRequest) {
@@ -24,10 +27,20 @@ export async function POST(req: NextRequest) {
       return apiError(result.reason || "Invalid verification code", 400);
     }
 
+    const { ip, device } = extractClientInfo(req);
+
+    // Check if account blocked
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing && existing.status === "BLOCKED") {
+      return apiError("Your account has been blocked. Please contact the conference committee.", 403);
+    }
+
     const user = await upsertUser({
       email,
       provider: "email",
     });
+
+    await recordLogin(user.id, ip, device);
 
     const token = await createSessionToken(user);
     const response = apiSuccess({
@@ -42,3 +55,4 @@ export async function POST(req: NextRequest) {
     return apiError(err, 500, "Error verifying code");
   }
 }
+

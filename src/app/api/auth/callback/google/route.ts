@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import {
   createSessionToken,
   upsertUser,
+  recordLogin,
+  extractClientInfo,
   getGoogleOAuthConfig,
   getRequestOrigin,
   attachSessionCookie,
   extractErrorMessage,
+  prisma,
 } from "@/lib";
 
 export async function GET(request: Request) {
@@ -69,13 +72,27 @@ export async function GET(request: Request) {
       );
     }
 
+    const cleanEmail = profile.email.toLowerCase().trim();
+
+    // Check if account blocked
+    const existing = await prisma.user.findUnique({ where: { email: cleanEmail } });
+    if (existing && existing.status === "BLOCKED") {
+      return NextResponse.redirect(
+        new URL("/admin/login?error=account_blocked", currentOrigin)
+      );
+    }
+
+    const { ip, device } = extractClientInfo(request);
+
     const dbUser = await upsertUser({
-      id: profile.sub || `google_${profile.email}`,
-      email: profile.email,
-      name: profile.name || profile.email.split("@")[0],
+      id: profile.sub || `google_${cleanEmail}`,
+      email: cleanEmail,
+      name: profile.name || cleanEmail.split("@")[0],
       avatar: profile.picture || null,
       provider: "google",
     });
+
+    await recordLogin(dbUser.id, ip, device);
 
     const sessionToken = await createSessionToken(dbUser);
     const destination = dbUser.role === "ADMIN" ? "/admin" : "/portal";

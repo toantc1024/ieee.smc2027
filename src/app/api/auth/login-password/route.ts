@@ -4,6 +4,8 @@ import {
   verifyPassword,
   hashPassword,
   createSessionToken,
+  recordLogin,
+  extractClientInfo,
   normalizeEmail,
   attachSessionCookie,
   apiSuccess,
@@ -28,11 +30,15 @@ export async function POST(req: NextRequest) {
       return apiError("Password must be at least 6 characters long", 400);
     }
 
+    const { ip, device } = extractClientInfo(req);
+
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
 
     let userToSign;
+    let userIdToTrack: string;
+    let userSessionVersion = 1;
 
     if (!existingUser) {
       // User does not exist -> Automatically create account for them
@@ -44,24 +50,37 @@ export async function POST(req: NextRequest) {
           email,
           name: defaultName,
           role: Role.USER,
-          provider: "email",
+          status: "ACTIVE",
+          provider: "password",
           passwordHash: newHash,
+          lastLoginAt: new Date(),
+          lastLoginIp: ip,
+          lastLoginDevice: device,
+          sessionVersion: 1,
           profileData: {
             conferenceRole,
           },
         },
       });
 
+      userIdToTrack = created.id;
+      userSessionVersion = created.sessionVersion;
       userToSign = {
         id: created.id,
         email: created.email,
         name: created.name,
         avatar: created.avatar,
         role: created.role as "ADMIN" | "USER",
-        provider: "email",
+        status: created.status,
+        provider: "password",
+        sessionVersion: created.sessionVersion,
         profileData: (created.profileData as Record<string, unknown>) || {},
       };
     } else {
+      if (existingUser.status === "BLOCKED") {
+        return apiError("Your account has been blocked. Please contact the conference committee.", 403);
+      }
+
       const storedHash =
         existingUser.passwordHash || (await getUserPasswordHash(email));
 
@@ -72,18 +91,22 @@ export async function POST(req: NextRequest) {
           where: { email },
           data: {
             passwordHash: newHash,
-            provider: "email",
+            provider: "password",
             ...(name && !existingUser.name ? { name } : {}),
           },
         });
 
+        userIdToTrack = updated.id;
+        userSessionVersion = updated.sessionVersion;
         userToSign = {
           id: updated.id,
           email: updated.email,
           name: updated.name,
           avatar: updated.avatar,
           role: updated.role as "ADMIN" | "USER",
-          provider: "email",
+          status: updated.status,
+          provider: updated.provider,
+          sessionVersion: updated.sessionVersion,
           profileData: (updated.profileData as Record<string, unknown>) || {},
         };
       } else {
@@ -91,19 +114,30 @@ export async function POST(req: NextRequest) {
           return apiError("Incorrect password. Please verify or use Email Code.", 401);
         }
 
+        userIdToTrack = existingUser.id;
+        userSessionVersion = existingUser.sessionVersion;
         userToSign = {
           id: existingUser.id,
           email: existingUser.email,
           name: existingUser.name,
           avatar: existingUser.avatar,
           role: existingUser.role as "ADMIN" | "USER",
-          provider: "email",
+          status: existingUser.status,
+          provider: existingUser.provider,
+          sessionVersion: existingUser.sessionVersion,
           profileData: (existingUser.profileData as Record<string, unknown>) || {},
         };
       }
+
+      // Record login tracking in DB
+      await recordLogin(userIdToTrack, ip, device);
     }
 
-    const token = await createSessionToken(userToSign);
+    const token = await createSessionToken({
+      ...userToSign,
+      sessionVersion: userSessionVersion,
+    });
+
     const response = apiSuccess({
       message: "Signed in successfully",
       user: userToSign,
@@ -116,3 +150,4 @@ export async function POST(req: NextRequest) {
     return apiError(err, 500, "Error processing password sign-in");
   }
 }
+
