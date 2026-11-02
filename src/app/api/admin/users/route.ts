@@ -31,8 +31,9 @@ export async function GET(request: NextRequest) {
     // Build dynamic where clause
     const where: Prisma.UserWhereInput = {};
 
-    if (search.trim()) {
-      const term = search.trim();
+    const cleanSearch = search.replace(/\0/g, "").trim();
+    if (cleanSearch) {
+      const term = cleanSearch;
       where.OR = [
         { name: { contains: term, mode: "insensitive" } },
         { email: { contains: term, mode: "insensitive" } },
@@ -147,6 +148,11 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanEmail = normalizeEmail(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return apiError("Invalid email format", 400);
+    }
+
     const targetRole = role === "ADMIN" ? Role.ADMIN : Role.USER;
     const targetStatus = ["ACTIVE", "INACTIVE", "BLOCKED"].includes(status?.toUpperCase())
       ? status.toUpperCase()
