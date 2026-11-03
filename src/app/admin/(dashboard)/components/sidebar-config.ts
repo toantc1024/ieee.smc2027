@@ -31,20 +31,7 @@ export interface SidebarMenuGroup {
   defaultOpen?: boolean;
 }
 
-export const quickNavItems: SidebarMenuItem[] = [
-  {
-    id: "dashboard",
-    title: "Overview",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
-];
+export const quickNavItems: SidebarMenuItem[] = [];
 
 export const sidebarMenuGroups: SidebarMenuGroup[] = [
   // ── 1. Content Management ──
@@ -74,7 +61,7 @@ export const sidebarMenuGroups: SidebarMenuGroup[] = [
     id: "websiteManagement",
     title: "Website",
     icon: Globe,
-    defaultOpen: false,
+    defaultOpen: true,
     items: [
       {
         id: "pages",

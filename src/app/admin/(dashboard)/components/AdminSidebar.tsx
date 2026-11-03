@@ -245,7 +245,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/admin"
+                href="/admin/posts"
                 className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 hover:scale-105 outline-hidden aspect-square cursor-pointer"
               >
                 <Image
@@ -271,7 +271,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 className="data-[state=open]:bg-transparent hover:bg-transparent rounded-xl transition-all h-auto py-0.5 px-1 justify-center"
                 asChild
               >
-                <Link href="/admin" className="flex items-center justify-center w-full">
+                <Link href="/admin/posts" className="flex items-center justify-center w-full">
                   <div className="relative h-10 w-full flex items-center justify-center">
                     <Image
                       src="/logo/rectangle-logo.png"
