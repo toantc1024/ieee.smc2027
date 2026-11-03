@@ -5,7 +5,15 @@ import { ChevronDown, ChevronUp, HelpCircle, Mail } from "lucide-react";
 import { FAQS, CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export function FAQ() {
+export interface FAQProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function FAQ({
+  title = "Frequently Asked Questions & Help",
+  subtitle = "Author & Attendee Assistance • Conference Policies & Guidance",
+}: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
@@ -29,11 +37,17 @@ export function FAQ() {
 
         <div className="space-y-3 w-full relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-[#004776]">Frequently Asked</span>
-            <span className="block text-[#115eff]">Questions & Help</span>
+            {title.includes("&") ? (
+              <>
+                <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              <span className="block text-[#004776]">{title}</span>
+            )}
           </h2>
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
-            Author & Attendee Assistance • Conference Policies & Guidance
+            {subtitle}
           </p>
         </div>
       </div>

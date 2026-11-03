@@ -5,7 +5,15 @@ import { Search, Layers, Cpu, Users } from "lucide-react";
 import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export function TracksExplorer() {
+export interface TracksExplorerProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function TracksExplorer({
+  title = "Technical Tracks & 3 Core Pillars",
+  subtitle = "Systems Science • Cybernetics • Human–Machine Systems",
+}: TracksExplorerProps) {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -73,11 +81,17 @@ export function TracksExplorer() {
 
         <div className="space-y-3 relative z-10 flex-1">
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-blue-100">Technical Tracks</span>
-            <span className="block text-white">& 3 Core Pillars</span>
+            {title.includes("&") ? (
+              <>
+                <span className="block text-blue-100">{title.split("&")[0].trim()}</span>
+                <span className="block text-white">& {title.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              <span className="block text-white">{title}</span>
+            )}
           </h2>
           <p className="text-base sm:text-lg text-blue-100/90 font-medium">
-            Systems Science • Cybernetics • Human–Machine Systems
+            {subtitle}
           </p>
         </div>
 

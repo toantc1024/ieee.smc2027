@@ -15,7 +15,20 @@ import {
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO, MUST_VISIT_ATTRACTIONS, TouristAttraction } from "@/data/conference";
 
-export function Venue() {
+export interface VenueProps {
+  title?: string;
+  subtitle?: string;
+  venueName?: string;
+  address?: string;
+  googleMapsUrl?: string;
+}
+
+export function Venue({
+  title = "Travel & Accommodation & Ho Chi Minh City Guide",
+  venueName = CONFERENCE_INFO.venue,
+  address = "No. 88 Dong Khoi, Saigon Ward, District 1, Ho Chi Minh City, Vietnam.",
+  googleMapsUrl = CONFERENCE_INFO.googleMapsUrl,
+}: VenueProps) {
   const [selectedFilter, setSelectedFilter] = useState<"all" | "walk" | "culture">("all");
 
   const filteredAttractions = MUST_VISIT_ATTRACTIONS.filter((item) => {
@@ -52,11 +65,22 @@ export function Venue() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-              <span className="block text-[#004776]">Travel & Accommodation</span>
-              <span className="block text-[#115eff]">& Ho Chi Minh City Guide</span>
+              {title === "Travel & Accommodation & Ho Chi Minh City Guide" ? (
+                <>
+                  <span className="block text-[#004776]">Travel & Accommodation</span>
+                  <span className="block text-[#115eff]">& Ho Chi Minh City Guide</span>
+                </>
+              ) : title.includes("&") ? (
+                <>
+                  <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                  <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+                </>
+              ) : (
+                <span className="block text-[#004776]">{title}</span>
+              )}
             </h2>
             <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
-              {CONFERENCE_INFO.venue} • Ho Chi Minh City, Vietnam
+              {venueName} • Ho Chi Minh City, Vietnam
             </p>
           </div>
 
@@ -70,7 +94,7 @@ export function Venue() {
               <ArrowUpRight className="w-4 h-4" />
             </a>
             <a
-              href={CONFERENCE_INFO.googleMapsUrl}
+              href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
@@ -91,11 +115,11 @@ export function Venue() {
           <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50/60 border border-slate-200 rounded-sm flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                Sheraton Saigon Grand Opera Hotel
+                {venueName}
               </h3>
 
               <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
-                IEEE SMC 2027 will take place at the iconic <strong>Sheraton Saigon Grand Opera Hotel</strong>, located at 88 Dong Khoi Street, District 1, Ho Chi Minh City, Vietnam.
+                IEEE SMC 2027 will take place at the iconic <strong>{venueName}</strong>, located at {address}
               </p>
 
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -107,7 +131,7 @@ export function Venue() {
                 <div className="flex items-start gap-3">
                   <MapPin className="w-4.5 h-4.5 text-[#115eff] mt-0.5 shrink-0" />
                   <span>
-                    <strong className="text-slate-900 font-semibold">Address:</strong> No. 88 Dong Khoi, Saigon Ward, District 1, Ho Chi Minh City, Vietnam.
+                    <strong className="text-slate-900 font-semibold">Address:</strong> {address}
                   </span>
                 </div>
                 <div className="flex items-start gap-3">

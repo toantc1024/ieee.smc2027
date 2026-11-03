@@ -5,89 +5,17 @@ import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
 import { NewsList } from "@/components/sections/NewsList";
 import { ConferenceVideo } from "@/components/sections/ConferenceVideo";
-import { PaperTemplates } from "@/components/sections/PaperTemplates";
 import { ContactCards } from "@/components/sections/ContactCards";
-import { CfpSubscribe } from "@/components/sections/CfpSubscribe";
-import { SubmissionCountdown } from "@/components/sections/SubmissionCountdown";
-import { ConferenceHighlights } from "@/components/sections/ConferenceHighlights";
-import { CallForPapers } from "@/components/sections/CallForPapers";
-import { TracksExplorer } from "@/components/sections/TracksExplorer";
 import { ImportantDates } from "@/components/sections/ImportantDates";
-import { About } from "@/components/sections/About";
-import { Committee } from "@/components/sections/Committee";
 import { Venue } from "@/components/sections/Venue";
-import { FAQ } from "@/components/sections/FAQ";
-import { Sponsors } from "@/components/sections/Sponsors";
-import { Keynotes } from "@/components/sections/Keynotes";
 import { CommitteesSection } from "@/components/sections/CommitteesSection";
+import { PublicPageRenderer } from "@/app/(public)/[slug]/public-page-renderer";
+import type { PageBlock } from "@/modules/website-builder/types";
 
 export const dynamic = "force-dynamic";
 
-interface PageBlockItem {
-  id: string;
-  type: string;
-  props?: Record<string, unknown>;
-  hidden?: boolean;
-}
-
-function renderBlock(block: PageBlockItem) {
-  if (block.hidden) return null;
-
-  switch (block.type) {
-    case "HeroCarousel":
-      return <HeroCarousel key={block.id} {...block.props} />;
-    case "WelcomeLetter":
-      return <WelcomeLetter key={block.id} {...block.props} />;
-    case "NewsList":
-      return <NewsList key={block.id} {...block.props} />;
-    case "ConferenceVideo":
-      return <ConferenceVideo key={block.id} {...block.props} />;
-    case "PaperTemplates":
-      return <PaperTemplates key={block.id} {...block.props} />;
-    case "ContactCards":
-      return <ContactCards key={block.id} {...block.props} />;
-    case "CfpSubscribe":
-      return <CfpSubscribe key={block.id} />;
-    case "SubmissionCountdown":
-      return <SubmissionCountdown key={block.id} />;
-    case "ConferenceHighlights":
-      return <ConferenceHighlights key={block.id} />;
-    case "CallForPapers":
-      return <CallForPapers key={block.id} />;
-    case "TracksExplorer":
-      return <TracksExplorer key={block.id} />;
-    case "ImportantDates":
-      return <ImportantDates key={block.id} />;
-    case "About":
-      return <About key={block.id} />;
-    case "Committee":
-      return <Committee key={block.id} />;
-    case "Venue":
-      return <Venue key={block.id} />;
-    case "CommitteesSection":
-      return <CommitteesSection key={block.id} {...block.props} />;
-    case "FAQ":
-      return <FAQ key={block.id} />;
-    case "Keynotes":
-      return <Keynotes key={block.id} />;
-    case "Sponsors":
-      return <Sponsors key={block.id} />;
-    case "CustomHTML":
-      return (
-        <div
-          key={block.id}
-          dangerouslySetInnerHTML={{
-            __html: (block.props?.content as string) || "",
-          }}
-        />
-      );
-    default:
-      return null;
-  }
-}
-
 export default async function Home() {
-  let blocks: PageBlockItem[] = [];
+  let blocks: PageBlock[] = [];
 
   try {
     const homePage = await withTimeout(
@@ -96,7 +24,7 @@ export default async function Home() {
       null
     );
     if (homePage && Array.isArray(homePage.blocks)) {
-      blocks = homePage.blocks as unknown as PageBlockItem[];
+      blocks = homePage.blocks as unknown as PageBlock[];
     }
   } catch (err) {
     console.error("Failed to fetch home page blocks via Prisma, using fallback", err);
@@ -118,9 +46,5 @@ export default async function Home() {
     );
   }
 
-  return (
-    <div className="w-full flex flex-col">
-      {blocks.map((block) => renderBlock(block))}
-    </div>
-  );
+  return <PublicPageRenderer blocks={blocks} />;
 }

@@ -34,6 +34,7 @@ function formatYouTubeEmbedUrl(url?: string): string {
 }
 
 export function ConferenceVideo({
+  title = "IEEE SMC 2027 Comes to Ho Chi Minh City",
   subtitle = "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global collaboration.",
   viewDetailsUrl = "#venue",
   videoUrl = "https://www.youtube.com/embed/vTwRHpRNtls",
@@ -61,8 +62,19 @@ export function ConferenceVideo({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10 w-full">
           <div className="space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-              <span className="block text-[#004776]">IEEE SMC 2027</span>
-              <span className="block text-[#115eff]">Comes to Ho Chi Minh City</span>
+              {title === "IEEE SMC 2027 Comes to Ho Chi Minh City" ? (
+                <>
+                  <span className="block text-[#004776]">IEEE SMC 2027</span>
+                  <span className="block text-[#115eff]">Comes to Ho Chi Minh City</span>
+                </>
+              ) : title.includes("&") ? (
+                <>
+                  <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                  <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+                </>
+              ) : (
+                <span className="block text-[#004776]">{title}</span>
+              )}
             </h2>
             <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-3xl">
               {safeSubtitle}

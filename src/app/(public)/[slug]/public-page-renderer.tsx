@@ -4,6 +4,7 @@ import React from "react";
 import type { PageBlock } from "@/modules/website-builder/types";
 import { getBlockDefinition } from "@/modules/website-builder/registry";
 import { BlockErrorBoundary } from "@/modules/website-builder/components/canvas/block-error-boundary";
+import { cn } from "@/lib/utils";
 
 interface PublicPageRendererProps {
   blocks: PageBlock[];
@@ -21,9 +22,23 @@ export function PublicPageRenderer({ blocks }: PublicPageRendererProps) {
 
         const def = getBlockDefinition(block.type);
         const ComponentToRender = def?.render;
+        const customStyles = (block.props?._styles || {}) as Record<string, string>;
 
         return (
-          <section key={block.id || idx} id={block.id} className="w-full">
+          <section
+            key={block.id || idx}
+            id={block.id}
+            className={cn(
+              "w-full",
+              customStyles.paddingTop,
+              customStyles.paddingBottom,
+              customStyles.className
+            )}
+            style={{
+              backgroundColor: customStyles.backgroundColor || undefined,
+              color: customStyles.textColor || undefined,
+            }}
+          >
             <BlockErrorBoundary blockType={block.type} blockId={block.id}>
               {ComponentToRender ? (
                 <ComponentToRender {...block.props} />

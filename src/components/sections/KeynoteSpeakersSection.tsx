@@ -29,8 +29,14 @@ export function KeynoteSpeakersSection({
       <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 w-full">
         <div className="space-y-3 w-full relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-[#004776]">Keynote Speakers</span>
-            <span className="block text-[#115eff]">& Plenary Sessions</span>
+            {title.includes("&") ? (
+              <>
+                <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              <span className="block text-[#004776]">{title}</span>
+            )}
           </h2>
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
             {subtitle}

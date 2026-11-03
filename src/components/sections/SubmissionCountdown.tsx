@@ -12,12 +12,20 @@ import { CONFERENCE_INFO } from "@/data/conference";
 import { GoogleCalendarIcon } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export function SubmissionCountdown() {
+export interface SubmissionCountdownProps {
+  title?: string;
+  deadlineText?: string;
+}
+
+export function SubmissionCountdown({
+  title = "Paper Submission Deadline:",
+  deadlineText = "April 08, 2027",
+}: SubmissionCountdownProps) {
   const [copiedDeadline, setCopiedDeadline] = useState(false);
 
   const handleCopyDeadline = () => {
     navigator.clipboard.writeText(
-      "IEEE SMC 2027 Paper Submission Deadline: April 08, 2027 (Ho Chi Minh City, Vietnam)"
+      `IEEE SMC 2027 ${title} ${deadlineText} (Ho Chi Minh City, Vietnam)`
     );
     setCopiedDeadline(true);
     setTimeout(() => setCopiedDeadline(false), 2500);
@@ -52,10 +60,10 @@ export function SubmissionCountdown() {
             <div className="space-y-2 text-left min-w-0">
               <h2 className="font-black tracking-tight leading-tight">
                 <span className="block text-xl sm:text-2xl lg:text-3xl text-slate-900">
-                  Paper Submission Deadline:
+                  {title}
                 </span>
                 <span className="block text-2xl sm:text-3xl lg:text-4xl text-[#115eff] mt-0.5">
-                  April 08, 2027
+                  {deadlineText}
                 </span>
               </h2>
 

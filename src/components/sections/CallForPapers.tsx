@@ -12,7 +12,19 @@ import {
 import { CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export function CallForPapers() {
+export interface CallForPapersProps {
+  title?: string;
+  subtitle?: string;
+  cfpPdfUrl?: string;
+  submissionUrl?: string;
+  submissionDeadline?: string;
+}
+
+export function CallForPapers({
+  title = "Call For Papers & Submission Guidelines",
+  subtitle = "Submission Categories & Technical Topics • IEEE SMC 2027",
+  cfpPdfUrl = CONFERENCE_INFO.cfpPdfUrl,
+}: CallForPapersProps) {
   const [showPdfViewer, setShowPdfViewer] = React.useState(false);
 
   return (
@@ -25,17 +37,23 @@ export function CallForPapers() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-              <span className="block text-[#004776]">Call For Papers</span>
-              <span className="block text-[#115eff]">& Submission Guidelines</span>
+              {title.includes("&") ? (
+                <>
+                  <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                  <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+                </>
+              ) : (
+                <span className="block text-[#004776]">{title}</span>
+              )}
             </h2>
             <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
-              Submission Categories & Technical Topics • IEEE SMC 2027
+              {subtitle}
             </p>
           </div>
 
         <div className="relative z-10 flex items-center gap-3">
           <a
-            href={CONFERENCE_INFO.cfpPdfUrl}
+            href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-slate-50 text-[#115eff] border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"

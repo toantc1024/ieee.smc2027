@@ -304,8 +304,14 @@ export function NewsList({
 
         <div className="space-y-3 relative z-10 w-full">
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-[#004776]">Latest Updates</span>
-            <span className="block text-[#115eff]">& Announcements</span>
+            {title.includes("&") ? (
+              <>
+                <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              <span className="block text-[#004776]">{title}</span>
+            )}
           </h2>
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
             {subtitle}

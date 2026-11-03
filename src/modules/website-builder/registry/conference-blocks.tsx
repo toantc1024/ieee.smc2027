@@ -64,8 +64,11 @@ import { About } from "@/components/sections/About";
 import { CfpSubscribe } from "@/components/sections/CfpSubscribe";
 import { SubmissionCountdown } from "@/components/sections/SubmissionCountdown";
 import { Hero } from "@/components/sections/Hero";
+import { MODULAR_BLOCK_DEFINITIONS } from "./modular-blocks";
 
 export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
+  ...MODULAR_BLOCK_DEFINITIONS,
+
   // 1. HeroCarousel
   HeroCarousel: {
     type: "HeroCarousel",
@@ -138,13 +141,11 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      badge: { type: "text", label: "Badge Label" },
       autoplayDelay: { type: "number", label: "Autoplay Interval (ms)", min: 1000, max: 8000 },
     },
     defaultProps: {
       title: "Organizing & Technical Committees",
       subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
-      badge: "Leadership & Organization",
       autoplayDelay: 3500,
     },
     render: (props) => <CommitteesSection {...props} />,
@@ -162,8 +163,8 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
       subtitle: { type: "textarea", label: "Subtitle Description" },
     },
     defaultProps: {
-      title: "Technical Tracks & Scientific Scope",
-      subtitle: "Explore research topics across Systems Science, Human-Machine Systems, and Cybernetics",
+      title: "Technical Tracks & 3 Core Pillars",
+      subtitle: "Systems Science • Cybernetics • Human–Machine Systems",
     },
     render: (props) => <TracksExplorer {...props} />,
   },
@@ -178,12 +179,10 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      badge: { type: "text", label: "Badge Label" },
     },
     defaultProps: {
       title: "Important Deadlines & Milestones",
       subtitle: "Critical dates for paper submissions, notifications, camera-ready papers, and registrations",
-      badge: "Critical Milestones",
     },
     render: (props) => <ImportantDates {...props} />,
   },
@@ -198,12 +197,10 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      badge: { type: "text", label: "Badge Label" },
     },
     defaultProps: {
       title: "Registration & Payment Methods",
       subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
-      badge: "Registration Guide",
     },
     render: (props) => <PaymentMethods {...props} />,
   },
@@ -216,11 +213,13 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     icon: MapPin,
     description: "Sheraton Saigon Grand Opera Hotel venue information, interactive map, and District 1 guide.",
     fields: {
+      title: { type: "text", label: "Section Title" },
       venueName: { type: "text", label: "Venue Name" },
       address: { type: "textarea", label: "Venue Address" },
       googleMapsUrl: { type: "text", label: "Google Maps URL" },
     },
     defaultProps: {
+      title: "Travel & Accommodation & Ho Chi Minh City Guide",
       venueName: "Sheraton Saigon Grand Opera Hotel",
       address: "88 Dong Khoi Street, District 1, Ho Chi Minh City, Vietnam",
       googleMapsUrl: "https://maps.google.com/?q=Sheraton+Saigon+Grand+Opera+Hotel",
@@ -537,8 +536,16 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     category: "contact",
     icon: Bell,
     description: "Email notification sign-up for call for papers and registration alerts.",
-    fields: {},
-    defaultProps: {},
+    fields: {
+      title: { type: "text", label: "Heading" },
+      subtitle: { type: "textarea", label: "Description" },
+      buttonLabel: { type: "text", label: "Button Label" },
+    },
+    defaultProps: {
+      title: "Receive CFP Updates & Deadline Alerts",
+      subtitle: "Subscribe for official alerts on submission deadlines, keynote announcements, and registration milestones.",
+      buttonLabel: "Subscribe",
+    },
     render: (props) => <CfpSubscribe {...props} />,
   },
 
@@ -548,8 +555,14 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     category: "conference",
     icon: Timer,
     description: "Live countdown timer to the paper submission deadline.",
-    fields: {},
-    defaultProps: {},
+    fields: {
+      title: { type: "text", label: "Headline Label" },
+      deadlineText: { type: "text", label: "Deadline Date Text" },
+    },
+    defaultProps: {
+      title: "Paper Submission Deadline:",
+      deadlineText: "April 08, 2027",
+    },
     render: (props) => <SubmissionCountdown {...props} />,
   },
 };

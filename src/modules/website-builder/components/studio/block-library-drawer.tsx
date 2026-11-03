@@ -5,9 +5,27 @@ import { Search, Plus } from "lucide-react";
 import { CONFERENCE_BLOCK_DEFINITIONS } from "../../registry";
 import { useBuilderStore } from "../../store/builder-store";
 
+const CATEGORY_LABELS: Record<string, string> = {
+  basic: "Small Modular Blocks",
+  hero: "Hero & Banners",
+  conference: "Conference Sections",
+  academic: "Call for Papers & Tracks",
+  program: "Program & Schedule",
+  organization: "Committees",
+  registration: "Registration & Fees",
+  venue: "Venue & Travel",
+  hospitality: "Visa & Accommodation",
+  partners: "Sponsors",
+  contact: "Contact & Alerts",
+  support: "FAQ & Help",
+  media: "Video & Media",
+  history: "Past Conferences",
+  layout: "Header & Footer",
+};
+
 export function BlockLibraryDrawer() {
   const [search, setSearch] = useState("");
-  const addBlock = useBuilderStore((s) => s.addBlock);
+  const { addBlock, selectedBlockId, data, insertBlockAt } = useBuilderStore();
 
   const blockList = Object.values(CONFERENCE_BLOCK_DEFINITIONS);
 
@@ -22,8 +40,19 @@ export function BlockLibraryDrawer() {
     );
   });
 
-  // Group by category
+  // Group by category, ensuring "basic" (Small Modular Blocks) is first
   const categories = Array.from(new Set(filtered.map((b) => b.category)));
+
+  const handleInsertBlock = (type: string) => {
+    if (selectedBlockId) {
+      const idx = data.content.findIndex((b) => b.id === selectedBlockId);
+      if (idx !== -1) {
+        insertBlockAt(type, idx + 1);
+        return;
+      }
+    }
+    addBlock(type);
+  };
 
   return (
     <div className="flex flex-col h-full bg-white select-none">
@@ -35,7 +64,7 @@ export function BlockLibraryDrawer() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search conference blocks..."
+            placeholder="Search blocks (text, image, sheet...)"
             className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
           />
         </div>
@@ -47,8 +76,8 @@ export function BlockLibraryDrawer() {
           const items = filtered.filter((b) => b.category === cat);
           return (
             <div key={cat} className="space-y-1.5">
-              <h5 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">
-                {cat}
+              <h5 className="text-[10px] font-bold uppercase tracking-wider text-blue-600/80 px-1">
+                {CATEGORY_LABELS[cat] || cat}
               </h5>
               <div className="space-y-1">
                 {items.map((item) => {
@@ -57,8 +86,8 @@ export function BlockLibraryDrawer() {
                     <button
                       key={item.type}
                       type="button"
-                      onClick={() => addBlock(item.type)}
-                      className="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-start gap-2.5 group"
+                      onClick={() => handleInsertBlock(item.type)}
+                      className="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-start gap-2.5 group cursor-pointer"
                     >
                       <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
                         <Icon className="w-4 h-4" />

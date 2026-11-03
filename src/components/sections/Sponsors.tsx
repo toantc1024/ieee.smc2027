@@ -89,7 +89,15 @@ function SponsorLogoBadge({ type }: { type: SponsorItem["logoType"] }) {
   );
 }
 
-export function Sponsors() {
+export interface SponsorsProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function Sponsors({
+  title = "Sponsors & Partners & Supporting Societies",
+  subtitle = "Partners & Organizing Institutions Supporting IEEE SMC 2027",
+}: SponsorsProps) {
   return (
     <SectionContainer id="sponsors" fullWidthBg="bg-white">
       
@@ -101,11 +109,22 @@ export function Sponsors() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-              <span className="block text-[#004776]">Sponsors & Partners</span>
-              <span className="block text-[#115eff]">& Supporting Societies</span>
+              {title === "Sponsors & Partners & Supporting Societies" ? (
+                <>
+                  <span className="block text-[#004776]">Sponsors & Partners</span>
+                  <span className="block text-[#115eff]">& Supporting Societies</span>
+                </>
+              ) : title.includes("&") ? (
+                <>
+                  <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
+                  <span className="block text-[#115eff]">& {title.split("&").slice(1).join("&").trim()}</span>
+                </>
+              ) : (
+                <span className="block text-[#004776]">{title}</span>
+              )}
             </h2>
             <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
-              Partners & Organizing Institutions Supporting IEEE SMC 2027
+              {subtitle}
             </p>
           </div>
         

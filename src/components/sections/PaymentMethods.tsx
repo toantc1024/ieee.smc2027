@@ -84,8 +84,14 @@ export function PaymentMethods({
 
         <div className="space-y-3 w-full relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight leading-[1.15]">
-            <span className="block text-[#004776]">Registration &</span>
-            <span className="block text-[#115eff]">Payment Methods</span>
+            {title.includes("&") ? (
+              <>
+                <span className="block text-[#004776]">{title.split("&")[0].trim()} &</span>
+                <span className="block text-[#115eff]">{title.split("&").slice(1).join("&").trim()}</span>
+              </>
+            ) : (
+              <span className="block text-[#004776]">{title}</span>
+            )}
           </h2>
 
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-3xl leading-relaxed">

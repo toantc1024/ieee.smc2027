@@ -3,7 +3,17 @@
 import React, { useState } from "react";
 import { Bell, CheckCircle2, ArrowRight } from "lucide-react";
 
-export function CfpSubscribe() {
+export interface CfpSubscribeProps {
+  title?: string;
+  subtitle?: string;
+  buttonLabel?: string;
+}
+
+export function CfpSubscribe({
+  title = "Receive CFP Updates & Deadline Alerts",
+  subtitle = "Subscribe for official alerts on submission deadlines, keynote announcements, and registration milestones.",
+  buttonLabel = "Subscribe",
+}: CfpSubscribeProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -26,10 +36,10 @@ export function CfpSubscribe() {
             
             <div className="lg:col-span-7">
               <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-                Receive CFP Updates & Deadline Alerts
+                {title}
               </h3>
             <p className="mt-2 text-sm sm:text-base text-blue-100 font-normal max-w-xl leading-relaxed">
-              Subscribe for official alerts on submission deadlines, keynote announcements, and registration milestones.
+              {subtitle}
             </p>
           </div>
 
@@ -56,7 +66,7 @@ export function CfpSubscribe() {
                   type="submit"
                   className="min-h-[52px] px-8 py-3.5 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-base rounded-sm transition-all shadow-md hover:shadow-lg shrink-0 flex items-center justify-center gap-2.5"
                 >
-                  <span>Subscribe</span>
+                  <span>{buttonLabel}</span>
                   <ArrowRight className="w-4 h-4 text-[#115eff]" />
                 </button>
               </form>

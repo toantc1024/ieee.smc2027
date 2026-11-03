@@ -43,18 +43,22 @@ export interface FieldDefinition {
   type: FieldType;
   label: string;
   description?: string;
+  placeholder?: string;
   options?: FieldOption[];
   min?: number;
   max?: number;
   step?: number;
   defaultValue?: any;
   arrayFields?: Record<string, FieldDefinition>;
+  itemFields?: Record<string, FieldDefinition>;
+  defaultItem?: any;
 }
 
 export interface ComponentDefinition<P = any> {
   type: string;
   label: string;
   category:
+    | "basic"
     | "hero"
     | "conference"
     | "academic"

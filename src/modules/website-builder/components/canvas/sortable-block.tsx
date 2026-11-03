@@ -2,17 +2,18 @@
 
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
-import { useDroppable } from "@dnd-kit/core";
+import { useDroppable, useDndContext } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
   GripVertical,
-  ChevronUp,
-  ChevronDown,
+  ArrowUp,
+  ArrowDown,
   Copy,
+  ClipboardCopy,
+  ClipboardPaste,
   Trash2,
   Eye,
   EyeOff,
-  Sliders,
 } from "lucide-react";
 import type { PageBlock } from "../../types";
 import { getBlockDefinition } from "../../registry";
@@ -20,6 +21,7 @@ import { useBuilderStore } from "../../store/builder-store";
 import { BlockErrorBoundary } from "./block-error-boundary";
 import { SeamDropzoneIndicator } from "./seam-dropzone";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface SortableBlockProps {
   block: PageBlock;
@@ -42,10 +44,16 @@ export function SortableBlock({
     moveBlockUp,
     moveBlockDown,
     duplicateBlock,
+    copyBlock,
+    pasteBlock,
+    copiedBlock,
     removeBlock,
     toggleBlockHidden,
     viewMode,
   } = useBuilderStore();
+
+  const { active } = useDndContext();
+  const isAnyDragActive = Boolean(active);
 
   const isSelected = selectedBlockId === block.id;
   const isHovered = hoveredBlockId === block.id;
@@ -53,6 +61,7 @@ export function SortableBlock({
 
   const def = getBlockDefinition(block.type);
   const ComponentToRender = def?.render;
+  const customStyles = (block.props?._styles || {}) as Record<string, string>;
 
   // DnD Sortable hook
   const {
@@ -81,17 +90,29 @@ export function SortableBlock({
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.35 : 1,
+    opacity: isDragging ? 0.45 : 1,
   };
 
-  // Counter scale formula: 100 / effectiveZoom so toolbar remains crisp
+  // Counter scale formula: 100 / effectiveZoom so toolbar remains crisp at any zoom
   const counterScale =
     effectiveZoom > 0 && effectiveZoom < 100 ? 100 / effectiveZoom : 1;
 
   if (isPreview) {
     if (block.hidden) return null;
     return (
-      <div id={block.id} className="relative w-full">
+      <div
+        id={block.id}
+        className={cn(
+          "relative w-full",
+          customStyles.paddingTop,
+          customStyles.paddingBottom,
+          customStyles.className
+        )}
+        style={{
+          backgroundColor: customStyles.backgroundColor || undefined,
+          color: customStyles.textColor || undefined,
+        }}
+      >
         <BlockErrorBoundary blockType={block.type} blockId={block.id}>
           {ComponentToRender ? (
             <ComponentToRender {...block.props} />
@@ -117,30 +138,32 @@ export function SortableBlock({
       onMouseEnter={() => hoverBlock(block.id)}
       onMouseLeave={() => hoverBlock(null)}
       className={cn(
-        "relative group transition-all duration-150",
-        isSelected
-          ? "ring-2 ring-blue-600 z-[45] shadow-lg"
-          : isHovered
-          ? "ring-1 ring-blue-400 z-[40]"
-          : "z-[2]",
+        "relative group transition-all duration-150 select-none",
+        isSelected ? "z-[45]" : isHovered ? "z-[40]" : "z-[2]",
         block.hidden && "opacity-45 grayscale"
       )}
     >
-      {/* Top half droppable seam detector */}
+      {/* Top half droppable seam detector (only intercepts pointer when dragging) */}
       <div
         ref={setBeforeDropRef}
-        className="absolute top-0 inset-x-0 h-1/2 z-20 pointer-events-auto"
+        className={cn(
+          "absolute top-0 inset-x-0 h-1/2 z-20",
+          isAnyDragActive ? "pointer-events-auto" : "pointer-events-none"
+        )}
       />
 
-      {/* Bottom half droppable seam detector */}
+      {/* Bottom half droppable seam detector (only intercepts pointer when dragging) */}
       <div
         ref={setAfterDropRef}
-        className="absolute bottom-0 inset-x-0 h-1/2 z-20 pointer-events-auto"
+        className={cn(
+          "absolute bottom-0 inset-x-0 h-1/2 z-20",
+          isAnyDragActive ? "pointer-events-auto" : "pointer-events-none"
+        )}
       />
 
       {/* Seam insertion indicator before */}
       {isOverBefore && (
-        <div className="absolute top-0 inset-x-0">
+        <div className="absolute top-0 inset-x-0 z-50">
           <SeamDropzoneIndicator
             label={def?.label || block.type}
             position="before"
@@ -151,7 +174,7 @@ export function SortableBlock({
 
       {/* Seam insertion indicator after */}
       {isOverAfter && (
-        <div className="absolute bottom-0 inset-x-0">
+        <div className="absolute bottom-0 inset-x-0 z-50">
           <SeamDropzoneIndicator
             label={def?.label || block.type}
             position="after"
@@ -160,90 +183,136 @@ export function SortableBlock({
         </div>
       )}
 
-      {/* Floating Counter-Scaled Action Pill */}
-      {(isSelected || isHovered) && (
+      {/* Top-Left Floating Blue Action Toolbar (HCMUTE Website Builder Style) */}
+      {(isSelected || isHovered) && !isDragging && (
         <div
-          className="absolute -top-4 left-4 z-[50] flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 text-white shadow-xl backdrop-blur-md select-none border border-slate-700"
+          className="absolute top-1.5 left-1.5 z-50 flex items-center gap-1.5 h-9 bg-blue-600 text-white rounded-lg px-3 py-1.5 shadow-lg shadow-blue-600/35 border border-blue-400/80 select-none"
           style={{
             transform: counterScale !== 1 ? `scale(${counterScale})` : undefined,
             transformOrigin: "top left",
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Drag Grip Handle */}
-          <button
-            type="button"
+          {/* Drag Grip Handle + Block Name */}
+          <div
             {...attributes}
             {...listeners}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 cursor-grab active:cursor-grabbing"
-            title="Drag to reorder"
+            className="flex items-center gap-1.5 cursor-grab active:cursor-grabbing pr-2 border-r border-white/25 hover:text-white/90 h-full"
+            title="Drag to reorder block"
           >
-            <GripVertical className="w-3.5 h-3.5" />
-          </button>
+            <GripVertical className="w-4 h-4 opacity-90 shrink-0" />
+            <span className="text-xs font-semibold tracking-tight whitespace-nowrap">
+              {def?.label || block.type}
+            </span>
+          </div>
 
-          <span className="text-xs font-bold text-white px-1">
-            {def?.label || block.type}
-          </span>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1 pl-0.5">
+            {/* Move Up */}
+            <button
+              type="button"
+              disabled={index === 0}
+              onClick={(e) => {
+                e.stopPropagation();
+                moveBlockUp(block.id);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+              title="Move Up"
+            >
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
 
-          <div className="h-3 w-px bg-slate-700 mx-0.5" />
+            {/* Move Down */}
+            <button
+              type="button"
+              disabled={index === totalBlocks - 1}
+              onClick={(e) => {
+                e.stopPropagation();
+                moveBlockDown(block.id);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+              title="Move Down"
+            >
+              <ArrowDown className="w-3.5 h-3.5" />
+            </button>
 
-          {/* Move Up */}
-          <button
-            type="button"
-            disabled={index === 0}
-            onClick={() => moveBlockUp(block.id)}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none"
-            title="Move Up"
-          >
-            <ChevronUp className="w-3.5 h-3.5" />
-          </button>
+            <div className="w-px h-4 bg-white/25 mx-0.5" />
 
-          {/* Move Down */}
-          <button
-            type="button"
-            disabled={index === totalBlocks - 1}
-            onClick={() => moveBlockDown(block.id)}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none"
-            title="Move Down"
-          >
-            <ChevronDown className="w-3.5 h-3.5" />
-          </button>
+            {/* Copy Block */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyBlock(block.id);
+                toast.success(`Copied "${def?.label || block.type}"`);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+              title="Copy Block"
+            >
+              <ClipboardCopy className="w-3.5 h-3.5" />
+            </button>
 
-          <div className="h-3 w-px bg-slate-700 mx-0.5" />
-
-          {/* Duplicate */}
-          <button
-            type="button"
-            onClick={() => duplicateBlock(block.id)}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-            title="Duplicate Section"
-          >
-            <Copy className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Hide / Show */}
-          <button
-            type="button"
-            onClick={() => toggleBlockHidden(block.id)}
-            className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-            title={block.hidden ? "Show Section" : "Hide Section"}
-          >
-            {block.hidden ? (
-              <EyeOff className="w-3.5 h-3.5 text-amber-400" />
-            ) : (
-              <Eye className="w-3.5 h-3.5" />
+            {/* Paste Below */}
+            {copiedBlock && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  pasteBlock(block.id);
+                  toast.success("Pasted block below");
+                }}
+                className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+                title="Paste Copied Block Below"
+              >
+                <ClipboardPaste className="w-3.5 h-3.5" />
+              </button>
             )}
-          </button>
 
-          {/* Delete */}
-          <button
-            type="button"
-            onClick={() => removeBlock(block.id)}
-            className="p-1 rounded text-rose-400 hover:text-rose-200 hover:bg-rose-950/60"
-            title="Delete Section"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+            {/* Duplicate */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                duplicateBlock(block.id);
+                toast.success(`Duplicated "${def?.label || block.type}"`);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+              title="Duplicate Block"
+            >
+              <Copy className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Hide / Show */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleBlockHidden(block.id);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+              title={block.hidden ? "Show Block" : "Hide Block"}
+            >
+              {block.hidden ? (
+                <EyeOff className="w-3.5 h-3.5 text-amber-300" />
+              ) : (
+                <Eye className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {/* Delete */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeBlock(block.id);
+                toast.success(`Removed "${def?.label || block.type}"`);
+              }}
+              className="w-6 h-6 flex items-center justify-center hover:bg-red-500 rounded-md transition-colors cursor-pointer"
+              title="Delete Block"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
@@ -257,12 +326,23 @@ export function SortableBlock({
           }}
         >
           <EyeOff className="w-3 h-3" />
-          <span>Hidden in Live View</span>
+          <span>Hidden</span>
         </div>
       )}
 
       {/* Render Component Body */}
-      <div className="w-full pointer-events-auto">
+      <div
+        className={cn(
+          "w-full pointer-events-auto",
+          customStyles.paddingTop,
+          customStyles.paddingBottom,
+          customStyles.className
+        )}
+        style={{
+          backgroundColor: customStyles.backgroundColor || undefined,
+          color: customStyles.textColor || undefined,
+        }}
+      >
         <BlockErrorBoundary blockType={block.type} blockId={block.id}>
           {ComponentToRender ? (
             <ComponentToRender {...block.props} />
@@ -272,6 +352,27 @@ export function SortableBlock({
             </div>
           )}
         </BlockErrorBoundary>
+      </div>
+
+      {/* Blue Selection Border & 4 Corner Handles (Figma / HCMUTE Artboard Style) */}
+      <div
+        className={cn(
+          "absolute inset-0 pointer-events-none z-40 transition-colors duration-150",
+          isSelected
+            ? "border-2 border-blue-600 shadow-[0_0_0_1px_rgba(37,99,235,0.2)]"
+            : isHovered
+              ? "border-2 border-blue-500/70"
+              : "border border-transparent"
+        )}
+      >
+        {isSelected && (
+          <>
+            <span className="absolute -top-1.25 -left-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
+            <span className="absolute -top-1.25 -right-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
+            <span className="absolute -bottom-1.25 -left-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
+            <span className="absolute -bottom-1.25 -right-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
+          </>
+        )}
       </div>
     </div>
   );
