@@ -47,7 +47,7 @@ export function BlockLibraryDrawer() {
     if (selectedBlockId) {
       const idx = data.content.findIndex((b) => b.id === selectedBlockId);
       if (idx !== -1) {
-        insertBlockAt(type, idx + 1);
+        insertBlockAt(idx + 1, type);
         return;
       }
     }

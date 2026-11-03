@@ -25,12 +25,10 @@ import {
   Redo2,
   ImageIcon,
   Link2,
-  Unlink,
   Table as TableIcon,
-  Plus,
-  Trash2,
-  Columns,
-  Rows,
+  Table2,
+  FileText,
+  AlertCircle,
   RemoveFormatting,
 } from "lucide-react";
 
@@ -38,6 +36,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { LinkModal } from "./tiptap/LinkModal";
 import { ImageInsertModal } from "./tiptap/ImageInsertModal";
+import { ImageBlockExtension } from "./tiptap/image-block-extension";
+import { SheetBlockExtension } from "./tiptap/sheet-block-extension";
+import { FileAttachmentExtension } from "./tiptap/file-attachment-extension";
+import { CalloutBlockExtension } from "./tiptap/callout-block-extension";
 
 interface TiptapEditorProps {
   content: string;
@@ -52,7 +54,6 @@ interface TiptapEditorProps {
 export function TiptapEditor({
   content,
   onChange,
-  placeholder = "Write article content here...",
   minHeight = "360px",
   documentStyle = false,
   className,
@@ -80,6 +81,10 @@ export function TiptapEditor({
         inline: true,
         allowBase64: true,
       }),
+      ImageBlockExtension,
+      SheetBlockExtension,
+      FileAttachmentExtension,
+      CalloutBlockExtension,
       Table.configure({
         resizable: true,
       }),
@@ -169,15 +174,25 @@ export function TiptapEditor({
 
   // Insert Table
   const handleInsertTable = () => {
-    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    editor
+      .chain()
+      .focus()
+      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+      .run();
   };
 
   return (
     <div
       className={
         documentStyle
-          ? cn("flex flex-col w-full h-full min-h-0 overflow-hidden bg-background", className)
-          : cn("border border-slate-200 rounded-xl overflow-hidden bg-white", className)
+          ? cn(
+              "flex flex-col w-full h-full min-h-0 overflow-hidden bg-background",
+              className
+            )
+          : cn(
+              "border border-slate-200 rounded-xl overflow-hidden bg-white",
+              className
+            )
       }
     >
       {/* ── Main Toolbar ── */}
@@ -340,21 +355,56 @@ export function TiptapEditor({
           title={editor.isActive("link") ? "Edit link" : "Insert link"}
         >
           <Link2 className="size-3.5 text-[#115eff]" />
-          <span>{editor.isActive("link") ? "Link" : "Insert Link"}</span>
+          <span>Link</span>
         </button>
 
-        {/* Image Insert Button */}
+        {/* Image Block Button */}
         <button
           type="button"
           onClick={() => setImageModalOpen(true)}
-          className="h-7 px-2 rounded flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
-          title="Insert image (upload or URL)"
+          className="h-7 px-2 rounded flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+          title="Insert Image Block (resizable, layout, caption)"
         >
           <ImageIcon className="size-3.5 text-[#115eff]" />
-          <span>Insert Image</span>
+          <span>Image Block</span>
         </button>
 
-        {/* Table Button */}
+        {/* Sheet / Data Table Block Button */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().insertSheetBlock().run()}
+          className="h-7 px-2 rounded flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer"
+          title="Insert Interactive Sheet / Data Table Block"
+        >
+          <Table2 className="size-3.5 text-emerald-600" />
+          <span>Sheet Block</span>
+        </button>
+
+        {/* Document / PDF Block Button */}
+        <button
+          type="button"
+          onClick={() =>
+            editor.chain().focus().insertFileAttachmentBlock().run()
+          }
+          className="h-7 px-2 rounded flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+          title="Insert PDF / Document Attachment Block"
+        >
+          <FileText className="size-3.5 text-[#115eff]" />
+          <span>PDF / File</span>
+        </button>
+
+        {/* Callout Block Button */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().insertCalloutBlock().run()}
+          className="h-7 px-2 rounded flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-colors cursor-pointer"
+          title="Insert Callout / Notice Box Block"
+        >
+          <AlertCircle className="size-3.5 text-amber-600" />
+          <span>Callout</span>
+        </button>
+
+        {/* Standard Table Button */}
         <button
           type="button"
           onClick={handleInsertTable}
@@ -372,7 +422,9 @@ export function TiptapEditor({
         {/* Clear Formatting */}
         <button
           type="button"
-          onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+          onClick={() =>
+            editor.chain().focus().clearNodes().unsetAllMarks().run()
+          }
           className="size-7 rounded flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition-colors cursor-pointer"
           title="Clear Formatting"
         >
@@ -466,7 +518,10 @@ export function TiptapEditor({
               }
             }}
           >
-            <EditorContent editor={editor} className="flex-1 flex flex-col tiptap-content-wrapper" />
+            <EditorContent
+              editor={editor}
+              className="flex-1 flex flex-col tiptap-content-wrapper"
+            />
           </div>
         </div>
       ) : (
@@ -508,13 +563,24 @@ export function TiptapEditor({
         />
       )}
 
-      {/* Image Insert / Upload / Crop Modal */}
+      {/* Image Block Insert / Upload / Crop Modal */}
       {imageModalOpen && (
         <ImageInsertModal
           open={imageModalOpen}
           onClose={() => setImageModalOpen(false)}
           onInsertImage={(src, alt) => {
-            editor.chain().focus().setImage({ src, alt: alt || "" }).run();
+            editor
+              .chain()
+              .focus()
+              .insertImageBlock({
+                src,
+                alt: alt || "",
+                caption: alt || "",
+                width: 100,
+                alignment: "center",
+                layoutMode: "inline",
+              })
+              .run();
           }}
         />
       )}

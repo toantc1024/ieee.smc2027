@@ -46,7 +46,7 @@ export function SortableBlock({
     duplicateBlock,
     copyBlock,
     pasteBlock,
-    copiedBlock,
+    clipboardBlock,
     removeBlock,
     toggleBlockHidden,
     viewMode,
@@ -253,12 +253,12 @@ export function SortableBlock({
             </button>
 
             {/* Paste Below */}
-            {copiedBlock && (
+            {clipboardBlock && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  pasteBlock(block.id);
+                  pasteBlock(index + 1);
                   toast.success("Pasted block below");
                 }}
                 className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
