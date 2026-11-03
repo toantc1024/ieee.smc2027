@@ -89,10 +89,6 @@ export function ScheduleTimelineSection({
     <SectionContainer id="schedule" fullWidthBg="bg-slate-50">
       <div className="px-4 sm:px-6 pt-10 sm:pt-14 pb-6 w-full">
         <div className="space-y-3 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider">
-            <Calendar className="w-3.5 h-3.5" />
-            Program Schedule
-          </div>
           <h2 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900 leading-tight">
             {title}
           </h2>

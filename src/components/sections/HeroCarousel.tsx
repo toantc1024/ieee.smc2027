@@ -256,12 +256,6 @@ export function HeroCarousel({
           <div className="absolute inset-0 z-10 pointer-events-none flex items-center">
             <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
               <div className="max-w-3xl space-y-3.5 sm:space-y-4 pointer-events-auto">
-                {activeSlideData.badge && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#115eff]/85 text-white border border-white/20 text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-xs">
-                    <span>{activeSlideData.badge}</span>
-                  </div>
-                )}
-
                 <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] drop-shadow-md">
                   {activeSlideData.title}{" "}
                   {activeSlideData.highlight && (

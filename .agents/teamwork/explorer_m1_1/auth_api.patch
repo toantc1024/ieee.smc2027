@@ -1,0 +1,145 @@
+--- a/src/lib/auth.ts
++++ b/src/lib/auth.ts
+@@ -19,6 +19,8 @@
+   avatar?: string | null;
+   role: "ADMIN" | "USER";
+   provider?: string;
++  sessionVersion?: number;
++  status?: string;
+   profileData?: Record<string, unknown>;
+ }
+ 
+@@ -148,6 +150,47 @@
+   }
+ }
+ 
++// ============================================================
++// CLIENT IP & DEVICE EXTRACTION & LOGIN TRACKING
++// ============================================================
++
++export function extractClientInfo(request: Request | any): {
++  ip: string;
++  device: string;
++} {
++  const headers = request.headers;
++  let ip = (request as any).ip;
++
++  if (!ip) {
++    const forwarded = headers.get("x-forwarded-for");
++    if (forwarded) {
++      ip = forwarded.split(",")[0].trim();
++    }
++  }
++
++  if (!ip) {
++    ip =
++      headers.get("x-real-ip") ||
++      headers.get("cf-connecting-ip") ||
++      headers.get("true-client-ip") ||
++      headers.get("fastly-client-ip") ||
++      headers.get("x-client-ip") ||
++      null;
++  }
++
++  if (!ip || ip === "::1" || ip === "::ffff:127.0.0.1") {
++    ip = "127.0.0.1";
++  }
++
++  const rawUserAgent = headers.get("user-agent") || "Unknown Device";
++  const device = rawUserAgent.length > 255 ? rawUserAgent.slice(0, 255) : rawUserAgent;
++
++  return { ip, device };
++}
++
++export async function recordLogin(
++  userId: string,
++  ip?: string | null,
++  device?: string | null
++): Promise<void> {
++  try {
++    await prisma.user.update({
++      where: { id: userId },
++      data: {
++        lastLoginAt: new Date(),
++        ...(ip ? { lastLoginIp: ip } : {}),
++        ...(device ? { lastLoginDevice: device } : {}),
++      },
++    });
++  } catch (error) {
++    console.warn(`[auth] Failed to record login tracking for ${userId}:`, error);
++  }
++}
++
+ // ============================================================
+ // SESSION TOKENS & USER LOOKUP
+ // ============================================================
+@@ -161,6 +204,7 @@
+     avatar: user.avatar,
+     role: user.role,
+     provider: user.provider || "email",
++    sessionVersion: user.sessionVersion ?? 1,
+   })
+     .setProtectedHeader({ alg: "HS256" })
+     .setIssuedAt()
+@@ -178,6 +222,8 @@
+       avatar: (payload.avatar as string) || null,
+       role: (payload.role as "ADMIN" | "USER") || "USER",
+       provider: (payload.provider as string) || "email",
++      sessionVersion:
++        typeof payload.sessionVersion === "number" ? payload.sessionVersion : 1,
+     };
+   } catch {
+     return null;
+@@ -193,16 +239,36 @@
+ 
+     // Fetch live role and profile from PostgreSQL so DB role updates take effect immediately
+     const dbUser = await prisma.user.findFirst({
+-      where: { email: normalizeEmail(sessionUser.email) },
++      where: {
++        OR: [
++          { id: sessionUser.id },
++          { email: normalizeEmail(sessionUser.email) },
++        ],
++      },
+     });
+ 
+-    if (!dbUser) return sessionUser;
++    // Bug Fix 1: If user deleted from DB, immediately invalidate session
++    if (!dbUser) {
++      return null;
++    }
++
++    // Bug Fix 2: If user blocked or inactive, immediately invalidate session
++    if (dbUser.status === "BLOCKED" || dbUser.status === "INACTIVE") {
++      return null;
++    }
++
++    // Bug Fix 3: If sessionVersion does not match, immediately invalidate session
++    if (
++      sessionUser.sessionVersion !== undefined &&
++      dbUser.sessionVersion !== sessionUser.sessionVersion
++    ) {
++      return null;
++    }
+ 
+     return {
+       id: dbUser.id,
+       email: dbUser.email,
+       name: dbUser.name,
+       avatar: dbUser.avatar,
+       role: dbUser.role as "ADMIN" | "USER",
+       provider: dbUser.provider,
++      sessionVersion: dbUser.sessionVersion,
++      status: dbUser.status,
+       profileData:
+         dbUser.profileData && typeof dbUser.profileData === "object"
+           ? (dbUser.profileData as Record<string, unknown>)
+@@ -284,6 +350,8 @@
+     avatar: result.avatar,
+     role: result.role as "ADMIN" | "USER",
+     provider: result.provider,
++    sessionVersion: result.sessionVersion,
++    status: result.status,
+     profileData:
+       result.profileData && typeof result.profileData === "object"
+         ? (result.profileData as Record<string, unknown>)

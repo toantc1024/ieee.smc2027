@@ -44,10 +44,6 @@ export function AwardsSection({
     <SectionContainer id="awards" fullWidthBg="bg-slate-50">
       <div className="px-4 sm:px-6 pt-10 sm:pt-14 pb-8 w-full">
         <div className="space-y-3 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold uppercase tracking-wider">
-            <Trophy className="w-3.5 h-3.5" />
-            Academic Honors
-          </div>
           <h2 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900 leading-tight">
             {title}
           </h2>

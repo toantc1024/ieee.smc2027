@@ -25,10 +25,6 @@ export function CfpSubscribe() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/20 text-sm font-semibold text-blue-200 rounded-sm mb-3">
-                <Bell className="w-4 h-4 text-blue-200" />
-                <span>Stay Informed • IEEE SMC 2027 Alerts</span>
-              </div>
               <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
                 Receive CFP Updates & Deadline Alerts
               </h3>

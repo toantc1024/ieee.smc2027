@@ -10,7 +10,6 @@ interface CompoundHeadingProps {
 }
 
 export function CompoundHeading({
-  badge,
   title,
   subtitle,
   align = "left",
@@ -24,16 +23,6 @@ export function CompoundHeading({
         className
       )}
     >
-      {badge && (
-        <div
-          className={cn(
-            "inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200/80 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#115eff]"
-          )}
-        >
-          <span className="size-1.5 rounded-full bg-[#115eff]" />
-          {badge}
-        </div>
-      )}
       <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
         {title}
       </h2>

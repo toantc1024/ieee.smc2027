@@ -90,10 +90,6 @@ export function Venue() {
           {/* Left Column: Sheraton Saigon Grand Opera Hotel Narrative & Details */}
           <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50/60 border border-slate-200 rounded-sm flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3.5 py-1 rounded-sm border border-blue-100">
-                <span>Official Conference Hotel & Headquarters</span>
-              </div>
-
               <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                 Sheraton Saigon Grand Opera Hotel
               </h3>

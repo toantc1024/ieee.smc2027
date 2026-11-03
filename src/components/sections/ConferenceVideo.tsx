@@ -120,12 +120,6 @@ export function ConferenceVideo({
               <div className="corner-dot-tr opacity-60 pointer-events-none" />
 
               <div className="relative z-10 space-y-4">
-                <Badge variant="ute">
-                  {playerSource === "QQ_VIDEO"
-                    ? "Tencent QQ Video Stream Active"
-                    : "Official Host City Preview"}
-                </Badge>
-
                 <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold text-[#004776] tracking-tight leading-snug">
                   Experience IEEE SMC in Ho Chi Minh City
                 </h3>

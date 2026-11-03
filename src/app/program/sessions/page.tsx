@@ -80,10 +80,6 @@ export default function ProgramSessionsPage() {
           className="py-10 sm:py-14"
         >
           <div className="max-w-4xl space-y-3">
-            <Badge variant="ute" className="px-3 py-1">
-              <Layers className="size-3.5" />
-              Technical Program & PaperCept Schedule
-            </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
               Technical Sessions <span className="text-[#115eff]">&amp; Tracks</span>
             </h1>

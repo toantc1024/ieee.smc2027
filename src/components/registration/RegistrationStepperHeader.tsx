@@ -18,10 +18,6 @@ export function RegistrationStepperHeader({
     <div className="bg-white border-b border-slate-200">
       <SectionContainer id="reg-header" fullWidthBg="bg-white" className="py-10 sm:py-12">
         <div className="max-w-4xl space-y-3">
-          <Badge variant="ute" className="px-3 py-1">
-            <ShieldCheck className="size-3.5" />
-            Official Delegate Registration
-          </Badge>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Conference Registration <span className="text-[#115eff]">IEEE SMC 2027</span>
           </h1>

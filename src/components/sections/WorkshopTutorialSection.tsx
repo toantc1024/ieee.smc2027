@@ -21,10 +21,6 @@ export function WorkshopTutorialSection({
     <SectionContainer id="workshops" fullWidthBg="bg-white">
       <div className="px-4 sm:px-6 pt-10 sm:pt-14 pb-8 w-full">
         <div className="space-y-3 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold uppercase tracking-wider">
-            <BookOpen className="w-3.5 h-3.5" />
-            Special Sessions & Tutorials
-          </div>
           <h2 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900 leading-tight">
             {title}
           </h2>

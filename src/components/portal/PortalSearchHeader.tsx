@@ -24,10 +24,6 @@ export function PortalSearchHeader({
     <div className="bg-white border-b border-slate-200">
       <SectionContainer id="portal-header" fullWidthBg="bg-white" className="py-10 sm:py-12">
         <div className="max-w-4xl space-y-3">
-          <Badge variant="ute" className="px-3 py-1">
-            <User className="size-3.5" />
-            Delegate Portal & Digital Badge
-          </Badge>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Delegate Profile & <span className="text-[#115eff]">Digital Badge Portal</span>
           </h1>
