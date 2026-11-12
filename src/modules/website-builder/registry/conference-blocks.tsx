@@ -34,10 +34,8 @@ import {
 // Import Section Components
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { CallForPapers } from "@/components/sections/CallForPapers";
-import { Keynotes } from "@/components/sections/Keynotes";
 import { KeynoteSpeakersSection } from "@/components/sections/KeynoteSpeakersSection";
 import { CommitteesSection } from "@/components/sections/CommitteesSection";
-import { Committee } from "@/components/sections/Committee";
 import { TracksExplorer } from "@/components/sections/TracksExplorer";
 import { ImportantDates } from "@/components/sections/ImportantDates";
 import { PaymentMethods } from "@/components/sections/PaymentMethods";
@@ -63,11 +61,68 @@ import { NewsList } from "@/components/sections/NewsList";
 import { About } from "@/components/sections/About";
 import { CfpSubscribe } from "@/components/sections/CfpSubscribe";
 import { SubmissionCountdown } from "@/components/sections/SubmissionCountdown";
-import { Hero } from "@/components/sections/Hero";
+import { CONFERENCE_INFO } from "@/data/conference";
 import { MODULAR_BLOCK_DEFINITIONS } from "./modular-blocks";
+import { CONFERENCE_CONTENT_FIELDS } from "./conference-content-fields";
+import { ColumnsSlot } from "../components/canvas/columns-slot";
+import { HCMUTE_BLOCK_DEFINITIONS, HcmuteHero, HcmuteFaq } from "./hcmute-blocks";
+import { HCMUTE_ACADEMIC_BLOCKS } from "./hcmute-academic-blocks";
 
-export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
+function localized(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    const text = value as { en?: unknown; vi?: unknown };
+    return typeof text.en === "string" && text.en ? text.en : typeof text.vi === "string" ? text.vi : "";
+  }
+  return "";
+}
+
+const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
   ...MODULAR_BLOCK_DEFINITIONS,
+  ...HCMUTE_BLOCK_DEFINITIONS,
+  ...HCMUTE_ACADEMIC_BLOCKS,
+
+  ColumnsSlot: {
+    type: "ColumnsSlot", label: "Columns & Grid Layout", category: "layout", icon: Layout,
+    description: "Place and arrange other blocks in up to four responsive columns.",
+    fields: {
+      title: { type: "text", label: "Section title" },
+      columnCount: { type: "select", label: "Columns & proportions", options: [
+        { label: "1 column", value: 1 }, { label: "2 equal columns", value: 2 }, { label: "2 columns: wide left", value: "left-wide" }, { label: "2 columns: wide right", value: "right-wide" }, { label: "3 equal columns", value: 3 }, { label: "3 columns: wide center", value: "center-wide" }, { label: "4 equal columns", value: 4 },
+      ] },
+      mobileLayout: { type: "select", label: "Mobile layout", options: [{ label: "Stack", value: "stack" }, { label: "Two columns", value: "grid-2" }, { label: "Horizontal scroll", value: "scroll" }] },
+      gap: { type: "select", label: "Spacing", options: [0, 2, 4, 6, 8, 12].map((value) => ({ label: `${value * 4}px`, value: `gap-${value}` })) },
+      verticalAlign: { type: "select", label: "Vertical alignment", options: [{ label: "Top", value: "items-start" }, { label: "Center", value: "items-center" }, { label: "Stretch", value: "items-stretch" }] },
+      containerWidth: { type: "select", label: "Container width", options: [{ label: "Standard", value: "max-w-7xl" }, { label: "Wide", value: "max-w-[1440px]" }, { label: "Full width", value: "max-w-full" }] },
+    },
+    defaultProps: { title: "", columnCount: 2, mobileLayout: "stack", gap: "gap-6", verticalAlign: "items-start", containerWidth: "max-w-7xl", slot1Blocks: [], slot2Blocks: [], slot3Blocks: [], slot4Blocks: [] },
+    render: ColumnsSlot,
+  },
+  Text: {
+    type: "Text", label: "Text", category: "basic", icon: FileText, description: "A simple text paragraph.",
+    fields: { content: { type: "textarea", label: "Content" } },
+    defaultProps: { content: { vi: "Nội dung văn bản mô tả...", en: "Text content description..." } },
+    render: ({ content }) => <div className="mx-auto max-w-4xl px-4 py-6"><p className="whitespace-pre-line text-base leading-relaxed">{localized(content)}</p></div>,
+  },
+  Heading: {
+    type: "Heading", label: "Heading", category: "basic", icon: FileText, description: "A heading for a column or section.",
+    fields: { text: { type: "text", label: "Heading" } }, defaultProps: { text: "Section heading" },
+    render: ({ text }) => <h2 className="px-4 py-3 text-2xl font-bold text-[#004776]">{localized(text)}</h2>,
+  },
+  Button: {
+    type: "Button", label: "Button", category: "basic", icon: CheckCircle, description: "A link styled as a button.",
+    fields: { text: { type: "text", label: "Button text" }, href: { type: "text", label: "Destination URL" } }, defaultProps: { text: "Learn more", href: "#" },
+    render: ({ text, href }) => <div className="px-4 py-3"><a className="inline-flex rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white" href={href || "#"}>{localized(text)}</a></div>,
+  },
+  Image: {
+    type: "Image", label: "Image", category: "basic", icon: Video, description: "An image with an optional caption and link.",
+    fields: { src: { type: "image", label: "Image" }, alt: { type: "text", label: "Alt text" }, caption: { type: "text", label: "Caption" }, href: { type: "text", label: "Link" }, openInNewTab: { type: "switch", label: "Open link in new tab" }, aspectRatio: { type: "select", label: "Aspect ratio", options: ["auto", "16/9", "4/3", "3/2", "1/1", "21/9"].map((value) => ({ label: value, value })) }, objectFit: { type: "select", label: "Fit", options: [{ label: "Cover", value: "cover" }, { label: "Contain", value: "contain" }] } },
+    defaultProps: { src: "", alt: "", caption: "", href: "", openInNewTab: false, aspectRatio: "auto", objectFit: "cover" },
+    render: ({ src, alt, caption, href, openInNewTab, aspectRatio, objectFit }) => {
+      const visual = src ? <img src={src} alt={alt || ""} className="w-full" style={{ aspectRatio: aspectRatio || "auto", objectFit: objectFit === "contain" ? "contain" : "cover" }} /> : null;
+      return <figure className="mx-auto max-w-4xl px-4 py-6">{href ? <a href={href} target={openInNewTab ? "_blank" : undefined} rel={openInNewTab ? "noopener noreferrer" : undefined}>{visual}</a> : visual}{localized(caption) && <figcaption className="mt-2 text-center text-xs text-slate-500">{localized(caption)}</figcaption>}</figure>;
+    },
+  },
 
   // 1. HeroCarousel
   HeroCarousel: {
@@ -83,8 +138,8 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     },
     defaultProps: {
       autoplayDuration: 7,
-      showOverlayText: true,
-      showIndicators: true,
+      showOverlayText: false,
+      showIndicators: false,
     },
     render: (props) => <HeroCarousel {...props} />,
   },
@@ -106,8 +161,8 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     defaultProps: {
       title: "Call For Papers & Submission Guidelines",
       subtitle: "Submission Categories & Technical Topics • IEEE SMC 2027",
-      cfpPdfUrl: "/CFP - IEEE SMC 2027.pdf",
-      submissionUrl: "https://ras.papercept.net",
+      cfpPdfUrl: CONFERENCE_INFO.cfpPdfUrl,
+      submissionUrl: CONFERENCE_INFO.submissionPortal,
       submissionDeadline: "April 08, 2027",
     },
     render: (props) => <CallForPapers {...props} />,
@@ -141,11 +196,10 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      autoplayDelay: { type: "number", label: "Autoplay Interval (ms)", min: 1000, max: 8000 },
     },
     defaultProps: {
-      title: "Organizing & Technical Committees",
-      subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
+      title: "Organizing Committee",
+      subtitle: "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       autoplayDelay: 3500,
     },
     render: (props) => <CommitteesSection {...props} />,
@@ -181,8 +235,8 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
       subtitle: { type: "textarea", label: "Subtitle Description" },
     },
     defaultProps: {
-      title: "Important Deadlines & Milestones",
-      subtitle: "Critical dates for paper submissions, notifications, camera-ready papers, and registrations",
+      title: "Important Dates",
+      subtitle: "Key conference deadlines and milestone schedule for IEEE SMC 2027",
     },
     render: (props) => <ImportantDates {...props} />,
   },
@@ -257,8 +311,8 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
       subtitle: { type: "textarea", label: "Subtitle Description" },
     },
     defaultProps: {
-      title: "Conference Sponsors & Technical Partners",
-      subtitle: "Generously supported by IEEE SMC Society, HCM-UTE, and international academic partners",
+      title: "Sponsors & Partners & Supporting Societies",
+      subtitle: "Partners & Organizing Institutions Supporting IEEE SMC 2027",
     },
     render: (props) => <Sponsors {...props} />,
   },
@@ -378,7 +432,7 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
       title: { type: "text", label: "Section Title" },
     },
     defaultProps: {
-      title: "Frequently Asked Questions",
+      title: "Frequently Asked Questions & Help",
     },
     render: (props) => <FAQ {...props} />,
   },
@@ -412,7 +466,6 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
       videoUrl: { type: "text", label: "YouTube Embed URL" },
-      venueName: { type: "text", label: "Venue Caption" },
     },
     defaultProps: {
       title: "IEEE SMC 2027 Comes to Ho Chi Minh City",
@@ -567,9 +620,15 @@ export const CONFERENCE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<an
   },
 };
 
+export const CONFERENCE_BLOCK_DEFINITIONS: typeof BASE_BLOCK_DEFINITIONS = Object.fromEntries(
+  Object.entries(BASE_BLOCK_DEFINITIONS).map(([type, definition]) => [type, {
+    ...definition,
+    fields: { ...definition.fields, ...CONFERENCE_CONTENT_FIELDS[type] },
+  }])
+);
+
 // BLOCK_ALIASES mapping legacy or shorthand names to canonical component types
 export const BLOCK_ALIASES: Record<string, string> = {
-  Hero: "HeroCarousel",
   Keynotes: "KeynoteSpeakersSection",
   TracksExplorer: "ConferenceTracksSection",
   ImportantDates: "ImportantDatesSection",
@@ -578,12 +637,31 @@ export const BLOCK_ALIASES: Record<string, string> = {
   Sponsors: "SponsorshipSection",
   PaperTemplates: "PaperSubmissionGuidelinesSection",
   ContactCards: "ContactSupportSection",
-  FAQ: "FaqAccordionSection",
   ConferenceVideo: "MediaGallerySection",
   Committee: "CommitteesSection",
 };
 
+const HERO_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
+    ...CONFERENCE_BLOCK_DEFINITIONS.Hero,
+    fields: { ...CONFERENCE_BLOCK_DEFINITIONS.HeroCarousel.fields, ...CONFERENCE_BLOCK_DEFINITIONS.Hero.fields },
+    render: (props) => {
+      const isCarousel = "slides" in props || "autoplayDuration" in props || "showOverlayText" in props || "showIndicators" in props || Object.keys(props).every((key) => key === "children");
+      return isCarousel ? <HeroCarousel {...props} /> : <HcmuteHero {...props} />;
+    },
+  };
+const FAQ_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
+    ...CONFERENCE_BLOCK_DEFINITIONS.FAQ,
+    fields: { ...CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields, ...CONFERENCE_BLOCK_DEFINITIONS.FAQ.fields, items: CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields.items },
+    render: (props) => {
+      const hasCategorizedItems = Array.isArray(props.items) && props.items.some((item: { category?: string }) => Boolean(item.category));
+      const isConference = hasCategorizedItems || (!Array.isArray(props.items) && !("badge" in props));
+      return isConference ? <FAQ {...props} /> : <HcmuteFaq {...props} />;
+    },
+  };
+
 export function getBlockDefinition(type: string): ComponentDefinition<any> | undefined {
+  if (type === "Hero") return HERO_COMPATIBILITY_DEFINITION;
+  if (type === "FAQ") return FAQ_COMPATIBILITY_DEFINITION;
   const canonicalType = BLOCK_ALIASES[type] || type;
   return CONFERENCE_BLOCK_DEFINITIONS[canonicalType];
 }

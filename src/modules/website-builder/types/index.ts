@@ -5,11 +5,14 @@ export interface PageBlock<P = Record<string, any>> {
   type: string;
   props: P;
   hidden?: boolean;
+  styles?: Record<string, unknown>;
+  children?: PageBlock[];
 }
 
 export interface PageRootData {
   title: string;
   slug: string;
+  parentId?: string | null;
   metaTitle?: string;
   metaDescription?: string;
 }
@@ -17,10 +20,11 @@ export interface PageRootData {
 export interface PageBuilderData {
   root: PageRootData;
   content: PageBlock[];
+  zones?: Record<string, PageBlock[]>;
 }
 
 export type ViewportMode = "desktop" | "tablet" | "mobile";
-export type SidebarTab = "library" | "layers" | "settings";
+export type SidebarTab = "library" | "layers" | "templates" | "settings";
 export type InspectorTab = "content" | "styles" | "json";
 export type StudioActiveView = "content" | "info" | "history";
 
@@ -32,6 +36,9 @@ export type FieldType =
   | "switch"
   | "color"
   | "image"
+  | "file"
+  | "richtext"
+  | "object"
   | "array";
 
 export interface FieldOption {
@@ -52,6 +59,11 @@ export interface FieldDefinition {
   arrayFields?: Record<string, FieldDefinition>;
   itemFields?: Record<string, FieldDefinition>;
   defaultItem?: any;
+  fields?: Record<string, FieldDefinition>;
+  group?: "Content" | "Media" | "Links" | "Layout";
+  itemLabel?: string;
+  itemLabelKey?: string;
+  accept?: string;
 }
 
 export interface ComponentDefinition<P = any> {

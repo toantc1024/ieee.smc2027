@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useBuilderStore } from "../../store/builder-store";
+import { PageParentPicker } from "./page-parent-picker";
 
 export function PageSettingsTab() {
   const { data, updatePageMeta } = useBuilderStore();
@@ -12,6 +13,7 @@ export function PageSettingsTab() {
 
   return (
     <div className="p-4 space-y-5 overflow-y-auto">
+      <PageParentPicker />
       <div className="space-y-1.5">
         <Label htmlFor="page-title-setting" className="text-xs font-semibold text-slate-700">
           Page Title

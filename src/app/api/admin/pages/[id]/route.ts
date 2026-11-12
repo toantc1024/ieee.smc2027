@@ -6,11 +6,14 @@ import {
   apiError,
 } from "@/lib";
 import { STANDARD_CONFERENCE_PAGES, normalizeSlug, formatPageRecord } from "../route";
+import { isValidPageParent } from "@/modules/website-builder/utils/page-tree";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
   try {
     const { id } = await params;
     let page = await prisma.page.findFirst({
@@ -186,6 +189,13 @@ async function handleUpdate(
 
     const parentId =
       body.parentId !== undefined ? (body.parentId || null) : existing.parentId;
+
+    if (body.parentId !== undefined && parentId !== existing.parentId) {
+      const hierarchy = await prisma.page.findMany({ select: { id: true, parentId: true } });
+      if (!isValidPageParent(hierarchy, existing.id, parentId)) {
+        return apiError("Select an existing parent outside this page's descendants", 400);
+      }
+    }
 
     const orderIndex =
       typeof body.orderIndex === "number" ? body.orderIndex : existing.orderIndex;

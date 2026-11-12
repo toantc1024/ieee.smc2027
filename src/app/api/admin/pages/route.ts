@@ -363,6 +363,8 @@ export function buildPageTree(flatPages: any[]): any[] {
 }
 
 export async function GET(request: Request) {
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || searchParams.get("title") || "";

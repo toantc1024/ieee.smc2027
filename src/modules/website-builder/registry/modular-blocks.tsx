@@ -95,8 +95,8 @@ function RichTextBlockRender({
  * 2. ImageBlock (Single Image / Banner with Caption & Sizing)
  * ───────────────────────────────────────────────────────────────────────────── */
 function ImageBlockRender({
-  imageUrl = "/hero/slide-1-hcmc.jpg",
-  alt = "Conference Image",
+  imageUrl = "",
+  alt = "",
   caption = "",
   aspectRatio = "16:9",
   containerWidth = "medium",
@@ -135,15 +135,10 @@ function ImageBlockRender({
         aspectClass
       )}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl || "/hero/slide-1-hcmc.jpg"}
-        alt={alt || "Image"}
-        className={cn(
-          "w-full",
-          aspectRatio === "auto" ? "h-auto object-contain" : "h-full object-cover"
-        )}
-      />
+      {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imageUrl} alt={alt} className={cn("w-full", aspectRatio === "auto" ? "h-auto object-contain" : "h-full object-cover")} />
+      ) : <div className="flex min-h-32 items-center justify-center text-sm text-slate-500">Choose an image in the section settings</div>}
     </div>
   );
 
@@ -171,10 +166,10 @@ function ImageBlockRender({
  * 3. DataSheetBlock (Interactive Sheet / Data Table Block)
  * ───────────────────────────────────────────────────────────────────────────── */
 function DataSheetBlockRender({
-  title = "Registration & Schedule Data Sheet",
-  subtitle = "Structured reference table",
-  headers = "Category, Early Bird (USD), Regular (USD), On-Site (USD)",
-  rowsData = "IEEE Member, $650, $750, $850\nNon-Member, $800, $920, $1050\nIEEE Student Member, $350, $420, $480\nStudent Non-Member, $450, $520, $580",
+  title = "Data table",
+  subtitle = "",
+  headers = "Column 1, Column 2, Column 3",
+  rowsData = "",
   striped = true,
   searchable = true,
 }: {
@@ -298,10 +293,10 @@ function DataSheetBlockRender({
  * ───────────────────────────────────────────────────────────────────────────── */
 function CalloutBlockRender({
   variant = "info",
-  title = "Important Submission Notice",
-  message = "All submitted papers must strictly adhere to the IEEE two-column format (maximum 6 pages) and be submitted via PaperCept.",
-  buttonText = "Submit via PaperCept",
-  buttonUrl = "https://ras.papercept.net",
+  title = "Important notice",
+  message = "",
+  buttonText = "",
+  buttonUrl = "",
 }: {
   variant?: "info" | "warning" | "success" | "urgent";
   title?: string;
@@ -394,12 +389,7 @@ function CalloutBlockRender({
 function StatsRowBlockRender({
   title = "",
   columns = "4",
-  items = [
-    { value: "1,200+", label: "Expected Delegates", description: "Global researchers & engineers" },
-    { value: "65+", label: "Countries Represented", description: "Worldwide participation" },
-    { value: "50+", label: "Technical Tracks", description: "Systems, Man & Cybernetics" },
-    { value: "100%", label: "IEEE Xplore Indexed", description: "Scopus & Web of Science" },
-  ],
+  items = [],
 }: {
   title?: string;
   columns?: "2" | "3" | "4";
@@ -826,7 +816,7 @@ function CustomHTMLRender({
 /* ─────────────────────────────────────────────────────────────────────────────
  * Export Modular Block Definitions
  * ───────────────────────────────────────────────────────────────────────────── */
-export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
+export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
   RichTextBlock: {
     type: "RichTextBlock",
     label: "Text & Heading",
@@ -836,7 +826,7 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>>
     fields: {
       heading: { type: "text", label: "Heading" },
       subheading: { type: "text", label: "Subheading" },
-      content: { type: "textarea", label: "Content (Text or HTML)" },
+      content: { type: "richtext", label: "Content", description: "Format your text with the toolbar below." },
       align: {
         type: "select",
         label: "Text Alignment",
@@ -909,9 +899,9 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>>
       linkUrl: { type: "text", label: "Click Link URL" },
     },
     defaultProps: {
-      imageUrl: "/hero/slide-1-hcmc.jpg",
-      alt: "IEEE SMC 2027 Ho Chi Minh City",
-      caption: "Ho Chi Minh City — Host City for IEEE SMC 2027",
+      imageUrl: "",
+      alt: "",
+      caption: "",
       aspectRatio: "16:9",
       containerWidth: "medium",
       rounded: true,
@@ -942,11 +932,10 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>>
       searchable: { type: "switch", label: "Show Search Filter" },
     },
     defaultProps: {
-      title: "Registration & Schedule Data Sheet",
-      subtitle: "Structured reference table",
-      headers: "Category, Early Bird (USD), Regular (USD), On-Site (USD)",
-      rowsData:
-        "IEEE Member, $650, $750, $850\nNon-Member, $800, $920, $1050\nIEEE Student Member, $350, $420, $480\nStudent Non-Member, $450, $520, $580",
+      title: "Data table",
+      subtitle: "",
+      headers: "Column 1, Column 2, Column 3",
+      rowsData: "",
       striped: true,
       searchable: true,
     },
@@ -977,11 +966,10 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>>
     },
     defaultProps: {
       variant: "info",
-      title: "Important Submission Notice",
-      message:
-        "All submitted papers must strictly adhere to the IEEE two-column format (maximum 6 pages) and be submitted via PaperCept.",
-      buttonText: "Submit via PaperCept",
-      buttonUrl: "https://ras.papercept.net",
+      title: "Important notice",
+      message: "",
+      buttonText: "",
+      buttonUrl: "",
     },
     render: (props) => <CalloutBlockRender {...props} />,
   },
@@ -1120,12 +1108,7 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>>
     defaultProps: {
       title: "",
       columns: "4",
-      items: [
-        { value: "1,200+", label: "Expected Delegates", description: "Global researchers & engineers" },
-        { value: "65+", label: "Countries Represented", description: "Worldwide participation" },
-        { value: "50+", label: "Technical Tracks", description: "Systems, Man & Cybernetics" },
-        { value: "100%", label: "IEEE Xplore Indexed", description: "Scopus & Web of Science" },
-      ],
+      items: [],
     },
     render: (props) => <StatsRowBlockRender {...props} />,
   },

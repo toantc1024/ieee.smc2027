@@ -57,6 +57,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { TemplateSelectionModal } from "./template-selection-modal";
+import { buildPageTree, type PageTreeNode as HierarchyNode } from "@/modules/website-builder/utils/page-tree";
 import { BulkActionBar } from "./bulk-action-bar";
 
 export interface PageItem {
@@ -82,11 +83,7 @@ export interface PageItem {
   updated_at?: string;
 }
 
-interface PageTreeNode extends PageItem {
-  children: PageTreeNode[];
-  depth: number;
-  hasChildren: boolean;
-}
+type PageTreeNode = HierarchyNode<PageItem>;
 
 export function PageListView() {
   const router = useRouter();
@@ -132,54 +129,8 @@ export function PageListView() {
     fetchPages();
   }, [fetchPages]);
 
-  // Build tree data with depth and hierarchy
-  const treeData = useMemo(() => {
-    const itemMap = new Map<string, PageTreeNode>();
-    const rootNodes: PageTreeNode[] = [];
-
-    // Initialize nodes
-    pages.forEach((p) => {
-      itemMap.set(p.id, {
-        ...p,
-        children: [],
-        depth: 0,
-        hasChildren: false,
-      });
-    });
-
-    // Link parents and children
-    pages.forEach((p) => {
-      const node = itemMap.get(p.id)!;
-      if (p.parentId && itemMap.has(p.parentId)) {
-        const parent = itemMap.get(p.parentId)!;
-        node.depth = parent.depth + 1;
-        parent.children.push(node);
-        parent.hasChildren = true;
-      } else if (p.slug.includes("/")) {
-        // Fallback hierarchy based on slug prefix
-        const segments = p.slug.split("/");
-        const parentSlug = segments.slice(0, -1).join("/");
-        const parentItem = Array.from(itemMap.values()).find((i) => i.slug === parentSlug);
-        if (parentItem) {
-          node.depth = parentItem.depth + 1;
-          parentItem.children.push(node);
-          parentItem.hasChildren = true;
-        } else {
-          rootNodes.push(node);
-        }
-      } else {
-        rootNodes.push(node);
-      }
-    });
-
-    const sortSubtree = (nodes: PageTreeNode[]) => {
-      nodes.sort((a, b) => a.orderIndex - b.orderIndex || a.title.localeCompare(b.title));
-      nodes.forEach((n) => sortSubtree(n.children));
-    };
-
-    sortSubtree(rootNodes);
-    return rootNodes;
-  }, [pages]);
+  // Use explicit parents and the reference builder's ordered hierarchy.
+  const treeData = useMemo(() => buildPageTree(pages), [pages]);
 
   // Auto-expand tree nodes matching search query
   useEffect(() => {
@@ -286,51 +237,55 @@ export function PageListView() {
     }
   };
 
-  // Render recursive tree node
-  const renderTreeNode = (node: PageTreeNode) => {
-    const isExpanded = expandedNodes.has(node.id);
+  // Keep ancestors visible when a descendant matches a search or status filter.
+  const matchesTreeFilter = (node: PageTreeNode): boolean => {
+    const q = debouncedSearch.toLowerCase().trim();
+    const textMatch = !q || node.title.toLowerCase().includes(q) || node.slug.toLowerCase().includes(q);
+    const statusMatch = statusFilter === "all" || (statusFilter === "published" ? node.isPublished : !node.isPublished);
+    return (textMatch && statusMatch) || node.children.some(matchesTreeFilter);
+  };
+
+  const renderTreeNode = (node: PageTreeNode, isLast = true, ancestorHasNext: boolean[] = []) => {
+    const filterActive = Boolean(debouncedSearch.trim()) || statusFilter !== "all";
+    const isExpanded = expandedNodes.has(node.id) || filterActive;
     const isSelected = selectedIds.includes(node.id);
     const isHome = node.slug === "home";
-
-    // If search active and neither node nor children match, hide
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase().trim();
-      const match =
-        node.title.toLowerCase().includes(q) || node.slug.toLowerCase().includes(q);
-      const childMatch = (n: PageTreeNode): boolean =>
-        n.title.toLowerCase().includes(q) ||
-        n.slug.toLowerCase().includes(q) ||
-        n.children.some(childMatch);
-      if (!match && !node.children.some(childMatch)) return null;
-    }
-
-    if (statusFilter === "published" && !node.isPublished) return null;
-    if (statusFilter === "draft" && node.isPublished) return null;
+    if (!matchesTreeFilter(node)) return null;
 
     return (
       <div key={node.id} className="select-none">
         <div
           className={cn(
-            "group flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent",
-            isSelected && "bg-blue-50/60 border-blue-200",
-            node.depth > 0 && "ml-6 pl-2 border-l border-slate-200"
+            "group flex min-h-12 items-stretch gap-2 px-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0",
+            isSelected && "bg-blue-50/60"
           )}
-          style={{ paddingLeft: `${node.depth * 20 + 12}px` }}
         >
           {/* Checkbox */}
           <input
             type="checkbox"
             checked={isSelected}
             onChange={() => handleSelectPage(node.id)}
-            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            aria-label={`Select ${node.title}`}
+            className="my-auto w-4 h-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
+
+          {/* HCMUTE's square branch guides keep every hierarchy level aligned. */}
+          {Array.from({ length: node.depth }, (_, index) => {
+            const currentBranch = index === node.depth - 1;
+            return <div key={index} className="relative w-5 self-stretch shrink-0" aria-hidden="true">
+              {(currentBranch || ancestorHasNext[index]) && <span className={cn("absolute left-1/2 top-0 w-px bg-slate-300", currentBranch && isLast ? "h-1/2" : "h-full")} />}
+              {currentBranch && <span className="absolute left-1/2 right-0 top-1/2 h-px bg-slate-300" />}
+            </div>;
+          })}
 
           {/* Expand/Collapse Chevron */}
           {node.hasChildren ? (
             <button
               type="button"
               onClick={() => toggleExpandNode(node.id)}
-              className="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              aria-label={`${isExpanded ? "Collapse" : "Expand"} ${node.title}`}
+              aria-expanded={isExpanded}
+              className="my-auto w-5 h-5 shrink-0 flex items-center justify-center rounded text-blue-600 hover:bg-blue-50"
             >
               {isExpanded ? (
                 <ChevronDown className="w-4 h-4" />
@@ -339,24 +294,24 @@ export function PageListView() {
               )}
             </button>
           ) : (
-            <div className="w-5 h-5" />
+            <div className="my-auto w-5 h-5 shrink-0" />
           )}
 
           {/* Folder / File Icon */}
-          <div className="text-slate-400 group-hover:text-slate-600">
+          <div className={cn("my-auto flex size-7 shrink-0 items-center justify-center rounded-md border", node.depth === 0 ? "bg-blue-600 border-blue-600 text-white" : "bg-blue-50 border-blue-200 text-blue-600")}>
             {node.hasChildren ? (
               isExpanded ? (
-                <FolderOpen className="w-4 h-4 text-blue-500" />
+                <FolderOpen className="w-4 h-4" />
               ) : (
-                <Folder className="w-4 h-4 text-blue-500" />
+                <Folder className="w-4 h-4" />
               )
             ) : (
-              <FileText className="w-4 h-4 text-slate-400" />
+              <FileText className="w-4 h-4" />
             )}
           </div>
 
           {/* Page Title & Slug */}
-          <div className="flex-1 min-w-0 flex items-center gap-2.5">
+          <div className="my-auto flex-1 min-w-0 flex items-center gap-2.5">
             <Link
               href={`/admin/pages/${node.id}`}
               className="text-sm font-medium text-slate-900 hover:text-blue-600 truncate"
@@ -374,7 +329,7 @@ export function PageListView() {
           </div>
 
           {/* Metadata badges */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="my-auto flex items-center gap-3 shrink-0">
             <span className="text-xs text-slate-400">
               {node.block_count || (Array.isArray(node.blocks) ? node.blocks.length : 0)} sections
             </span>
@@ -481,7 +436,7 @@ export function PageListView() {
         {/* Children Subtree */}
         {node.hasChildren && isExpanded && (
           <div className="relative">
-            {node.children.map(renderTreeNode)}
+            {node.children.filter(matchesTreeFilter).map((child, index, siblings) => renderTreeNode(child, index === siblings.length - 1, [...ancestorHasNext, !isLast]))}
           </div>
         )}
       </div>
@@ -663,8 +618,10 @@ export function PageListView() {
             )}
           </div>
         ) : viewMode === "tree" ? (
-          <div className="p-4 space-y-1">
-            {treeData.map(renderTreeNode)}
+          <div className="overflow-x-auto">
+            <div className="min-w-[640px]">
+              {treeData.filter(matchesTreeFilter).map((node, index, siblings) => renderTreeNode(node, index === siblings.length - 1))}
+            </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
