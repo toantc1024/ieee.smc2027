@@ -76,38 +76,38 @@ export function BlockLibraryDrawer() {
   return (
     <div className="flex flex-col h-full bg-white select-none">
       {/* Search + Category Quick Filter */}
-      <div className="p-3 border-b border-slate-100 space-y-2.5 shrink-0">
+      <div className="p-3 border-b border-slate-200 space-y-2.5 shrink-0 bg-white">
         <div className="relative">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search blocks..."
-            className="w-full h-8 pl-8 pr-7 text-xs rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 text-slate-900"
+            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:border-[#004776] focus:ring-2 focus:ring-[#004776]/15 text-slate-900 font-medium"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
               aria-label="Clear search"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
         {/* Horizontal Category Filter Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none]">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none]">
           <button
             type="button"
             onClick={() => setActiveCategory("all")}
             className={cn(
-              "px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-colors cursor-pointer shrink-0",
+              "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
               activeCategory === "all"
-                ? "bg-blue-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                ? "bg-[#004776] text-white"
+                : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
             )}
           >
             All
@@ -118,10 +118,10 @@ export function BlockLibraryDrawer() {
               type="button"
               onClick={() => setActiveCategory(activeCategory === cat ? "all" : cat)}
               className={cn(
-                "px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-colors cursor-pointer shrink-0",
+                "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
                 activeCategory === cat
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                  ? "bg-[#004776] text-white"
+                  : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
               )}
             >
               {CATEGORY_LABELS[cat] || cat}
@@ -133,7 +133,7 @@ export function BlockLibraryDrawer() {
       {/* Blocks List */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
         {categories.length === 0 ? (
-          <div className="py-12 text-center text-xs text-slate-400">
+          <div className="py-12 text-center text-sm text-slate-400">
             No matching blocks found.
           </div>
         ) : (
@@ -147,16 +147,16 @@ export function BlockLibraryDrawer() {
                   onClick={() => toggleCategory(cat)}
                   className="w-full flex items-center justify-between px-1 py-1 rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
                 >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                     {CATEGORY_LABELS[cat] || cat}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <span className="rounded-full bg-slate-100 px-1.5 py-0.2 text-[10px] font-bold text-slate-500">
+                    <span className="rounded-md bg-slate-100 border border-slate-300 px-2 py-0.5 text-xs font-bold text-slate-800">
                       {items.length}
                     </span>
                     <ChevronDown
                       className={cn(
-                        "w-3 h-3 text-slate-400 transition-transform",
+                        "w-3.5 h-3.5 text-slate-400 transition-transform",
                         isCollapsed && "-rotate-90"
                       )}
                     />
@@ -164,7 +164,7 @@ export function BlockLibraryDrawer() {
                 </button>
 
                 {!isCollapsed && (
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {items.map((item) => (
                       <PaletteItem
                         key={item.type}
@@ -248,11 +248,11 @@ function PaletteItem({
         listeners?.onPointerDown?.(event);
       }}
       className={cn(
-        "group flex min-h-[82px] touch-none select-none items-center gap-2.5 rounded-xl border bg-white p-2.5 transition-colors hover:border-blue-500 hover:bg-blue-50/20 cursor-grab active:cursor-grabbing",
-        isDragging ? "border-dashed border-blue-600 opacity-40" : "border-slate-200"
+        "group flex min-h-[82px] touch-none select-none items-center gap-3 rounded-xl border bg-white p-3 transition-colors hover:border-slate-400 hover:shadow-2xs cursor-grab active:cursor-grabbing",
+        isDragging ? "border-dashed border-[#004776] opacity-40" : "border-slate-300"
       )}
     >
-      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1 group-hover:border-blue-300">
+      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1 group-hover:border-slate-400">
         <ScalableWireframe
           type={item.type}
           label={item.label}
@@ -260,10 +260,10 @@ function PaletteItem({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <span className="block truncate text-xs font-bold text-slate-800 group-hover:text-blue-600">
+        <span className="block truncate text-sm font-bold text-slate-900 group-hover:text-[#004776]">
           {item.label}
         </span>
-        <p className="mt-0.5 line-clamp-2 text-[10px] leading-snug text-slate-500">
+        <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-500">
           {item.description}
         </p>
       </div>
@@ -276,7 +276,7 @@ function PaletteItem({
           event.stopPropagation();
           onAdd(item.type);
         }}
-        className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white transition-colors cursor-pointer"
+        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-[#004776] hover:text-white hover:border-[#004776] transition-colors cursor-pointer"
       >
         <Plus className="size-4" />
       </button>

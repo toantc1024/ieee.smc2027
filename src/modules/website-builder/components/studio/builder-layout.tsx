@@ -1,12 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  LayoutGrid,
-  Layers,
-  Settings,
-  Bookmark,
-} from "lucide-react";
 import { useBuilderStore } from "../../store/builder-store";
 import { BuilderHeader } from "../toolbar/builder-header";
 import { SubToolbar } from "../toolbar/sub-toolbar";
@@ -125,19 +119,18 @@ export function BuilderLayout() {
             {!isPreview && (
               <aside className="min-w-0 shrink-0 border-r border-slate-200 bg-white flex flex-col h-full overflow-hidden z-20">
                 {/* Segmented Tab Header */}
-                <div className="grid grid-cols-4 p-1.5 border-b border-slate-200 bg-slate-50 gap-1 text-xs font-semibold text-slate-600">
+                <div className="grid grid-cols-4 p-1.5 border-b border-slate-200 bg-white gap-1 text-xs font-bold text-slate-700">
                   <button
                     type="button"
                     onClick={() => setSidebarTab("library")}
                     className={cn(
-                      "py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+                      "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "library"
-                        ? "bg-white text-blue-600 shadow-xs font-bold"
-                        : "hover:text-slate-900"
+                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Block Library"
                   >
-                    <LayoutGrid className="w-3.5 h-3.5" />
                     <span>Blocks</span>
                   </button>
 
@@ -145,14 +138,13 @@ export function BuilderLayout() {
                     type="button"
                     onClick={() => setSidebarTab("templates")}
                     className={cn(
-                      "py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+                      "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "templates"
-                        ? "bg-white text-blue-600 shadow-xs font-bold"
-                        : "hover:text-slate-900"
+                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Saved Blocks and Layouts"
                   >
-                    <Bookmark className="w-3.5 h-3.5" />
                     <span>Saved</span>
                   </button>
 
@@ -160,14 +152,13 @@ export function BuilderLayout() {
                     type="button"
                     onClick={() => setSidebarTab("layers")}
                     className={cn(
-                      "py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+                      "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "layers"
-                        ? "bg-white text-blue-600 shadow-xs font-bold"
-                        : "hover:text-slate-900"
+                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Layers Tree"
                   >
-                    <Layers className="w-3.5 h-3.5" />
                     <span>Layers</span>
                   </button>
 
@@ -175,14 +166,13 @@ export function BuilderLayout() {
                     type="button"
                     onClick={() => setSidebarTab("settings")}
                     className={cn(
-                      "py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+                      "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "settings"
-                        ? "bg-white text-blue-600 shadow-xs font-bold"
-                        : "hover:text-slate-900"
+                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Page Settings"
                   >
-                    <Settings className="w-3.5 h-3.5" />
                     <span>Page</span>
                   </button>
                 </div>

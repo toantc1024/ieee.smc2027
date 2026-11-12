@@ -22,22 +22,21 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
   HeroCarousel: {
     slides: {
       type: "array", label: "Slides", itemLabel: "slide", group: "Media", defaultValue: DEFAULT_CAROUSEL_SLIDES,
-      description: "Edit each slide’s images, text, and buttons. Use the arrows to change their order.",
       defaultItem: { title: "New slide", image: "", mobileImage: "", subtitle: "", highlight: "", badge: "", primaryAction: { label: "", href: "" }, secondaryAction: { label: "", href: "" } },
       itemFields: {
         id: text("Slide ID"),
-        image: image("Desktop image", { description: "Use a wide landscape image for desktop screens." }),
-        mobileImage: image("Mobile image", { description: "Optional portrait version. Desktop image is used when empty." }),
+        image: image("Desktop image"),
+        mobileImage: image("Mobile image"),
         title: text("Slide title"), highlight: text("Highlighted text"), subtitle: paragraph("Slide description"), badge: text("Badge text"),
         primaryAction: action("Primary button"), secondaryAction: action("Secondary button"),
       },
     },
-    showOverlayText: { type: "switch", label: "Show text and buttons", description: "Enable to display the title, description, and buttons over each image." },
+    showOverlayText: { type: "switch", label: "Show text and buttons" },
   },
   KeynoteSpeakersSection: {
     speakers: {
       type: "array", label: "Speakers", itemLabel: "speaker", defaultValue: [], itemLabelKey: "name",
-      itemFields: { photo: image("Speaker photo"), name: text("Full name"), affiliation: text("University / organization"), topic: paragraph("Presentation topic") },
+      itemFields: { photo: image("Speaker photo"), name: text("Full name"), affiliation: text("Affiliation"), topic: paragraph("Presentation topic") },
     },
   },
   RegistrationFeesSection: {
@@ -46,10 +45,10 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
     } },
   },
   AwardsSection: {
-    awards: { type: "array", label: "Awards", itemLabel: "award", defaultValue: AWARDS_LIST.map(({ title, description, prize }) => ({ title, description, prize })), itemFields: { title: text("Award title"), description: paragraph("Description"), prize: text("Recognition / prize") } },
+    awards: { type: "array", label: "Awards", itemLabel: "award", defaultValue: AWARDS_LIST.map(({ title, description, prize }) => ({ title, description, prize })), itemFields: { title: text("Award title"), description: paragraph("Description"), prize: text("Prize") } },
   },
   PaperSubmissionGuidelinesSection: {
-    templates: { type: "array", label: "Downloadable templates", itemLabel: "template", itemLabelKey: "name", defaultValue: PAPER_TEMPLATE_ITEMS.map(({ name, format, description, fileSize, downloadUrl, instructions }) => ({ name, format, description, fileSize, downloadUrl, instructions })), itemFields: { name: text("Template name"), format: text("File format"), description: paragraph("Description"), fileSize: text("File size label"), downloadUrl: text("Download URL"), instructions: paragraph("Instructions") } },
+    templates: { type: "array", label: "Downloadable templates", itemLabel: "template", itemLabelKey: "name", defaultValue: PAPER_TEMPLATE_ITEMS.map(({ name, format, description, fileSize, downloadUrl, instructions }) => ({ name, format, description, fileSize, downloadUrl, instructions })), itemFields: { name: text("Template name"), format: text("File format"), description: paragraph("Description"), fileSize: text("File size"), downloadUrl: text("Download URL"), instructions: paragraph("Instructions") } },
     guidelines: { type: "array", label: "Submission guidelines", itemLabel: "guideline", itemLabelKey: "label", defaultValue: PAPER_GUIDELINES, itemFields: { label: text("Submission category"), limit: text("Page limit"), detail: paragraph("Details") } },
   },
   ConferenceTracksSection: {
@@ -91,8 +90,8 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
           itemFields: {
             photo: image("Portrait"),
             name: text("Full name"),
-            role: text("Role / position"),
-            affiliation: text("University / organization"),
+            role: text("Role"),
+            affiliation: text("Affiliation"),
             country: text("Country"),
           },
         },
@@ -101,19 +100,19 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
   },
   ImportantDatesSection: {
     dates: { type: "array", label: "Deadlines & milestones", itemLabel: "milestone", defaultValue: OFFICIAL_2027_DATES, itemFields: {
-      id: text("Milestone ID"), title: paragraph("Milestone title"), date: text("Date", { placeholder: "April 08, 2027" }), originalDeadline: text("Original deadline (optional)"), extendedDeadline: text("Extended deadline (optional)"), category: text("Category"), status: text("Status label"), highlight: { type: "switch", label: "Highlight milestone" },
+      id: text("Milestone ID"), title: paragraph("Milestone title"), date: text("Date", { placeholder: "April 08, 2027" }), originalDeadline: text("Original deadline"), extendedDeadline: text("Extended deadline"), category: text("Category"), status: text("Status label"), highlight: { type: "switch", label: "Highlight milestone" },
     } },
     viewDetailsUrl: text("View details link", { group: "Links", defaultValue: "#cfp" }),
   },
   ScheduleTimelineSection: {
     days: { type: "array", label: "Schedule days", itemLabel: "day", itemLabelKey: "dateStr", defaultValue: DEFAULT_DAYS, itemFields: {
       dayNumber: { type: "number", label: "Day number", min: 1, defaultValue: 1 }, dateStr: text("Date label"), theme: text("Day theme"),
-      events: { type: "array", label: "Events", itemLabel: "event", itemFields: { time: text("Time", { placeholder: "09:00 – 10:15" }), title: text("Event title"), room: text("Room / location"), speakers: text("Speakers"), track: text("Track") } },
+      events: { type: "array", label: "Events", itemLabel: "event", itemFields: { time: text("Time", { placeholder: "09:00 – 10:15" }), title: text("Event title"), room: text("Location"), speakers: text("Speakers"), track: text("Track") } },
     } },
   },
   SponsorshipSection: {
     sponsors: { type: "array", label: "Sponsors & partners", itemLabel: "sponsor", itemLabelKey: "shortName", defaultValue: SPONSORS, itemFields: {
-      logo: image("Sponsor logo", { description: "Upload a logo, or leave empty to use the built-in emblem." }), name: text("Organization name"), shortName: text("Display name"), type: text("Sponsorship level / role"),
+      logo: image("Sponsor logo"), name: text("Organization name"), shortName: text("Display name"), type: text("Sponsorship level"),
       logoType: { type: "select", label: "Built-in emblem", options: [{ label: "IEEE", value: "ieee" }, { label: "HCM-UTE", value: "hcmute" }, { label: "IEEE SMC", value: "ieee-smc" }, { label: "IEEE CIS", value: "ieee-cis" }, { label: "IEEE RAS", value: "ieee-ras" }, { label: "Institution", value: "most" }] },
     } },
   },
@@ -132,7 +131,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
   WelcomeLetter: {
     heading: text("Intro heading", { defaultValue: "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam" }),
     subtitle: paragraph("Section description"),
-    body: { type: "richtext", label: "Letter content", description: "Write a custom welcome message. Leave empty to use the official letter." },
+    body: { type: "richtext", label: "Letter content" },
     showSignatures: { type: "switch", label: "Show chair signatures", defaultValue: true },
     chairs: { type: "array", label: "Chairs & signatures", itemLabel: "chair", itemLabelKey: "name", defaultValue: CHAIR_MEMBERS, itemFields: {
       image: image("Chair portrait"), name: text("Full name"), role: { type: "select", label: "Chair role", options: [{ label: "General Chair", value: "General Chair" }, { label: "Honorary Chair", value: "Honorary Chair" }] }, affiliation: text("Affiliation"), country: text("Country"),
@@ -142,7 +141,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
     items: { type: "array", label: "Conference statistics", itemLabel: "statistic", itemLabelKey: "label", defaultValue: CONFERENCE_STATS, itemFields: { value: text("Value", { placeholder: "1,200+" }), label: text("Label"), sub: paragraph("Description") } },
   },
   PastConferencesSection: {
-    conferences: { type: "array", label: "Past conferences", itemLabel: "conference", itemLabelKey: "city", defaultValue: PAST_CONFERENCES, itemFields: { year: text("Year"), city: text("City / country"), dates: text("Dates"), theme: paragraph("Conference theme") } },
+    conferences: { type: "array", label: "Past conferences", itemLabel: "conference", itemLabelKey: "city", defaultValue: PAST_CONFERENCES, itemFields: { year: text("Year"), city: text("Location"), dates: text("Dates"), theme: paragraph("Conference theme") } },
   },
   About: {
     theme: paragraph("Conference theme", { defaultValue: CONFERENCE_INFO.theme }),

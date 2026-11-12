@@ -55,11 +55,11 @@ function BottomCanvasDropzone({
         </div>
       )}
 
-      <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+      <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center">
         <Plus className="w-5 h-5" />
       </div>
       <div className="text-center">
-        <p className="text-sm font-bold text-slate-800">
+        <p className="text-sm font-bold text-slate-900">
           Add Section to End
         </p>
         <p className="text-xs text-slate-500 mt-0.5">
@@ -70,7 +70,7 @@ function BottomCanvasDropzone({
         <button
           type="button"
           onClick={onOpenLibrary}
-          className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-lg bg-[#004776] hover:bg-[#115eff] text-white text-xs font-bold shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
         >
           <LayoutGrid className="w-3.5 h-3.5" />
           <span>Browse Block Library</span>
@@ -79,7 +79,7 @@ function BottomCanvasDropzone({
           <button
             type="button"
             onClick={onPasteEnd}
-            className="px-3.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <ClipboardPaste className="w-3.5 h-3.5" />
             <span>Paste Block</span>
@@ -220,20 +220,20 @@ export function BuilderCanvas() {
                 onClick={(e) => e.stopPropagation()}
                 className="py-24 px-6 text-center space-y-4"
               >
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center mx-auto">
+                <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto shadow-xs">
                   <Plus className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">
                   Your Page Canvas is Empty
                 </h3>
-                <p className="text-sm text-slate-500 max-w-sm mx-auto">
+                <p className="text-sm font-medium text-slate-500 max-w-sm mx-auto">
                   Select or drag a section from the Blocks panel on the left to start building this page.
                 </p>
                 <div className="flex items-center justify-center gap-2 pt-1">
                   <button
                     type="button"
                     onClick={() => setSidebarTab("library")}
-                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-lg bg-[#004776] hover:bg-[#115eff] text-white text-sm font-bold shadow-2xs transition-colors cursor-pointer"
                   >
                     Open Block Library
                   </button>
@@ -244,7 +244,7 @@ export function BuilderCanvas() {
                         pasteBlock();
                         toast.success("Pasted block to canvas");
                       }}
-                      className="px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold transition-colors cursor-pointer"
+                      className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-800 text-sm font-bold transition-colors cursor-pointer"
                     >
                       Paste Block
                     </button>

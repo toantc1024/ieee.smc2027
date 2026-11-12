@@ -6,9 +6,6 @@ import {
   ArrowLeft,
   Save,
   EyeOff,
-  PanelsTopLeft,
-  Info,
-  History,
   Loader2,
   Pencil,
   Globe,
@@ -162,45 +159,42 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
         </div>
       </div>
 
-      {/* Center:HCM-UTE Segmented Studio View Switcher */}
-      <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600 shrink-0">
+      {/* Center: Segmented Studio View Switcher */}
+      <div className="flex items-center h-9 p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 shrink-0">
         <button
           type="button"
           onClick={() => setStudioTab("content")}
           className={cn(
-            "px-2.5 py-1 rounded-md transition-colors flex items-center gap-1.5 cursor-pointer",
+            "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "content"
-              ? "bg-white text-blue-600 shadow-2xs font-bold"
-              : "hover:text-slate-900"
+              ? "bg-[#004776] text-white shadow-xs font-bold"
+              : "text-slate-700 hover:text-slate-900"
           )}
         >
-          <PanelsTopLeft className="w-3.5 h-3.5" />
           <span>Page Content</span>
         </button>
         <button
           type="button"
           onClick={() => setStudioTab("info")}
           className={cn(
-            "px-2.5 py-1 rounded-md transition-colors flex items-center gap-1.5 cursor-pointer",
+            "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "info"
-              ? "bg-white text-blue-600 shadow-2xs font-bold"
-              : "hover:text-slate-900"
+              ? "bg-[#004776] text-white shadow-xs font-bold"
+              : "text-slate-700 hover:text-slate-900"
           )}
         >
-          <Info className="w-3.5 h-3.5" />
           <span>Page Info</span>
         </button>
         <button
           type="button"
           onClick={() => setStudioTab("history")}
           className={cn(
-            "px-2.5 py-1 rounded-md transition-colors flex items-center gap-1.5 cursor-pointer",
+            "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "history"
-              ? "bg-white text-blue-600 shadow-2xs font-bold"
-              : "hover:text-slate-900"
+              ? "bg-[#004776] text-white shadow-xs font-bold"
+              : "text-slate-700 hover:text-slate-900"
           )}
         >
-          <History className="w-3.5 h-3.5" />
           <span>History</span>
         </button>
       </div>
@@ -209,17 +203,12 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
       <div className="flex items-center gap-2 shrink-0">
         {/* Published / Draft Status Dot Pill */}
         <div
-          className={cn(
-            "hidden xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg border text-xs font-semibold",
-            isPublished
-              ? "border-emerald-200 bg-emerald-50/70 text-emerald-700"
-              : "border-slate-200 bg-slate-100 text-slate-600"
-          )}
+          className="hidden xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-800"
         >
           <span
             className={cn(
               "w-2 h-2 rounded-full",
-              isPublished ? "bg-emerald-500" : "bg-slate-400"
+              isPublished ? "bg-emerald-600" : "bg-slate-400"
             )}
           />
           <span>{isPublished ? "Published" : "Draft"}</span>
@@ -233,10 +222,8 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           disabled={!pageId || publishing}
           onClick={handleTogglePublish}
           className={cn(
-            "h-8 px-3 text-xs font-semibold gap-1.5 cursor-pointer shadow-none",
-            isPublished
-              ? "border-rose-200 bg-rose-50/70 text-rose-700 hover:bg-rose-100 hover:text-rose-800"
-              : "border-blue-200 bg-blue-50/70 text-blue-700 hover:bg-blue-100 hover:text-blue-800"
+            "h-8 px-3 text-xs font-bold gap-1.5 cursor-pointer shadow-none border-slate-300 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-400",
+            isPublished && "hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50"
           )}
         >
           {publishing ? (
@@ -256,10 +243,10 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           disabled={saving || !isDirty}
           onClick={onSave}
           className={cn(
-            "h-8 px-3.5 text-xs font-semibold text-white min-w-[88px] gap-1.5 shadow-xs transition-colors cursor-pointer",
+            "h-8 px-3.5 text-xs font-bold min-w-[88px] gap-1.5 shadow-xs transition-colors cursor-pointer",
             isDirty
-              ? "bg-blue-600 hover:bg-blue-700"
-              : "bg-slate-200 text-slate-500 cursor-not-allowed hover:bg-slate-200"
+              ? "bg-[#004776] hover:bg-[#115eff] text-white"
+              : "border border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100"
           )}
         >
           {saving ? (

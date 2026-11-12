@@ -76,32 +76,32 @@ export function PropertyInspector() {
       {/* HCM-UTE Inspector Top Header */}
       <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0">
             <Icon className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-bold text-slate-900 truncate leading-tight">
+            <h4 className="text-base font-bold text-slate-900 truncate leading-tight">
               {def?.label || selectedBlock.type}
             </h4>
-            <p className="text-xs font-medium text-slate-400 truncate mt-0.5">
+            <p className="text-xs font-medium text-slate-500 truncate mt-0.5">
               #{shortId}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
             onClick={() => toggleBlockHidden(selectedBlock.id)}
             className={cn(
-              "h-7 px-2.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+              "h-8 px-2.5 rounded-md border text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer",
               isHidden
-                ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
-                : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600"
+                ? "border-amber-600 bg-amber-600 text-white"
+                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900"
             )}
             title={isHidden ? "Show section on page" : "Hide section on page"}
           >
-            {isHidden ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+            {isHidden ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             <span>{isHidden ? "Hidden" : "Hide"}</span>
           </button>
 
@@ -109,14 +109,14 @@ export function PropertyInspector() {
             type="button"
             onClick={() => setInspectorTab(isJsonOpen ? "content" : "json")}
             className={cn(
-              "h-7 px-2.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+              "h-8 px-2.5 rounded-md border text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer",
               isJsonOpen
-                ? "border-blue-600 bg-blue-600 text-white shadow-2xs"
-                : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600"
+                ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
+                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900"
             )}
             title="Toggle JSON Data Editor"
           >
-            <Code2 className="w-3 h-3" />
+            <Code2 className="w-3.5 h-3.5" />
             <span>JSON</span>
           </button>
 
@@ -126,59 +126,57 @@ export function PropertyInspector() {
               removeBlock(selectedBlock.id);
               toast.success(`Removed "${def?.label || selectedBlock.type}"`);
             }}
-            className="h-7 w-7 rounded-md border border-transparent text-slate-400 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-md border border-slate-300 bg-white text-slate-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 flex items-center justify-center transition-colors cursor-pointer"
             title="Delete Block"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Primary Pill Tabs: Content | Styles */}
+      {/* Primary Pill Tabs: Content | Styles without redundant icons */}
       {!isJsonOpen && (
-        <div className="grid grid-cols-2 p-2 border-b border-slate-200 bg-slate-50/80 gap-2 shrink-0">
+        <div className="grid grid-cols-2 p-2 border-b border-slate-200 bg-slate-100 gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setInspectorTab("content")}
             className={cn(
-              "h-9 rounded-lg text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+              "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "content"
-                ? "bg-blue-600 text-white shadow-xs font-bold"
-                : "bg-white border border-slate-200/80 text-slate-600 font-semibold hover:text-slate-900"
+                ? "bg-[#004776] text-white shadow-xs font-bold"
+                : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
-            <FileEdit className="w-4 h-4" />
-            <span>Content</span>
+            Content
           </button>
           <button
             type="button"
             onClick={() => setInspectorTab("styles")}
             className={cn(
-              "h-9 rounded-lg text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+              "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "styles"
-                ? "bg-blue-600 text-white shadow-xs font-bold"
-                : "bg-white border border-slate-200/80 text-slate-600 font-semibold hover:text-slate-900"
+                ? "bg-[#004776] text-white shadow-xs font-bold"
+                : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
-            <Paintbrush className="w-4 h-4" />
-            <span>Styles</span>
+            Styles
           </button>
         </div>
       )}
 
       {/* Hidden Block Banner */}
       {isHidden && !isJsonOpen && (
-        <div className="mx-3.5 mt-3 rounded-xl border border-amber-200 bg-amber-50/90 px-3 py-2 flex items-center justify-between gap-2 shrink-0">
+        <div className="mx-4 mt-3 rounded-lg border-l-4 border-l-amber-600 border border-slate-200 bg-white p-3 flex items-center justify-between gap-2 shrink-0 shadow-xs">
           <div className="flex items-center gap-2 min-w-0">
-            <EyeOff className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="text-xs font-semibold text-amber-800 truncate">
-              Hidden from public website
+            <EyeOff className="w-4 h-4 text-amber-600 shrink-0" />
+            <span className="text-xs font-bold text-slate-900 truncate">
+              Hidden from live website
             </span>
           </div>
           <button
             type="button"
             onClick={() => toggleBlockHidden(selectedBlock.id)}
-            className="px-2 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0 cursor-pointer"
+            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-black text-white text-xs font-bold shrink-0 cursor-pointer"
           >
             Show
           </button>
@@ -235,16 +233,11 @@ function StylesInspectorPanel({
   return (
     <div className="space-y-4 p-4 select-text">
       {/* Visibility & Side Borders */}
-      <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
+      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <Label htmlFor="inspector-visible-switch" className="text-sm font-semibold text-slate-800 cursor-pointer">
-              Visible on Website
-            </Label>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Display this section to visitors on the live page.
-            </p>
-          </div>
+          <Label htmlFor="inspector-visible-switch" className="text-sm font-bold text-slate-900 cursor-pointer">
+            Visible on Website
+          </Label>
           <Switch
             id="inspector-visible-switch"
             checked={!isHidden}
@@ -252,15 +245,10 @@ function StylesInspectorPanel({
           />
         </div>
 
-        <div className="border-t border-slate-200/80 pt-2.5 flex items-center justify-between gap-3">
-          <div>
-            <Label htmlFor="section-side-borders" className="text-sm font-semibold text-slate-800 cursor-pointer">
-              Hide Side Borders
-            </Label>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Remove vertical frame lines on the left and right edges.
-            </p>
-          </div>
+        <div className="border-t border-slate-200 pt-3 flex items-center justify-between gap-3">
+          <Label htmlFor="section-side-borders" className="text-sm font-bold text-slate-900 cursor-pointer">
+            Hide Side Borders
+          </Label>
           <Switch
             id="section-side-borders"
             checked={hideSideBorders}
@@ -272,8 +260,8 @@ function StylesInspectorPanel({
       </div>
 
       {/* Colors & Gradients */}
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-3.5">
-        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
+        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
           Colors & Background
         </h5>
 
@@ -300,22 +288,22 @@ function StylesInspectorPanel({
       </div>
 
       {/* Text Alignment */}
-      <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3.5">
+      <div className="space-y-2.5 rounded-xl border border-slate-300 bg-white p-4">
         <div className="flex items-center justify-between">
-          <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
             Text Alignment
           </h5>
           {textAlign && (
             <button
               type="button"
               onClick={() => onUpdateStyles({ textAlign: "" })}
-              className="text-[10px] font-semibold text-blue-600 hover:underline cursor-pointer"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
             >
-              Auto
+              Reset
             </button>
           )}
         </div>
-        <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 border border-slate-200/80">
+        <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 border border-slate-200">
           {[
             { value: "left", label: "Left", icon: AlignLeft },
             { value: "center", label: "Center", icon: AlignCenter },
@@ -331,10 +319,10 @@ function StylesInspectorPanel({
                   onUpdateStyles({ textAlign: active ? "" : item.value })
                 }
                 className={cn(
-                  "h-7 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer",
+                  "h-8 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer",
                   active
-                    ? "bg-white text-blue-600 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "text-slate-700 hover:text-slate-900 hover:bg-white"
                 )}
               >
                 <AlignIcon className="w-3.5 h-3.5" />
@@ -346,8 +334,8 @@ function StylesInspectorPanel({
       </div>
 
       {/* Spacing Controls */}
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-3.5">
-        <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
+        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
           Section Spacing
         </h5>
         <div className="grid grid-cols-2 gap-3">
@@ -377,8 +365,8 @@ function StylesInspectorPanel({
       </div>
 
       {/* Custom CSS */}
-      <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3.5">
-        <Label htmlFor="custom-css-classes" className="text-sm font-semibold text-slate-700">
+      <div className="space-y-2 rounded-xl border border-slate-300 bg-white p-4">
+        <Label htmlFor="custom-css-classes" className="text-sm font-bold text-slate-900">
           Custom CSS Classes
         </Label>
         <Input
@@ -388,7 +376,7 @@ function StylesInspectorPanel({
             onUpdateStyles({ className: e.target.value, customClass: e.target.value })
           }
           placeholder="py-12 bg-slate-50"
-          className="text-sm h-9 bg-white"
+          className="text-sm font-medium h-10 bg-white border-slate-300"
         />
       </div>
     </div>
@@ -437,13 +425,13 @@ function BlockJsonEditor({ block }: { block: PageBlock }) {
   return (
     <div className="space-y-3 p-4 select-text">
       <div className="flex items-center justify-between">
-        <Label htmlFor="block-json" className="text-xs font-bold text-slate-800">
+        <Label htmlFor="block-json" className="text-sm font-bold text-slate-900">
           Raw Block JSON
         </Label>
         <button
           type="button"
           onClick={() => setInspectorTab("content")}
-          className="text-[11px] font-semibold text-blue-600 hover:underline cursor-pointer"
+          className="text-xs font-bold text-[#004776] hover:underline cursor-pointer"
         >
           Back to Inspector
         </button>
@@ -456,7 +444,7 @@ function BlockJsonEditor({ block }: { block: PageBlock }) {
           setError("");
         }}
         spellCheck={false}
-        className="min-h-[360px] resize-y bg-slate-950 font-mono text-[11px] leading-relaxed text-slate-100"
+        className="min-h-[360px] resize-y bg-slate-950 font-mono text-xs leading-relaxed text-slate-100 rounded-lg p-3"
       />
       {error && (
         <p role="alert" className="text-xs font-medium text-rose-600">
@@ -466,7 +454,7 @@ function BlockJsonEditor({ block }: { block: PageBlock }) {
       <Button
         type="button"
         onClick={apply}
-        className="w-full bg-blue-600 text-white hover:bg-blue-700"
+        className="w-full bg-[#004776] text-white hover:bg-[#115eff] font-bold text-sm h-10 rounded-lg cursor-pointer"
       >
         Apply JSON
       </Button>
@@ -501,29 +489,12 @@ function ContentFields({
 
   return (
     <div className="select-text">
-      {/* Quick Styles Shortcut Banner */}
-      <div className="px-4 pt-3.5">
-        <button
-          type="button"
-          onClick={onOpenStyles}
-          className="w-full flex items-center justify-between gap-2 rounded-xl border border-blue-100 bg-blue-50/60 hover:bg-blue-50 px-3.5 py-2.5 text-left transition-colors cursor-pointer group"
-        >
-          <div className="flex items-center gap-2 min-w-0">
-            <Paintbrush className="w-4 h-4 text-blue-600 shrink-0" />
-            <span className="text-sm font-semibold text-blue-800 truncate">
-              Customize colors, spacing & borders
-            </span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-blue-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
-        </button>
-      </div>
-
       {entries.length === 0 ? (
-        <div className="p-4 text-xs leading-relaxed text-slate-500 space-y-2">
+        <div className="p-4 text-sm leading-relaxed text-slate-500 space-y-2">
           {block.type === "HeaderSection" ? (
             <Link
               href="/admin/header"
-              className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
+              className="inline-flex items-center gap-1 font-bold text-[#004776] hover:underline"
             >
               <span>Edit navigation in Header settings</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -531,14 +502,14 @@ function ContentFields({
           ) : block.type === "FooterSection" ? (
             <Link
               href="/admin/footer"
-              className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
+              className="inline-flex items-center gap-1 font-bold text-[#004776] hover:underline"
             >
               <span>Edit links in Footer settings</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           ) : (
             <p>
-              This section uses shared global data. Switch to the Styles tab to customize spacing, colors, and visibility.
+              This section uses global data. Switch to the Styles tab to configure appearance and visibility.
             </p>
           )}
         </div>

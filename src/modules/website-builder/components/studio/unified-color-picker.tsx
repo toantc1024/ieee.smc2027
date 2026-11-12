@@ -280,15 +280,15 @@ export function UnifiedColorPicker({
     <div className="space-y-1.5">
       {label && (
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-semibold text-slate-700">{label}</span>
+          <span className="text-sm font-bold text-slate-900">{label}</span>
           {value && (
             <button
               type="button"
               onClick={() => onChange("")}
-              className="text-[10px] font-medium text-slate-400 hover:text-blue-600 flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-xs font-bold text-slate-500 hover:text-[#004776] flex items-center gap-1 transition-colors cursor-pointer"
               title="Reset color"
             >
-              <RotateCcw className="w-2.5 h-2.5" />
+              <RotateCcw className="w-3 h-3" />
               <span>Reset</span>
             </button>
           )}
@@ -301,26 +301,26 @@ export function UnifiedColorPicker({
             <button
               type="button"
               aria-label={`Choose ${label || "color"}`}
-              className="h-9 flex-1 flex items-center gap-2.5 px-2.5 rounded-lg border border-slate-200 bg-white hover:border-blue-400 transition-colors text-left cursor-pointer min-w-0"
+              className="h-10 flex-1 flex items-center gap-2.5 px-3 rounded-lg border border-slate-300 bg-white hover:border-slate-400 transition-colors text-left cursor-pointer min-w-0"
             >
               <span
-                className="w-5 h-5 rounded-md border border-slate-300/80 shrink-0 shadow-2xs"
+                className="w-6 h-6 rounded-md border border-slate-300 shrink-0 shadow-2xs"
                 style={{
                   background:
                     value ||
                     "repeating-conic-gradient(#e2e8f0 0% 25%, #ffffff 0% 50%) 50% / 8px 8px",
                 }}
               />
-              <span className="text-sm font-medium text-slate-700 truncate flex-1">
+              <span className="text-sm font-bold text-slate-900 truncate flex-1">
                 {value ? (isGradientValue ? "Gradient" : value) : placeholder}
               </span>
-              <Pipette className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <Pipette className="w-4 h-4 text-slate-500 shrink-0" />
             </button>
           </PopoverTrigger>
 
           <PopoverContent align="end" className="w-80 p-3.5 space-y-3">
             {allowGradient && (
-              <div className="grid grid-cols-2 p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold">
+              <div className="grid grid-cols-2 p-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => {
@@ -329,8 +329,8 @@ export function UnifiedColorPicker({
                     onChange(formatted);
                   }}
                   className={cn(
-                    "py-1 rounded-md transition-colors cursor-pointer",
-                    mode === "solid" ? "bg-white text-blue-600 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                    "py-1.5 rounded-md transition-colors cursor-pointer",
+                    mode === "solid" ? "bg-[#004776] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
                   )}
                 >
                   Solid
@@ -342,8 +342,8 @@ export function UnifiedColorPicker({
                     onChange(buildGradientString(gradient));
                   }}
                   className={cn(
-                    "py-1 rounded-md transition-colors cursor-pointer",
-                    mode === "gradient" ? "bg-white text-blue-600 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                    "py-1.5 rounded-md transition-colors cursor-pointer",
+                    mode === "gradient" ? "bg-[#004776] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
                   )}
                 >
                   Gradient

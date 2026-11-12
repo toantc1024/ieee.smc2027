@@ -231,13 +231,13 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3"
+          className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-slate-300 bg-white p-3.5"
         >
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-white">
               <FileText className="size-4" />
             </div>
-            <span className="truncate text-xs font-semibold text-slate-700">
+            <span className="truncate text-sm font-bold text-slate-900">
               {url.split("/").pop() || url}
             </span>
           </div>
@@ -247,7 +247,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Replace ${field.label}`}
               onClick={() => inputRef.current?.click()}
-              className="h-7 rounded-md border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-600 cursor-pointer"
+              className="h-8 rounded-lg border border-slate-300 bg-white px-3 text-xs font-bold text-slate-800 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
             >
               Change
             </button>
@@ -256,7 +256,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="h-7 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-600 cursor-pointer"
+              className="h-8 rounded-lg border border-slate-300 bg-white px-3 text-xs font-bold text-slate-800 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
             >
               Library
             </button>
@@ -268,33 +268,30 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "relative flex w-full flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed p-4 text-center transition-colors",
+            "relative flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition-colors",
             dragging
-              ? "border-blue-600 bg-blue-50/60"
-              : "border-slate-200 bg-slate-50/70 hover:border-blue-400 hover:bg-blue-50/20",
-            isImage ? "min-h-36" : "min-h-24"
+              ? "border-[#004776] bg-blue-50/30"
+              : "border-slate-300 bg-white hover:border-slate-400",
+            isImage ? "min-h-32" : "min-h-24"
           )}
         >
-          <div className="flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-blue-600 shadow-2xs">
-            {isImage ? <ImagePlus className="size-5" /> : <FileText className="size-5" />}
-          </div>
           <div className="space-y-0.5">
-            <p className="text-sm font-semibold text-slate-700">
-              {url ? "Media unavailable · select a replacement" : isImage ? "Drop image here or browse" : "Drop PDF here or browse"}
+            <p className="text-sm font-bold text-slate-800">
+              {url ? "Select a replacement" : isImage ? "Select or drop image" : "Select or drop PDF"}
             </p>
             <p className="text-xs text-slate-400">
-              {isImage ? "JPG, PNG, WebP, GIF, SVG · Max 10 MB" : "PDF document · Max 10 MB"}
+              Max 10 MB
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-2 pt-0.5">
+          <div className="flex items-center justify-center gap-2 pt-1">
             <button
               type="button"
               disabled={disabled || uploading}
               aria-label={`${url ? "Replace" : "Upload"} ${field.label}`}
               aria-busy={uploading}
               onClick={() => inputRef.current?.click()}
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-[#004776] hover:bg-[#115eff] px-4 text-xs font-bold text-white shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Upload className="size-3.5" />
               <span>Upload</span>
@@ -304,9 +301,9 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:border-slate-400 px-4 text-xs font-bold text-slate-800 transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <FolderOpen className="size-3.5 text-blue-600" />
+              <FolderOpen className="size-3.5 text-slate-600" />
               <span>Library</span>
             </button>
           </div>
@@ -314,7 +311,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           {uploading && (
             <div
               role="status"
-              className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-white/90 text-xs font-semibold text-blue-700"
+              className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-white/95 text-xs font-bold text-[#004776]"
             >
               <Loader2 className="size-4 animate-spin" />
               <span>Uploading…</span>
@@ -340,13 +337,13 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
         id={id}
         value={url}
         disabled={disabled || uploading}
-        placeholder={isImage ? "Or paste image URL..." : "Or paste document URL..."}
+        placeholder={isImage ? "Or paste image URL" : "Or paste document URL"}
         onChange={(event) => {
           setError("");
           setBrokenUrl(null);
           onChange(path, event.target.value);
         }}
-        className="h-9 bg-white text-sm"
+        className="h-10 bg-white text-sm font-medium border-slate-300 rounded-lg px-3"
       />
 
       {field.description && (
@@ -501,23 +498,23 @@ function ArrayField(props: InspectorFieldProps) {
   const allExpanded = items.length > 0 && expandedSet.size >= items.length;
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
-          <h5 className="text-sm font-bold text-slate-800">{field.label}</h5>
-          <span className="rounded-full bg-blue-50 border border-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700">
+        <div className="flex items-center gap-2">
+          <h5 className="text-base font-bold text-slate-900">{field.label}</h5>
+          <span className="rounded-md bg-slate-900 px-2 py-0.5 text-xs font-bold text-white">
             {items.length}
           </span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {items.length > 1 && (
             <button
               type="button"
               onClick={() =>
                 setExpandedSet(allExpanded ? new Set() : new Set(items.map((_, i) => i)))
               }
-              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 cursor-pointer"
+              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title={allExpanded ? "Collapse all" : "Expand all"}
             >
               {allExpanded ? (
@@ -541,7 +538,7 @@ function ArrayField(props: InspectorFieldProps) {
               onChange(path, [...items, item]);
               setExpandedSet(new Set([items.length]));
             }}
-            className="flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-40 cursor-pointer"
+            className="flex items-center gap-1.5 rounded-lg bg-[#004776] hover:bg-[#115eff] px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs transition-colors disabled:opacity-40 cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Add {itemLabel}</span>
@@ -554,7 +551,7 @@ function ArrayField(props: InspectorFieldProps) {
       )}
 
       {items.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-3 py-6 text-center text-sm text-slate-500">
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-3 py-6 text-center text-sm font-medium text-slate-500">
           No {field.label.toLowerCase()} yet. Click Add {itemLabel} to create one.
         </div>
       )}
@@ -583,39 +580,39 @@ function ArrayField(props: InspectorFieldProps) {
           >
             {/* Blue drop indicator seam above */}
             {isTargetingThis && dropPosition === "before" && (
-              <div className="absolute -top-1.5 left-0 right-0 z-30 h-1 bg-blue-600 rounded-full shadow-xs pointer-events-none" />
+              <div className="absolute -top-1.5 left-0 right-0 z-30 h-1 bg-[#004776] rounded-full shadow-xs pointer-events-none" />
             )}
 
             <div
               className={cn(
                 "overflow-hidden rounded-xl border transition-all",
                 isDraggingThis
-                  ? "opacity-40 border-dashed border-blue-400 bg-blue-50/30 scale-[0.99]"
+                  ? "opacity-40 border-dashed border-[#004776] bg-blue-50/30 scale-[0.99]"
                   : open
-                    ? "border-blue-200 bg-white shadow-xs"
-                    : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
+                    ? "border-slate-900 bg-white shadow-xs ring-1 ring-slate-900/10"
+                    : "border-slate-300 bg-white hover:border-slate-400"
               )}
             >
-              <div className="flex items-center gap-1 pr-1.5">
+              <div className="flex items-center gap-1 pr-1.5 bg-white">
                 {/* Drag handle */}
                 <div
                   draggable={!disabled}
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragEnd={handleDragEnd}
-                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-l cursor-grab active:cursor-grabbing transition-colors shrink-0 flex items-center justify-center"
+                  className="p-2 text-slate-400 hover:text-[#004776] hover:bg-slate-100 rounded-l cursor-grab active:cursor-grabbing transition-colors shrink-0 flex items-center justify-center"
                   title="Drag to reorder position"
                   aria-label={`Drag to reorder ${title}`}
                 >
-                  <GripVertical className="size-3.5" />
+                  <GripVertical className="size-4" />
                 </div>
 
                 <button
                   type="button"
                   aria-expanded={open}
                   onClick={() => toggleIndex(index)}
-                  className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-blue-600 cursor-pointer"
+                  className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-[#004776] cursor-pointer"
                 >
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 px-1 text-xs font-bold text-blue-700">
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 border border-slate-300 px-1 text-xs font-bold text-slate-800">
                     #{index + 1}
                   </span>
                   {thumbnail && (
@@ -623,16 +620,16 @@ function ArrayField(props: InspectorFieldProps) {
                     <img
                       src={thumbnail}
                       alt=""
-                      className="size-7 shrink-0 rounded-md border border-slate-200 bg-slate-100 object-cover"
+                      className="size-7 shrink-0 rounded-md border border-slate-300 bg-slate-100 object-cover"
                     />
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800">
+                  <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
                     {title}
                   </span>
                   <ChevronDown
                     className={cn(
                       "size-4 shrink-0 text-slate-400 transition-transform",
-                      open && "rotate-180 text-blue-600"
+                      open && "rotate-180 text-slate-900"
                     )}
                   />
                 </button>
@@ -641,7 +638,7 @@ function ArrayField(props: InspectorFieldProps) {
                   aria-label={`Move ${title} up`}
                   disabled={disabled || index === 0}
                   onClick={() => move(index, -1)}
-                  className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
+                  className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
                   title="Move up"
                 >
                   <ArrowUp className="size-3.5" />
@@ -651,7 +648,7 @@ function ArrayField(props: InspectorFieldProps) {
                   aria-label={`Move ${title} down`}
                   disabled={disabled || index === items.length - 1}
                   onClick={() => move(index, 1)}
-                  className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
+                  className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
                   title="Move down"
                 >
                   <ArrowDown className="size-3.5" />
@@ -682,7 +679,7 @@ function ArrayField(props: InspectorFieldProps) {
               </div>
 
               {open && (
-                <div className="space-y-4 border-t border-slate-100 p-3.5">
+                <div className="space-y-4 border-t border-slate-200 p-4 bg-white">
                   {Object.entries(fields)
                     .filter(([key]) => key !== "id")
                     .map(([key, child]) => (
@@ -700,7 +697,7 @@ function ArrayField(props: InspectorFieldProps) {
 
             {/* Blue drop indicator seam below */}
             {isTargetingThis && dropPosition === "after" && (
-              <div className="absolute -bottom-1.5 left-0 right-0 z-30 h-1 bg-blue-600 rounded-full shadow-xs pointer-events-none" />
+              <div className="absolute -bottom-1.5 left-0 right-0 z-30 h-1 bg-[#004776] rounded-full shadow-xs pointer-events-none" />
             )}
           </div>
         );
@@ -748,8 +745,8 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "object") {
     return (
-      <fieldset className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/40 p-3.5">
-        <legend className="px-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">{field.label}</legend>
+      <fieldset className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
+        <legend className="px-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">{field.label}</legend>
         {Object.entries(field.fields || {}).map(([key, child]) => (
           <InspectorField
             {...props}
@@ -765,9 +762,9 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "switch") {
     return (
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3">
         <div className="min-w-0">
-          <Label htmlFor={id} className="text-sm font-semibold text-slate-800 cursor-pointer">
+          <Label htmlFor={id} className="text-sm font-bold text-slate-900 cursor-pointer">
             {field.label}
           </Label>
           {field.description && (
@@ -789,7 +786,7 @@ export function InspectorField(props: InspectorFieldProps) {
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-sm font-semibold text-slate-800">
+      <Label htmlFor={id} className="text-sm font-bold text-slate-900">
         {field.label}
       </Label>
       {field.type === "richtext" ? (
@@ -802,7 +799,7 @@ export function InspectorField(props: InspectorFieldProps) {
           placeholder={field.placeholder}
           aria-describedby={field.description ? descriptionId : undefined}
           onChange={(event) => changeText(event.target.value)}
-          className="min-h-24 resize-y bg-white text-sm leading-relaxed"
+          className="min-h-24 resize-y bg-white text-sm font-medium leading-relaxed border-slate-300 rounded-lg p-3"
         />
       ) : field.type === "select" ? (
         <select
@@ -815,7 +812,7 @@ export function InspectorField(props: InspectorFieldProps) {
             );
             onChange(path, option?.value ?? event.target.value);
           }}
-          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-sm font-medium text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/15"
+          className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-900 focus:border-[#004776] focus:outline-none focus:ring-2 focus:ring-[#004776]/15"
         >
           {field.options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -839,7 +836,7 @@ export function InspectorField(props: InspectorFieldProps) {
               ? onChange(path, event.target.value === "" ? "" : Number(event.target.value))
               : changeText(event.target.value)
           }
-          className="h-9 min-w-0 bg-white text-sm"
+          className="h-10 min-w-0 bg-white text-sm font-medium border-slate-300 rounded-lg px-3"
         />
       )}
       {field.description && (
