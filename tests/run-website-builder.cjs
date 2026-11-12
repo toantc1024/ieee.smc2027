@@ -19,7 +19,7 @@ for (const extension of [".ts", ".tsx"]) {
     module._compile(result.outputText, filename);
   };
 }
-for (const filename of ["page-tree-and-dnd.test.ts", "component-editor.test.ts", "hcmute-blocks.test.ts", "hcmute-academic.test.ts", "reusable-templates.test.ts", "keyboard-shortcuts.test.ts"]) {
+for (const filename of ["page-tree-and-dnd.test.ts", "component-editor.test.ts", "hcmute-blocks.test.ts", "hcmute-academic.test.ts", "reusable-templates.test.ts", "keyboard-shortcuts.test.ts", "committee-dnd.test.ts"]) {
   require(path.join(__dirname, "website-builder", filename));
 }
 require(path.join(__dirname, "website-builder", "selection-hover.integration.test.cjs"));

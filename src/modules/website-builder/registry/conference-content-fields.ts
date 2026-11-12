@@ -62,9 +62,40 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
     groups: {
       type: "array", label: "Committee groups", itemLabel: "group", itemLabelKey: "groupName",
       defaultValue: COMMITTEE_GROUPS.map((group) => ({ ...group, members: group.members.map((member) => ({ ...member, photo: member.photo ?? CHAIR_PHOTO_MAP[member.name] ?? "" })) })),
+      defaultItem: {
+        groupName: "New Committee Group",
+        members: [
+          {
+            name: "New Member",
+            role: "Committee Member",
+            affiliation: "Ho Chi Minh City University of Technology and Education",
+            country: "Vietnam",
+            photo: "",
+          },
+        ],
+      },
       itemFields: {
         groupName: text("Group name"),
-        members: { type: "array", label: "Members", itemLabel: "member", itemLabelKey: "name", itemFields: { photo: image("Portrait"), name: text("Full name"), role: text("Role / position"), affiliation: text("University / organization"), country: text("Country") } },
+        members: {
+          type: "array",
+          label: "Members",
+          itemLabel: "member",
+          itemLabelKey: "name",
+          defaultItem: {
+            name: "New Member",
+            role: "Committee Member",
+            affiliation: "Ho Chi Minh City University of Technology and Education",
+            country: "Vietnam",
+            photo: "",
+          },
+          itemFields: {
+            photo: image("Portrait"),
+            name: text("Full name"),
+            role: text("Role / position"),
+            affiliation: text("University / organization"),
+            country: text("Country"),
+          },
+        },
       },
     },
   },

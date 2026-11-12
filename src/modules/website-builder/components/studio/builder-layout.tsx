@@ -118,7 +118,7 @@ export function BuilderLayout() {
               "flex-1 min-h-0 relative overflow-hidden bg-slate-50 grid",
               isPreview
                 ? "grid-cols-1"
-                : "grid-cols-[272px_minmax(0,1fr)_316px] xl:grid-cols-[300px_minmax(0,1fr)_336px]"
+                : "grid-cols-[280px_minmax(0,1fr)_380px] xl:grid-cols-[300px_minmax(0,1fr)_420px]"
             )}
           >
             {/* Left Drawer */}

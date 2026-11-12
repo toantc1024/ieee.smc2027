@@ -9,6 +9,7 @@ import {
   ChevronsUpDown,
   FileText,
   FolderOpen,
+  GripVertical,
   ImagePlus,
   Loader2,
   Plus,
@@ -278,10 +279,10 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
             {isImage ? <ImagePlus className="size-5" /> : <FileText className="size-5" />}
           </div>
           <div className="space-y-0.5">
-            <p className="text-xs font-semibold text-slate-700">
+            <p className="text-sm font-semibold text-slate-700">
               {url ? "Media unavailable · select a replacement" : isImage ? "Drop image here or browse" : "Drop PDF here or browse"}
             </p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-xs text-slate-400">
               {isImage ? "JPG, PNG, WebP, GIF, SVG · Max 10 MB" : "PDF document · Max 10 MB"}
             </p>
           </div>
@@ -293,7 +294,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               aria-label={`${url ? "Replace" : "Upload"} ${field.label}`}
               aria-busy={uploading}
               onClick={() => inputRef.current?.click()}
-              className="flex h-8 items-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
             >
               <Upload className="size-3.5" />
               <span>Upload</span>
@@ -303,7 +304,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition-colors hover:border-blue-400 hover:text-blue-600 disabled:opacity-50 cursor-pointer"
             >
               <FolderOpen className="size-3.5 text-blue-600" />
               <span>Library</span>
@@ -345,11 +346,11 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           setBrokenUrl(null);
           onChange(path, event.target.value);
         }}
-        className="h-8 bg-white text-xs"
+        className="h-9 bg-white text-sm"
       />
 
       {field.description && (
-        <p className="text-[11px] leading-relaxed text-slate-500">{field.description}</p>
+        <p className="text-xs leading-relaxed text-slate-500">{field.description}</p>
       )}
       {error && (
         <p role="alert" className="text-xs font-medium text-rose-600">
@@ -381,6 +382,12 @@ function ArrayField(props: InspectorFieldProps) {
   const fields = field.itemFields || field.arrayFields || {};
   const [expandedSet, setExpandedSet] = useState<Set<number>>(() => new Set([0]));
   const itemLabel = field.itemLabel || "item";
+
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(null);
+
+  const arrayPathKey = path.join(".");
 
   const name = (item: Record<string, unknown>, index: number) => {
     const raw =
@@ -415,14 +422,90 @@ function ArrayField(props: InspectorFieldProps) {
     setExpandedSet(new Set([target]));
   }
 
+  function handleDragStart(e: React.DragEvent, index: number) {
+    if (disabled) return;
+    e.dataTransfer.setData("text/plain", String(index));
+    e.dataTransfer.setData("application/x-builder-array-path", arrayPathKey);
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    if (draggedIndex === null || draggedIndex === index || disabled) return;
+    const dragSourcePath = e.dataTransfer.getData("application/x-builder-array-path");
+    if (dragSourcePath && dragSourcePath !== arrayPathKey) return;
+
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const pos: "before" | "after" = e.clientY < midY ? "before" : "after";
+    setDragOverIndex(index);
+    setDropPosition(pos);
+  }
+
+  function handleDragLeave(e: React.DragEvent, index: number) {
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+    if (dragOverIndex === index) {
+      setDragOverIndex(null);
+      setDropPosition(null);
+    }
+  }
+
+  function handleDragEnd() {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDropPosition(null);
+  }
+
+  function handleDrop(e: React.DragEvent, targetIndex: number) {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex || disabled) {
+      handleDragEnd();
+      return;
+    }
+
+    const from = draggedIndex;
+    let target = targetIndex;
+    if (dropPosition === "after" && from > targetIndex) {
+      target = targetIndex + 1;
+    } else if (dropPosition === "before" && from < targetIndex) {
+      target = targetIndex - 1;
+    }
+
+    const next = [...items];
+    const [moved] = next.splice(from, 1);
+    const clamped = Math.max(0, Math.min(next.length, target));
+    next.splice(clamped, 0, moved);
+    onChange(path, next);
+
+    setExpandedSet((prev) => {
+      const nextSet = new Set<number>();
+      prev.forEach((idx) => {
+        if (idx === from) {
+          nextSet.add(clamped);
+        } else {
+          let updated = idx;
+          if (from < clamped && idx > from && idx <= clamped) updated = idx - 1;
+          else if (from > clamped && idx >= clamped && idx < from) updated = idx + 1;
+          nextSet.add(updated);
+        }
+      });
+      return nextSet;
+    });
+
+    handleDragEnd();
+  }
+
   const allExpanded = items.length > 0 && expandedSet.size >= items.length;
 
   return (
     <div className="space-y-2.5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
-          <h5 className="text-xs font-bold text-slate-800">{field.label}</h5>
-          <span className="rounded-full bg-blue-50 border border-blue-100 px-1.5 py-0.2 text-[10px] font-bold text-blue-700">
+          <h5 className="text-sm font-bold text-slate-800">{field.label}</h5>
+          <span className="rounded-full bg-blue-50 border border-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700">
             {items.length}
           </span>
         </div>
@@ -434,13 +517,13 @@ function ArrayField(props: InspectorFieldProps) {
               onClick={() =>
                 setExpandedSet(allExpanded ? new Set() : new Set(items.map((_, i) => i)))
               }
-              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[10px] font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 cursor-pointer"
+              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 cursor-pointer"
               title={allExpanded ? "Collapse all" : "Expand all"}
             >
               {allExpanded ? (
-                <ChevronsDownUp className="size-3" />
+                <ChevronsDownUp className="size-3.5" />
               ) : (
-                <ChevronsUpDown className="size-3" />
+                <ChevronsUpDown className="size-3.5" />
               )}
             </button>
           )}
@@ -458,7 +541,7 @@ function ArrayField(props: InspectorFieldProps) {
               onChange(path, [...items, item]);
               setExpandedSet(new Set([items.length]));
             }}
-            className="flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-40 cursor-pointer"
+            className="flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-40 cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Add {itemLabel}</span>
@@ -467,11 +550,11 @@ function ArrayField(props: InspectorFieldProps) {
       </div>
 
       {field.description && (
-        <p className="text-[11px] leading-relaxed text-slate-500">{field.description}</p>
+        <p className="text-xs leading-relaxed text-slate-500">{field.description}</p>
       )}
 
       {items.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-3 py-5 text-center text-xs text-slate-500">
+        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-3 py-6 text-center text-sm text-slate-500">
           No {field.label.toLowerCase()} yet. Click Add {itemLabel} to create one.
         </div>
       )}
@@ -479,6 +562,8 @@ function ArrayField(props: InspectorFieldProps) {
       {items.map((item, index) => {
         const title = name(item, index);
         const open = expandedSet.has(index);
+        const isDraggingThis = draggedIndex === index;
+        const isTargetingThis = dragOverIndex === index;
         const thumbnail =
           typeof item?.image === "string" && item.image
             ? item.image
@@ -491,98 +576,131 @@ function ArrayField(props: InspectorFieldProps) {
         return (
           <div
             key={index}
-            className={cn(
-              "overflow-hidden rounded-xl border transition-colors",
-              open ? "border-blue-200 bg-white shadow-xs" : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
-            )}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={(e) => handleDragLeave(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            className="relative"
           >
-            <div className="flex items-center gap-1 pr-1.5">
-              <button
-                type="button"
-                aria-expanded={open}
-                onClick={() => toggleIndex(index)}
-                className="flex min-w-0 flex-1 items-center gap-2.5 p-2.5 text-left focus-visible:outline-2 focus-visible:outline-blue-600 cursor-pointer"
-              >
-                <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 px-1 text-[10px] font-bold text-blue-700">
-                  #{index + 1}
-                </span>
-                {thumbnail && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={thumbnail}
-                    alt=""
-                    className="size-7 shrink-0 rounded-md border border-slate-200 bg-slate-100 object-cover"
-                  />
-                )}
-                <span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">
-                  {title}
-                </span>
-                <ChevronDown
-                  className={cn(
-                    "size-3.5 shrink-0 text-slate-400 transition-transform",
-                    open && "rotate-180 text-blue-600"
+            {/* Blue drop indicator seam above */}
+            {isTargetingThis && dropPosition === "before" && (
+              <div className="absolute -top-1.5 left-0 right-0 z-30 h-1 bg-blue-600 rounded-full shadow-xs pointer-events-none" />
+            )}
+
+            <div
+              className={cn(
+                "overflow-hidden rounded-xl border transition-all",
+                isDraggingThis
+                  ? "opacity-40 border-dashed border-blue-400 bg-blue-50/30 scale-[0.99]"
+                  : open
+                    ? "border-blue-200 bg-white shadow-xs"
+                    : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
+              )}
+            >
+              <div className="flex items-center gap-1 pr-1.5">
+                {/* Drag handle */}
+                <div
+                  draggable={!disabled}
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragEnd={handleDragEnd}
+                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-l cursor-grab active:cursor-grabbing transition-colors shrink-0 flex items-center justify-center"
+                  title="Drag to reorder position"
+                  aria-label={`Drag to reorder ${title}`}
+                >
+                  <GripVertical className="size-3.5" />
+                </div>
+
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  onClick={() => toggleIndex(index)}
+                  className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-blue-600 cursor-pointer"
+                >
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 px-1 text-xs font-bold text-blue-700">
+                    #{index + 1}
+                  </span>
+                  {thumbnail && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={thumbnail}
+                      alt=""
+                      className="size-7 shrink-0 rounded-md border border-slate-200 bg-slate-100 object-cover"
+                    />
                   )}
-                />
-              </button>
-              <button
-                type="button"
-                aria-label={`Move ${title} up`}
-                disabled={disabled || index === 0}
-                onClick={() => move(index, -1)}
-                className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
-                title="Move up"
-              >
-                <ArrowUp className="size-3" />
-              </button>
-              <button
-                type="button"
-                aria-label={`Move ${title} down`}
-                disabled={disabled || index === items.length - 1}
-                onClick={() => move(index, 1)}
-                className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
-                title="Move down"
-              >
-                <ArrowDown className="size-3" />
-              </button>
-              <button
-                type="button"
-                aria-label={`Remove ${title}`}
-                disabled={disabled}
-                onClick={() => {
-                  onChange(
-                    path,
-                    items.filter((_, i) => i !== index)
-                  );
-                  setExpandedSet((prev) => {
-                    const next = new Set<number>();
-                    prev.forEach((v) => {
-                      if (v < index) next.add(v);
-                      else if (v > index) next.add(v - 1);
+                  <span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800">
+                    {title}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "size-4 shrink-0 text-slate-400 transition-transform",
+                      open && "rotate-180 text-blue-600"
+                    )}
+                  />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Move ${title} up`}
+                  disabled={disabled || index === 0}
+                  onClick={() => move(index, -1)}
+                  className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
+                  title="Move up"
+                >
+                  <ArrowUp className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Move ${title} down`}
+                  disabled={disabled || index === items.length - 1}
+                  onClick={() => move(index, 1)}
+                  className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 cursor-pointer"
+                  title="Move down"
+                >
+                  <ArrowDown className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Remove ${title}`}
+                  disabled={disabled}
+                  onClick={() => {
+                    onChange(
+                      path,
+                      items.filter((_, i) => i !== index)
+                    );
+                    setExpandedSet((prev) => {
+                      const next = new Set<number>();
+                      prev.forEach((v) => {
+                        if (v < index) next.add(v);
+                        else if (v > index) next.add(v - 1);
+                      });
+                      return next;
                     });
-                    return next;
-                  });
-                }}
-                className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-25 cursor-pointer"
-                title="Remove"
-              >
-                <Trash2 className="size-3" />
-              </button>
+                  }}
+                  className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-25 cursor-pointer"
+                  title="Remove"
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              </div>
+
+              {open && (
+                <div className="space-y-4 border-t border-slate-100 p-3.5">
+                  {Object.entries(fields)
+                    .filter(([key]) => key !== "id")
+                    .map(([key, child]) => (
+                      <InspectorField
+                        {...props}
+                        key={key}
+                        field={child}
+                        value={item?.[key] ?? createFieldDefault(child)}
+                        path={[...path, index, key]}
+                      />
+                    ))}
+                </div>
+              )}
             </div>
 
-            {open && (
-              <div className="space-y-4 border-t border-slate-100 p-3">
-                {Object.entries(fields)
-                  .filter(([key]) => key !== "id")
-                  .map(([key, child]) => (
-                    <InspectorField
-                      {...props}
-                      key={key}
-                      field={child}
-                      value={item?.[key] ?? createFieldDefault(child)}
-                      path={[...path, index, key]}
-                    />
-                  ))}
-              </div>
+            {/* Blue drop indicator seam below */}
+            {isTargetingThis && dropPosition === "after" && (
+              <div className="absolute -bottom-1.5 left-0 right-0 z-30 h-1 bg-blue-600 rounded-full shadow-xs pointer-events-none" />
             )}
           </div>
         );
@@ -622,7 +740,7 @@ export function InspectorField(props: InspectorFieldProps) {
           allowGradient={/background|gradient/i.test(field.label)}
         />
         {field.description && (
-          <p className="text-[11px] leading-relaxed text-slate-500">{field.description}</p>
+          <p className="text-xs leading-relaxed text-slate-500">{field.description}</p>
         )}
       </div>
     );
@@ -630,8 +748,8 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "object") {
     return (
-      <fieldset className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/40 p-3">
-        <legend className="px-1.5 text-xs font-bold text-slate-700">{field.label}</legend>
+      <fieldset className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/40 p-3.5">
+        <legend className="px-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">{field.label}</legend>
         {Object.entries(field.fields || {}).map(([key, child]) => (
           <InspectorField
             {...props}
@@ -647,13 +765,13 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "switch") {
     return (
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 py-2.5">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
         <div className="min-w-0">
-          <Label htmlFor={id} className="text-xs font-semibold text-slate-700 cursor-pointer">
+          <Label htmlFor={id} className="text-sm font-semibold text-slate-800 cursor-pointer">
             {field.label}
           </Label>
           {field.description && (
-            <p id={descriptionId} className="mt-0.5 text-[11px] text-slate-500">
+            <p id={descriptionId} className="mt-0.5 text-xs text-slate-500">
               {field.description}
             </p>
           )}
@@ -671,7 +789,7 @@ export function InspectorField(props: InspectorFieldProps) {
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-semibold text-slate-700">
+      <Label htmlFor={id} className="text-sm font-semibold text-slate-800">
         {field.label}
       </Label>
       {field.type === "richtext" ? (
@@ -684,7 +802,7 @@ export function InspectorField(props: InspectorFieldProps) {
           placeholder={field.placeholder}
           aria-describedby={field.description ? descriptionId : undefined}
           onChange={(event) => changeText(event.target.value)}
-          className="min-h-24 resize-y bg-white text-xs leading-relaxed"
+          className="min-h-24 resize-y bg-white text-sm leading-relaxed"
         />
       ) : field.type === "select" ? (
         <select
@@ -697,7 +815,7 @@ export function InspectorField(props: InspectorFieldProps) {
             );
             onChange(path, option?.value ?? event.target.value);
           }}
-          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/15"
+          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-sm font-medium text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/15"
         >
           {field.options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -721,11 +839,11 @@ export function InspectorField(props: InspectorFieldProps) {
               ? onChange(path, event.target.value === "" ? "" : Number(event.target.value))
               : changeText(event.target.value)
           }
-          className="h-9 min-w-0 bg-white text-xs"
+          className="h-9 min-w-0 bg-white text-sm"
         />
       )}
       {field.description && (
-        <p id={descriptionId} className="text-[11px] leading-relaxed text-slate-500">
+        <p id={descriptionId} className="text-xs leading-relaxed text-slate-500">
           {field.description}
         </p>
       )}

@@ -311,14 +311,14 @@ export function UnifiedColorPicker({
                     "repeating-conic-gradient(#e2e8f0 0% 25%, #ffffff 0% 50%) 50% / 8px 8px",
                 }}
               />
-              <span className="text-xs font-medium text-slate-700 truncate flex-1">
+              <span className="text-sm font-medium text-slate-700 truncate flex-1">
                 {value ? (isGradientValue ? "Gradient" : value) : placeholder}
               </span>
               <Pipette className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             </button>
           </PopoverTrigger>
 
-          <PopoverContent align="end" className="w-72 p-3 space-y-3">
+          <PopoverContent align="end" className="w-80 p-3.5 space-y-3">
             {allowGradient && (
               <div className="grid grid-cols-2 p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold">
                 <button

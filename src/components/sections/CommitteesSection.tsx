@@ -64,8 +64,18 @@ const CARD_STATIC_CLASSES = cn(
  * Single Committee Member Card
  */
 function CommitteeCard({ member }: { member: CommitteeMember }) {
-  const photo = member.photo ?? CHAIR_PHOTO_MAP[member.name];
+  if (!member) return null;
+  const name = member.name?.trim() || "Committee Member";
+  const photo = member.photo ?? CHAIR_PHOTO_MAP[name];
   const [imgError, setImgError] = useState(false);
+  const initials =
+    (name || "CM")
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .slice(-2)
+      .join("")
+      .toUpperCase() || "CM";
 
   return (
     <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
@@ -103,7 +113,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
             {photo && !imgError ? (
               <Image
                 src={photo}
-                alt={member.name}
+                alt={name}
                 fill
                 draggable={false}
                 className="object-cover object-bottom scale-105 origin-bottom pointer-events-none select-none"
@@ -113,12 +123,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5 pointer-events-none select-none">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-sm bg-white/90 border border-blue-200/80 group-hover/card:border-white/40 flex items-center justify-center text-[#115eff] group-hover/card:text-white group-hover/card:bg-white/20 font-bold text-sm sm:text-lg md:text-2xl shadow-xs transition-all duration-300">
-                  {member.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .filter(Boolean)
-                    .slice(-2)
-                    .join("")}
+                  {initials}
                 </div>
               </div>
             )}
@@ -129,10 +134,10 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
         <div className="relative z-20 w-full p-2.5 sm:p-3 md:p-3.5 bg-white group-hover/card:bg-[#115eff] border-t border-slate-200 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[105px] sm:min-h-[115px] md:min-h-[120px]">
           <div className="relative z-10">
             <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
-              {member.role}
+              {member.role || "Committee Member"}
             </span>
             <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
-              {member.name}
+              {name}
             </h4>
             <p className="text-[11px] sm:text-xs text-slate-500 group-hover/card:!text-white/80 mt-0.5 font-normal leading-snug transition-colors duration-300 line-clamp-1">
               {member.affiliation || "\u00A0"}
@@ -141,7 +146,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
 
           <div className="mt-2 sm:mt-2.5 pt-2 border-t border-slate-100 group-hover/card:border-white/20 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 group-hover/card:text-white/80 transition-colors duration-300 gap-1">
             <span className="font-semibold text-slate-700 group-hover/card:text-white truncate">
-              {member.country}
+              {member.country || "Vietnam"}
             </span>
             <span className="text-[#004776] group-hover/card:text-white/80 text-[10px] font-semibold shrink-0">
               IEEE SMC
@@ -273,12 +278,22 @@ function CommitteeGroupCarousel({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
+
+  const members = useMemo(
+    () => (Array.isArray(group?.members) ? group.members.filter(Boolean) : []),
+    [group?.members]
+  );
+  const memberCount = members.length;
+
   // Default: groups with <= 5 members do not overflow on desktop (1280px site width)
-  const [isOverflowing, setIsOverflowing] = useState(() => group.members.length > 5);
+  const [isOverflowing, setIsOverflowing] = useState(() => memberCount > 5);
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el || memberCount === 0) {
+      setIsOverflowing(false);
+      return;
+    }
 
     const checkOverflow = () => {
       // Guard against measuring un-mounted or 0-width elements
@@ -289,7 +304,7 @@ function CommitteeGroupCarousel({
         w < 640 ? 150 : w < 768 ? 170 : w < 1024 ? 190 : w < 1280 ? 205 : 215;
       const gap = w < 640 ? 12 : 16;
       const totalRequiredWidth =
-        group.members.length * cardWidth + (group.members.length - 1) * gap;
+        memberCount * cardWidth + (memberCount - 1) * gap;
 
       // Only overflow if total required width is strictly greater than container width
       setIsOverflowing(totalRequiredWidth > el.clientWidth);
@@ -304,18 +319,18 @@ function CommitteeGroupCarousel({
       ro.disconnect();
       window.removeEventListener("resize", checkOverflow);
     };
-  }, [group.members.length]);
+  }, [memberCount]);
 
   // When overflowing, ensure Embla has enough slides so that canLoop() is always true,
   // enabling seamless, infinite circular scrolling from the last item back to the first.
   const carouselMembers = useMemo(() => {
-    if (!isOverflowing) return group.members;
-    if (group.members.length < 12) {
-      const repeat = Math.ceil(14 / group.members.length);
-      return Array.from({ length: repeat }, () => group.members).flat();
+    if (!isOverflowing || memberCount === 0) return members;
+    if (memberCount < 12) {
+      const repeat = Math.min(14, Math.ceil(14 / memberCount));
+      return Array.from({ length: repeat }, () => members).flat();
     }
-    return group.members;
-  }, [group.members, isOverflowing]);
+    return members;
+  }, [members, isOverflowing, memberCount]);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsHovered(true);
@@ -333,6 +348,8 @@ function CommitteeGroupCarousel({
     setHoveredSide(null);
   };
 
+  const groupName = group?.groupName || "Committee Group";
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Group Header */}
@@ -340,22 +357,31 @@ function CommitteeGroupCarousel({
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-6 bg-[#115eff] rounded-xs shrink-0" />
           <h2 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight">
-            {group.groupName}
+            {groupName}
           </h2>
         </div>
         <span className="text-xs sm:text-sm font-semibold text-slate-500 pl-4 sm:pl-0">
-          {group.members.length} {group.members.length === 1 ? "Member" : "Members"}
+          {memberCount} {memberCount === 1 ? "Member" : "Members"}
         </span>
       </div>
 
       {/* Row Container */}
       <div ref={containerRef} className="relative w-full">
-        {!isOverflowing ? (
+        {memberCount === 0 ? (
+          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 sm:p-8 text-center">
+            <p className="text-sm font-semibold text-slate-600">
+              No committee members in &ldquo;{groupName}&rdquo; yet.
+            </p>
+            <p className="text-xs text-slate-400 mt-1">
+              Add members using the right-side inspector panel.
+            </p>
+          </div>
+        ) : !isOverflowing ? (
           /* Non-overflowing items: Centered, exact same card size, NO chevrons, NO fade blur */
           <div className="flex flex-wrap sm:flex-nowrap justify-center items-stretch gap-3 sm:gap-4 py-2">
-            {group.members.map((member, idx) => (
+            {members.map((member, idx) => (
               <div
-                key={`${member.name}-${idx}`}
+                key={`${member.name || "member"}-${idx}`}
                 className={CARD_STATIC_CLASSES}
               >
                 <CommitteeCard member={member} />
@@ -381,7 +407,7 @@ function CommitteeGroupCarousel({
               <CarouselContent className="py-2 items-stretch cursor-grab active:cursor-grabbing">
                 {carouselMembers.map((member, idx) => (
                   <CarouselItem
-                    key={`${member.name}-${idx}`}
+                    key={`${member.name || "member"}-${idx}`}
                     className={cn(SLIDE_BASIS_CLASSES, "shrink-0 flex")}
                   >
                     <div className="w-full h-full flex">
@@ -393,7 +419,7 @@ function CommitteeGroupCarousel({
               <CommitteeCarouselControls
                 isHovered={isHovered}
                 hoveredSide={hoveredSide}
-                groupName={group.groupName}
+                groupName={groupName}
               />
             </Carousel>
           </div>
@@ -408,6 +434,8 @@ export function CommitteesSection({
   subtitle = "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
   groups = COMMITTEE_GROUPS,
 }: CommitteesSectionProps) {
+  const safeGroups = Array.isArray(groups) && groups.length > 0 ? groups.filter(Boolean) : COMMITTEE_GROUPS;
+
   return (
     <SectionContainer id="committees" fullWidthBg="bg-white">
       {/* 1. Page / Section Header */}
@@ -428,8 +456,8 @@ export function CommitteesSection({
 
       {/* 2. All Groups Displayed - Centered if no overflow, Circular Carousel on overflow with hover-only fade blur */}
       <div className="px-4 sm:px-6 py-10 sm:py-14 space-y-12 sm:space-y-16">
-        {groups.map((group) => (
-          <CommitteeGroupCarousel key={group.groupName} group={group} />
+        {safeGroups.map((group, idx) => (
+          <CommitteeGroupCarousel key={`${group?.groupName || "group"}-${idx}`} group={group} />
         ))}
       </div>
     </SectionContainer>

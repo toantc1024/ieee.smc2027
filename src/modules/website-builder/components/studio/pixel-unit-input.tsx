@@ -91,12 +91,12 @@ export function PixelUnitInput({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-1">
-        <span className="text-[11px] font-semibold text-slate-700 truncate">{label}</span>
+        <span className="text-xs font-semibold text-slate-700 truncate">{label}</span>
         {normalized && (
           <button
             type="button"
             onClick={() => onChange("")}
-            className="text-[10px] font-medium text-slate-400 hover:text-blue-600 flex items-center gap-0.5 transition-colors cursor-pointer"
+            className="text-xs font-medium text-slate-400 hover:text-blue-600 flex items-center gap-0.5 transition-colors cursor-pointer"
             title="Reset to default"
           >
             <RotateCcw className="w-2.5 h-2.5" />
@@ -105,14 +105,14 @@ export function PixelUnitInput({
         )}
       </div>
 
-      <div className="flex items-center h-8 rounded-lg border border-slate-200 bg-white focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-500/15 overflow-hidden">
+      <div className="flex items-center h-9 rounded-lg border border-slate-200 bg-white focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-500/15 overflow-hidden">
         <button
           type="button"
           onClick={() => handleStep(-step)}
-          className="h-full px-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0 border-r border-slate-100"
+          className="h-full px-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0 border-r border-slate-100"
           aria-label={`Decrease ${label}`}
         >
-          <Minus className="w-3 h-3" />
+          <Minus className="w-3.5 h-3.5" />
         </button>
 
         <input
@@ -122,30 +122,30 @@ export function PixelUnitInput({
           onChange={handleInputChange}
           placeholder="Auto"
           aria-label={label}
-          className="w-full min-w-0 h-full px-2 text-center text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal bg-transparent focus:outline-none"
+          className="w-full min-w-0 h-full px-2 text-center text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal bg-transparent focus:outline-none"
         />
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="h-full px-1.5 text-[10px] font-bold text-slate-500 hover:text-blue-600 hover:bg-slate-50 flex items-center gap-0.5 border-l border-slate-100 transition-colors cursor-pointer shrink-0"
+              className="h-full px-2 text-xs font-bold text-slate-500 hover:text-blue-600 hover:bg-slate-50 flex items-center gap-0.5 border-l border-slate-100 transition-colors cursor-pointer shrink-0"
               aria-label={`${label} presets`}
             >
               <span>px</span>
-              <ChevronDown className="w-2.5 h-2.5" />
+              <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-52 p-2.5 space-y-2">
+          <PopoverContent align="end" className="w-56 p-2.5 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-700">{label}</span>
+              <span className="text-xs font-bold text-slate-800">{label}</span>
               <button
                 type="button"
                 onClick={() => {
                   onChange("");
                   setOpen(false);
                 }}
-                className="text-[10px] font-semibold text-blue-600 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
               >
                 Default
               </button>

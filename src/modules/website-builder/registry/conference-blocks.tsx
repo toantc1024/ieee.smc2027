@@ -35,7 +35,7 @@ import {
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { CallForPapers } from "@/components/sections/CallForPapers";
 import { KeynoteSpeakersSection } from "@/components/sections/KeynoteSpeakersSection";
-import { CommitteesSection } from "@/components/sections/CommitteesSection";
+import { CommitteesSection, CHAIR_PHOTO_MAP } from "@/components/sections/CommitteesSection";
 import { TracksExplorer } from "@/components/sections/TracksExplorer";
 import { ImportantDates } from "@/components/sections/ImportantDates";
 import { PaymentMethods } from "@/components/sections/PaymentMethods";
@@ -61,7 +61,7 @@ import { NewsList } from "@/components/sections/NewsList";
 import { About } from "@/components/sections/About";
 import { CfpSubscribe } from "@/components/sections/CfpSubscribe";
 import { SubmissionCountdown } from "@/components/sections/SubmissionCountdown";
-import { CONFERENCE_INFO } from "@/data/conference";
+import { CONFERENCE_INFO, COMMITTEE_GROUPS } from "@/data/conference";
 import { MODULAR_BLOCK_DEFINITIONS } from "./modular-blocks";
 import { CONFERENCE_CONTENT_FIELDS } from "./conference-content-fields";
 import { ColumnsSlot } from "../components/canvas/columns-slot";
@@ -201,6 +201,13 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
       title: "Organizing Committee",
       subtitle: "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       autoplayDelay: 3500,
+      groups: COMMITTEE_GROUPS.map((group) => ({
+        ...group,
+        members: group.members.map((member) => ({
+          ...member,
+          photo: member.photo ?? CHAIR_PHOTO_MAP[member.name] ?? "",
+        })),
+      })),
     },
     render: (props) => <CommitteesSection {...props} />,
   },

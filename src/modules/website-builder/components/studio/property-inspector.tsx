@@ -74,16 +74,16 @@ export function PropertyInspector() {
   return (
     <div className="h-full flex flex-col bg-white select-none">
       {/* HCM-UTE Inspector Top Header */}
-      <div className="px-3.5 py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0">
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
             <Icon className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-xs font-bold text-slate-900 truncate leading-tight">
+            <h4 className="text-sm font-bold text-slate-900 truncate leading-tight">
               {def?.label || selectedBlock.type}
             </h4>
-            <p className="text-[10px] font-medium text-slate-400 truncate mt-0.5">
+            <p className="text-xs font-medium text-slate-400 truncate mt-0.5">
               #{shortId}
             </p>
           </div>
@@ -94,7 +94,7 @@ export function PropertyInspector() {
             type="button"
             onClick={() => toggleBlockHidden(selectedBlock.id)}
             className={cn(
-              "h-7 px-2 rounded-md border text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+              "h-7 px-2.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
               isHidden
                 ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
                 : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600"
@@ -109,7 +109,7 @@ export function PropertyInspector() {
             type="button"
             onClick={() => setInspectorTab(isJsonOpen ? "content" : "json")}
             className={cn(
-              "h-7 px-2 rounded-md border text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer",
+              "h-7 px-2.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer",
               isJsonOpen
                 ? "border-blue-600 bg-blue-600 text-white shadow-2xs"
                 : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600"
@@ -136,31 +136,31 @@ export function PropertyInspector() {
 
       {/* Primary Pill Tabs: Content | Styles */}
       {!isJsonOpen && (
-        <div className="grid grid-cols-2 p-2 border-b border-slate-200 bg-slate-50/80 gap-1.5 shrink-0">
+        <div className="grid grid-cols-2 p-2 border-b border-slate-200 bg-slate-50/80 gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setInspectorTab("content")}
             className={cn(
-              "h-8 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+              "h-9 rounded-lg text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
               inspectorTab === "content"
                 ? "bg-blue-600 text-white shadow-xs font-bold"
                 : "bg-white border border-slate-200/80 text-slate-600 font-semibold hover:text-slate-900"
             )}
           >
-            <FileEdit className="w-3.5 h-3.5" />
+            <FileEdit className="w-4 h-4" />
             <span>Content</span>
           </button>
           <button
             type="button"
             onClick={() => setInspectorTab("styles")}
             className={cn(
-              "h-8 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
+              "h-9 rounded-lg text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
               inspectorTab === "styles"
                 ? "bg-blue-600 text-white shadow-xs font-bold"
                 : "bg-white border border-slate-200/80 text-slate-600 font-semibold hover:text-slate-900"
             )}
           >
-            <Paintbrush className="w-3.5 h-3.5" />
+            <Paintbrush className="w-4 h-4" />
             <span>Styles</span>
           </button>
         </div>
@@ -171,14 +171,14 @@ export function PropertyInspector() {
         <div className="mx-3.5 mt-3 rounded-xl border border-amber-200 bg-amber-50/90 px-3 py-2 flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <EyeOff className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="text-[11px] font-semibold text-amber-800 truncate">
+            <span className="text-xs font-semibold text-amber-800 truncate">
               Hidden from public website
             </span>
           </div>
           <button
             type="button"
             onClick={() => toggleBlockHidden(selectedBlock.id)}
-            className="px-2 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold shrink-0 cursor-pointer"
+            className="px-2 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0 cursor-pointer"
           >
             Show
           </button>
@@ -235,13 +235,13 @@ function StylesInspectorPanel({
   return (
     <div className="space-y-4 p-4 select-text">
       {/* Visibility & Side Borders */}
-      <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+      <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <Label htmlFor="inspector-visible-switch" className="text-xs font-semibold text-slate-800 cursor-pointer">
+            <Label htmlFor="inspector-visible-switch" className="text-sm font-semibold text-slate-800 cursor-pointer">
               Visible on Website
             </Label>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Display this section to visitors on the live page.
             </p>
           </div>
@@ -254,10 +254,10 @@ function StylesInspectorPanel({
 
         <div className="border-t border-slate-200/80 pt-2.5 flex items-center justify-between gap-3">
           <div>
-            <Label htmlFor="section-side-borders" className="text-xs font-semibold text-slate-800 cursor-pointer">
+            <Label htmlFor="section-side-borders" className="text-sm font-semibold text-slate-800 cursor-pointer">
               Hide Side Borders
             </Label>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Remove vertical frame lines on the left and right edges.
             </p>
           </div>
@@ -273,7 +273,7 @@ function StylesInspectorPanel({
 
       {/* Colors & Gradients */}
       <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-3.5">
-        <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Colors & Background
         </h5>
 
@@ -378,7 +378,7 @@ function StylesInspectorPanel({
 
       {/* Custom CSS */}
       <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3.5">
-        <Label htmlFor="custom-css-classes" className="text-xs font-semibold text-slate-700">
+        <Label htmlFor="custom-css-classes" className="text-sm font-semibold text-slate-700">
           Custom CSS Classes
         </Label>
         <Input
@@ -388,7 +388,7 @@ function StylesInspectorPanel({
             onUpdateStyles({ className: e.target.value, customClass: e.target.value })
           }
           placeholder="py-12 bg-slate-50"
-          className="text-xs h-8 bg-white"
+          className="text-sm h-9 bg-white"
         />
       </div>
     </div>
@@ -489,10 +489,11 @@ function ContentFields({
     const current = findBlock(useBuilderStore.getState().data.content, block.id);
     if (!current) return;
     const rootKey = String(path[0]);
-    const rootValue =
+    const rawRoot =
       current.props[rootKey] ??
       definition?.defaultProps[rootKey] ??
       fields[rootKey]?.defaultValue;
+    const rootValue = rawRoot !== undefined ? structuredClone(rawRoot) : undefined;
     const updated =
       path.length === 1 ? value : setFieldValue(rootValue, path.slice(1), value);
     useBuilderStore.getState().updateBlockProps(block.id, { [rootKey]: updated });
@@ -505,15 +506,15 @@ function ContentFields({
         <button
           type="button"
           onClick={onOpenStyles}
-          className="w-full flex items-center justify-between gap-2 rounded-xl border border-blue-100 bg-blue-50/60 hover:bg-blue-50 px-3 py-2 text-left transition-colors cursor-pointer group"
+          className="w-full flex items-center justify-between gap-2 rounded-xl border border-blue-100 bg-blue-50/60 hover:bg-blue-50 px-3.5 py-2.5 text-left transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-2 min-w-0">
-            <Paintbrush className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span className="text-xs font-semibold text-blue-800 truncate">
+            <Paintbrush className="w-4 h-4 text-blue-600 shrink-0" />
+            <span className="text-sm font-semibold text-blue-800 truncate">
               Customize colors, spacing & borders
             </span>
           </div>
-          <ChevronRight className="w-3.5 h-3.5 text-blue-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+          <ChevronRight className="w-4 h-4 text-blue-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
         </button>
       </div>
 
