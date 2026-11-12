@@ -27,6 +27,7 @@ export function StudioClient({ pageId }: { pageId: string }) {
             id: data.page.id,
             title: data.page.title,
             slug: data.page.slug,
+            parentId: data.page.parentId,
             version: data.page.version,
             isPublished: data.page.isPublished,
             content: data.page.content,
@@ -51,10 +52,10 @@ export function StudioClient({ pageId }: { pageId: string }) {
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 gap-3">
+      <div className="h-full min-h-[420px] w-full flex flex-col items-center justify-center bg-slate-50 gap-3">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
         <p className="text-xs font-semibold text-slate-500">
-          Loading IEEE SMC Visual Studio...
+          Loading Page Studio...
         </p>
       </div>
     );
@@ -62,7 +63,7 @@ export function StudioClient({ pageId }: { pageId: string }) {
 
   if (error) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 p-6 text-center gap-4">
+      <div className="h-full min-h-[420px] w-full flex flex-col items-center justify-center bg-slate-50 p-6 text-center gap-4">
         <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
           <AlertCircle className="w-6 h-6" />
         </div>

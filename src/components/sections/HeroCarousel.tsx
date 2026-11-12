@@ -64,10 +64,11 @@ export function HeroCarousel({
   showIndicators = false,
   className,
 }: HeroCarouselProps = {}) {
-  const slides = slidesProp?.length ? slidesProp : DEFAULT_CAROUSEL_SLIDES;
+  const slides = slidesProp ?? DEFAULT_CAROUSEL_SLIDES;
   const duration = autoplayDuration;
 
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [requestedSlide, setCurrentSlide] = useState(0);
+  const currentSlide = Math.max(0, Math.min(requestedSlide, slides.length - 1));
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLElement>(null);
@@ -169,10 +170,18 @@ export function HeroCarousel({
     [animateToSlide]
   );
 
+  const [isInBuilder, setIsInBuilder] = useState(false);
+
+  useEffect(() => {
+    if (containerRef.current?.closest("[data-builder-block]")) {
+      setIsInBuilder(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
 
-    if (isAutoPlay) {
+    if (isAutoPlay && !isInBuilder && slides.length > 1) {
       autoplayTimer.current = setTimeout(() => {
         nextSlide();
       }, duration * 1000);
@@ -181,19 +190,23 @@ export function HeroCarousel({
     return () => {
       if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
     };
-  }, [currentSlide, isAutoPlay, nextSlide, duration]);
+  }, [currentSlide, isAutoPlay, isInBuilder, slides.length, nextSlide, duration]);
 
   useEffect(() => {
     slideRefs.current.forEach((el, i) => {
       if (el) {
         gsap.set(el, {
-          opacity: i === 0 ? 1 : 0,
-          zIndex: i === 0 ? 2 : 1,
+          opacity: i === currentSlide ? 1 : 0,
+          zIndex: i === currentSlide ? 2 : 1,
           scale: 1,
         });
       }
     });
-  }, []);
+  // Reinitialize slide visibility when the editor adds, removes, or reorders slides.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides]);
+
+  if (slides.length === 0) return <div className="flex min-h-64 items-center justify-center bg-slate-100 text-sm text-slate-500">Add a slide to display the hero carousel.</div>;
 
   const activeSlideData = slides[currentSlide];
 
@@ -212,18 +225,22 @@ export function HeroCarousel({
         onTouchEnd={handleTouchEnd}
       >
         {slides.map((slide, index) => {
+          const desktopSrc = slide.image || DEFAULT_CAROUSEL_SLIDES[0].image;
+          const isUnoptimizedDesktop = /^(?:\/api\/|https?:\/\/|blob:|data:)/i.test(desktopSrc);
+          const isUnoptimizedMobile = slide.mobileImage ? /^(?:\/api\/|https?:\/\/|blob:|data:)/i.test(slide.mobileImage) : false;
           return (
             <div
-              key={slide.id}
+              key={`${slide.id}-${index}`}
               ref={(el) => {
                 slideRefs.current[index] = el;
               }}
               className="absolute inset-0"
             >
               <Image
-                src={slide.image}
-                alt={slide.title}
+                src={desktopSrc}
+                alt={slide.title || "Hero banner"}
                 fill
+                unoptimized={isUnoptimizedDesktop}
                 className={cn(
                   "object-cover object-[center_35%] md:object-center",
                   slide.mobileImage ? "hidden md:block" : ""
@@ -235,8 +252,9 @@ export function HeroCarousel({
               {slide.mobileImage && (
                 <Image
                   src={slide.mobileImage}
-                  alt={slide.title}
+                  alt={slide.title || "Hero banner"}
                   fill
+                  unoptimized={isUnoptimizedMobile}
                   className="object-cover object-center block md:hidden"
                   priority={index === 0}
                   quality={75}

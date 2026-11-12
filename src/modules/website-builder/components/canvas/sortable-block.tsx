@@ -6,10 +6,11 @@ import { useDroppable, useDndContext } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
   GripVertical,
-  ArrowUp,
-  ArrowDown,
+  ChevronUp,
+  ChevronDown,
   Copy,
-  ClipboardCopy,
+  CopyPlus,
+  Scissors,
   ClipboardPaste,
   Trash2,
   Eye,
@@ -22,6 +23,8 @@ import { BlockErrorBoundary } from "./block-error-boundary";
 import { SeamDropzoneIndicator } from "./seam-dropzone";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { getBlockPresentation, isBlockHidden } from "../../utils/block-presentation";
+import { EditableChildren, EditableNestedBlock, PublicNestedBlock } from "./columns-slot";
 
 interface SortableBlockProps {
   block: PageBlock;
@@ -45,6 +48,7 @@ export function SortableBlock({
     moveBlockDown,
     duplicateBlock,
     copyBlock,
+    cutBlock,
     pasteBlock,
     clipboardBlock,
     removeBlock,
@@ -57,11 +61,12 @@ export function SortableBlock({
 
   const isSelected = selectedBlockId === block.id;
   const isHovered = hoveredBlockId === block.id;
+  const isHidden = isBlockHidden(block);
   const isPreview = viewMode === "preview";
 
   const def = getBlockDefinition(block.type);
   const ComponentToRender = def?.render;
-  const customStyles = (block.props?._styles || {}) as Record<string, string>;
+  const presentation = getBlockPresentation(block);
 
   // DnD Sortable hook
   const {
@@ -88,9 +93,10 @@ export function SortableBlock({
   });
 
   const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
-    opacity: isDragging ? 0.45 : 1,
+    opacity: isHidden ? (isHovered || isSelected ? 0.75 : 0.45) : 1,
+    zIndex: !isDragging && (isOverBefore || isOverAfter) ? 9999 : isDragging ? 100 : isSelected ? 55 : isHovered ? 50 : 2,
   };
 
   // Counter scale formula: 100 / effectiveZoom so toolbar remains crisp at any zoom
@@ -98,24 +104,19 @@ export function SortableBlock({
     effectiveZoom > 0 && effectiveZoom < 100 ? 100 / effectiveZoom : 1;
 
   if (isPreview) {
-    if (block.hidden) return null;
+    if (isHidden) return null;
     return (
       <div
         id={block.id}
         className={cn(
           "relative w-full",
-          customStyles.paddingTop,
-          customStyles.paddingBottom,
-          customStyles.className
+          presentation.className
         )}
-        style={{
-          backgroundColor: customStyles.backgroundColor || undefined,
-          color: customStyles.textColor || undefined,
-        }}
+        style={presentation.style}
       >
         <BlockErrorBoundary blockType={block.type} blockId={block.id}>
           {ComponentToRender ? (
-            <ComponentToRender {...block.props} />
+            <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
           ) : (
             <div className="p-8 text-center bg-slate-100 text-slate-500">
               Unknown block: {block.type}
@@ -131,16 +132,28 @@ export function SortableBlock({
       ref={setSortableRef}
       style={style}
       id={block.id}
+      data-builder-block={block.id}
+      data-builder-state={isSelected ? "selected" : isHovered ? "hovered" : "idle"}
+      data-builder-hidden={isHidden ? "true" : "false"}
+      {...attributes}
+      onPointerDown={(event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("[data-builder-controls], [data-builder-nested], [data-builder-dropzone]")) return;
+        listeners?.onPointerDown?.(event);
+      }}
       onClick={(e) => {
         e.stopPropagation();
         selectBlock(block.id);
       }}
-      onMouseEnter={() => hoverBlock(block.id)}
-      onMouseLeave={() => hoverBlock(null)}
+      onMouseEnter={(event) => { if (event.buttons === 0) hoverBlock(block.id); }}
+      onMouseMove={(event) => {
+        if (event.buttons === 0 && useBuilderStore.getState().hoveredBlockId !== block.id) {
+          hoverBlock(block.id);
+        }
+      }}
+      onMouseLeave={() => { if (useBuilderStore.getState().hoveredBlockId === block.id) hoverBlock(null); }}
       className={cn(
-        "relative group transition-all duration-150 select-none",
-        isSelected ? "z-[45]" : isHovered ? "z-[40]" : "z-[2]",
-        block.hidden && "opacity-45 grayscale"
+        "relative group select-none font-sans w-full cursor-grab active:cursor-grabbing touch-none"
       )}
     >
       {/* Top half droppable seam detector (only intercepts pointer when dragging) */}
@@ -151,6 +164,8 @@ export function SortableBlock({
           isAnyDragActive ? "pointer-events-auto" : "pointer-events-none"
         )}
       />
+
+      {isDragging && <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl border-2 border-dashed border-blue-500/80 bg-slate-500/10 pointer-events-none"><span className="rounded-full border border-white/20 bg-slate-900/80 px-3.5 py-1 text-xs font-bold text-white shadow-md">Dragging block</span></div>}
 
       {/* Bottom half droppable seam detector (only intercepts pointer when dragging) */}
       <div
@@ -183,10 +198,13 @@ export function SortableBlock({
         </div>
       )}
 
-      {/* Top-Left Floating Blue Action Toolbar (HCMUTE Website Builder Style) */}
+      {/* Top-Left Floating Blue Action Toolbar */}
       {(isSelected || isHovered) && !isDragging && (
         <div
-          className="absolute top-1.5 left-1.5 z-50 flex items-center gap-1.5 h-9 bg-blue-600 text-white rounded-lg px-3 py-1.5 shadow-lg shadow-blue-600/35 border border-blue-400/80 select-none"
+          className="absolute top-1.5 left-1.5 z-[70] flex items-center gap-1.5 h-9 bg-blue-600 text-white rounded-lg px-3 py-1.5 shadow-lg shadow-blue-600/35 border border-blue-400/80 select-none"
+          data-builder-toolbar
+          data-builder-controls
+          onPointerDown={(event) => event.stopPropagation()}
           style={{
             transform: counterScale !== 1 ? `scale(${counterScale})` : undefined,
             transformOrigin: "top left",
@@ -197,17 +215,17 @@ export function SortableBlock({
           <div
             {...attributes}
             {...listeners}
-            className="flex items-center gap-1.5 cursor-grab active:cursor-grabbing pr-2 border-r border-white/25 hover:text-white/90 h-full"
+            className="flex items-center gap-2 px-1.5 py-1 text-white font-bold select-none shrink-0 cursor-grab active:cursor-grabbing touch-none"
             title="Drag to reorder block"
           >
-            <GripVertical className="w-4 h-4 opacity-90 shrink-0" />
-            <span className="text-xs font-semibold tracking-tight whitespace-nowrap">
+            <GripVertical className="w-3.5 h-3.5 text-blue-100 shrink-0" />
+            <span className="text-xs font-bold tracking-tight max-w-[160px] truncate leading-none text-white">
               {def?.label || block.type}
             </span>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 pl-0.5">
+          <div className="flex items-center gap-1">
             {/* Move Up */}
             <button
               type="button"
@@ -216,10 +234,10 @@ export function SortableBlock({
                 e.stopPropagation();
                 moveBlockUp(block.id);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer shrink-0"
               title="Move Up"
             >
-              <ArrowUp className="w-3.5 h-3.5" />
+              <ChevronUp className="w-3.5 h-3.5" />
             </button>
 
             {/* Move Down */}
@@ -230,13 +248,13 @@ export function SortableBlock({
                 e.stopPropagation();
                 moveBlockDown(block.id);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer shrink-0"
               title="Move Down"
             >
-              <ArrowDown className="w-3.5 h-3.5" />
+              <ChevronDown className="w-3.5 h-3.5" />
             </button>
 
-            <div className="w-px h-4 bg-white/25 mx-0.5" />
+            <div className="w-px h-4 bg-blue-400/70 mx-0.5 shrink-0" />
 
             {/* Copy Block */}
             <button
@@ -246,27 +264,27 @@ export function SortableBlock({
                 copyBlock(block.id);
                 toast.success(`Copied "${def?.label || block.type}"`);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer shrink-0"
               title="Copy Block"
             >
-              <ClipboardCopy className="w-3.5 h-3.5" />
+              <Copy className="w-3.5 h-3.5" />
             </button>
 
-            {/* Paste Below */}
-            {clipboardBlock && (
               <button
                 type="button"
+                disabled={!clipboardBlock}
                 onClick={(e) => {
                   e.stopPropagation();
                   pasteBlock(index + 1);
                   toast.success("Pasted block below");
                 }}
-                className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+                className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer shrink-0 disabled:opacity-30"
                 title="Paste Copied Block Below"
               >
                 <ClipboardPaste className="w-3.5 h-3.5" />
               </button>
-            )}
+
+            <button type="button" onClick={(event) => { event.stopPropagation(); cutBlock(block.id); toast.success(`Cut "${def?.label || block.type}"`); }} className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer shrink-0" title="Cut Block" aria-label={`Cut ${def?.label || block.type}`}><Scissors className="w-3.5 h-3.5" /></button>
 
             {/* Duplicate */}
             <button
@@ -276,11 +294,13 @@ export function SortableBlock({
                 duplicateBlock(block.id);
                 toast.success(`Duplicated "${def?.label || block.type}"`);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer shrink-0"
               title="Duplicate Block"
             >
-              <Copy className="w-3.5 h-3.5" />
+              <CopyPlus className="w-3.5 h-3.5" />
             </button>
+
+            <div className="w-px h-4 bg-blue-400/70 mx-0.5 shrink-0" />
 
             {/* Hide / Show */}
             <button
@@ -289,11 +309,11 @@ export function SortableBlock({
                 e.stopPropagation();
                 toggleBlockHidden(block.id);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-blue-700 rounded-md transition-colors cursor-pointer"
-              title={block.hidden ? "Show Block" : "Hide Block"}
+              className={cn("w-7 h-7 flex items-center justify-center rounded-md transition-colors cursor-pointer shrink-0", isHidden ? "bg-amber-500 hover:bg-amber-600 text-white shadow-xs" : "hover:bg-blue-700")}
+              title={isHidden ? "Show Block" : "Hide Block"}
             >
-              {block.hidden ? (
-                <EyeOff className="w-3.5 h-3.5 text-amber-300" />
+              {isHidden ? (
+                <EyeOff className="w-3.5 h-3.5" />
               ) : (
                 <Eye className="w-3.5 h-3.5" />
               )}
@@ -307,7 +327,7 @@ export function SortableBlock({
                 removeBlock(block.id);
                 toast.success(`Removed "${def?.label || block.type}"`);
               }}
-              className="w-6 h-6 flex items-center justify-center hover:bg-red-500 rounded-md transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center hover:bg-red-600 rounded-md transition-colors cursor-pointer shrink-0"
               title="Delete Block"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -317,9 +337,9 @@ export function SortableBlock({
       )}
 
       {/* Hidden Status Badge (counter-scaled at bottom right) */}
-      {block.hidden && (
+      {isHidden && !isDragging && (
         <div
-          className="absolute bottom-3 right-3 z-30 px-2.5 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-md flex items-center gap-1 select-none pointer-events-none"
+          className="absolute bottom-2 right-2 z-30 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/95 text-white text-[11px] font-bold shadow-md shadow-amber-500/20 border border-amber-300 backdrop-blur font-sans select-none"
           style={{
             transform: counterScale !== 1 ? `scale(${counterScale})` : undefined,
             transformOrigin: "bottom right",
@@ -333,19 +353,15 @@ export function SortableBlock({
       {/* Render Component Body */}
       <div
         className={cn(
-          "w-full pointer-events-auto",
-          customStyles.paddingTop,
-          customStyles.paddingBottom,
-          customStyles.className
+          "min-h-[48px] w-full flex flex-col justify-center",
+          block.type !== "ColumnsSlot" && block.type !== "Container" && "pointer-events-none",
+          presentation.className
         )}
-        style={{
-          backgroundColor: customStyles.backgroundColor || undefined,
-          color: customStyles.textColor || undefined,
-        }}
+        style={presentation.style}
       >
         <BlockErrorBoundary blockType={block.type} blockId={block.id}>
           {ComponentToRender ? (
-            <ComponentToRender {...block.props} />
+            <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</ComponentToRender>
           ) : (
             <div className="p-8 text-center bg-slate-100 text-slate-500 font-medium">
               Section renderer unavailable for: {block.type}
@@ -354,23 +370,21 @@ export function SortableBlock({
         </BlockErrorBoundary>
       </div>
 
-      {/* Blue Selection Border & 4 Corner Handles (Figma / HCMUTE Artboard Style) */}
+      {/* Blue Selection Border & 4 Corner Handles */}
       <div
+        data-builder-outline
         className={cn(
-          "absolute inset-0 pointer-events-none z-40 transition-colors duration-150",
+          "absolute inset-0 pointer-events-none z-[60] transition-colors duration-100 border-2",
           isSelected
-            ? "border-2 border-blue-600 shadow-[0_0_0_1px_rgba(37,99,235,0.2)]"
+            ? isHidden ? "border-amber-500 shadow-xs" : "border-blue-600 shadow-xs"
             : isHovered
-              ? "border-2 border-blue-500/70"
-              : "border border-transparent"
+              ? isHidden ? "border-amber-400/80 border-dashed" : "border-blue-500/70"
+              : isHidden ? "border-dashed border-amber-400/40" : "border-transparent"
         )}
       >
         {isSelected && (
           <>
-            <span className="absolute -top-1.25 -left-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
-            <span className="absolute -top-1.25 -right-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
-            <span className="absolute -bottom-1.25 -left-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
-            <span className="absolute -bottom-1.25 -right-1.25 w-2.5 h-2.5 bg-white border-2 border-blue-600 rounded-[1px] shadow-xs" />
+            {["-top-1.25 -left-1.25", "-top-1.25 -right-1.25", "-bottom-1.25 -left-1.25", "-bottom-1.25 -right-1.25"].map((position) => <span key={position} className={cn("absolute w-2.5 h-2.5 bg-white border-2 rounded-none shadow-md pointer-events-none z-[70]", position, isHidden ? "border-amber-500" : "border-blue-600")} />)}
           </>
         )}
       </div>
