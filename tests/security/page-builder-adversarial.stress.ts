@@ -877,13 +877,19 @@ describe("Adversarial Challenge M3-1: Page Builder & Pages API Stress Suite", { 
       }
     });
 
-    test("PB-SEC.3: Authorized preview mode (?preview=true or ?preview=1) renders draft page with 200", async () => {
-      const res1 = await unauthClient.get(`/${draftSlug}?preview=true`);
-      assert.strictEqual(res1.status, 200, `?preview=true should allow draft view, got ${res1.status}`);
-      assert.ok(res1.text.includes("Draft Preview Mode"), "Should render draft preview indicator banner");
-
-      const res2 = await unauthClient.get(`/${draftSlug}?preview=1`);
-      assert.strictEqual(res2.status, 200, `?preview=1 should allow draft view, got ${res2.status}`);
+    test("PB-SEC.3: Only an administrator can preview a draft", async () => {
+      for (const flag of ["true", "1"]) {
+        const anonymous = await unauthClient.get(`/${draftSlug}?preview=${flag}`);
+        assert.strictEqual(anonymous.status, 404, `Anonymous preview=${flag} must not expose the draft`);
+        assert.ok(!anonymous.text.includes("Top Secret Draft Page"), "Draft title must not leak in metadata");
+        const authorized = await adminClient.get(`/${draftSlug}?preview=${flag}`);
+        assert.strictEqual(authorized.status, 200, `Admin preview=${flag} should show the draft`);
+        assert.ok(authorized.text.includes("Draft Preview Mode"), "Should render draft preview indicator banner");
+      }
+      for (const path of ["/api/admin/pages", `/api/admin/pages/${draftPageId}`, "/api/admin/posts", "/api/admin/posts/unknown"]) {
+        const anonymous = await unauthClient.get(path);
+        assert.strictEqual(anonymous.status, 401, `Anonymous access to ${path} must be rejected`);
+      }
     });
 
     test("PB-SEC.4: Publishing cycle: Publishing page opens public access (200), unpublishing returns to 404", async () => {

@@ -117,6 +117,10 @@ function AdminLoginForm() {
   const derivedError =
     errorParam === "missing_google_credentials"
       ? "Google Client Secret is not configured yet. Please sign in with Email."
+      : errorParam === "invalid_oauth_state"
+      ? "Your Google sign-in session expired or could not be verified. Please try again."
+      : errorParam === "access_denied"
+      ? "Google sign-in was cancelled. Please try again when you're ready."
       : errorParam
       ? `Authentication message: ${errorParam}`
       : null;

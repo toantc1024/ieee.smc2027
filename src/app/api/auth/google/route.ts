@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { getGoogleOAuthConfig, getRequestOrigin } from "@/lib";
+import {
+  createGoogleOAuthState,
+  GOOGLE_OAUTH_CALLBACK_PATH,
+  GOOGLE_OAUTH_LEGACY_CALLBACK_PATH,
+  setGoogleOAuthStateCookie,
+} from "@/lib/google-oauth-state";
 
 export async function GET(request: Request) {
   const { clientId } = await getGoogleOAuthConfig();
@@ -13,10 +19,12 @@ export async function GET(request: Request) {
   const currentOrigin = getRequestOrigin(request);
   const requestUrl = new URL(request.url);
   const customCallback = requestUrl.searchParams.get("callback");
-  const callbackPath = customCallback?.startsWith("/") ? customCallback : "/api/auth/callback/google";
+  const callbackPath = customCallback === GOOGLE_OAUTH_LEGACY_CALLBACK_PATH
+    ? GOOGLE_OAUTH_LEGACY_CALLBACK_PATH
+    : GOOGLE_OAUTH_CALLBACK_PATH;
   const redirectUri = `${currentOrigin}${callbackPath}`;
 
-  const state = Math.random().toString(36).substring(2);
+  const state = createGoogleOAuthState();
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   googleAuthUrl.searchParams.set("client_id", clientId);
   googleAuthUrl.searchParams.set("redirect_uri", redirectUri);
@@ -26,5 +34,7 @@ export async function GET(request: Request) {
   googleAuthUrl.searchParams.set("prompt", "select_account");
   googleAuthUrl.searchParams.set("state", state);
 
-  return NextResponse.redirect(googleAuthUrl.toString());
+  const response = NextResponse.redirect(googleAuthUrl.toString());
+  setGoogleOAuthStateCookie(response, state, new URL(currentOrigin).protocol === "https:");
+  return response;
 }

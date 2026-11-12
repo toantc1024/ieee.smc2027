@@ -48,4 +48,6 @@ yarn-error.log*
 next-env.d.ts
 .pnpm-store/
 ute.short/
+/public/uploads/*
+!/public/uploads/.gitkeep
 hcmute-website-frontend-brand/
