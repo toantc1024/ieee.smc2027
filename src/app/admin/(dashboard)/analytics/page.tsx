@@ -52,6 +52,7 @@ function AnalyticsContent() {
         title="Analytics"
         description="Editorial publishing metrics, website traffic telemetry, and system benchmarks"
         image3d="/assets/3d-icons/analytics__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-stats-bg.jpg"
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">

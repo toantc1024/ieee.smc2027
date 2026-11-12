@@ -933,6 +933,8 @@ export default function AdminUsersPage() {
       <ManagementPageHeader
         title="Users & Access Roles"
         description="Manage conference participants, speakers, delegates, credentials, and access permissions"
+        image3d="/assets/3d-icons/users__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-users-bg.jpg"
         actions={
           <Button
             type="button"

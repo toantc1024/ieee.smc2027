@@ -607,7 +607,8 @@ export default function PostsManagementPage() {
       <ManagementPageHeader
         title="Posts & News"
         description="Conference announcements, call for papers, and news updates"
-        image3d="/assets/article-management__hcmute-3d-icon.png"
+        image3d="/assets/3d-icons/article-management__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-posts-bg.jpg"
       />
 
       {/* ── Tabs Row & Top Actions (Matching HCMUTE Layout & Justification) ── */}

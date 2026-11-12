@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smc2027_pG_sEcUrE_kEy_83726190}
       POSTGRES_DB: ${POSTGRES_DB:-ieee_smc_2027}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
@@ -78,7 +78,7 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
-      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/ieee_smc_2027?schema=public}
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgresql://postgres:${POSTGRES_PASSWORD:-smc2027_pG_sEcUrE_kEy_83726190}@postgres:5432/ieee_smc_2027?schema=public}
       MINIO_ENDPOINT: ${DOCKER_MINIO_ENDPOINT:-minio}
       MINIO_PORT: ${MINIO_PORT:-9000}
       MINIO_USE_SSL: ${MINIO_USE_SSL:-false}

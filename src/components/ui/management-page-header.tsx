@@ -30,6 +30,7 @@ export function ManagementPageHeader({
 }: ManagementPageHeaderProps) {
   const effectiveImageIcon = image3d || imageIcon;
   const contentActions = actions || children;
+  const effectiveBg = backgroundImage || "/assets/manage-website-bg.jpg";
 
   if (hideBg) {
     return (
@@ -84,10 +85,10 @@ export function ManagementPageHeader({
     >
       {/* Background Graphic Pattern */}
       <div className="absolute inset-0 pointer-events-none select-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/40 via-transparent to-transparent" />
-      {backgroundImage && (
+      {effectiveBg && (
         <div
-          className="absolute inset-0 select-none pointer-events-none opacity-20 bg-cover bg-right"
-          style={{ backgroundImage: `url('${backgroundImage}')` }}
+          className="absolute inset-0 select-none pointer-events-none opacity-30 bg-cover bg-right"
+          style={{ backgroundImage: `url('${effectiveBg}')` }}
         />
       )}
 

@@ -449,6 +449,8 @@ export function PageListView() {
       <ManagementPageHeader
         title="Page Management"
         description="Design and manage conference pages, navigation hierarchies, and content sections for IEEE SMC 2027."
+        image3d="/assets/3d-icons/website-pages__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-website-bg.jpg"
         actions={
           <div className="flex items-center gap-2">
             <Button

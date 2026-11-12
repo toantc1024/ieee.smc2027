@@ -920,6 +920,8 @@ export default function HeaderEditorPage() {
       <ManagementPageHeader
         title="Header & Navigation"
         description="Configure navigation items, multi-level dropdowns, and topbar contact links"
+        image3d="/assets/3d-icons/website-pages__hcmute-3d-icon.png"
+        backgroundImage="/assets/manage-website-bg.jpg"
         actions={
           <div className="flex items-center gap-2">
             <Link
