@@ -76,7 +76,7 @@ export function PropertyInspector() {
       {/* HCM-UTE Inspector Top Header */}
       <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[#115eff] text-white flex items-center justify-center shrink-0 shadow-xs">
             <Icon className="w-4 h-4" />
           </div>
           <div className="min-w-0">
@@ -111,7 +111,7 @@ export function PropertyInspector() {
             className={cn(
               "h-8 px-2.5 rounded-md border text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer",
               isJsonOpen
-                ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
+                ? "border-[#115eff] bg-[#115eff] text-white shadow-xs"
                 : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900"
             )}
             title="Toggle JSON Data Editor"
@@ -143,7 +143,7 @@ export function PropertyInspector() {
             className={cn(
               "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "content"
-                ? "bg-[#004776] text-white shadow-xs font-bold"
+                ? "bg-[#115eff] text-white shadow-xs font-bold"
                 : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
@@ -155,7 +155,7 @@ export function PropertyInspector() {
             className={cn(
               "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "styles"
-                ? "bg-[#004776] text-white shadow-xs font-bold"
+                ? "bg-[#115eff] text-white shadow-xs font-bold"
                 : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
@@ -176,7 +176,7 @@ export function PropertyInspector() {
           <button
             type="button"
             onClick={() => toggleBlockHidden(selectedBlock.id)}
-            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-black text-white text-xs font-bold shrink-0 cursor-pointer"
+            className="px-2.5 py-1 rounded-md bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold shrink-0 cursor-pointer shadow-xs"
           >
             Show
           </button>
@@ -321,7 +321,7 @@ function StylesInspectorPanel({
                 className={cn(
                   "h-8 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer",
                   active
-                    ? "bg-slate-900 text-white shadow-xs"
+                    ? "bg-[#115eff] text-white shadow-xs font-bold"
                     : "text-slate-700 hover:text-slate-900 hover:bg-white"
                 )}
               >
@@ -454,7 +454,7 @@ function BlockJsonEditor({ block }: { block: PageBlock }) {
       <Button
         type="button"
         onClick={apply}
-        className="w-full bg-[#004776] text-white hover:bg-[#115eff] font-bold text-sm h-10 rounded-lg cursor-pointer"
+        className="w-full bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm h-10 rounded-lg shadow-xs cursor-pointer"
       >
         Apply JSON
       </Button>

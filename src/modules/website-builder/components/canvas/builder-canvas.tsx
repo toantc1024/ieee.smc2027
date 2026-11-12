@@ -55,7 +55,7 @@ function BottomCanvasDropzone({
         </div>
       )}
 
-      <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full bg-[#115eff] text-white flex items-center justify-center shadow-xs">
         <Plus className="w-5 h-5" />
       </div>
       <div className="text-center">
@@ -70,7 +70,7 @@ function BottomCanvasDropzone({
         <button
           type="button"
           onClick={onOpenLibrary}
-          className="px-4 py-2 rounded-lg bg-[#004776] hover:bg-[#115eff] text-white text-xs font-bold shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
         >
           <LayoutGrid className="w-3.5 h-3.5" />
           <span>Browse Block Library</span>
@@ -220,7 +220,7 @@ export function BuilderCanvas() {
                 onClick={(e) => e.stopPropagation()}
                 className="py-24 px-6 text-center space-y-4"
               >
-                <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto shadow-xs">
+                <div className="w-14 h-14 rounded-2xl bg-[#115eff] text-white flex items-center justify-center mx-auto shadow-xs">
                   <Plus className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">
@@ -233,7 +233,7 @@ export function BuilderCanvas() {
                   <button
                     type="button"
                     onClick={() => setSidebarTab("library")}
-                    className="px-5 py-2.5 rounded-lg bg-[#004776] hover:bg-[#115eff] text-white text-sm font-bold shadow-2xs transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold shadow-xs transition-colors cursor-pointer"
                   >
                     Open Block Library
                   </button>

@@ -105,7 +105,7 @@ export function PixelUnitInput({
         )}
       </div>
 
-      <div className="flex items-center h-10 rounded-lg border border-slate-300 bg-white focus-within:border-[#004776] focus-within:ring-2 focus-within:ring-[#004776]/15 overflow-hidden">
+      <div className="flex items-center h-10 rounded-lg border border-slate-300 bg-white focus-within:border-[#115eff] focus-within:ring-2 focus-within:ring-[#115eff]/15 overflow-hidden">
         <button
           type="button"
           onClick={() => handleStep(-step)}
@@ -164,8 +164,8 @@ export function PixelUnitInput({
                     className={cn(
                       "h-7 rounded-md text-xs font-bold border transition-colors cursor-pointer",
                       active
-                        ? "bg-slate-900 text-white border-slate-900"
-                        : "bg-white text-slate-800 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                        ? "bg-[#115eff] text-white border-[#115eff] shadow-xs"
+                        : "bg-white text-slate-800 border-slate-300 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
                     )}
                   >
                     {preset}
@@ -190,8 +190,8 @@ export function PixelUnitInput({
                         className={cn(
                           "h-7 rounded-md text-xs font-bold border transition-colors cursor-pointer",
                           active
-                            ? "bg-slate-900 text-white border-slate-900"
-                            : "bg-white text-slate-800 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                            ? "bg-[#115eff] text-white border-[#115eff] shadow-xs"
+                            : "bg-white text-slate-800 border-slate-300 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
                         )}
                       >
                         {preset}

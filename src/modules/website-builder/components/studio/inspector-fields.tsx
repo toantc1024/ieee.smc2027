@@ -234,7 +234,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-slate-300 bg-white p-3.5"
         >
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-white">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#115eff] text-white shadow-xs">
               <FileText className="size-4" />
             </div>
             <span className="truncate text-sm font-bold text-slate-900">
@@ -270,7 +270,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           className={cn(
             "relative flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition-colors",
             dragging
-              ? "border-[#004776] bg-blue-50/30"
+              ? "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30"
               : "border-slate-300 bg-white hover:border-slate-400",
             isImage ? "min-h-32" : "min-h-24"
           )}
@@ -291,7 +291,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               aria-label={`${url ? "Replace" : "Upload"} ${field.label}`}
               aria-busy={uploading}
               onClick={() => inputRef.current?.click()}
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-[#004776] hover:bg-[#115eff] px-4 text-xs font-bold text-white shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] px-4 text-xs font-bold text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Upload className="size-3.5" />
               <span>Upload</span>
@@ -502,7 +502,7 @@ function ArrayField(props: InspectorFieldProps) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <h5 className="text-base font-bold text-slate-900">{field.label}</h5>
-          <span className="rounded-md bg-slate-900 px-2 py-0.5 text-xs font-bold text-white">
+          <span className="rounded-md bg-[#115eff] px-2 py-0.5 text-xs font-bold text-white shadow-xs">
             {items.length}
           </span>
         </div>
@@ -538,7 +538,7 @@ function ArrayField(props: InspectorFieldProps) {
               onChange(path, [...items, item]);
               setExpandedSet(new Set([items.length]));
             }}
-            className="flex items-center gap-1.5 rounded-lg bg-[#004776] hover:bg-[#115eff] px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs transition-colors disabled:opacity-40 cursor-pointer"
+            className="flex items-center gap-1.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-colors disabled:opacity-40 cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Add {itemLabel}</span>
@@ -580,16 +580,16 @@ function ArrayField(props: InspectorFieldProps) {
           >
             {/* Blue drop indicator seam above */}
             {isTargetingThis && dropPosition === "before" && (
-              <div className="absolute -top-1.5 left-0 right-0 z-30 h-1 bg-[#004776] rounded-full shadow-xs pointer-events-none" />
+              <div className="absolute -top-1.5 left-0 right-0 z-30 h-1 bg-[#115eff] rounded-full shadow-xs pointer-events-none" />
             )}
 
             <div
               className={cn(
                 "overflow-hidden rounded-xl border transition-all",
                 isDraggingThis
-                  ? "opacity-40 border-dashed border-[#004776] bg-blue-50/30 scale-[0.99]"
+                  ? "opacity-40 border-dashed border-[#115eff] bg-blue-50/30 scale-[0.99]"
                   : open
-                    ? "border-slate-900 bg-white shadow-xs ring-1 ring-slate-900/10"
+                    ? "border-[#115eff] bg-white shadow-xs ring-1 ring-[#115eff]/20"
                     : "border-slate-300 bg-white hover:border-slate-400"
               )}
             >
@@ -697,7 +697,7 @@ function ArrayField(props: InspectorFieldProps) {
 
             {/* Blue drop indicator seam below */}
             {isTargetingThis && dropPosition === "after" && (
-              <div className="absolute -bottom-1.5 left-0 right-0 z-30 h-1 bg-[#004776] rounded-full shadow-xs pointer-events-none" />
+              <div className="absolute -bottom-1.5 left-0 right-0 z-30 h-1 bg-[#115eff] rounded-full shadow-xs pointer-events-none" />
             )}
           </div>
         );
@@ -812,7 +812,7 @@ export function InspectorField(props: InspectorFieldProps) {
             );
             onChange(path, option?.value ?? event.target.value);
           }}
-          className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-900 focus:border-[#004776] focus:outline-none focus:ring-2 focus:ring-[#004776]/15"
+          className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-900 focus:border-[#115eff] focus:outline-none focus:ring-2 focus:ring-[#115eff]/15"
         >
           {field.options?.map((option) => (
             <option key={option.value} value={option.value}>

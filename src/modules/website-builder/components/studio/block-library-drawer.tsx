@@ -84,7 +84,7 @@ export function BlockLibraryDrawer() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search blocks..."
-            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:border-[#004776] focus:ring-2 focus:ring-[#004776]/15 text-slate-900 font-medium"
+            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 text-slate-900 font-medium"
           />
           {search && (
             <button
@@ -106,7 +106,7 @@ export function BlockLibraryDrawer() {
             className={cn(
               "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
               activeCategory === "all"
-                ? "bg-[#004776] text-white"
+                ? "bg-[#115eff] text-white shadow-xs"
                 : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
             )}
           >
@@ -120,7 +120,7 @@ export function BlockLibraryDrawer() {
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
                 activeCategory === cat
-                  ? "bg-[#004776] text-white"
+                  ? "bg-[#115eff] text-white shadow-xs"
                   : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
               )}
             >
@@ -249,7 +249,7 @@ function PaletteItem({
       }}
       className={cn(
         "group flex min-h-[82px] touch-none select-none items-center gap-3 rounded-xl border bg-white p-3 transition-colors hover:border-slate-400 hover:shadow-2xs cursor-grab active:cursor-grabbing",
-        isDragging ? "border-dashed border-[#004776] opacity-40" : "border-slate-300"
+        isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-slate-300"
       )}
     >
       <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1 group-hover:border-slate-400">
@@ -276,7 +276,7 @@ function PaletteItem({
           event.stopPropagation();
           onAdd(item.type);
         }}
-        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-[#004776] hover:text-white hover:border-[#004776] transition-colors cursor-pointer"
+        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-[#115eff] hover:text-white hover:border-[#115eff] transition-colors cursor-pointer"
       >
         <Plus className="size-4" />
       </button>

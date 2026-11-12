@@ -126,7 +126,7 @@ export function BuilderLayout() {
                     className={cn(
                       "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "library"
-                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
                         : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Block Library"
@@ -140,7 +140,7 @@ export function BuilderLayout() {
                     className={cn(
                       "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "templates"
-                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
                         : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Saved Blocks and Layouts"
@@ -154,7 +154,7 @@ export function BuilderLayout() {
                     className={cn(
                       "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "layers"
-                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
                         : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Layers Tree"
@@ -168,7 +168,7 @@ export function BuilderLayout() {
                     className={cn(
                       "h-8 py-1 rounded-md transition-colors flex items-center justify-center cursor-pointer",
                       sidebarTab === "settings"
-                        ? "bg-[#004776] text-white shadow-xs font-bold"
+                        ? "bg-[#115eff] text-white shadow-xs font-bold"
                         : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                     )}
                     title="Page Settings"

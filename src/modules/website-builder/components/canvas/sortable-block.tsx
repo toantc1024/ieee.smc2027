@@ -165,7 +165,7 @@ export function SortableBlock({
         )}
       />
 
-      {isDragging && <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl border-2 border-dashed border-blue-500/80 bg-slate-500/10 pointer-events-none"><span className="rounded-full border border-white/20 bg-slate-900/80 px-3.5 py-1 text-xs font-bold text-white shadow-md">Dragging block</span></div>}
+      {isDragging && <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl border-2 border-dashed border-[#115eff] bg-blue-500/10 pointer-events-none"><span className="rounded-full border border-white/20 bg-[#115eff] px-3.5 py-1 text-xs font-bold text-white shadow-md">Dragging block</span></div>}
 
       {/* Bottom half droppable seam detector (only intercepts pointer when dragging) */}
       <div

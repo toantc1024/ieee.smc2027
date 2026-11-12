@@ -167,7 +167,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           className={cn(
             "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "content"
-              ? "bg-[#004776] text-white shadow-xs font-bold"
+              ? "bg-[#115eff] text-white shadow-xs font-bold"
               : "text-slate-700 hover:text-slate-900"
           )}
         >
@@ -179,7 +179,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           className={cn(
             "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "info"
-              ? "bg-[#004776] text-white shadow-xs font-bold"
+              ? "bg-[#115eff] text-white shadow-xs font-bold"
               : "text-slate-700 hover:text-slate-900"
           )}
         >
@@ -191,7 +191,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           className={cn(
             "h-8 px-3.5 rounded-md transition-colors flex items-center justify-center cursor-pointer",
             studioTab === "history"
-              ? "bg-[#004776] text-white shadow-xs font-bold"
+              ? "bg-[#115eff] text-white shadow-xs font-bold"
               : "text-slate-700 hover:text-slate-900"
           )}
         >
@@ -245,7 +245,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           className={cn(
             "h-8 px-3.5 text-xs font-bold min-w-[88px] gap-1.5 shadow-xs transition-colors cursor-pointer",
             isDirty
-              ? "bg-[#004776] hover:bg-[#115eff] text-white"
+              ? "bg-[#115eff] hover:bg-[#0a4de6] text-white"
               : "border border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100"
           )}
         >

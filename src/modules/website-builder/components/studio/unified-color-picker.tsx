@@ -330,7 +330,7 @@ export function UnifiedColorPicker({
                   }}
                   className={cn(
                     "py-1.5 rounded-md transition-colors cursor-pointer",
-                    mode === "solid" ? "bg-[#004776] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
+                    mode === "solid" ? "bg-[#115eff] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
                   )}
                 >
                   Solid
@@ -343,7 +343,7 @@ export function UnifiedColorPicker({
                   }}
                   className={cn(
                     "py-1.5 rounded-md transition-colors cursor-pointer",
-                    mode === "gradient" ? "bg-[#004776] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
+                    mode === "gradient" ? "bg-[#115eff] text-white shadow-xs font-bold" : "text-slate-700 hover:text-slate-900"
                   )}
                 >
                   Gradient
