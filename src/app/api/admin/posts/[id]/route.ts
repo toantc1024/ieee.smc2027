@@ -11,6 +11,8 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
   const { id } = await params;
 
   try {

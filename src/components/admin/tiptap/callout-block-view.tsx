@@ -55,10 +55,8 @@ export function CalloutBlockView({
 }: NodeViewProps) {
   const attrs = node.attrs as CalloutBlockAttrs;
   const variant: CalloutVariant = attrs.variant || "info";
-  const title = attrs.title || "Important Notice";
-  const text =
-    attrs.text ||
-    "Enter your callout message or submission instruction here.";
+  const title = attrs.title ?? "Important Notice";
+  const text = attrs.text ?? "";
   const width = Number(attrs.width) || 100;
 
   const cfg = VARIANT_CONFIG[variant] || VARIANT_CONFIG.info;

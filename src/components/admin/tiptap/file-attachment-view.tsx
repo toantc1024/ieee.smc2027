@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { uploadPostMedia } from "./upload";
 import {
   BlockWrapper,
   type BlockAlignment,
@@ -31,7 +32,7 @@ export function FileAttachmentView({
   const [isUploading, setIsUploading] = useState(false);
 
   const src = attrs.src || "";
-  const title = attrs.title || "Conference Document.pdf";
+  const title = attrs.title ?? "Document";
   const fileType = attrs.fileType || "PDF";
   const showPreview = attrs.showPreview !== false;
   const height = Number(attrs.height) || 460;
@@ -50,27 +51,12 @@ export function FileAttachmentView({
 
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/media", {
-        method: "POST",
-        body: formData,
-      });
-      const json = await res.json();
-      const uploadedUrl = json?.media?.url || json?.url;
-      if (res.ok && uploadedUrl) {
-        const ext = (file.name.split(".").pop() || "FILE").toUpperCase();
-        updateAttributes({
-          src: uploadedUrl,
-          title: file.name,
-          fileType: ext,
-        });
-        toast.success("Document uploaded to block");
-      } else {
-        toast.error(json?.error || "Failed to upload file");
-      }
-    } catch {
-      toast.error("Failed to upload file");
+      const uploadedUrl = await uploadPostMedia(file);
+      const ext = (file.name.split(".").pop() || "FILE").toUpperCase();
+      updateAttributes({ src: uploadedUrl, title: file.name, fileType: ext });
+      toast.success("Document uploaded to block");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload file");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -168,7 +154,7 @@ export function FileAttachmentView({
               type="text"
               value={src}
               onChange={(e) => updateAttributes({ src: e.target.value })}
-              placeholder="/CFP - IEEE SMC 2027.pdf or https://..."
+              placeholder="https://... or upload a file"
               className="h-8 w-full rounded-md border border-slate-200 bg-white px-2.5 text-xs focus:outline-none focus:border-blue-600"
             />
           </div>

@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { ImageIcon, Upload, Crop, X, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { uploadPostMedia } from "./upload";
 
 interface ImageInsertModalProps {
   open: boolean;
@@ -38,26 +39,12 @@ export function ImageInsertModal({
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
-
-      if (uploadedUrl) {
-        toast.success("Image uploaded successfully");
-        onInsertImage(uploadedUrl, altText.trim() || file.name);
-        onClose();
-      } else {
-        toast.error(data.error || "Image upload failed");
-      }
-    } catch {
-      toast.error("Unable to upload image");
+      const uploadedUrl = await uploadPostMedia(file);
+      toast.success("Image uploaded successfully");
+      onInsertImage(uploadedUrl, altText.trim() || file.name);
+      onClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to upload image");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

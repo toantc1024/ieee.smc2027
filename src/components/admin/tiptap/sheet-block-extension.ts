@@ -29,10 +29,8 @@ declare module "@tiptap/core" {
 }
 
 const DEFAULT_SHEET_DATA = JSON.stringify([
-  ["Category", "Early Bird (USD)", "Regular (USD)", "On-Site (USD)"],
-  ["IEEE Member", "$650", "$750", "$850"],
-  ["Non-Member", "$800", "$920", "$1,050"],
-  ["IEEE Student Member", "$350", "$420", "$480"],
+  ["Column 1", "Column 2", "Column 3"],
+  ["", "", ""],
 ]);
 
 export const SheetBlockExtension = Node.create({

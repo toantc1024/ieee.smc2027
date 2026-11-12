@@ -30,10 +30,7 @@ export const CalloutBlockExtension = Node.create({
     return {
       variant: { default: "info" },
       title: { default: "Important Notice" },
-      text: {
-        default:
-          "All submitted manuscripts must follow the standard IEEE two-column template.",
-      },
+      text: { default: "" },
       width: { default: 100 },
     };
   },
@@ -106,9 +103,7 @@ export const CalloutBlockExtension = Node.create({
             attrs: {
               variant: attrs.variant || "info",
               title: attrs.title || "Important Notice",
-              text:
-                attrs.text ||
-                "All submitted manuscripts must follow the standard IEEE two-column template.",
+              text: attrs.text ?? "",
               width: attrs.width ?? 100,
             },
           });

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { parseDelimitedText } from "./parse-delimited-text";
 import {
   BlockWrapper,
   type BlockAlignment,
@@ -23,10 +24,8 @@ import type { SheetBlockAttrs } from "./sheet-block-extension";
 function parseSheetJson(raw?: string): string[][] {
   if (!raw) {
     return [
-      ["Category", "Early Bird (USD)", "Regular (USD)", "On-Site (USD)"],
-      ["IEEE Member", "$650", "$750", "$850"],
-      ["Non-Member", "$800", "$920", "$1,050"],
-      ["IEEE Student Member", "$350", "$420", "$480"],
+      ["Column 1", "Column 2", "Column 3"],
+      ["", "", ""],
     ];
   }
   try {
@@ -123,29 +122,15 @@ export function SheetBlockView({
     if (!file) return;
     try {
       const text = await file.text();
-      const lines = text
-        .split(/\r?\n/)
-        .map((l) => l.trim())
-        .filter(Boolean);
-      if (lines.length === 0) return;
-
-      const delimiter = lines[0].includes("\t") ? "\t" : ",";
-      const parsed = lines.map((line) =>
-        line.split(delimiter).map((cell) => cell.replace(/^"|"$/g, "").trim())
-      );
-      const maxCols = Math.max(...parsed.map((r) => r.length), 1);
-      const normalized = parsed.map((r) => {
-        const padded = [...r];
-        while (padded.length < maxCols) padded.push("");
-        return padded;
-      });
+      const normalized = parseDelimitedText(text);
+      if (!normalized.length) { toast.error("The file is empty"); return; }
       updateAttributes({
         dataJson: JSON.stringify(normalized),
         title: file.name.replace(/\.[^/.]+$/, ""),
       });
       toast.success(`Imported ${normalized.length} rows into Sheet Block`);
-    } catch {
-      toast.error("Failed to parse CSV / Sheet file");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to parse CSV / Sheet file");
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }

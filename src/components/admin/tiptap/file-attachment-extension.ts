@@ -40,8 +40,8 @@ export const FileAttachmentExtension = Node.create({
 
   addAttributes() {
     return {
-      src: { default: "/CFP - IEEE SMC 2027.pdf" },
-      title: { default: "Call for Papers — IEEE SMC 2027.pdf" },
+      src: { default: "" },
+      title: { default: "Document" },
       fileType: { default: "PDF" },
       showPreview: { default: true },
       height: { default: 460 },
@@ -100,7 +100,7 @@ export const FileAttachmentExtension = Node.create({
           { style: "font-weight:700;color:#0f172a;font-size:0.9375rem;" },
           `${title} (${fileType})`,
         ],
-        [
+        ...(src ? [[
           "a",
           {
             href: src,
@@ -110,7 +110,7 @@ export const FileAttachmentExtension = Node.create({
               "padding:0.5rem 1rem;border-radius:0.5rem;background:#115eff;color:#ffffff;font-weight:700;font-size:0.8125rem;text-decoration:none;",
           },
           "Download",
-        ],
+        ]] : []),
       ],
     ];
 
@@ -157,8 +157,8 @@ export const FileAttachmentExtension = Node.create({
           return commands.insertContent({
             type: this.name,
             attrs: {
-              src: attrs.src || "/CFP - IEEE SMC 2027.pdf",
-              title: attrs.title || "Call for Papers — IEEE SMC 2027.pdf",
+              src: attrs.src ?? "",
+              title: attrs.title ?? "Document",
               fileType: attrs.fileType || "PDF",
               showPreview: attrs.showPreview ?? true,
               height: attrs.height ?? 460,

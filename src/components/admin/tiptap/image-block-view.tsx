@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { uploadPostMedia } from "./upload";
 import {
   BlockWrapper,
   type BlockAlignment,
@@ -51,25 +52,11 @@ export function ImageBlockView({
 
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/media", {
-        method: "POST",
-        body: formData,
-      });
-      const json = await res.json();
-      const uploadedUrl = json?.media?.url || json?.url;
-      if (res.ok && uploadedUrl) {
-        updateAttributes({
-          src: uploadedUrl,
-          alt: alt || file.name.replace(/\.[^/.]+$/, ""),
-        });
-        toast.success("Image uploaded to block");
-      } else {
-        toast.error(json?.error || "Failed to upload image");
-      }
-    } catch {
-      toast.error("Failed to upload image");
+      const uploadedUrl = await uploadPostMedia(file);
+      updateAttributes({ src: uploadedUrl, alt: alt || file.name.replace(/\.[^/.]+$/, "") });
+      toast.success("Image uploaded to block");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload image");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

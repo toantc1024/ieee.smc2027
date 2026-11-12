@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowLeft,
   Save,
-  Send,
   Eye,
   EyeOff,
   Type,
@@ -20,9 +18,7 @@ import {
   Crop,
   X,
   Upload,
-  RefreshCw,
   Rocket,
-  Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -38,8 +34,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { TiptapEditor } from "@/components/admin/TiptapEditor";
+import { TiptapEditor, type TiptapEditorHandle } from "@/components/admin/TiptapEditor";
 import { ImageInsertModal } from "@/components/admin/tiptap/ImageInsertModal";
+import { uploadPostMedia } from "@/components/admin/tiptap/upload";
 import { POST_CATEGORIES } from "@/app/admin/(dashboard)/posts/page";
 import { cn } from "@/lib/utils";
 
@@ -75,6 +72,7 @@ export function PostEditorForm({
 }: PostEditorFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<TiptapEditorHandle>(null);
 
   const [title, setTitle] = useState(initialData?.title || "");
   const [slug, setSlug] = useState(initialData?.slug || "");
@@ -94,10 +92,11 @@ export function PostEditorForm({
 
   // Modals
   const [showCoverModal, setShowCoverModal] = useState(false);
+  const [showContentImageModal, setShowContentImageModal] = useState(false);
   const [showDirtyBackDialog, setShowDirtyBackDialog] = useState(false);
 
   // Track initial state for dirty detection
-  const initialDataRef = useRef({
+  const [initialSnapshot, setInitialSnapshot] = useState({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
     summary: initialData?.summary || "",
@@ -108,13 +107,13 @@ export function PostEditorForm({
   });
 
   const isDirty =
-    title !== initialDataRef.current.title ||
-    slug !== initialDataRef.current.slug ||
-    summary !== initialDataRef.current.summary ||
-    content !== initialDataRef.current.content ||
-    coverImage !== initialDataRef.current.coverImage ||
-    category !== initialDataRef.current.category ||
-    status !== initialDataRef.current.status;
+    title !== initialSnapshot.title ||
+    slug !== initialSnapshot.slug ||
+    summary !== initialSnapshot.summary ||
+    content !== initialSnapshot.content ||
+    coverImage !== initialSnapshot.coverImage ||
+    category !== initialSnapshot.category ||
+    status !== initialSnapshot.status;
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -135,25 +134,12 @@ export function PostEditorForm({
 
     setIsUploadingCover(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
-      if (uploadedUrl) {
-        setCoverImage(uploadedUrl);
-        setCoverImgError(false);
-        toast.success("Cover image uploaded successfully");
-      } else {
-        toast.error(data.error || "Failed to upload cover image");
-      }
-    } catch {
-      toast.error("Unable to upload cover image");
+      const uploadedUrl = await uploadPostMedia(file);
+      setCoverImage(uploadedUrl);
+      setCoverImgError(false);
+      toast.success("Cover image uploaded successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to upload cover image");
     } finally {
       setIsUploadingCover(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -195,7 +181,7 @@ export function PostEditorForm({
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to save post");
         setStatus(targetStatus);
-        initialDataRef.current = { ...payload };
+        setInitialSnapshot({ ...payload });
         toast.success(
           targetStatus === "PUBLISHED" ? "Post published successfully" : "Draft saved successfully"
         );
@@ -211,7 +197,7 @@ export function PostEditorForm({
         toast.success(
           targetStatus === "PUBLISHED" ? "Post published successfully" : "Draft created successfully"
         );
-        const createdId = data.post?.id || data.id;
+        const createdId = data.data?.post?.id || data.post?.id || data.id;
         if (createdId) {
           router.push(`/admin/posts/${createdId}`);
         } else {
@@ -639,7 +625,7 @@ export function PostEditorForm({
                     <Button
                       type="button"
                       size="sm"
-                      onClick={() => setShowCoverModal(true)}
+                      onClick={() => setShowContentImageModal(true)}
                       className="mt-3 h-8 text-xs font-medium bg-[#115eff] text-white"
                     >
                       <Upload className="size-3.5 mr-1.5" />
@@ -749,6 +735,7 @@ export function PostEditorForm({
         {/* ── Center Paper Canvas Workspace ── */}
         <div className="flex-1 min-w-0 min-h-0 overflow-hidden flex flex-col bg-slate-100/70 dark:bg-[#070b14]">
           <TiptapEditor
+            editorRef={editorRef}
             content={content}
             onChange={setContent}
             placeholder="Write article content here..."
@@ -768,6 +755,11 @@ export function PostEditorForm({
             setCoverImgError(false);
           }}
         />
+      )}
+      {showContentImageModal && (
+        <ImageInsertModal open={showContentImageModal} onClose={() => setShowContentImageModal(false)} onInsertImage={(src, alt) => {
+          if (!editorRef.current?.insertImage(src, alt)) toast.error("The editor is not ready. Please try again.");
+        }} />
       )}
 
 

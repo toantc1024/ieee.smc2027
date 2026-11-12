@@ -9,6 +9,8 @@ import {
 } from "@/lib";
 
 export async function GET() {
+  const { errorResponse } = await requireAdminRequest();
+  if (errorResponse) return errorResponse;
   try {
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },

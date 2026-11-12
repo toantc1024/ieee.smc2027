@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { X, ZoomIn, ZoomOut, RotateCcw, Crop as CropIcon } from "lucide-react";
 import { toast } from "sonner";
+import { uploadPostMedia } from "./upload";
 
 interface ImageCropperModalProps {
   open: boolean;
@@ -96,27 +97,13 @@ export function ImageCropperModal({
         type: "image/jpeg",
       });
 
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      const uploadedUrl = data.url || data.data?.url || data.data?.proxyUrl;
-
-      if (uploadedUrl) {
-        toast.success("Image cropped and uploaded successfully");
-        onCroppedAndUploaded(uploadedUrl);
-        onClose();
-      } else {
-        toast.error(data.error || "Failed to upload cropped image");
-      }
+      const uploadedUrl = await uploadPostMedia(file);
+      toast.success("Image cropped and uploaded successfully");
+      onCroppedAndUploaded(uploadedUrl);
+      onClose();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to crop image");
+      toast.error(err instanceof Error ? err.message : "Failed to crop image");
     } finally {
       setUploading(false);
     }
