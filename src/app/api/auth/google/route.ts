@@ -8,7 +8,7 @@ import {
 } from "@/lib/google-oauth-state";
 
 export async function GET(request: Request) {
-  const { clientId } = await getGoogleOAuthConfig();
+  const { clientId, appUrl } = await getGoogleOAuthConfig();
 
   if (!clientId) {
     return NextResponse.redirect(
@@ -22,7 +22,10 @@ export async function GET(request: Request) {
   const callbackPath = customCallback === GOOGLE_OAUTH_LEGACY_CALLBACK_PATH
     ? GOOGLE_OAUTH_LEGACY_CALLBACK_PATH
     : GOOGLE_OAUTH_CALLBACK_PATH;
-  const redirectUri = `${currentOrigin}${callbackPath}`;
+  const baseOrigin = currentOrigin.includes("localhost") || currentOrigin.includes("127.0.0.1")
+    ? currentOrigin
+    : (appUrl || currentOrigin).replace("://www.ieee-smc2027.org", "://ieee-smc2027.org");
+  const redirectUri = `${baseOrigin}${callbackPath}`;
 
   const state = createGoogleOAuthState();
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");

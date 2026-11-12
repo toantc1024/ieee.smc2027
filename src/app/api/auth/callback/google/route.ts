@@ -35,8 +35,11 @@ export async function GET(request: NextRequest) {
     return redirectAndClear(`/admin/login?error=${encodeURIComponent(error || "no_code")}`);
   }
 
-  const { clientId, clientSecret } = await getGoogleOAuthConfig();
-  const redirectUri = `${currentOrigin}${requestUrl.pathname}`;
+  const { clientId, clientSecret, appUrl } = await getGoogleOAuthConfig();
+  const baseOrigin = currentOrigin.includes("localhost") || currentOrigin.includes("127.0.0.1")
+    ? currentOrigin
+    : (appUrl || currentOrigin).replace("://www.ieee-smc2027.org", "://ieee-smc2027.org");
+  const redirectUri = `${baseOrigin}${requestUrl.pathname}`;
 
   if (!clientId || !clientSecret) {
     return redirectAndClear("/admin/login?error=missing_google_credentials");
