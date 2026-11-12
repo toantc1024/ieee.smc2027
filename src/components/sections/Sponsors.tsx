@@ -7,14 +7,15 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
 import { IeeeSmc2027LogoGroup } from "@/components/common/IeeeSmc2027LogoGroup";
 
-interface SponsorItem {
+export interface SponsorItem {
+  logo?: string;
   name: string;
   shortName: string;
   type: string;
   logoType: "hcmute" | "ieee" | "ieee-smc" | "ieee-cis" | "ieee-ras" | "most";
 }
 
-const SPONSORS: SponsorItem[] = [
+export const SPONSORS: SponsorItem[] = [
   {
     name: "IEEE Systems, Man, and Cybernetics Society",
     shortName: "IEEE SMC Society",
@@ -90,11 +91,13 @@ function SponsorLogoBadge({ type }: { type: SponsorItem["logoType"] }) {
 }
 
 export interface SponsorsProps {
+  sponsors?: SponsorItem[];
   title?: string;
   subtitle?: string;
 }
 
 export function Sponsors({
+  sponsors = SPONSORS,
   title = "Sponsors & Partners & Supporting Societies",
   subtitle = "Partners & Organizing Institutions Supporting IEEE SMC 2027",
 }: SponsorsProps) {
@@ -150,12 +153,15 @@ export function Sponsors({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {SPONSORS.map((s, index) => (
+          {sponsors.map((s, index) => (
             <div
               key={index}
               className="p-5 bg-slate-50/70 border border-slate-200 rounded-sm text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
             >
-              <SponsorLogoBadge type={s.logoType} />
+              {s.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={s.logo} alt={s.name} className="mb-3 h-12 w-full object-contain" />
+              ) : <SponsorLogoBadge type={s.logoType} />}
               
               <div className="w-full">
                 <div className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug">

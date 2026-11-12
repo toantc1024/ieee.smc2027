@@ -24,6 +24,8 @@ export function CallForPapers({
   title = "Call For Papers & Submission Guidelines",
   subtitle = "Submission Categories & Technical Topics • IEEE SMC 2027",
   cfpPdfUrl = CONFERENCE_INFO.cfpPdfUrl,
+  submissionDeadline = "April 08, 2027",
+  submissionUrl = CONFERENCE_INFO.submissionPortal,
 }: CallForPapersProps) {
   const [showPdfViewer, setShowPdfViewer] = React.useState(false);
 
@@ -151,7 +153,7 @@ export function CallForPapers({
                     Regular Track
                   </span>
                   <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
-                    April 08, 2027
+                    {submissionDeadline}
                   </span>
                 </div>
               </div>
@@ -170,7 +172,7 @@ export function CallForPapers({
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
-                <span>Electronic submission portal</span>
+                <a href={submissionUrl} className="hover:underline">Electronic submission portal</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
@@ -197,7 +199,7 @@ export function CallForPapers({
                     Special Sessions
                   </span>
                   <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
-                    April 08, 2027
+                    {submissionDeadline}
                   </span>
                 </div>
               </div>
@@ -300,7 +302,7 @@ export function CallForPapers({
             </button>
 
             <a
-              href={CONFERENCE_INFO.cfpPdfUrl}
+              href={cfpPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
@@ -317,7 +319,7 @@ export function CallForPapers({
             <div className="px-4 py-2.5 bg-slate-200/80 border-b border-slate-200 flex items-center justify-between text-xs font-semibold text-slate-700">
               <span>Official 2-Page Brochure (Vertical Scroll)</span>
               <a
-                href={CONFERENCE_INFO.cfpPdfUrl}
+                href={cfpPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#115eff] font-bold hover:underline flex items-center gap-1"
@@ -327,7 +329,7 @@ export function CallForPapers({
               </a>
             </div>
             <iframe
-              src={CONFERENCE_INFO.cfpPdfUrl}
+              src={cfpPdfUrl}
               title="IEEE SMC 2027 Official CFP Brochure"
               className="w-full h-[640px] border-0"
             />

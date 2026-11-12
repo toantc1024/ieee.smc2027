@@ -24,6 +24,7 @@ export interface TrackPillar {
 }
 
 export interface CommitteeMember {
+  photo?: string;
   name: string;
   role: string;
   country: string;

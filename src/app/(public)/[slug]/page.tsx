@@ -2,6 +2,8 @@ import React from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib";
+import { getCurrentUser } from "@/lib/auth";
+import { canViewPage } from "@/lib/page-access";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PublicPageRenderer } from "./public-page-renderer";
@@ -11,10 +13,13 @@ import { EyeOff } from "lucide-react";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const { preview } = await searchParams;
   const page = await prisma.page.findFirst({
     where: {
       OR: [{ slug }, { id: slug }],
@@ -36,6 +41,11 @@ export async function generateMetadata({
     return { title: "Page Not Found | IEEE SMC 2027" };
   }
 
+  const user = !page.isPublished && (preview === "true" || preview === "1") ? await getCurrentUser() : null;
+  if (!canViewPage(page.isPublished, preview, user?.role)) {
+    return { title: "Page Not Found | IEEE SMC 2027", robots: { index: false, follow: false } };
+  }
+
   return {
     title: page.metaTitle || `${page.title} | IEEE SMC 2027`,
     description:
@@ -48,6 +58,7 @@ export async function generateMetadata({
         "Official Conference Website for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
       type: "website",
     },
+    ...(!page.isPublished ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -95,7 +106,8 @@ export default async function PublicPage({
   }
 
   // Draft access protection
-  if (!page.isPublished && !isPreview) {
+  const user = !page.isPublished && isPreview ? await getCurrentUser() : null;
+  if (!canViewPage(page.isPublished, preview, user?.role)) {
     notFound();
   }
 

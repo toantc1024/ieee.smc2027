@@ -53,18 +53,20 @@ export interface WelcomeLetterProps {
   datesLocation?: string;
   showSignatures?: boolean;
   chairs?: ChairMember[];
+  body?: string;
 }
 
 export function WelcomeLetter({
-  heading = "Join us at the IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
+  heading,
   title = "Welcome Message from the General Chairs & Honorary Chairs",
-  subtitle = "Welcome to IEEE SMC 2027 • Ho Chi Minh City",
+  subtitle,
   salutation = "Dear Colleagues & Honored Participants,",
   theme = "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
   conferenceName = "IEEE SMC 2027",
   datesLocation = "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
   showSignatures = true,
   chairs = CHAIR_MEMBERS,
+  body,
 }: WelcomeLetterProps) {
   return (
     <SectionContainer id="welcome" fullWidthBg="bg-white">
@@ -76,18 +78,20 @@ export function WelcomeLetter({
         <div className="space-y-3 w-full relative z-10">
           {/* Big Bold 2-Line Headline matching HCMUTE signature style */}
           <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
-            <span className="block text-[#004776]">
+            {heading ? <span className="block text-[#004776]">{heading}</span> : <><span className="block text-[#004776]">
               Join us at the {conferenceName}
             </span>
             <span className="block text-[#115eff]">
               in Ho Chi Minh City, Vietnam
-            </span>
+            </span></>}
           </h2>
 
           {/* Subtitle */}
           <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
             {title}
           </p>
+          {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
+          <p className="text-sm font-medium text-[#115eff]">{datesLocation}</p>
         </div>
       </div>
 
@@ -99,6 +103,7 @@ export function WelcomeLetter({
             <span>{salutation}</span>
           </div>
 
+          {body && body !== "<p></p>" ? <div className="space-y-4 text-base leading-relaxed text-[#004776]/90 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: body }} /> : <>
           {/* Letter Paragraph 1: Welcome & Theme */}
           <p className="text-base sm:text-lg text-[#004776]/90 leading-relaxed font-normal text-justify">
             It is our great pleasure and honor to welcome you to the{" "}
@@ -117,6 +122,8 @@ export function WelcomeLetter({
           <p className="text-base sm:text-lg text-[#004776]/90 leading-relaxed font-normal text-justify">
             Ho Chi Minh City, a thriving center of scientific innovation, youthful entrepreneurship, and rich historical heritage in Southeast Asia, offers the ideal backdrop for discovery and global partnerships. To maximize engagement, collaboration, and spontaneous intellectual exchange, we <strong className="text-[#004776]">strongly encourage in-person participation</strong> at the iconic <strong className="text-[#004776]">Sheraton Saigon Grand Opera Hotel</strong>, while providing flexible online presentation avenues for colleagues facing travel constraints.
           </p>
+
+          </>}
 
           {/* Closing & Signatures */}
           {showSignatures && (
@@ -157,14 +164,14 @@ export function WelcomeLetter({
 
                         {/* Image strictly scaled and fitted inside the container without any horizontal or vertical overflow */}
                         <div className="relative w-full h-full flex items-end justify-center z-10">
-                          <Image
+                          {chair.image && <Image
                             src={chair.image}
                             alt={chair.name}
                             width={360}
                             height={440}
                             className="h-full w-auto max-h-full max-w-full object-contain object-bottom transition-transform duration-300 ease-out group-hover:scale-105"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          />
+                          />}
                         </div>
                       </div>
 

@@ -5,11 +5,12 @@ import { History, Globe, ExternalLink, Calendar } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 interface PastConferencesProps {
+  conferences?: typeof PAST_CONFERENCES;
   title?: string;
   subtitle?: string;
 }
 
-const PAST_CONFERENCES = [
+export const PAST_CONFERENCES = [
   {
     year: "2026",
     city: "Bellevue, Washington, USA",
@@ -43,6 +44,7 @@ const PAST_CONFERENCES = [
 ];
 
 export function PastConferencesSection({
+  conferences = PAST_CONFERENCES,
   title = "Past IEEE SMC Conferences",
   subtitle = "Discover the international heritage of the IEEE Systems, Man, and Cybernetics Society flagship annual conference",
 }: PastConferencesProps) {
@@ -59,7 +61,7 @@ export function PastConferencesSection({
         </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {PAST_CONFERENCES.map((conf) => (
+          {conferences.map((conf) => (
             <div
               key={conf.year}
               className="p-5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all shadow-xs flex flex-col justify-between"

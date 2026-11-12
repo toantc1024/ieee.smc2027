@@ -10,14 +10,14 @@ import {
 } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export function ConferenceHighlights() {
+export function ConferenceHighlights({ items = CONFERENCE_STATS }: { items?: typeof CONFERENCE_STATS }) {
   return (
     <SectionContainer id="highlights" fullWidthBg="bg-white">
       
       {/* Top: 4 Key Conference Statistics Cards */}
       <div className="px-4 sm:px-6 py-6 sm:py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {CONFERENCE_STATS.map((stat, i) => (
+          {items.map((stat, i) => (
             <div
               key={i}
               className="p-5 sm:p-6 bg-slate-50/80 hover:bg-white border border-slate-200 hover:border-[#115eff] rounded-md shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between group"

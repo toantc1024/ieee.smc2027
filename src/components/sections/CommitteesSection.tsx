@@ -15,7 +15,7 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { cn } from "@/lib/utils";
 
 // High-resolution chair portraits mapping (normalized to 900x1200 3:4 canvas)
-const CHAIR_PHOTO_MAP: Record<string, string> = {
+export const CHAIR_PHOTO_MAP: Record<string, string> = {
   // Honorary Chairs
   "Hieu-Giang Le": "/chairs/prof-hieu-giang-le.webp",
   "Saeid Nahavandi": "/chairs/prof-saeid-nahavandi.webp",
@@ -40,6 +40,7 @@ interface CommitteesSectionProps {
   autoplayDuration?: number;
   initialGroupIndex?: number;
   showAllGroups?: boolean;
+  groups?: (typeof COMMITTEE_GROUPS);
 }
 
 // Responsive card widths (content box width)
@@ -63,7 +64,7 @@ const CARD_STATIC_CLASSES = cn(
  * Single Committee Member Card
  */
 function CommitteeCard({ member }: { member: CommitteeMember }) {
-  const photo = CHAIR_PHOTO_MAP[member.name];
+  const photo = member.photo ?? CHAIR_PHOTO_MAP[member.name];
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -405,6 +406,7 @@ function CommitteeGroupCarousel({
 export function CommitteesSection({
   title = "Organizing Committee",
   subtitle = "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
+  groups = COMMITTEE_GROUPS,
 }: CommitteesSectionProps) {
   return (
     <SectionContainer id="committees" fullWidthBg="bg-white">
@@ -426,7 +428,7 @@ export function CommitteesSection({
 
       {/* 2. All Groups Displayed - Centered if no overflow, Circular Carousel on overflow with hover-only fade blur */}
       <div className="px-4 sm:px-6 py-10 sm:py-14 space-y-12 sm:space-y-16">
-        {COMMITTEE_GROUPS.map((group) => (
+        {groups.map((group) => (
           <CommitteeGroupCarousel key={group.groupName} group={group} />
         ))}
       </div>

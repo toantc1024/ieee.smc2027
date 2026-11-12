@@ -6,14 +6,14 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { CONFERENCE_INFO } from "@/data/conference";
 
-const AFFILIATED_PUBLICATIONS = [
+export const AFFILIATED_PUBLICATIONS = [
   { name: "IEEE Trans. on Systems, Man, and Cybernetics: Systems", href: "https://www.ieeesmc.org" },
   { name: "IEEE Trans. on Human-Machine Systems", href: "https://www.ieeesmc.org" },
   { name: "IEEE Trans. on Computational Social Systems", href: "https://www.ieeesmc.org" },
   { name: "IEEE Systems, Man, and Cybernetics Magazine", href: "https://www.ieeesmc.org" },
 ];
 
-export function About() {
+export function About({ theme = CONFERENCE_INFO.theme, publicationsTitle = "Affiliated IEEE SMC Publications", publications = AFFILIATED_PUBLICATIONS }: { theme?: string; publicationsTitle?: string; publications?: typeof AFFILIATED_PUBLICATIONS }) {
   return (
     <SectionContainer id="about" fullWidthBg="bg-white">
       {/* Subtle top-right grid pattern with natural radial fade mask (hcmute style) */}
@@ -32,17 +32,17 @@ export function About() {
             <strong>IEEE SMC 2027</strong> is the flagship conference of the IEEE Systems, Man, and Cybernetics Society, hosted by <strong>HCM-UTE</strong> on <strong>October 6–10, 2027</strong> in Ho Chi Minh City, Vietnam.
           </p>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            Theme: <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>. Presented papers will appear in <strong>IEEE Xplore®</strong> and index in Scopus, EI Compendex, and Web of Science.
+            Theme: <em>&ldquo;{theme}&rdquo;</em>. Presented papers will appear in <strong>IEEE Xplore®</strong> and index in Scopus, EI Compendex, and Web of Science.
           </p>
         </div>
 
         {/* Right: Bigger Affiliated IEEE SMC Society Publications */}
         <div className="lg:col-span-7 p-6 sm:p-7 bg-slate-50 border border-slate-200 rounded-md shadow-2xs">
           <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
-            Affiliated IEEE SMC Publications
+            {publicationsTitle}
           </h3>
           <ul className="space-y-3">
-            {AFFILIATED_PUBLICATIONS.map((pub, idx) => (
+            {publications.map((pub, idx) => (
               <li key={idx}>
                 <a
                   href={pub.href}

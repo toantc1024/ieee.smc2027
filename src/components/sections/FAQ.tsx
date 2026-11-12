@@ -6,20 +6,22 @@ import { FAQS, CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export interface FAQProps {
+  items?: (typeof FAQS);
   title?: string;
   subtitle?: string;
 }
 
 export function FAQ({
+  items = FAQS,
   title = "Frequently Asked Questions & Help",
   subtitle = "Author & Attendee Assistance • Conference Policies & Guidance",
 }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  const categories = ["All", "Submission", "Registration", "Venue", "Visa"];
+  const categories = ["All", ...new Set(items.map((item) => item.category))];
 
-  const filteredFaqs = FAQS.filter((item) => {
+  const filteredFaqs = items.filter((item) => {
     if (activeCategory === "All") return true;
     return item.category === activeCategory;
   });

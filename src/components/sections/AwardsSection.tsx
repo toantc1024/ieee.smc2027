@@ -5,11 +5,12 @@ import { Award, Trophy, Medal, Star } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 interface AwardsProps {
+  awards?: Array<Pick<(typeof AWARDS_LIST)[number], "title" | "description" | "prize">>;
   title?: string;
   subtitle?: string;
 }
 
-const AWARDS_LIST = [
+export const AWARDS_LIST = [
   {
     icon: Trophy,
     title: "Best Overall Conference Paper Award",
@@ -37,6 +38,7 @@ const AWARDS_LIST = [
 ];
 
 export function AwardsSection({
+  awards = AWARDS_LIST,
   title = "IEEE SMC 2027 Conference Awards",
   subtitle = "Recognizing excellence in research rigor, student innovation, and scientific novelty across systems, cybernetics, and human-machine interaction",
 }: AwardsProps) {
@@ -53,8 +55,8 @@ export function AwardsSection({
         </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {AWARDS_LIST.map((award, idx) => {
-            const Icon = award.icon;
+          {awards.map((award, idx) => {
+            const Icon = AWARDS_LIST[idx % AWARDS_LIST.length].icon;
             return (
               <div
                 key={idx}

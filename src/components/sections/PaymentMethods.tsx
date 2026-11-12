@@ -17,11 +17,12 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
 
 interface PaymentMethodsProps {
+  rates?: typeof REGISTRATION_RATES;
   title?: string;
   subtitle?: string;
 }
 
-const REGISTRATION_RATES = [
+export const REGISTRATION_RATES = [
   {
     category: "IEEE Member (Author)",
     earlyBird: "$650 USD",
@@ -65,6 +66,7 @@ const REGISTRATION_RATES = [
 ];
 
 export function PaymentMethods({
+  rates = REGISTRATION_RATES,
   title = "Registration & Payment Methods",
   subtitle = "Official registration fees and payment instructions for IEEE SMC 2027 participants and authors",
 }: PaymentMethodsProps) {
@@ -131,7 +133,7 @@ export function PaymentMethods({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {REGISTRATION_RATES.map((rate, idx) => (
+                {rates.map((rate, idx) => (
                   <tr
                     key={idx}
                     className={`hover:bg-blue-50/40 transition-colors ${

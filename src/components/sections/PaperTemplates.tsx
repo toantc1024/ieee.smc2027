@@ -14,24 +14,7 @@ import {
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
-export interface PaperTemplatesProps {
-  title?: string;
-  subtitle?: string;
-}
-
-export function PaperTemplates({
-  title = "Author Submission Templates & Guidelines",
-  subtitle = "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
-}: PaperTemplatesProps) {
-  const [copiedLink, setCopiedLink] = useState<string | null>(null);
-
-  const handleCopyLink = (name: string, url: string) => {
-    navigator.clipboard.writeText(url);
-    setCopiedLink(name);
-    setTimeout(() => setCopiedLink(null), 2000);
-  };
-
-  const templates = [
+export const PAPER_TEMPLATE_ITEMS = [
     {
       name: "IEEE LaTeX Template Package",
       format: "LaTeX (zip)",
@@ -52,7 +35,7 @@ export function PaperTemplates({
     },
   ];
 
-  const guidelines = [
+export const PAPER_GUIDELINES = [
     {
       label: "Regular & Special Session Papers",
       limit: "Up to 6 pages",
@@ -74,6 +57,28 @@ export function PaperTemplates({
       detail: "Poster and rapid presentation format for cutting-edge emerging ideas.",
     },
   ];
+
+export interface PaperTemplatesProps {
+  templates?: Array<Omit<(typeof PAPER_TEMPLATE_ITEMS)[number], "icon">>;
+  guidelines?: typeof PAPER_GUIDELINES;
+  title?: string;
+  subtitle?: string;
+}
+
+export function PaperTemplates({
+  templates = PAPER_TEMPLATE_ITEMS,
+  guidelines = PAPER_GUIDELINES,
+  title = "Author Submission Templates & Guidelines",
+  subtitle = "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
+}: PaperTemplatesProps) {
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
+
+  const handleCopyLink = (name: string, url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedLink(name);
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
 
   return (
     <SectionContainer id="templates" fullWidthBg="bg-white">
@@ -111,7 +116,7 @@ export function PaperTemplates({
 
             <div className="space-y-4">
               {templates.map((tpl) => {
-                const Icon = tpl.icon;
+                const Icon = tpl.format.toLowerCase().includes("latex") ? FileCode : FileText;
                 return (
                   <div
                     key={tpl.name}

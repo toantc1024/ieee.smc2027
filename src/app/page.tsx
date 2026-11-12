@@ -1,6 +1,9 @@
 import React from "react";
 import { cmsService } from "@/services";
 import { withTimeout } from "@/lib";
+import { getCurrentUser } from "@/lib/auth";
+import { canViewPage } from "@/lib/page-access";
+import { notFound } from "next/navigation";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { WelcomeLetter } from "@/components/sections/WelcomeLetter";
 import { NewsList } from "@/components/sections/NewsList";
@@ -14,37 +17,37 @@ import type { PageBlock } from "@/modules/website-builder/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  let blocks: PageBlock[] = [];
+export default async function Home({ searchParams }: { searchParams: Promise<{ preview?: string }> }) {
+  const { preview } = await searchParams;
+  let homePage: Awaited<ReturnType<typeof cmsService.getPageByIdOrSlug>> = null;
 
   try {
-    const homePage = await withTimeout(
+    homePage = await withTimeout(
       cmsService.getPageByIdOrSlug("home"),
       2500,
       null
     );
-    if (homePage && Array.isArray(homePage.blocks)) {
-      blocks = homePage.blocks as unknown as PageBlock[];
-    }
   } catch (err) {
     console.error("Failed to fetch home page blocks via Prisma, using fallback", err);
   }
 
-  // Fallback in case of DB disconnect or empty blocks
-  if (blocks.length === 0) {
-    return (
-      <div className="w-full flex flex-col">
-        <HeroCarousel />
-        <WelcomeLetter />
-        <NewsList />
-        <ImportantDates />
-        <ConferenceVideo />
-        <CommitteesSection />
-        <Venue />
-        <ContactCards />
-      </div>
-    );
+  if (homePage) {
+    const user = !homePage.is_published && (preview === "true" || preview === "1") ? await getCurrentUser() : null;
+    if (!canViewPage(homePage.is_published, preview, user?.role)) notFound();
+    if (Array.isArray(homePage.blocks)) return <PublicPageRenderer blocks={homePage.blocks as unknown as PageBlock[]} />;
   }
 
-  return <PublicPageRenderer blocks={blocks} />;
+  // A missing page or unavailable database falls back to the conference homepage.
+  return (
+    <div className="w-full flex flex-col">
+      <HeroCarousel />
+      <WelcomeLetter />
+      <NewsList />
+      <ImportantDates />
+      <ConferenceVideo />
+      <CommitteesSection />
+      <Venue />
+      <ContactCards />
+    </div>
+  );
 }

@@ -5,6 +5,8 @@ import type { PageBlock } from "@/modules/website-builder/types";
 import { getBlockDefinition } from "@/modules/website-builder/registry";
 import { BlockErrorBoundary } from "@/modules/website-builder/components/canvas/block-error-boundary";
 import { cn } from "@/lib/utils";
+import { getBlockPresentation, isBlockHidden } from "@/modules/website-builder/utils/block-presentation";
+import { PublicNestedBlock } from "@/modules/website-builder/components/canvas/columns-slot";
 
 interface PublicPageRendererProps {
   blocks: PageBlock[];
@@ -18,11 +20,11 @@ export function PublicPageRenderer({ blocks }: PublicPageRendererProps) {
   return (
     <div className="w-full flex flex-col min-h-[50vh]">
       {blocks.map((block, idx) => {
-        if (block.hidden) return null;
+        if (isBlockHidden(block)) return null;
 
         const def = getBlockDefinition(block.type);
         const ComponentToRender = def?.render;
-        const customStyles = (block.props?._styles || {}) as Record<string, string>;
+        const presentation = getBlockPresentation(block);
 
         return (
           <section
@@ -30,18 +32,13 @@ export function PublicPageRenderer({ blocks }: PublicPageRendererProps) {
             id={block.id}
             className={cn(
               "w-full",
-              customStyles.paddingTop,
-              customStyles.paddingBottom,
-              customStyles.className
+              presentation.className
             )}
-            style={{
-              backgroundColor: customStyles.backgroundColor || undefined,
-              color: customStyles.textColor || undefined,
-            }}
+            style={presentation.style}
           >
             <BlockErrorBoundary blockType={block.type} blockId={block.id}>
               {ComponentToRender ? (
-                <ComponentToRender {...block.props} />
+                <ComponentToRender {...block.props}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
               ) : (
                 <div className="py-12 px-4 text-center text-slate-400 bg-slate-50 border-y border-slate-100">
                   <p className="text-sm">Section type: {block.type}</p>

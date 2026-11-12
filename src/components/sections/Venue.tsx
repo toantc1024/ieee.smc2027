@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   MapPin,
   Building2,
@@ -16,6 +17,8 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO, MUST_VISIT_ATTRACTIONS, TouristAttraction } from "@/data/conference";
 
 export interface VenueProps {
+  image?: string;
+  attractions?: TouristAttraction[];
   title?: string;
   subtitle?: string;
   venueName?: string;
@@ -24,6 +27,8 @@ export interface VenueProps {
 }
 
 export function Venue({
+  image = "/images/sheraton-saigon-card.jpg",
+  attractions = MUST_VISIT_ATTRACTIONS,
   title = "Travel & Accommodation & Ho Chi Minh City Guide",
   venueName = CONFERENCE_INFO.venue,
   address = "No. 88 Dong Khoi, Saigon Ward, District 1, Ho Chi Minh City, Vietnam.",
@@ -31,7 +36,7 @@ export function Venue({
 }: VenueProps) {
   const [selectedFilter, setSelectedFilter] = useState<"all" | "walk" | "culture">("all");
 
-  const filteredAttractions = MUST_VISIT_ATTRACTIONS.filter((item) => {
+  const filteredAttractions = attractions.filter((item) => {
     if (selectedFilter === "walk") {
       return (
         item.id === "nguyen-hue" ||
@@ -85,14 +90,14 @@ export function Venue({
           </div>
 
           <div className="relative z-10 flex flex-wrap items-center gap-3">
-            <a
+            <Link
               href="/travel"
               className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all"
             >
               <Compass className="w-4.5 h-4.5" />
               <span>Full Travel Guide</span>
               <ArrowUpRight className="w-4 h-4" />
-            </a>
+            </Link>
             <a
               href={googleMapsUrl}
               target="_blank"
@@ -180,7 +185,7 @@ export function Venue({
           {/* Right Column: Clean, Unobstructed Photography of the Venue */}
           <div className="lg:col-span-5 relative min-h-[340px] lg:min-h-full rounded-sm overflow-hidden border border-slate-200 shadow-2xs group">
             <Image
-              src="/images/sheraton-saigon-card.jpg"
+              src={image || "/images/sheraton-saigon-card.jpg"}
               alt="Sheraton Saigon Grand Opera Hotel"
               fill
               className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
@@ -432,13 +437,13 @@ export function Venue({
           <p className="text-xs sm:text-sm text-slate-600">
             For airport transfer details, climate advice, and full city guides, visit our dedicated travel page.
           </p>
-          <a
+          <Link
             href="/travel"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-xs sm:text-sm rounded-sm shadow-xs transition-all shrink-0"
           >
             <span>Open Dedicated Travel & Accommodation Page</span>
             <ArrowUpRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </SectionContainer>

@@ -6,20 +6,22 @@ import { TECHNICAL_TRACKS } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 
 export interface TracksExplorerProps {
+  pillars?: typeof TECHNICAL_TRACKS;
   title?: string;
   subtitle?: string;
 }
 
 export function TracksExplorer({
+  pillars = TECHNICAL_TRACKS,
   title = "Technical Tracks & 3 Core Pillars",
   subtitle = "Systems Science • Cybernetics • Human–Machine Systems",
 }: TracksExplorerProps) {
   const [activePillarId, setActivePillarId] = useState<string>("systems");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const activePillar = TECHNICAL_TRACKS.find((p) => p.id === activePillarId) || TECHNICAL_TRACKS[0];
+  const activePillar = pillars.find((p) => p.id === activePillarId) || pillars[0];
 
-  const filteredTopics = activePillar.topics.filter((topic) => {
+  const filteredTopics = (activePillar?.topics || []).filter((topic) => {
     if (!searchQuery.trim()) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -110,8 +112,8 @@ export function TracksExplorer({
 
       {/* 3 Pillars Tabs */}
       <div className="grid grid-cols-1 md:grid-cols-3 border-b border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-blue-800/40 relative z-10">
-        {TECHNICAL_TRACKS.map((pillar) => {
-          const isActive = pillar.id === activePillarId;
+        {pillars.map((pillar) => {
+          const isActive = pillar.id === activePillar?.id;
           return (
             <button
               key={pillar.id}

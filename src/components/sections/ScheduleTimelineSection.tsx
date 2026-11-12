@@ -19,7 +19,7 @@ interface TimelineDay {
   events: TimelineEvent[];
 }
 
-const DEFAULT_DAYS: TimelineDay[] = [
+export const DEFAULT_DAYS: TimelineDay[] = [
   {
     dayNumber: 1,
     dateStr: "Wednesday, Oct 6, 2027",
@@ -74,16 +74,18 @@ const DEFAULT_DAYS: TimelineDay[] = [
 ];
 
 interface ScheduleTimelineProps {
+  days?: TimelineDay[];
   title?: string;
   subtitle?: string;
 }
 
 export function ScheduleTimelineSection({
+  days = DEFAULT_DAYS,
   title = "Conference Schedule & Daily Timeline",
   subtitle = "October 6–10, 2027 • Five days of cutting-edge research, keynotes, workshops, and networking",
 }: ScheduleTimelineProps) {
   const [selectedDay, setSelectedDay] = useState(1);
-  const activeDay = DEFAULT_DAYS.find((d) => d.dayNumber === selectedDay) || DEFAULT_DAYS[0];
+  const activeDay = days.find((d) => d.dayNumber === selectedDay) || days[0];
 
   return (
     <SectionContainer id="schedule" fullWidthBg="bg-slate-50">
@@ -99,11 +101,11 @@ export function ScheduleTimelineSection({
 
         {/* Day Selector Tabs */}
         <div className="mt-8 flex flex-wrap gap-2 border-b border-slate-200 pb-4">
-          {DEFAULT_DAYS.map((day) => {
-            const isSelected = selectedDay === day.dayNumber;
+          {days.map((day, index) => {
+            const isSelected = activeDay?.dayNumber === day.dayNumber;
             return (
               <button
-                key={day.dayNumber}
+                key={`${day.dayNumber}-${index}`}
                 type="button"
                 onClick={() => setSelectedDay(day.dayNumber)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
@@ -121,6 +123,7 @@ export function ScheduleTimelineSection({
           })}
         </div>
 
+        {activeDay ? <>
         {/* Active Day Overview Banner */}
         <div className="mt-6 p-4 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-xs">
           <div>
@@ -172,6 +175,7 @@ export function ScheduleTimelineSection({
             </div>
           ))}
         </div>
+        </> : <p className="py-8 text-sm text-slate-500">No schedule days added yet.</p>}
       </div>
     </SectionContainer>
   );
