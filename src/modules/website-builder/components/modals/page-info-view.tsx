@@ -6,23 +6,18 @@ import {
   Share2,
   CheckCircle2,
   AlertCircle,
-  ExternalLink,
-  ShieldCheck,
-  Send,
-  EyeOff,
   Copy,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useBuilderStore } from "../../store/builder-store";
+import { PageParentPicker } from "../studio/page-parent-picker";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export function PageInfoView() {
   const {
-    pageId,
     pageTitle,
     pageSlug,
     isPublished,
@@ -38,32 +33,28 @@ export function PageInfoView() {
     root.metaDescription ||
     "Official Conference Website for IEEE SMC 2027 in Ho Chi Minh City, Vietnam. Systems science, human-AI symbiosis, and cybernetics.";
 
-  // Calculate real SEO Score (0-100)
   const seoAudit = useMemo(() => {
     let score = 0;
     const checks: Array<{ label: string; passed: boolean; tip: string }> = [];
 
-    // Title length check (ideal 30-65 chars)
     const titleLen = metaTitle.length;
     const titlePass = titleLen >= 20 && titleLen <= 70;
     if (titlePass) score += 30;
     checks.push({
       label: "SEO Title Length",
       passed: titlePass,
-      tip: `${titleLen} characters (recommended: 30–65)`,
+      tip: `${titleLen} characters`,
     });
 
-    // Description length check (ideal 70-160 chars)
     const descLen = metaDescription.length;
     const descPass = descLen >= 50 && descLen <= 170;
     if (descPass) score += 30;
     checks.push({
       label: "Meta Description Length",
       passed: descPass,
-      tip: `${descLen} characters (recommended: 70–160)`,
+      tip: `${descLen} characters`,
     });
 
-    // Slug formatting check
     const slugPass =
       currentSlug.length > 0 &&
       !currentSlug.includes(" ") &&
@@ -72,14 +63,13 @@ export function PageInfoView() {
     checks.push({
       label: "Clean URL Slug",
       passed: slugPass,
-      tip: slugPass ? "Lowercase URL without spaces" : "Contains spaces or invalid characters",
+      tip: slugPass ? "Lowercase URL without spaces" : "Contains invalid characters",
     });
 
-    // Sections presence
     const sectionsPass = data.content.length >= 2;
     if (sectionsPass) score += 20;
     checks.push({
-      label: "Sufficient Page Content",
+      label: "Page Content Depth",
       passed: sectionsPass,
       tip: `${data.content.length} sections placed`,
     });
@@ -87,9 +77,10 @@ export function PageInfoView() {
     return { score, checks };
   }, [metaTitle, metaDescription, currentSlug, data.content.length]);
 
-  const liveUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/${currentSlug === "home" ? "" : currentSlug}`
-    : `https://ieee-smc2027.org/${currentSlug}`;
+  const liveUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/${currentSlug === "home" ? "" : currentSlug}`
+      : `https://ieee-smc2027.org/${currentSlug}`;
 
   const copyUrl = () => {
     navigator.clipboard.writeText(liveUrl);
@@ -97,9 +88,9 @@ export function PageInfoView() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 max-w-5xl mx-auto space-y-8 select-none">
+    <div className="flex-1 min-h-0 overflow-y-auto p-6 max-w-5xl w-full mx-auto space-y-6 select-none">
       {/* Overview Top Card */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span
@@ -110,18 +101,18 @@ export function PageInfoView() {
                   : "bg-slate-100 text-slate-600 border border-slate-200"
               )}
             >
-              {isPublished ? "Live Published Page" : "Draft Status"}
+              {isPublished ? "Published" : "Draft"}
             </span>
-            <span className="text-xs text-slate-400 font-mono">/{currentSlug}</span>
+            <span className="text-xs text-slate-400 font-medium">/{currentSlug}</span>
           </div>
           <h2 className="text-2xl font-bold text-slate-900">{currentTitle}</h2>
           <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
-            <span>Public Address:</span>
-            <span className="font-mono text-blue-600">{liveUrl}</span>
+            <span>Public URL:</span>
+            <span className="font-medium text-blue-600">{liveUrl}</span>
             <button
               type="button"
               onClick={copyUrl}
-              className="text-slate-400 hover:text-slate-700"
+              className="text-slate-400 hover:text-blue-600 cursor-pointer"
               title="Copy URL"
             >
               <Copy className="w-3.5 h-3.5" />
@@ -138,17 +129,17 @@ export function PageInfoView() {
                 seoAudit.score >= 80
                   ? "text-emerald-600"
                   : seoAudit.score >= 50
-                  ? "text-amber-500"
-                  : "text-rose-500"
+                    ? "text-amber-500"
+                    : "text-rose-500"
               )}
             >
               {seoAudit.score}
             </span>
             <span className="text-[10px] block font-bold text-slate-400 uppercase tracking-wider">
-              / 100 SEO Score
+              SEO Score
             </span>
           </div>
-          <div className="h-8 w-px bg-slate-200" />
+          <div className="h-10 w-px bg-slate-200" />
           <div className="space-y-1 text-xs">
             {seoAudit.checks.map((c, i) => (
               <div key={i} className="flex items-center gap-1.5">
@@ -165,16 +156,18 @@ export function PageInfoView() {
       </div>
 
       {/* Two Column Layout: Editor Fields & Previews */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column: Metadata Fields */}
-        <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-slate-400">
-            SEO & Social Metadata
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 select-text">
+        {/* Left Column: Page Structure & Metadata */}
+        <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Page Settings & SEO Metadata
           </h3>
+
+          <PageParentPicker />
 
           <div className="space-y-1.5">
             <Label htmlFor="seo-title" className="text-xs font-semibold text-slate-700">
-              Page Title (Browser Tab & Search Title)
+              Page Title
             </Label>
             <Input
               id="seo-title"
@@ -188,8 +181,23 @@ export function PageInfoView() {
           </div>
 
           <div className="space-y-1.5">
+            <Label htmlFor="seo-slug" className="text-xs font-semibold text-slate-700">
+              URL Slug
+            </Label>
+            <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs">
+              <span className="text-slate-400 mr-1 select-none">/</span>
+              <input
+                id="seo-slug"
+                value={root.slug || ""}
+                onChange={(e) => updatePageMeta({ slug: e.target.value })}
+                className="w-full bg-transparent outline-none font-medium text-slate-900"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
             <Label htmlFor="seo-meta-title" className="text-xs font-semibold text-slate-700">
-              Meta Title Tag
+              Search Engine Title
             </Label>
             <Input
               id="seo-meta-title"
@@ -199,55 +207,39 @@ export function PageInfoView() {
               className="text-xs"
             />
             <span className="text-[10px] text-slate-400">
-              {metaTitle.length} characters (recommended 30–65)
+              {metaTitle.length} characters · ideal 30–65
             </span>
           </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="seo-meta-desc" className="text-xs font-semibold text-slate-700">
-              Search & Social Description
+              Meta Description
             </Label>
             <Textarea
               id="seo-meta-desc"
               value={root.metaDescription || ""}
               onChange={(e) => updatePageMeta({ metaDescription: e.target.value })}
-              placeholder="Summary of this conference page for Google and social previews..."
+              placeholder="Summary of this page for search engines and social cards..."
               className="text-xs min-h-[100px] resize-none"
             />
             <span className="text-[10px] text-slate-400">
-              {metaDescription.length} characters (recommended 70–160)
+              {metaDescription.length} characters · ideal 70–160
             </span>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="seo-slug" className="text-xs font-semibold text-slate-700">
-              URL Path Slug
-            </Label>
-            <div className="flex items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs">
-              <span className="text-slate-400 font-mono mr-1 select-none">/</span>
-              <input
-                id="seo-slug"
-                value={root.slug || ""}
-                onChange={(e) => updatePageMeta({ slug: e.target.value })}
-                className="w-full bg-transparent outline-none font-mono text-slate-900"
-              />
-            </div>
           </div>
         </div>
 
         {/* Right Column: Live Previews */}
         <div className="space-y-6">
-          {/* Google Search Card Preview */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
               <Globe className="w-4 h-4 text-blue-600" />
-              <span>Google Search Result Preview</span>
+              <span>Google Search Preview</span>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 font-sans space-y-1">
-              <div className="text-xs text-slate-500 font-mono truncate">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+              <div className="text-xs text-slate-500 truncate">
                 https://ieee-smc2027.org/{currentSlug === "home" ? "" : currentSlug}
               </div>
-              <h4 className="text-base font-semibold text-blue-700 hover:underline cursor-pointer truncate">
+              <h4 className="text-base font-semibold text-blue-700 truncate">
                 {metaTitle}
               </h4>
               <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
@@ -256,18 +248,17 @@ export function PageInfoView() {
             </div>
           </div>
 
-          {/* Social Card Preview (Facebook / Twitter) */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
               <Share2 className="w-4 h-4 text-blue-600" />
-              <span>Social Open Graph Card (LinkedIn / Twitter)</span>
+              <span>Social Open Graph Card</span>
             </div>
-            <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-xs">
-              <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-800 flex items-center justify-center text-white font-bold text-sm tracking-tight px-4 text-center">
-                IEEE SMC 2027 • Ho Chi Minh City, Vietnam
+            <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-2xs">
+              <div className="h-32 bg-gradient-to-r from-[#004776] to-[#2563EB] flex items-center justify-center text-white font-bold text-sm tracking-tight px-4 text-center">
+                IEEE SMC 2027 · Ho Chi Minh City, Vietnam
               </div>
               <div className="p-3.5 space-y-1 bg-slate-50">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 font-mono">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
                   ieee-smc2027.org
                 </span>
                 <h5 className="text-xs font-bold text-slate-900 truncate">

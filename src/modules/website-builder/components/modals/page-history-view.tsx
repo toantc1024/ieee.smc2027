@@ -90,6 +90,7 @@ export function PageHistoryView() {
           id: json.page.id,
           title: json.page.title,
           slug: json.page.slug,
+          parentId: json.page.parentId,
           version: json.page.version,
           isPublished: json.page.isPublished,
           content: json.page.content,

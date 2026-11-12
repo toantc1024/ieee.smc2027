@@ -7,4 +7,4 @@ export * from "./toolbar/builder-header";
 export * from "./toolbar/sub-toolbar";
 export * from "./modals/page-info-view";
 export * from "./modals/page-history-view";
-export * from "./modals/sync-translate-modal";
+export * from "./modals/page-preview-modal";
