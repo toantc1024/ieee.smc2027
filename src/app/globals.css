@@ -50,7 +50,7 @@
   --sidebar-accent-foreground: oklch(0.4 0.0999 254.9438);
   --sidebar-border: oklch(0.891 0.0151 251.1685);
   --sidebar-ring: oklch(0.6 0.1994 262.7563);
-  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: JetBrains Mono, ui-monospace, monospace;
   --radius: 0.35rem;
@@ -134,7 +134,7 @@
   --sidebar-accent-foreground: oklch(0.9411 0.019 248.0297);
   --sidebar-border: oklch(0.3192 0.0409 251.8513);
   --sidebar-ring: oklch(0.6357 0.1954 261.471);
-  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: JetBrains Mono, ui-monospace, monospace;
   --radius: 0.35rem;
@@ -864,6 +864,10 @@ body:not(:has(.admin-page-root)) select {
 .tiptap {
   outline: none;
   caret-color: auto;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #1e293b;
 }
 
 .tiptap p,

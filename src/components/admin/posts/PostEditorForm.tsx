@@ -222,15 +222,15 @@ export function PostEditorForm({
   return (
     <div className="h-full flex flex-col overflow-hidden bg-background select-none font-sans">
       {/* ── Top Header Bar ── */}
-      <header className="shrink-0 bg-white dark:bg-card border-b border-border/80 z-20">
-        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 h-13 min-h-[52px] w-full min-w-0">
+      <header className="shrink-0 bg-white dark:bg-card border-b border-border/80 z-20 shadow-2xs">
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 h-14 min-h-[56px] w-full min-w-0">
           {/* Back Button */}
           <Button
             type="button"
             variant="ghost"
             size="icon"
             onClick={handleBackSafe}
-            className="size-9 shrink-0 cursor-pointer"
+            className="size-9 rounded-lg shrink-0 cursor-pointer text-slate-500 hover:text-slate-900 hover:bg-slate-100"
             title="Back"
           >
             <ArrowLeft className="size-4" />
@@ -239,39 +239,44 @@ export function PostEditorForm({
           {/* Title Input inside Header */}
           <div
             className={cn(
-              "flex-1 min-w-0 flex items-center h-9 border border-border rounded-md transition-all box-border bg-slate-50/50 dark:bg-muted/30",
-              "focus-within:border-primary/40 focus-within:ring-1 focus-within:ring-primary/10 focus-within:bg-white dark:focus-within:bg-card"
+              "flex-1 min-w-0 flex items-center h-10 border border-slate-200 rounded-lg transition-all box-border bg-slate-50/60 dark:bg-muted/30",
+              "focus-within:border-[#115eff] focus-within:ring-2 focus-within:ring-[#115eff]/10 focus-within:bg-white dark:focus-within:bg-card"
             )}
           >
-            <div className="px-2.5 sm:px-3 border-r border-border h-full flex items-center shrink-0">
-              <Type className="size-4 text-muted-foreground/60" />
+            <div className="px-3 border-r border-slate-200 h-full flex items-center shrink-0">
+              <Type className="size-4 text-slate-400" />
             </div>
             <input
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder={isEditMode ? "Edit post title..." : "Enter new post title..."}
-              className="flex-1 min-w-0 bg-transparent border-none outline-none h-full px-2.5 sm:px-3 text-sm font-semibold placeholder:text-muted-foreground/40 text-foreground"
+              className="flex-1 min-w-0 bg-transparent border-none outline-none h-full px-3 text-sm sm:text-base font-semibold placeholder:text-slate-400 text-slate-900"
             />
           </div>
 
           {/* Status Badge */}
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <Badge
-              variant={status === "PUBLISHED" ? "default" : "secondary"}
+            <span
               className={cn(
-                "h-7 px-2.5 text-xs font-semibold rounded-md",
+                "inline-flex items-center h-8 px-3 text-xs font-semibold rounded-full border",
                 status === "PUBLISHED"
-                  ? "bg-[#115eff] text-white hover:bg-[#115eff]"
-                  : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  ? "bg-blue-50 text-[#115eff] border-blue-200"
+                  : "bg-slate-100 text-slate-700 border-slate-200"
               )}
             >
+              <span
+                className={cn(
+                  "size-1.5 rounded-full mr-1.5",
+                  status === "PUBLISHED" ? "bg-[#115eff]" : "bg-slate-400"
+                )}
+              />
               {status === "PUBLISHED" ? "Published" : "Draft"}
-            </Badge>
+            </span>
           </div>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
             {/* Direct Preview to Full Post Page (No modal dialog) */}
             <Button
               type="button"
@@ -286,7 +291,7 @@ export function PostEditorForm({
                   toast.info("Please enter a title or save draft first to preview.");
                 }
               }}
-              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-none"
+              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 text-slate-700 rounded-lg shadow-sm"
               title="Open full post page in new tab"
             >
               <Eye className="size-4 text-[#115eff]" />
@@ -300,7 +305,7 @@ export function PostEditorForm({
               variant="outline"
               onClick={() => handleSave("DRAFT")}
               disabled={isSaving}
-              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 shadow-none text-slate-700"
+              className="h-9 px-3.5 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 border-slate-200 shadow-sm text-slate-700 rounded-lg"
             >
               <Save className="size-4" />
               <span>Save Draft</span>
@@ -314,7 +319,7 @@ export function PostEditorForm({
                 variant="outline"
                 onClick={() => handleSave("DRAFT")}
                 disabled={isSaving}
-                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:text-rose-800 shadow-none"
+                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:text-rose-800 rounded-lg shadow-sm"
               >
                 <EyeOff className="size-4" />
                 <span>Unpublish</span>
@@ -325,7 +330,7 @@ export function PostEditorForm({
                 size="sm"
                 onClick={() => handleSave("PUBLISHED")}
                 disabled={isSaving}
-                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none"
+                className="h-9 px-4 gap-1.5 cursor-pointer text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-lg shadow-sm"
               >
                 <Rocket className="size-4" />
                 <span>Publish Post</span>
@@ -339,14 +344,14 @@ export function PostEditorForm({
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
         {/* ── Left Collapsible Attributes Sidebar ── */}
         {isLeftSidebarOpen ? (
-          <aside className="w-full lg:w-[360px] xl:w-[390px] shrink-0 border-b lg:border-b-0 lg:border-r border-border/80 bg-white dark:bg-card flex flex-col overflow-hidden z-10 shadow-none">
+          <aside className="w-full lg:w-[370px] xl:w-[400px] shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white flex flex-col overflow-hidden z-10 shadow-none">
             {/* Sidebar Sticky Header */}
-            <div className="px-4 py-3 bg-muted/20 border-b border-border/80 flex items-center justify-between shrink-0">
+            <div className="px-4 py-3 bg-slate-50/70 border-b border-slate-200 flex items-center justify-between shrink-0">
               <div className="min-w-0">
-                <h3 className="font-semibold text-sm text-foreground tracking-tight truncate">
+                <h3 className="font-semibold text-sm sm:text-base text-slate-900 tracking-tight truncate">
                   Post Information
                 </h3>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-slate-500 truncate">
                   Cover image, category & summary
                 </p>
               </div>
@@ -359,7 +364,7 @@ export function PostEditorForm({
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsLeftSidebarOpen(false)}
-                      className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                      className="size-8 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
                       aria-label="Collapse sidebar"
                     >
                       <ChevronLeft className="size-4" />
@@ -373,16 +378,16 @@ export function PostEditorForm({
             </div>
 
             {/* Tab switch */}
-            <div className="px-3 py-1.5 border-b border-border/70 bg-muted/10 shrink-0">
-              <div className="grid grid-cols-2 p-0.5 rounded-sm bg-muted/60 text-xs">
+            <div className="px-3 py-2 border-b border-slate-200 bg-white shrink-0">
+              <div className="grid grid-cols-2 p-1 rounded-lg bg-slate-100 text-xs sm:text-sm">
                 <button
                   type="button"
                   onClick={() => setActiveTab("attributes")}
                   className={cn(
-                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-sm font-medium transition-all cursor-pointer",
+                    "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition-all cursor-pointer",
                     activeTab === "attributes"
-                      ? "bg-background text-foreground font-semibold shadow-none"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
                   )}
                 >
                   <FileText className="size-3.5" />
@@ -392,13 +397,13 @@ export function PostEditorForm({
                   type="button"
                   onClick={() => setActiveTab("files")}
                   className={cn(
-                    "flex items-center justify-center gap-1.5 py-1 px-2 rounded-sm font-medium transition-all cursor-pointer",
+                    "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition-all cursor-pointer",
                     activeTab === "files"
-                      ? "bg-background text-foreground font-semibold shadow-none"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
                   )}
                 >
-                  <ImageIcon className="size-3.5 text-primary" />
+                  <ImageIcon className="size-3.5 text-[#115eff]" />
                   <span>Media</span>
                 </button>
               </div>
@@ -411,25 +416,25 @@ export function PostEditorForm({
                   {/* Card 1: Cover Image */}
                   <div
                     id="post-sidebar-cover"
-                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-3"
+                    className="rounded-xl border border-slate-200 bg-slate-50/40 p-4 space-y-3 shadow-2xs"
                   >
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <ImageIcon className="size-4 text-muted-foreground" />
+                      <label className="text-xs sm:text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                        <ImageIcon className="size-4 text-slate-500" />
                         Cover Image
                       </label>
-                      <span className="text-[11px] text-muted-foreground">16:9 ratio</span>
+                      <span className="text-xs text-slate-400 font-medium">16:9 ratio</span>
                     </div>
 
                     {coverImage && !coverImgError ? (
                       <div className="space-y-2">
-                        <div className="relative group overflow-hidden rounded-sm border border-border bg-slate-100">
+                        <div className="relative group overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
                           <div className="aspect-[16/9] w-full relative">
                             <Image
                               src={coverImage}
                               alt="Cover preview"
                               fill
-                              className="object-cover rounded-sm"
+                              className="object-cover rounded-lg"
                               unoptimized
                               onError={() => setCoverImgError(true)}
                             />
@@ -439,20 +444,20 @@ export function PostEditorForm({
                               type="button"
                               variant="secondary"
                               size="sm"
-                              className="h-7 px-2.5 text-xs bg-white text-slate-900 hover:bg-slate-100 cursor-pointer font-medium"
+                              className="h-8 px-3 text-xs bg-white text-slate-900 hover:bg-slate-100 cursor-pointer font-medium rounded-lg"
                               onClick={() => setShowCoverModal(true)}
                             >
-                              <Crop className="mr-1 size-3" />
+                              <Crop className="mr-1 size-3.5" />
                               Change
                             </Button>
                             <Button
                               type="button"
                               variant="destructive"
                               size="sm"
-                              className="h-7 px-2.5 text-xs cursor-pointer font-medium"
+                              className="h-8 px-3 text-xs cursor-pointer font-medium rounded-lg"
                               onClick={() => setCoverImage(null)}
                             >
-                              <X className="mr-1 size-3" />
+                              <X className="mr-1 size-3.5" />
                               Remove
                             </Button>
                           </div>
@@ -463,17 +468,17 @@ export function PostEditorForm({
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="flex-1 h-8 text-xs font-medium cursor-pointer bg-white"
+                            className="flex-1 h-8 text-xs font-medium cursor-pointer bg-white rounded-lg border-slate-200"
                             onClick={() => setShowCoverModal(true)}
                           >
-                            <ImageIcon className="mr-1.5 size-3.5 text-muted-foreground" />
+                            <ImageIcon className="mr-1.5 size-3.5 text-slate-500" />
                             Change Cover
                           </Button>
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="h-8 px-2 text-xs text-rose-600 hover:bg-rose-50"
+                            className="h-8 px-2.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg"
                             onClick={() => setCoverImage(null)}
                           >
                             Remove
@@ -481,17 +486,17 @@ export function PostEditorForm({
                         </div>
                       </div>
                     ) : (
-                      <div className="border border-dashed border-border rounded-sm p-4 text-center bg-white dark:bg-card">
+                      <div className="border border-dashed border-slate-200 rounded-lg p-5 text-center bg-white">
                         <div className="flex flex-col items-center justify-center gap-2">
-                          <div className="size-10 rounded-sm bg-slate-100 dark:bg-muted flex items-center justify-center text-muted-foreground">
+                          <div className="size-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
                             <ImageIcon className="size-5" />
                           </div>
                           <div className="text-center">
-                            <p className="text-xs font-medium text-foreground">
+                            <p className="text-xs sm:text-sm font-medium text-slate-800">
                               No cover image selected
                             </p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">
-                              Upload an image or paste an image URL
+                            <p className="text-xs text-slate-500 mt-0.5">
+                              Upload an image or choose from library
                             </p>
                           </div>
                           <div className="flex items-center gap-2 mt-1">
@@ -499,21 +504,21 @@ export function PostEditorForm({
                               type="button"
                               size="sm"
                               variant="outline"
-                              className="h-7 text-xs font-medium cursor-pointer bg-white"
+                              className="h-8 text-xs font-medium cursor-pointer bg-white rounded-lg border-slate-200"
                               onClick={() => setShowCoverModal(true)}
                             >
-                              <ImageIcon className="size-3 mr-1" />
+                              <ImageIcon className="size-3.5 mr-1 text-slate-500" />
                               Choose Image
                             </Button>
                             <Button
                               type="button"
                               size="sm"
                               variant="outline"
-                              className="h-7 text-xs font-medium cursor-pointer bg-white"
+                              className="h-8 text-xs font-medium cursor-pointer bg-white rounded-lg border-slate-200"
                               onClick={() => fileInputRef.current?.click()}
                               disabled={isUploadingCover}
                             >
-                              <Upload className="size-3 mr-1" />
+                              <Upload className="size-3.5 mr-1 text-slate-500" />
                               {isUploadingCover ? "Uploading..." : "Upload File"}
                             </Button>
                           </div>
@@ -532,16 +537,16 @@ export function PostEditorForm({
                   {/* Card 2: Category */}
                   <div
                     id="post-sidebar-category"
-                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-xl border border-slate-200 bg-slate-50/40 p-4 space-y-2.5 shadow-2xs"
                   >
-                    <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <FolderOpen className="size-4 text-primary" />
+                    <label className="text-xs sm:text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                      <FolderOpen className="size-4 text-[#115eff]" />
                       Category
                     </label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full h-8 px-2.5 text-xs bg-white dark:bg-card border border-border rounded-sm font-medium text-foreground focus:outline-none focus:border-primary cursor-pointer"
+                      className="w-full h-10 px-3 text-sm bg-white border border-slate-200 rounded-lg font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#115eff]/20 focus:border-[#115eff] cursor-pointer"
                     >
                       {POST_CATEGORIES.map((cat) => (
                         <option key={cat} value={cat}>
@@ -554,11 +559,11 @@ export function PostEditorForm({
                   {/* Card 3: URL Slug */}
                   <div
                     id="post-sidebar-slug"
-                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-xl border border-slate-200 bg-slate-50/40 p-4 space-y-2.5 shadow-2xs"
                   >
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <LinkIcon className="size-4 text-muted-foreground" />
+                      <label className="text-xs sm:text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                        <LinkIcon className="size-4 text-slate-500" />
                         URL Slug
                       </label>
                       <button
@@ -573,19 +578,19 @@ export function PostEditorForm({
                           setSlug(autoSlug);
                           toast.success("Slug generated from title");
                         }}
-                        className="text-[11px] text-primary hover:underline cursor-pointer font-medium"
+                        className="text-xs text-[#115eff] hover:underline cursor-pointer font-medium"
                       >
                         Auto-generate
                       </button>
                     </div>
-                    <div className="flex items-center bg-white dark:bg-card border border-border rounded-sm px-2.5 h-8 text-xs text-muted-foreground">
-                      <span className="font-mono text-[11px] opacity-70">/news/</span>
+                    <div className="flex items-center bg-white border border-slate-200 rounded-lg px-3 h-10 text-sm focus-within:border-[#115eff] focus-within:ring-2 focus-within:ring-[#115eff]/20">
+                      <span className="font-mono text-xs text-slate-400 select-none">/news/</span>
                       <input
                         type="text"
                         value={slug}
                         onChange={(e) => setSlug(e.target.value)}
                         placeholder="post-url-slug"
-                        className="w-full py-1 pl-1 bg-transparent focus:outline-none text-foreground font-mono text-[11px]"
+                        className="w-full py-1 pl-1 bg-transparent focus:outline-none text-slate-800 font-mono text-xs sm:text-sm"
                       />
                     </div>
                   </div>
@@ -593,14 +598,14 @@ export function PostEditorForm({
                   {/* Card 4: Summary / Excerpt */}
                   <div
                     id="post-sidebar-summary"
-                    className="rounded-sm border border-border/80 bg-slate-50/50 dark:bg-muted/20 p-3.5 space-y-2.5"
+                    className="rounded-xl border border-slate-200 bg-slate-50/40 p-4 space-y-2.5 shadow-2xs"
                   >
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <FileText className="size-4 text-muted-foreground" />
+                      <label className="text-xs sm:text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                        <FileText className="size-4 text-slate-500" />
                         Summary Excerpt
                       </label>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-xs text-slate-400 font-medium">
                         {summary.length} chars
                       </span>
                     </div>
@@ -609,24 +614,24 @@ export function PostEditorForm({
                       value={summary}
                       onChange={(e) => setSummary(e.target.value)}
                       placeholder="Short description displayed on news feeds and SEO cards..."
-                      className="w-full p-2.5 text-xs text-foreground bg-white dark:bg-card border border-border rounded-sm focus:outline-none focus:border-primary resize-none leading-relaxed"
+                      className="w-full p-3 text-sm text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#115eff]/20 focus:border-[#115eff] resize-none leading-relaxed placeholder:text-slate-400"
                     />
                   </div>
                 </>
               ) : (
                 /* Media Quick Upload Tab */
                 <div className="space-y-3">
-                  <div className="border border-dashed border-border rounded-sm p-6 text-center bg-slate-50/50 dark:bg-muted/20">
-                    <ImageIcon className="size-8 mx-auto text-muted-foreground/60 mb-2" />
-                    <p className="text-xs font-semibold text-foreground">Media & Attachments</p>
-                    <p className="text-[11px] text-muted-foreground mt-1">
+                  <div className="border border-dashed border-slate-200 rounded-xl p-6 text-center bg-white shadow-2xs">
+                    <ImageIcon className="size-8 mx-auto text-slate-400 mb-2" />
+                    <p className="text-sm font-semibold text-slate-800">Media & Attachments</p>
+                    <p className="text-xs text-slate-500 mt-1">
                       Upload images directly into your content or set as cover image
                     </p>
                     <Button
                       type="button"
                       size="sm"
                       onClick={() => setShowContentImageModal(true)}
-                      className="mt-3 h-8 text-xs font-medium bg-[#115eff] text-white"
+                      className="mt-3 h-9 text-xs sm:text-sm font-medium bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-lg shadow-sm"
                     >
                       <Upload className="size-3.5 mr-1.5" />
                       Insert Image to Content
@@ -638,7 +643,7 @@ export function PostEditorForm({
           </aside>
         ) : (
           /* Minimized Left Rail */
-          <aside className="w-12 shrink-0 border-r border-border/80 bg-white dark:bg-card flex flex-col items-center py-3 gap-3 z-10">
+          <aside className="w-12 shrink-0 border-r border-slate-200 bg-white flex flex-col items-center py-3 gap-3 z-10">
             <TooltipProvider delayDuration={150}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -647,7 +652,7 @@ export function PostEditorForm({
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsLeftSidebarOpen(true)}
-                    className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                    className="size-8 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
                     aria-label="Expand sidebar"
                   >
                     <ChevronRight className="size-4" />
@@ -658,7 +663,7 @@ export function PostEditorForm({
                 </TooltipContent>
               </Tooltip>
 
-              <div className="w-6 border-t border-border" />
+              <div className="w-6 border-t border-slate-200" />
 
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -670,7 +675,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-cover")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     <ImageIcon className="size-4" />
                   </button>
@@ -690,7 +695,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-category")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     <FolderOpen className="size-4" />
                   </button>
@@ -710,7 +715,7 @@ export function PostEditorForm({
                         document.getElementById("post-sidebar-summary")?.scrollIntoView({ behavior: "smooth" });
                       }, 100);
                     }}
-                    className="size-8 rounded-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    className="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     <FileText className="size-4" />
                   </button>
@@ -724,7 +729,7 @@ export function PostEditorForm({
             <button
               type="button"
               onClick={() => setIsLeftSidebarOpen(true)}
-              className="mt-auto cursor-pointer py-2 px-1 text-[11px] font-semibold tracking-wider text-muted-foreground/60 hover:text-foreground transition-colors [writing-mode:vertical-rl] rotate-180 uppercase select-none"
+              className="mt-auto cursor-pointer py-2 px-1 text-xs font-semibold tracking-wider text-slate-400 hover:text-slate-700 transition-colors [writing-mode:vertical-rl] rotate-180 uppercase select-none"
               title="Click to expand"
             >
               Post Details

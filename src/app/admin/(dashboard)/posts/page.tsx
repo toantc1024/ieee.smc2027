@@ -73,7 +73,7 @@ function PostCoverThumbnail({
     <button
       type="button"
       onClick={onClick}
-      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-sm overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block"
+      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block shadow-2xs"
       title="Click to preview post"
     >
       {src && !imgError ? (
@@ -88,7 +88,7 @@ function PostCoverThumbnail({
       ) : (
         <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
           <ImageIcon className="size-5" />
-          <span className="text-[10px] font-medium text-slate-400">No cover</span>
+          <span className="text-xs font-medium text-slate-400">No cover</span>
         </div>
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-colors">
@@ -309,11 +309,11 @@ export default function PostsManagementPage() {
       {
         accessorKey: "title",
         header: "Post",
-        size: 320,
+        size: 340,
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="w-full min-w-0 max-w-[340px] sm:max-w-md py-1 space-y-1 overflow-hidden whitespace-normal">
+            <div className="w-full min-w-0 max-w-[360px] sm:max-w-md py-1 space-y-1 overflow-hidden whitespace-normal">
               {/* Title with word-wrap and caption */}
               <button
                 type="button"
@@ -321,7 +321,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="font-bold text-[#004776] hover:text-[#115eff] text-xs text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
+                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm sm:text-base text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
@@ -330,7 +330,7 @@ export default function PostsManagementPage() {
               {/* Summary with wrap and caption */}
               {item.summary && (
                 <p
-                  className="text-xs text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-normal w-full"
+                  className="text-xs sm:text-sm text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-normal w-full"
                   title={item.summary}
                 >
                   {item.summary}
@@ -340,7 +340,7 @@ export default function PostsManagementPage() {
               {/* Slug tag with safe truncation */}
               <div className="pt-0.5 min-w-0 max-w-full overflow-hidden">
                 <span
-                  className="text-[11px] font-normal text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
+                  className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
                   title={`/${item.slug}`}
                 >
                   /{item.slug}
@@ -359,26 +359,26 @@ export default function PostsManagementPage() {
           const cat = (row.getValue("category") as string) || item.category;
           return (
             <div
-              className="flex items-center justify-center min-w-0 max-w-[140px] mx-auto overflow-hidden"
+              className="flex items-center justify-center min-w-0 max-w-[150px] mx-auto overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-sm text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50 hover:bg-slate-100 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group shadow-2xs"
                     title={cat}
                   >
                     <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
                     <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-sm border border-slate-200 bg-white">
+                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
                   {POST_CATEGORIES.map((categoryOption) => (
                     <DropdownMenuItem
                       key={categoryOption}
                       onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
-                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
+                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                     >
                       <span className="truncate" title={categoryOption}>{categoryOption}</span>
                       {cat === categoryOption && (
@@ -408,16 +408,25 @@ export default function PostsManagementPage() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-8 px-3 max-w-full rounded-sm text-xs font-medium text-slate-700 border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group"
+                    className={cn(
+                      "inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-semibold border transition-colors cursor-pointer group shadow-2xs",
+                      status === "PUBLISHED"
+                        ? "bg-blue-50 text-[#115eff] border-blue-200 hover:bg-blue-100/80"
+                        : status === "DRAFT"
+                        ? "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200/70"
+                        : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100/80"
+                    )}
                     title={status}
                   >
                     <span className="flex items-center gap-1.5 min-w-0 truncate">
                       <span
                         className={cn(
-                          "size-1.5 rounded-xs shrink-0",
+                          "size-1.5 rounded-full shrink-0",
                           status === "PUBLISHED"
                             ? "bg-[#115eff]"
-                            : "bg-slate-400"
+                            : status === "DRAFT"
+                            ? "bg-slate-400"
+                            : "bg-amber-500"
                         )}
                       />
                       <span className="truncate">
@@ -428,16 +437,16 @@ export default function PostsManagementPage() {
                           : "Archived"}
                       </span>
                     </span>
-                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
+                    <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-sm border border-slate-200 bg-white">
+                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-xs bg-[#115eff]" />
+                      <span className="size-1.5 rounded-full bg-[#115eff]" />
                       Published
                     </span>
                     {status === "PUBLISHED" && (
@@ -446,10 +455,10 @@ export default function PostsManagementPage() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-xs bg-slate-400" />
+                      <span className="size-1.5 rounded-full bg-slate-400" />
                       Draft
                     </span>
                     {status === "DRAFT" && (
@@ -458,10 +467,10 @@ export default function PostsManagementPage() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-sm cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-xs bg-slate-300" />
+                      <span className="size-1.5 rounded-full bg-amber-500" />
                       Archived
                     </span>
                     {status === "ARCHIVED" && (
@@ -482,7 +491,7 @@ export default function PostsManagementPage() {
           const val = Number(row.getValue("views") || 0);
           return (
             <div
-              className="text-center font-medium text-slate-600 text-xs truncate px-1"
+              className="text-center font-medium text-slate-700 text-xs sm:text-sm truncate px-1"
               title={`${val.toLocaleString("en-US")} views`}
             >
               {val.toLocaleString("en-US")}
@@ -498,7 +507,7 @@ export default function PostsManagementPage() {
           const date = new Date(row.getValue("createdAt"));
           return (
             <div
-              className="text-center text-xs text-slate-500 font-medium truncate px-1"
+              className="text-center text-xs sm:text-sm text-slate-600 font-medium truncate px-1"
               title={date.toLocaleString("en-US")}
             >
               {date.toLocaleDateString("en-US", {
@@ -513,13 +522,13 @@ export default function PostsManagementPage() {
       {
         id: "actions",
         header: "Actions",
-        size: 130,
+        size: 140,
         cell: ({ row }) => {
           const item = row.original;
           const isDuplicating = duplicatingId === item.id;
           return (
             <div
-              className="flex items-center justify-center gap-1 shrink-0"
+              className="flex items-center justify-center gap-1.5 shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
               {/* 1. Direct Post Detail View */}
@@ -529,7 +538,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer shadow-2xs"
                 title="View post detail page"
               >
                 <Eye className="size-4" />
@@ -542,7 +551,7 @@ export default function PostsManagementPage() {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}/edit`);
                 }}
-                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer shadow-2xs"
                 title="Edit post in full editor"
               >
                 <Edit2 className="size-4" />
@@ -573,7 +582,7 @@ export default function PostsManagementPage() {
                     setDuplicatingId(null);
                   }
                 }}
-                className="size-8 inline-flex items-center justify-center text-[#004776] hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer disabled:opacity-50 shadow-2xs"
+                className="size-8 inline-flex items-center justify-center text-slate-500 hover:text-white hover:bg-[#115eff] hover:border-[#115eff] border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-2xs"
                 title="Duplicate & edit post"
               >
                 <CopyPlus className="size-4" />
@@ -587,7 +596,7 @@ export default function PostsManagementPage() {
                   setActivePost(item);
                   setDeleteOpen(true);
                 }}
-                className="size-8 inline-flex items-center justify-center text-rose-600 hover:text-white hover:bg-rose-600 hover:border-rose-600 border border-slate-200 bg-white rounded-sm transition-colors cursor-pointer shadow-2xs"
+                className="size-8 inline-flex items-center justify-center text-rose-500 hover:text-white hover:bg-rose-600 hover:border-rose-600 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer shadow-2xs"
                 title="Delete post"
               >
                 <Trash2 className="size-4" />
@@ -602,63 +611,63 @@ export default function PostsManagementPage() {
   );
 
   return (
-    <div className="space-y-4 font-sans">
+    <div className="space-y-6 font-sans">
       {/* ── Page Header ── */}
       <ManagementPageHeader
         title="Posts & News"
         description="Conference announcements, call for papers, and news updates"
         image3d="/assets/3d-icons/article-management__hcmute-3d-icon.png"
         backgroundImage="/assets/manage-posts-bg.jpg"
-      />
-
-      {/* ── Tabs Row & Top Actions (Matching HCMUTE Layout & Justification) ── */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex flex-wrap items-center justify-between gap-3 w-full">
-          <TabsList className="h-9">
-            <TabsTrigger value="all" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
-              <FileText className="mr-1.5 size-4" />
-              <span>All Posts ({posts.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="published" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
-              <Check className="mr-1.5 size-4 text-[#115eff]" />
-              <span>Published ({posts.filter((p) => p.status === "PUBLISHED").length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="draft" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
-              <Edit2 className="mr-1.5 size-4 text-slate-500" />
-              <span>Drafts ({posts.filter((p) => p.status === "DRAFT").length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="archived" className="text-xs sm:text-sm font-semibold px-3.5 h-8">
-              <Archive className="mr-1.5 size-4 text-slate-400" />
-              <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Top Right Action Buttons (New Post, Refresh) */}
-          <div className="flex items-center gap-2 shrink-0 ml-auto">
-            <Button
-              type="button"
-              className="h-9 gap-1.5 rounded-sm shadow-2xs font-semibold px-3.5 shrink-0 cursor-pointer whitespace-nowrap text-xs sm:text-sm bg-[#115eff] hover:bg-[#0a4de6] text-white"
-              onClick={() => router.push("/admin/posts/create")}
-            >
-              <Plus className="size-4" />
-              <span>New Post</span>
-            </Button>
-
+        actions={
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              className="h-9 gap-1.5 text-slate-600 hover:text-[#004776] border-slate-200 rounded-sm shadow-2xs font-semibold px-3 shrink-0 cursor-pointer text-xs sm:text-sm"
+              size="sm"
               onClick={fetchPosts}
               disabled={loading}
+              className="gap-1.5 text-xs sm:text-sm text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg shadow-sm font-semibold h-9 px-3"
               title="Refresh"
             >
               <RefreshCw className={cn("size-3.5 sm:size-4", loading && "animate-spin text-[#115eff]")} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
+            <Button
+              size="sm"
+              onClick={() => router.push("/admin/posts/create")}
+              className="bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 shadow-sm text-xs sm:text-sm font-semibold rounded-lg h-9 px-3.5"
+            >
+              <Plus className="size-4" />
+              <span>New Post</span>
+            </Button>
           </div>
+        }
+      />
+
+      {/* ── Tabs Row ── */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
+          <TabsList className="h-9 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <TabsTrigger value="all" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#004776] data-[state=active]:shadow-sm">
+              <FileText className="mr-1.5 size-4" />
+              <span>All ({posts.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="published" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#115eff] data-[state=active]:shadow-sm">
+              <Check className="mr-1.5 size-4 text-[#115eff]" />
+              <span>Published ({posts.filter((p) => p.status === "PUBLISHED").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="draft" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-sm">
+              <Edit2 className="mr-1.5 size-4 text-slate-500" />
+              <span>Drafts ({posts.filter((p) => p.status === "DRAFT").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="archived" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-sm">
+              <Archive className="mr-1.5 size-4 text-slate-400" />
+              <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
+            </TabsTrigger>
+          </TabsList>
         </div>
 
-        <TabsContent value={activeTab}>
+        <TabsContent value={activeTab} className="mt-0">
           <DataTable
             columns={columns}
             data={displayedPosts}
@@ -687,7 +696,7 @@ export default function PostsManagementPage() {
                   type="button"
                   size="sm"
                   onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-sm shadow-none"
+                  className="h-7 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-md shadow-none"
                 >
                   Publish
                 </Button>
@@ -696,7 +705,7 @@ export default function PostsManagementPage() {
                   size="sm"
                   variant="outline"
                   onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-white text-[#004776] border-slate-200 hover:bg-slate-50 rounded-sm shadow-none"
+                  className="h-7 px-3 text-xs font-semibold bg-white text-[#004776] border-slate-200 hover:bg-slate-50 rounded-md shadow-none"
                 >
                   Set Draft
                 </Button>
@@ -705,7 +714,7 @@ export default function PostsManagementPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleBatchDelete(selected, clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-white text-rose-600 border-slate-200 hover:bg-rose-50 hover:text-rose-700 rounded-sm shadow-none"
+                  className="h-7 px-3 text-xs font-semibold bg-white text-rose-600 border-slate-200 hover:bg-rose-50 hover:text-rose-700 rounded-md shadow-none"
                 >
                   Delete selected
                 </Button>

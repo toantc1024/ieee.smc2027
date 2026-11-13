@@ -148,7 +148,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} h-full antialiased scroll-smooth`}
+      className={`${inter.variable} ${inter.className} h-full antialiased scroll-smooth`}
     >
       <head>
         <script

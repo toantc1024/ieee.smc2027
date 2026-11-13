@@ -133,17 +133,17 @@ export function DataTable<TData, TValue = unknown>({
   return (
     <div className="space-y-3 font-sans">
       {/* ── Toolbar: Search & Faceted Filters ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
         <div className="flex flex-wrap items-center gap-2 flex-1">
           {/* Global search with shadcn Input */}
-          <div className="relative min-w-[200px] max-w-xs w-full">
-            <Search className="size-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="relative min-w-[220px] max-w-sm w-full">
+            <Search className="size-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <Input
               type="text"
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-8 pl-8.5 pr-7 text-xs bg-slate-50 border-slate-200 rounded-lg focus:bg-white focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff]"
+              className="h-9 pl-9 pr-8 text-sm bg-slate-50/70 border-slate-200 rounded-lg focus:bg-white focus:border-[#115eff] focus:ring-1 focus:ring-[#115eff] text-slate-900 placeholder:text-slate-400"
             />
             {globalFilter && (
               <button
@@ -151,7 +151,7 @@ export function DataTable<TData, TValue = unknown>({
                 onClick={() => setGlobalFilter("")}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
               >
-                <X className="size-3" />
+                <X className="size-3.5" />
               </button>
             )}
           </div>
@@ -168,7 +168,7 @@ export function DataTable<TData, TValue = unknown>({
                   }))
                 }
               >
-                <SelectTrigger className="h-8 min-w-[120px] w-auto text-xs rounded-lg border-slate-200 bg-white">
+                <SelectTrigger className="h-9 min-w-[130px] w-auto text-sm rounded-lg border-slate-200 bg-white font-medium text-slate-700">
                   <SelectValue placeholder={`${filter.title}: All`} />
                 </SelectTrigger>
                 <SelectContent>
@@ -189,7 +189,7 @@ export function DataTable<TData, TValue = unknown>({
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="h-8 px-2.5 text-xs text-slate-500 hover:text-slate-800 rounded-lg flex items-center gap-1.5"
+              className="h-9 px-3 text-xs sm:text-sm text-slate-500 hover:text-slate-800 rounded-lg flex items-center gap-1.5"
             >
               <X className="size-3.5" />
               <span>Reset</span>
@@ -199,8 +199,8 @@ export function DataTable<TData, TValue = unknown>({
 
         {/* Selected row count & batch action bar */}
         {selectedRows.length > 0 && batchActions && (
-          <div className="flex items-center gap-2 bg-slate-50 px-2.5 h-8 rounded-lg border border-slate-200">
-            <span className="text-xs font-semibold text-slate-800">
+          <div className="flex items-center gap-2 bg-slate-50 px-3 h-9 rounded-lg border border-slate-200">
+            <span className="text-xs sm:text-sm font-semibold text-slate-800">
               {selectedRows.length} selected
             </span>
             {batchActions(selectedRows, clearSelection)}
@@ -455,13 +455,13 @@ export function DataTable<TData, TValue = unknown>({
             <span className="text-slate-300">|</span>
 
             {/* Page size selector with shadcn Select */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600">
               <span>Per page:</span>
               <Select
                 value={String(table.getState().pagination.pageSize)}
                 onValueChange={(val) => table.setPageSize(Number(val))}
               >
-                <SelectTrigger className="h-8 w-[68px] px-2 text-xs bg-white border-slate-200 rounded-lg">
+                <SelectTrigger className="h-9 w-[72px] px-2 text-xs sm:text-sm bg-white border-slate-200 rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -483,13 +483,13 @@ export function DataTable<TData, TValue = unknown>({
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="h-8 px-2.5 text-xs text-slate-600 disabled:opacity-40"
+              className="h-9 px-3 text-xs sm:text-sm text-slate-600 disabled:opacity-40"
             >
-              <ChevronLeft className="size-3.5 mr-1" />
+              <ChevronLeft className="size-4 mr-1" />
               <span>Previous</span>
             </Button>
 
-            <span className="px-2 text-xs font-medium text-slate-700">
+            <span className="px-2 text-xs sm:text-sm font-medium text-slate-700">
               Page {table.getState().pagination.pageIndex + 1} of{" "}
               {Math.max(1, table.getPageCount())}
             </span>
@@ -500,10 +500,10 @@ export function DataTable<TData, TValue = unknown>({
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="h-8 px-2.5 text-xs text-slate-600 disabled:opacity-40"
+              className="h-9 px-3 text-xs sm:text-sm text-slate-600 disabled:opacity-40"
             >
               <span>Next</span>
-              <ChevronRight className="size-3.5 ml-1" />
+              <ChevronRight className="size-4 ml-1" />
             </Button>
           </div>
         </div>

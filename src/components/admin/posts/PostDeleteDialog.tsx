@@ -41,15 +41,15 @@ export function PostDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md font-sans p-6 shadow-none border border-slate-200">
+      <DialogContent className="max-w-md font-sans p-6 rounded-xl shadow-xl border border-slate-200">
         <DialogHeader className="space-y-3">
-          <div className="size-10 rounded-sm bg-slate-100 text-slate-700 flex items-center justify-center">
+          <div className="size-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
             <AlertCircle className="size-5" />
           </div>
-          <DialogTitle className="text-base font-bold text-slate-900">
+          <DialogTitle className="text-base sm:text-lg font-bold text-slate-900">
             Confirm Post Deletion
           </DialogTitle>
-          <DialogDescription className="text-xs text-slate-600 leading-relaxed">
+          <DialogDescription className="text-sm text-slate-600 leading-relaxed">
             Are you sure you want to delete the post{" "}
             <strong className="text-slate-900 font-semibold">
               &quot;{post.title}&quot;
@@ -65,7 +65,7 @@ export function PostDeleteDialog({
             size="sm"
             onClick={() => onOpenChange(false)}
             disabled={deleting}
-            className="h-8.5 px-3.5 text-xs bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-none"
+            className="h-9 px-4 text-xs sm:text-sm font-semibold bg-white text-slate-700 border-slate-200 hover:bg-slate-50 rounded-lg shadow-sm"
           >
             Cancel
           </Button>
@@ -74,7 +74,7 @@ export function PostDeleteDialog({
             size="sm"
             onClick={handleConfirm}
             disabled={deleting}
-            className="h-8.5 px-4 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white border border-transparent shadow-none"
+            className="h-9 px-4 text-xs sm:text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-lg shadow-sm"
           >
             {deleting ? (
               <>

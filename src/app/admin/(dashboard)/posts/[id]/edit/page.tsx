@@ -56,25 +56,25 @@ export default function EditPostPage({
   if (loading) {
     return (
       <div className="h-full flex flex-col overflow-hidden bg-background">
-        <div className="h-13 min-h-[52px] border-b border-border/80 px-4 flex items-center justify-between bg-white dark:bg-card">
+        <div className="h-14 min-h-[56px] border-b border-border/80 px-4 flex items-center justify-between bg-white dark:bg-card">
           <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-sm" />
-            <Skeleton className="h-6 w-72 rounded-sm" />
+            <Skeleton className="size-9 rounded-lg" />
+            <Skeleton className="h-7 w-72 rounded-lg" />
           </div>
           <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-20 rounded-sm" />
-            <Skeleton className="h-8 w-28 rounded-sm" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-28 rounded-lg" />
           </div>
         </div>
         <div className="flex-1 flex overflow-hidden">
           <div className="w-[380px] border-r border-border/80 p-4 space-y-4 bg-white dark:bg-card">
-            <Skeleton className="h-44 w-full rounded-sm" />
-            <Skeleton className="h-12 w-full rounded-sm" />
-            <Skeleton className="h-12 w-full rounded-sm" />
-            <Skeleton className="h-28 w-full rounded-sm" />
+            <Skeleton className="h-44 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-28 w-full rounded-xl" />
           </div>
           <div className="flex-1 bg-slate-100/70 dark:bg-[#070b14] p-8 flex justify-center overflow-y-auto">
-            <Skeleton className="w-full max-w-[850px] h-[900px] rounded-sm bg-white" />
+            <Skeleton className="w-full max-w-[850px] h-[900px] rounded-xl bg-white" />
           </div>
         </div>
       </div>
@@ -84,15 +84,15 @@ export default function EditPostPage({
   if (!post) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-background">
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+        <p className="text-base font-semibold text-slate-800 mb-2">
           Post not found
         </p>
-        <p className="text-xs text-muted-foreground mb-4">
+        <p className="text-sm text-slate-500 mb-4">
           The requested article does not exist or may have been deleted.
         </p>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" asChild className="h-9 px-4 text-xs sm:text-sm font-semibold rounded-lg">
           <Link href="/admin/posts">
-            <ArrowLeft className="size-3.5 mr-1.5" />
+            <ArrowLeft className="size-4 mr-1.5" />
             Back to Posts
           </Link>
         </Button>
