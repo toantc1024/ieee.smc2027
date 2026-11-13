@@ -38,7 +38,7 @@ export function PublicPageRenderer({ blocks }: PublicPageRendererProps) {
           >
             <BlockErrorBoundary blockType={block.type} blockId={block.id}>
               {ComponentToRender ? (
-                <ComponentToRender {...block.props}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
+                <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
               ) : (
                 <div className="py-12 px-4 text-center text-slate-400 bg-slate-50 border-y border-slate-100">
                   <p className="text-sm">Section type: {block.type}</p>

@@ -34,7 +34,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   if (homePage) {
     const user = !homePage.is_published && (preview === "true" || preview === "1") ? await getCurrentUser() : null;
     if (!canViewPage(homePage.is_published, preview, user?.role)) notFound();
-    if (Array.isArray(homePage.blocks)) return <PublicPageRenderer blocks={homePage.blocks as unknown as PageBlock[]} />;
+
+    let blocks: PageBlock[] = [];
+    if (Array.isArray(homePage.blocks)) {
+      blocks = homePage.blocks as unknown as PageBlock[];
+    } else if (
+      homePage.content &&
+      typeof homePage.content === "object" &&
+      Array.isArray((homePage.content as any).content)
+    ) {
+      blocks = (homePage.content as any).content as PageBlock[];
+    }
+    return <PublicPageRenderer blocks={blocks} />;
   }
 
   // A missing page or unavailable database falls back to the conference homepage.

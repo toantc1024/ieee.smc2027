@@ -3,6 +3,7 @@ import {
   requireAdminRequest,
   apiSuccess,
   apiError,
+  revalidatePagePaths,
 } from "@/lib";
 import { formatPageRecord } from "../../route";
 
@@ -44,6 +45,8 @@ export async function POST(
         parent: true,
       },
     });
+
+    revalidatePagePaths(updated.slug);
 
     return apiSuccess({ page: formatPageRecord(updated) });
   } catch (error: unknown) {

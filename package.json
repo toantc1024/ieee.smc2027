@@ -19,7 +19,7 @@
     "docker:prod:up": "docker compose -f docker-compose.yml up -d --build",
     "docker:prod:down": "docker compose -f docker-compose.yml down",
     "test:post-editor": "node tests/posts/run-advanced-tests.cjs",
-    "test:website-builder": "node tests/run-website-builder.cjs"
+    "test:website-builder": "node tests/run-website-builder.cjs && node tests/website-builder/homepage-render.test.cjs && node tests/website-builder/public-page-sync.test.cjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

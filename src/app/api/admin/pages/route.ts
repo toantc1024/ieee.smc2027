@@ -6,6 +6,7 @@ import {
   requireAdminRequest,
   apiSuccess,
   apiError,
+  revalidatePagePaths,
 } from "@/lib";
 
 const DEFAULT_HOME_BLOCKS = [
@@ -536,6 +537,8 @@ export async function POST(request: Request) {
         },
       }),
     ]);
+
+    revalidatePagePaths(slug);
 
     return apiSuccess({ page: formatPageRecord(createdPage) }, 201);
   } catch (error: unknown) {

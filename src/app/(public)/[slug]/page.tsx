@@ -4,12 +4,12 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib";
 import { getCurrentUser } from "@/lib/auth";
 import { canViewPage } from "@/lib/page-access";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { PublicPageRenderer } from "./public-page-renderer";
 import { STANDARD_CONFERENCE_PAGES } from "@/app/api/admin/pages/route";
 import type { PageBlock } from "@/modules/website-builder/types";
-import { EyeOff } from "lucide-react";
+import { DraftPreviewBanner } from "@/components/shared/draft-preview-banner";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -120,33 +120,14 @@ export default async function PublicPage({
     blocks = page.blocks as any[];
   }
 
-  const hasHeaderBlock = blocks.some(
-    (b) => b.type === "HeaderSection" || b.type === "Header"
-  );
-  const hasFooterBlock = blocks.some(
-    (b) => b.type === "FooterSection" || b.type === "Footer"
-  );
-
   return (
-    <main className="min-h-screen flex flex-col bg-white">
+    <div className="w-full flex flex-col">
       {/* Draft Preview Banner */}
       {!page.isPublished && isPreview && (
-        <div className="sticky top-0 z-50 bg-amber-500 text-white px-4 py-2 text-xs font-semibold flex items-center justify-between shadow-md">
-          <div className="flex items-center gap-2">
-            <EyeOff className="w-4 h-4" />
-            <span>Draft Preview Mode — This page is currently unpublished and visible only to authorized users.</span>
-          </div>
-          <span className="font-mono text-[11px] bg-amber-600 px-2 py-0.5 rounded">
-            v{page.version}
-          </span>
-        </div>
+        <DraftPreviewBanner version={page.version} />
       )}
 
-      {!hasHeaderBlock && <Header />}
-      <div className="flex-1">
-        <PublicPageRenderer blocks={blocks} />
-      </div>
-      {!hasFooterBlock && <Footer />}
-    </main>
+      <PublicPageRenderer blocks={blocks} />
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import {
   requireAdminRequest,
   apiSuccess,
   apiError,
+  revalidatePagePaths,
 } from "@/lib";
 import { STANDARD_CONFERENCE_PAGES, normalizeSlug, formatPageRecord } from "../route";
 import { isValidPageParent } from "@/modules/website-builder/utils/page-tree";
@@ -241,6 +242,11 @@ async function handleUpdate(
       }),
     ]);
 
+    revalidatePagePaths(slug);
+    if (existing.slug !== slug) {
+      revalidatePagePaths(existing.slug);
+    }
+
     return apiSuccess({ page: formatPageRecord(updatedPage) }, 200);
   } catch (error: unknown) {
     console.error("Error updating page:", error);
@@ -312,6 +318,8 @@ export async function DELETE(
         where: { id: existing.id },
       }),
     ]);
+
+    revalidatePagePaths(existing.slug);
 
     return apiSuccess({ message: "Page deleted successfully" });
   } catch (error: unknown) {
