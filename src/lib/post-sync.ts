@@ -34,3 +34,4 @@ export function broadcastPostSync(message: PostSyncMessage): void {
     // BroadcastChannel unavailable
   }
 }
+
