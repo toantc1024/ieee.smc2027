@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { CommitteesSection } from "../../src/components/sections/CommitteesSection";
@@ -100,12 +102,23 @@ test("ArrayField in inspector renders GripVertical drag handles with accessibili
 
   assert.match(markup, /Group A/);
   assert.match(markup, /Group B/);
+  assert.match(markup, /data-array-item-index="0"/);
+  assert.match(markup, /data-array-item-index="1"/);
   assert.match(markup, /aria-label="Drag to reorder Group A"/);
   assert.match(markup, /aria-label="Drag to reorder Group B"/);
   assert.match(markup, /title="Drag to reorder position"/);
   assert.match(markup, /draggable="true"/);
   assert.match(markup, /group\/item/);
-  assert.match(markup, /group-hover\/item:opacity-100/);
+  assert.match(markup, /group-hover\/item:text-\[#115eff\]/);
+  assert.doesNotMatch(markup, /opacity-0 group-hover\/item:opacity-100/);
+
+  const source = readFileSync(
+    resolve(process.cwd(), "src/modules/website-builder/components/studio/inspector-fields.tsx"),
+    "utf8"
+  );
+  assert.match(source, /function commitReorder/);
+  assert.match(source, /function handleHeaderPointerDown/);
+  assert.match(source, /e\.stopPropagation\(\)/);
 });
 
 test("Reordering array items preserves nested data integrity", () => {

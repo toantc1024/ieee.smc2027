@@ -230,6 +230,12 @@ function PaletteItem({
   return (
     <div
       ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onPointerDown={(event) => {
+        onPreview(null);
+        listeners?.onPointerDown?.(event);
+      }}
       onClick={() => onAdd(item.type)}
       onMouseEnter={(event) => {
         if (!isDragging) {
@@ -243,25 +249,15 @@ function PaletteItem({
       }}
       onMouseLeave={() => onPreview(null)}
       className={cn(
-        "group flex min-h-[82px] select-none items-center gap-2.5 rounded-xl border bg-white p-3 transition-colors hover:border-slate-300 hover:shadow-2xs cursor-pointer",
+        "group flex min-h-[82px] select-none items-center gap-2.5 rounded-xl border bg-white p-3 transition-colors hover:border-slate-300 hover:shadow-2xs cursor-grab active:cursor-grabbing touch-none",
         isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-slate-200/85"
       )}
     >
-      {/* Left-side hover drag handle */}
+      {/* Left-side drag indicator */}
       <div
-        {...attributes}
-        {...listeners}
-        onClick={(event) => event.stopPropagation()}
-        onPointerDown={(event) => {
-          onPreview(null);
-          listeners?.onPointerDown?.(event);
-        }}
         title="Drag block to canvas"
         aria-label={`Drag ${item.label}`}
-        className={cn(
-          "flex w-5 shrink-0 self-stretch -ml-1 items-center justify-center rounded-md text-slate-400 hover:text-[#115eff] hover:bg-blue-50/60 transition-opacity cursor-grab active:cursor-grabbing touch-none",
-          isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-within:opacity-100"
-        )}
+        className="flex w-5 shrink-0 self-stretch -ml-1 items-center justify-center rounded-md text-slate-400 group-hover:text-[#115eff] transition-colors"
       >
         <GripVertical className="size-4" />
       </div>

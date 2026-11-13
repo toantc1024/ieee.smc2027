@@ -391,6 +391,10 @@ function ArrayField(props: InspectorFieldProps) {
   const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const didDragRef = useRef(false);
+  const draggedIndexRef = useRef<number | null>(null);
+  const dragOverIndexRef = useRef<number | null>(null);
+  const dropPositionRef = useRef<"before" | "after" | null>(null);
+  const cancelPointerDragRef = useRef<(() => void) | null>(null);
 
   const arrayPathKey = path.join(".");
 
@@ -415,6 +419,10 @@ function ArrayField(props: InspectorFieldProps) {
       clientY = event.clientY;
     };
 
+    const handleWindowPointerMove = (event: PointerEvent) => {
+      clientY = event.clientY;
+    };
+
     const tick = () => {
       if (clientY !== null) {
         const scrollParent = findScrollParent(listRef.current);
@@ -434,10 +442,12 @@ function ArrayField(props: InspectorFieldProps) {
     };
 
     window.addEventListener("dragover", handleWindowDragOver);
+    window.addEventListener("pointermove", handleWindowPointerMove);
     frameId = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("dragover", handleWindowDragOver);
+      window.removeEventListener("pointermove", handleWindowPointerMove);
       cancelAnimationFrame(frameId);
     };
   }, [draggedIndex]);
@@ -475,67 +485,22 @@ function ArrayField(props: InspectorFieldProps) {
     setExpandedSet(new Set([target]));
   }
 
-  function handleDragStart(e: React.DragEvent, index: number) {
-    if (disabled) return;
-    didDragRef.current = true;
-    e.dataTransfer.setData("text/plain", String(index));
-    e.dataTransfer.setData("application/x-builder-array-path", arrayPathKey);
-    e.dataTransfer.effectAllowed = "move";
-    const headerEl = e.currentTarget.parentElement;
-    if (headerEl && e.dataTransfer.setDragImage) {
-      e.dataTransfer.setDragImage(headerEl, 18, 20);
-    }
-    setDraggedIndex(index);
-  }
+  useEffect(() => {
+    return () => {
+      cancelPointerDragRef.current?.();
+    };
+  }, []);
 
-  function handleDragOver(e: React.DragEvent, index: number) {
-    if (draggedIndex === null || draggedIndex === index || disabled) return;
-    const dragSourcePath = e.dataTransfer.getData("application/x-builder-array-path");
-    if (dragSourcePath && dragSourcePath !== arrayPathKey) return;
-
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const midY = rect.top + rect.height / 2;
-    const pos: "before" | "after" = e.clientY < midY ? "before" : "after";
-    setDragOverIndex(index);
-    setDropPosition(pos);
-  }
-
-  function handleDragLeave(e: React.DragEvent, index: number) {
-    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
-    if (dragOverIndex === index) {
-      setDragOverIndex(null);
-      setDropPosition(null);
-    }
-  }
-
-  function handleDragEnd() {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-    setDropPosition(null);
-    if (typeof requestAnimationFrame === "function") {
-      requestAnimationFrame(() => {
-        didDragRef.current = false;
-      });
-    } else {
-      didDragRef.current = false;
-    }
-  }
-
-  function handleDrop(e: React.DragEvent, targetIndex: number) {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === targetIndex || disabled) {
-      handleDragEnd();
-      return;
-    }
-
-    const from = draggedIndex;
+  function commitReorder(
+    from: number,
+    targetIndex: number,
+    pos: "before" | "after" | null
+  ) {
+    if (from === targetIndex || disabled) return;
     let target = targetIndex;
-    if (dropPosition === "after" && from > targetIndex) {
+    if (pos === "after" && from > targetIndex) {
       target = targetIndex + 1;
-    } else if (dropPosition === "before" && from < targetIndex) {
+    } else if (pos === "before" && from < targetIndex) {
       target = targetIndex - 1;
     }
 
@@ -559,8 +524,179 @@ function ArrayField(props: InspectorFieldProps) {
       });
       return nextSet;
     });
+  }
 
+  function handleDragEnd() {
+    draggedIndexRef.current = null;
+    dragOverIndexRef.current = null;
+    dropPositionRef.current = null;
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDropPosition(null);
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        didDragRef.current = false;
+      }, 50);
+    } else {
+      didDragRef.current = false;
+    }
+  }
+
+  function handleDragStart(e: React.DragEvent, index: number) {
+    if (disabled) return;
+    e.stopPropagation();
+    cancelPointerDragRef.current?.();
+    didDragRef.current = true;
+    draggedIndexRef.current = index;
+    e.dataTransfer.setData("text/plain", String(index));
+    e.dataTransfer.setData("application/x-builder-array-path", arrayPathKey);
+    e.dataTransfer.effectAllowed = "move";
+    const headerEl = e.currentTarget.parentElement || e.currentTarget;
+    if (headerEl && e.dataTransfer.setDragImage) {
+      e.dataTransfer.setDragImage(headerEl, 18, 20);
+    }
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => {
+        if (draggedIndexRef.current === index) {
+          setDraggedIndex(index);
+        }
+      });
+    } else {
+      setDraggedIndex(index);
+    }
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    const activeFrom = draggedIndexRef.current ?? draggedIndex;
+    if (activeFrom === null || disabled) return;
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+
+    if (activeFrom === index) {
+      dragOverIndexRef.current = null;
+      dropPositionRef.current = null;
+      setDragOverIndex(null);
+      setDropPosition(null);
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const pos: "before" | "after" = e.clientY < midY ? "before" : "after";
+    dragOverIndexRef.current = index;
+    dropPositionRef.current = pos;
+    setDragOverIndex(index);
+    setDropPosition(pos);
+  }
+
+  function handleDragLeave(e: React.DragEvent, index: number) {
+    if ((draggedIndexRef.current ?? draggedIndex) === null) return;
+    e.stopPropagation();
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+    if (dragOverIndex === index) {
+      dragOverIndexRef.current = null;
+      dropPositionRef.current = null;
+      setDragOverIndex(null);
+      setDropPosition(null);
+    }
+  }
+
+  function handleDrop(e: React.DragEvent, targetIndex: number) {
+    const activeFrom = draggedIndexRef.current ?? draggedIndex;
+    if (activeFrom === null || disabled) return;
+    e.stopPropagation();
+    e.preventDefault();
+    commitReorder(activeFrom, targetIndex, dropPositionRef.current ?? dropPosition);
     handleDragEnd();
+  }
+
+  function handleHeaderPointerDown(e: React.PointerEvent, index: number) {
+    if (e.button !== 0 || disabled) return;
+    if ((e.target as HTMLElement).closest("[data-array-action]")) return;
+    e.stopPropagation();
+    cancelPointerDragRef.current?.();
+    didDragRef.current = false;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let pointerActive = false;
+
+    const cleanup = () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
+      document.body.style.cursor = "";
+      cancelPointerDragRef.current = null;
+    };
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
+      if (!pointerActive) {
+        // Let native HTML5 drag win around ~4-5px on draggable handles; activate pointer drag at 7px otherwise
+        if (dist < 7) return;
+        pointerActive = true;
+        didDragRef.current = true;
+        draggedIndexRef.current = index;
+        setDraggedIndex(index);
+        document.body.style.cursor = "grabbing";
+      }
+
+      const rowNodes = listRef.current?.querySelectorAll<HTMLElement>(
+        ":scope > [data-array-item-index]"
+      );
+      if (!rowNodes) return;
+
+      let matchedIndex: number | null = null;
+      let matchedPos: "before" | "after" | null = null;
+      rowNodes.forEach((node) => {
+        const rawIdx = node.dataset.arrayItemIndex;
+        if (rawIdx === undefined) return;
+        const rowIdx = Number(rawIdx);
+        const rect = node.getBoundingClientRect();
+        if (moveEvent.clientY >= rect.top - 6 && moveEvent.clientY <= rect.bottom + 6) {
+          matchedIndex = rowIdx;
+          matchedPos = moveEvent.clientY < rect.top + rect.height / 2 ? "before" : "after";
+        }
+      });
+
+      if (matchedIndex !== null && matchedIndex !== index && matchedPos !== null) {
+        dragOverIndexRef.current = matchedIndex;
+        dropPositionRef.current = matchedPos;
+        setDragOverIndex(matchedIndex);
+        setDropPosition(matchedPos);
+      } else {
+        dragOverIndexRef.current = null;
+        dropPositionRef.current = null;
+        setDragOverIndex(null);
+        setDropPosition(null);
+      }
+    };
+
+    const onPointerUp = () => {
+      cleanup();
+      if (pointerActive) {
+        const from = draggedIndexRef.current;
+        const to = dragOverIndexRef.current;
+        const pos = dropPositionRef.current;
+        if (from !== null && to !== null && from !== to) {
+          commitReorder(from, to, pos);
+        }
+        handleDragEnd();
+      }
+    };
+
+    const onPointerCancel = () => {
+      cleanup();
+      if (pointerActive) {
+        handleDragEnd();
+      }
+    };
+
+    cancelPointerDragRef.current = cleanup;
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerCancel);
   }
 
   const allExpanded = items.length > 0 && expandedSet.size >= items.length;
@@ -641,6 +777,7 @@ function ArrayField(props: InspectorFieldProps) {
         return (
           <div
             key={index}
+            data-array-item-index={index}
             onDragOver={(e) => handleDragOver(e, index)}
             onDragLeave={(e) => handleDragLeave(e, index)}
             onDrop={(e) => handleDrop(e, index)}
@@ -662,99 +799,101 @@ function ArrayField(props: InspectorFieldProps) {
               )}
             >
               <div className="flex items-center gap-1 pr-1.5 bg-white">
-                {/* Left-side Drag handle (visible on hover; click toggles accordion) */}
+                {/* Whole header row is draggable; click (< 7px move) opens/closes accordion */}
                 <div
                   draggable={!disabled}
-                  onMouseDown={() => {
-                    didDragRef.current = false;
-                  }}
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragEnd={handleDragEnd}
-                  onClick={() => {
-                    if (!didDragRef.current) toggleIndex(index);
-                  }}
-                  className={cn(
-                    "p-2 text-slate-400 hover:text-[#004776] hover:bg-slate-100 rounded-l cursor-grab active:cursor-grabbing transition-opacity shrink-0 flex items-center justify-center",
-                    isDraggingThis
-                      ? "opacity-100"
-                      : "opacity-0 group-hover/item:opacity-100 focus-within:opacity-100"
-                  )}
+                  onPointerDown={(e) => handleHeaderPointerDown(e, index)}
                   title="Drag to reorder position"
                   aria-label={`Drag to reorder ${title}`}
+                  className="flex min-w-0 flex-1 items-center gap-1 cursor-grab active:cursor-grabbing select-none"
                 >
-                  <GripVertical className="size-4" />
+                  <div
+                    onClick={() => {
+                      if (!didDragRef.current) toggleIndex(index);
+                    }}
+                    className="p-2 text-slate-400 group-hover/item:text-[#115eff] hover:bg-slate-100 rounded-l shrink-0 flex items-center justify-center transition-colors"
+                  >
+                    <GripVertical className="size-4" />
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    onClick={() => {
+                      if (!didDragRef.current) toggleIndex(index);
+                    }}
+                    className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-[#004776] cursor-grab active:cursor-grabbing"
+                  >
+                    <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 border border-slate-200/80 px-1 text-xs font-bold text-slate-800">
+                      #{index + 1}
+                    </span>
+                    {thumbnail && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={thumbnail}
+                        alt=""
+                        className="size-7 shrink-0 rounded-md border border-slate-200/80 bg-slate-100 object-cover pointer-events-none"
+                      />
+                    )}
+                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
+                      {title}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "size-4 shrink-0 text-slate-400 transition-transform",
+                        open && "rotate-180 text-slate-900"
+                      )}
+                    />
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  aria-expanded={open}
-                  onClick={() => toggleIndex(index)}
-                  className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-[#004776] cursor-pointer"
-                >
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 border border-slate-200/80 px-1 text-xs font-bold text-slate-800">
-                    #{index + 1}
-                  </span>
-                  {thumbnail && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={thumbnail}
-                      alt=""
-                      className="size-7 shrink-0 rounded-md border border-slate-200/80 bg-slate-100 object-cover"
-                    />
-                  )}
-                  <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
-                    {title}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "size-4 shrink-0 text-slate-400 transition-transform",
-                      open && "rotate-180 text-slate-900"
-                    )}
-                  />
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Move ${title} up`}
-                  disabled={disabled || index === 0}
-                  onClick={() => move(index, -1)}
-                  className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
-                  title="Move up"
-                >
-                  <ArrowUp className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Move ${title} down`}
-                  disabled={disabled || index === items.length - 1}
-                  onClick={() => move(index, 1)}
-                  className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
-                  title="Move down"
-                >
-                  <ArrowDown className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Remove ${title}`}
-                  disabled={disabled}
-                  onClick={() => {
-                    onChange(
-                      path,
-                      items.filter((_, i) => i !== index)
-                    );
-                    setExpandedSet((prev) => {
-                      const next = new Set<number>();
-                      prev.forEach((v) => {
-                        if (v < index) next.add(v);
-                        else if (v > index) next.add(v - 1);
+                <div data-array-action="true" className="flex items-center gap-0.5 shrink-0">
+                  <button
+                    type="button"
+                    aria-label={`Move ${title} up`}
+                    disabled={disabled || index === 0}
+                    onClick={() => move(index, -1)}
+                    className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
+                    title="Move up"
+                  >
+                    <ArrowUp className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Move ${title} down`}
+                    disabled={disabled || index === items.length - 1}
+                    onClick={() => move(index, 1)}
+                    className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
+                    title="Move down"
+                  >
+                    <ArrowDown className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${title}`}
+                    disabled={disabled}
+                    onClick={() => {
+                      onChange(
+                        path,
+                        items.filter((_, i) => i !== index)
+                      );
+                      setExpandedSet((prev) => {
+                        const next = new Set<number>();
+                        prev.forEach((v) => {
+                          if (v < index) next.add(v);
+                          else if (v > index) next.add(v - 1);
+                        });
+                        return next;
                       });
-                      return next;
-                    });
-                  }}
-                  className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-25 cursor-pointer"
-                  title="Remove"
-                >
-                  <Trash2 className="size-3.5" />
-                </button>
+                    }}
+                    className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-25 cursor-pointer"
+                    title="Remove"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
               </div>
 
               {open && (
