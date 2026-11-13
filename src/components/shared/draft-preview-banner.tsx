@@ -20,3 +20,4 @@ export function DraftPreviewBanner({ version }: DraftPreviewBannerProps) {
     </div>
   );
 }
+

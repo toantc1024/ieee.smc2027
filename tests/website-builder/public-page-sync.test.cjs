@@ -189,3 +189,4 @@ const NewsPage = require(path.join(root, 'src/app/news/page.tsx')).default;
   console.error('Test failed:', err);
   process.exit(1);
 });
+

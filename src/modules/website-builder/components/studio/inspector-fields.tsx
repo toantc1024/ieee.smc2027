@@ -100,11 +100,17 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
       const uploadedUrl = await uploadEditorMedia(file, controller.signal);
       if (!controller.signal.aborted) {
         setBrokenUrl(null);
+        setError("");
         onChange(path, uploadedUrl);
       }
     } catch (err) {
       if (!controller.signal.aborted) {
-        setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
+        let msg = err instanceof Error ? err.message : "Upload failed. Please try again.";
+        if (msg.includes("<Message>")) {
+          const match = msg.match(/<Message>(.*?)<\/Message>/);
+          if (match) msg = match[1];
+        }
+        setError(msg);
       }
     } finally {
       onBusyChange(busyKey, false);

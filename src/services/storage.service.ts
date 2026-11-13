@@ -64,23 +64,26 @@ export class StorageService {
       proxyUrl = `/api/images/${objectKey}`;
       storageDriver = "minio";
     } catch (minioError) {
-      if (env.isProd) {
+      console.warn("MinIO upload failed, falling back to local file storage:", minioError);
+
+      try {
+        const localRelativeDir = folder.startsWith("public/")
+          ? folder.replace(/^public\//, "")
+          : path.join("uploads", folder);
+        const targetDir = path.join(process.cwd(), "public", localRelativeDir);
+        await fs.mkdir(targetDir, { recursive: true });
+
+        const fullLocalPath = path.join(targetDir, filename);
+        await fs.writeFile(fullLocalPath, input.buffer);
+
+        const publicPath = `/${localRelativeDir}/${filename}`.replace(/\\/g, "/");
+        url = publicPath;
+        proxyUrl = `/api/images${publicPath}`;
+        storageDriver = "local-fallback";
+      } catch (fallbackError) {
+        console.error("Local storage fallback failed:", fallbackError);
         throw minioError;
       }
-
-      const localRelativeDir = folder.startsWith("public/")
-        ? folder.replace(/^public\//, "")
-        : path.join("uploads", folder);
-      const targetDir = path.join(process.cwd(), "public", localRelativeDir);
-      await fs.mkdir(targetDir, { recursive: true });
-
-      const fullLocalPath = path.join(targetDir, filename);
-      await fs.writeFile(fullLocalPath, input.buffer);
-
-      const publicPath = `/${localRelativeDir}/${filename}`.replace(/\\/g, "/");
-      url = publicPath;
-      proxyUrl = `/api/images${publicPath}`;
-      storageDriver = "local-fallback";
     }
 
     const category = input.mimeType.startsWith("image/") ? "IMAGE" : "DOCUMENT";

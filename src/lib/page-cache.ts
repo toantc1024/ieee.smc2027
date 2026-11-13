@@ -19,3 +19,4 @@ export function revalidatePagePaths(slug: string) {
     console.warn(`[revalidatePagePaths] Error revalidating ${publicPath}:`, error);
   }
 }
+
