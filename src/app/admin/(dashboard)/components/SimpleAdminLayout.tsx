@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import type { SessionUser } from "@/lib/auth";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import {
+  AUTH_CHANNEL_NAME,
+  installSessionFetchInterceptor,
+  triggerAutoLogout,
+} from "@/lib/session-guard";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
 
@@ -15,6 +20,68 @@ interface SimpleAdminLayoutProps {
 
 export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    const uninstallInterceptor = installSessionFetchInterceptor({
+      requireAdmin: true,
+      redirectPath: "/admin/login",
+    });
+
+    const checkSession = async () => {
+      try {
+        const res = await fetch("/api/auth/me", {
+          cache: "no-store",
+          credentials: "include",
+        });
+        if (res.status === 401) {
+          triggerAutoLogout("/admin/login");
+          return;
+        }
+        if (!res.ok) return;
+        const data = await res.json().catch(() => null);
+        if (!data?.user || data.user.role !== "ADMIN") {
+          triggerAutoLogout("/admin/login");
+        }
+      } catch {
+        // Ignore transient network errors during background heartbeat
+      }
+    };
+
+    const intervalId = window.setInterval(checkSession, 10000);
+    const handleFocus = () => {
+      void checkSession();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void checkSession();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    let authChannel: BroadcastChannel | null = null;
+    try {
+      authChannel = new BroadcastChannel(AUTH_CHANNEL_NAME);
+      authChannel.onmessage = (event) => {
+        if (event.data?.type === "LOGOUT") {
+          window.location.replace("/admin/login");
+        }
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
+
+    return () => {
+      uninstallInterceptor();
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (authChannel) {
+        authChannel.close();
+      }
+    };
+  }, []);
 
   const isFullBleed = useMemo(() => {
     return (

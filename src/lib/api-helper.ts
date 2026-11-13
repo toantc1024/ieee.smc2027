@@ -44,12 +44,16 @@ export async function requireAdminRequest(
 > {
   const user = await getCurrentUser();
   if (!user || user.role !== "ADMIN") {
+    const res = NextResponse.json(
+      { error: unauthorizedMessage },
+      { status: user ? 403 : 401 }
+    );
+    if (!user) {
+      clearSessionCookie(res);
+    }
     return {
       user: null,
-      errorResponse: NextResponse.json(
-        { error: unauthorizedMessage },
-        { status: user ? 403 : 401 }
-      ),
+      errorResponse: res,
     };
   }
   return { user, errorResponse: null };
@@ -78,7 +82,15 @@ export function attachSessionCookie(
  * Clear session cookie on logout
  */
 export function clearSessionCookie(response: NextResponse): NextResponse {
-  response.cookies.delete(SESSION_COOKIE_NAME);
+  response.cookies.set({
+    name: SESSION_COOKIE_NAME,
+    value: "",
+    httpOnly: true,
+    secure: env.isProd,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
   return response;
 }
 

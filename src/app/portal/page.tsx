@@ -24,6 +24,7 @@ import {
 } from "@/components/portal/PortalProfileJsonEditor";
 import QRCode from "qrcode";
 import type { UnstructuredRegistrationFormData } from "@/types";
+import { installSessionFetchInterceptor, triggerAutoLogout } from "@/lib/session-guard";
 
 function PortalContent() {
   const searchParams = useSearchParams();
@@ -109,6 +110,14 @@ function PortalContent() {
   };
 
   useEffect(() => {
+    const uninstall = installSessionFetchInterceptor({
+      requireAdmin: false,
+      redirectPath: "/admin/login",
+    });
+    return uninstall;
+  }, []);
+
+  useEffect(() => {
     if (initialCode) {
       fetchByCode(initialCode);
       return;
@@ -116,7 +125,13 @@ function PortalContent() {
 
     setLoading(true);
     fetch("/api/profile")
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => {
+        if (res.status === 401) {
+          triggerAutoLogout("/admin/login");
+          return null;
+        }
+        return res.ok ? res.json() : null;
+      })
       .then(async (json) => {
         if (json?.success && json.data) {
           if (json.data.user) {

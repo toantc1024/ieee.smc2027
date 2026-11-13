@@ -28,6 +28,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
+import { triggerAutoLogout } from "@/lib/session-guard";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -502,8 +503,15 @@ export default function UserDetailPage() {
         throw new Error(data.error || "Failed to revoke sessions");
       }
 
-      toast.success("All active sessions revoked successfully");
       setConfirmRevokeOpen(false);
+      if (isSelf) {
+        triggerAutoLogout(
+          "/admin/login",
+          "Your sessions were revoked. Redirecting to sign in..."
+        );
+        return;
+      }
+      toast.success("All active sessions revoked successfully");
       await fetchUserData(false);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to revoke sessions");

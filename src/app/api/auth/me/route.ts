@@ -1,16 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser, upsertUser, createSessionToken } from "@/lib/auth";
-import { attachSessionCookie, apiError, apiSuccess } from "@/lib/api-helper";
+import { getCurrentUser, upsertUser, createSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { attachSessionCookie, clearSessionCookie, apiError, apiSuccess } from "@/lib/api-helper";
 
-export async function GET() {
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate",
+};
+
+export async function GET(request: NextRequest) {
+  const hasCookie = Boolean(request.cookies.get(SESSION_COOKIE_NAME)?.value);
   const user = await getCurrentUser();
-  return NextResponse.json({ user });
+
+  if (!user) {
+    const res = NextResponse.json(
+      { user: null, sessionExpired: hasCookie },
+      { headers: NO_STORE_HEADERS }
+    );
+    if (hasCookie) {
+      clearSessionCookie(res);
+    }
+    return res;
+  }
+
+  return NextResponse.json({ user, sessionExpired: false }, { headers: NO_STORE_HEADERS });
 }
 
 export async function PATCH(request: NextRequest) {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    return apiError("Authentication required", 401);
+    const res = apiError("Authentication required", 401);
+    return clearSessionCookie(res);
   }
 
   try {

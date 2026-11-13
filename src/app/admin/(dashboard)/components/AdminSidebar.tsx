@@ -13,6 +13,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AUTH_CHANNEL_NAME } from "@/lib/session-guard";
 
 import {
   AlertDialog,
@@ -205,6 +206,25 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     } catch {
       // ignore
     }
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // ignore
+    }
+    try {
+      const ch = new BroadcastChannel(AUTH_CHANNEL_NAME);
+      ch.postMessage({ type: "LOGOUT" });
+      ch.close();
+    } catch {
+      // ignore
+    }
+    window.location.replace("/admin/login");
   }, []);
 
   useEffect(() => {
@@ -597,15 +617,14 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             {/* Logout (Collapsed) */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <form action="/api/auth/logout" method="POST">
-                  <button
-                    type="submit"
-                    aria-label="Log out"
-                    className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-transparent hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/60 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 group/logout shadow-none"
-                  >
-                    <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-slate-500 dark:text-slate-400 group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400 shrink-0" />
-                  </button>
-                </form>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  aria-label="Log out"
+                  className="size-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 outline-hidden cursor-pointer aspect-square bg-transparent hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/60 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 group/logout shadow-none"
+                >
+                  <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-slate-500 dark:text-slate-400 group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400 shrink-0" />
+                </button>
               </TooltipTrigger>
               <TooltipContent side="right" align="center">
                 Log out
@@ -639,24 +658,23 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
             {/* Logout button */}
             <SidebarMenuItem className="w-full">
-              <form action="/api/auth/logout" method="POST" className="w-full">
-                <SidebarMenuButton
-                  type="submit"
-                  tooltip="Log out"
-                  className={cn(
-                    "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/logout shadow-none",
-                    "bg-transparent border-transparent text-muted-foreground font-medium",
-                    "hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:border-red-900/60 dark:hover:text-red-400"
-                  )}
-                >
-                  <div className="size-5 flex items-center justify-center shrink-0">
-                    <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-muted-foreground group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400" />
-                  </div>
-                  <span className="text-xs font-semibold transition-colors group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400">
-                    Log out
-                  </span>
-                </SidebarMenuButton>
-              </form>
+              <SidebarMenuButton
+                type="button"
+                onClick={handleLogout}
+                tooltip="Log out"
+                className={cn(
+                  "relative overflow-hidden rounded-lg px-2.5 py-1.5 h-8.5 flex items-center gap-2.5 w-full cursor-pointer transition-all duration-200 border group/logout shadow-none",
+                  "bg-transparent border-transparent text-muted-foreground font-medium",
+                  "hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:border-red-900/60 dark:hover:text-red-400"
+                )}
+              >
+                <div className="size-5 flex items-center justify-center shrink-0">
+                  <LogOut className="size-4 transition-transform group-hover/logout:-translate-x-0.5 text-muted-foreground group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400" />
+                </div>
+                <span className="text-xs font-semibold transition-colors group-hover/logout:text-red-600 dark:group-hover/logout:text-red-400">
+                  Log out
+                </span>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         )}
@@ -732,6 +750,25 @@ function NavGroup({ group, isActive }: NavGroupProps) {
     } catch {
       // ignore
     }
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // ignore
+    }
+    try {
+      const ch = new BroadcastChannel(AUTH_CHANNEL_NAME);
+      ch.postMessage({ type: "LOGOUT" });
+      ch.close();
+    } catch {
+      // ignore
+    }
+    window.location.replace("/admin/login");
   }, []);
 
   const handleOpenChange = useCallback((open: boolean) => {

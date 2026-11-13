@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { triggerAutoLogout } from "@/lib/session-guard";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   Plus,
@@ -422,10 +423,21 @@ export default function AdminUsersPage() {
       if (!res.ok && json.error) {
         throw new Error(json.error);
       }
+      const isRevokingSelf = Boolean(
+        currentUserEmail &&
+          revokeSessionsUser.email.toLowerCase() === currentUserEmail.toLowerCase()
+      );
+      setRevokeSessionsUser(null);
+      if (isRevokingSelf) {
+        triggerAutoLogout(
+          "/admin/login",
+          "Your sessions were revoked. Redirecting to sign in..."
+        );
+        return;
+      }
       toast.success(
         `All active sessions for ${revokeSessionsUser.name} have been revoked`
       );
-      setRevokeSessionsUser(null);
       await fetchUsers();
     } catch (err: unknown) {
       toast.error(
