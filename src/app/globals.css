@@ -34,8 +34,8 @@
   --accent-foreground: oklch(0.421 0.1203 261.7139);
   --destructive: oklch(0.6207 0.2306 24.9164);
   --destructive-foreground: oklch(0.9801 0.0096 252.8096);
-  --border: oklch(0.948 0.012 264);
-  --input: oklch(0.94 0.004 255);
+  --border: oklch(0.925 0.022 255);
+  --input: oklch(0.925 0.018 255);
   --ring: oklch(0.632 0.1979 260.8448);
   --chart-1: oklch(0.6723 0.1606 244.9955);
   --chart-2: oklch(0.6907 0.1554 160.3454);
@@ -518,7 +518,7 @@ h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emera
 /* Continuous full-width borders with no gaps */
 .divider-full {
   width: 100%;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(17, 94, 255, 0.12);
 }
 
 /* Unified Frame & Control Radius System:
@@ -540,16 +540,28 @@ textarea:not([class*="rounded-full"]) {
   border-radius: var(--radius-lg) !important;
 }
 
-/* Hero Carousel Responsive Aspect Ratio — Exact 1:1 Safe-Area Contract from HCMUTE */
+/* Hero Carousel Responsive Height & Aspect Ratio */
 .hero-carousel-height {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  height: auto;
+  min-height: 260px;
+  height: 56vw;
+  max-height: 420px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .hero-carousel-height {
+    height: 440px;
+    min-height: 400px;
+    max-height: 480px;
+  }
+}
+
+@media (min-width: 1024px) {
   .hero-carousel-height {
     aspect-ratio: 2.4 / 1;
+    height: auto;
+    min-height: 480px;
+    max-height: 760px;
   }
 }
 
@@ -607,8 +619,8 @@ article:hover .news-card-badge,
 }
 
 /* Customized prominent button heights (avoiding cramped default shadcn heights on public marketing pages only) */
-body:not(:has(.admin-page-root)) a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]),
-body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]) {
+body:not(:has(.admin-page-root)) a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]):not([data-slot="badge"]):not([class*="badge"]),
+body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]):not([data-slot="badge"]):not([class*="badge"]) {
   min-height: 2.75rem; /* at least 44px height */
 }
 
@@ -753,8 +765,8 @@ body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*=
   top: 0;
   bottom: 0;
   width: 1px;
-  background: var(--border);
-  opacity: 0.35;
+  background: rgba(17, 94, 255, 0.12);
+  opacity: 1;
   z-index: 10;
   pointer-events: none;
 }
@@ -815,8 +827,8 @@ body.no-page-borders::after {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: var(--border);
-  opacity: 0.35;
+  background: rgba(147, 197, 253, 0.22);
+  opacity: 1;
   z-index: 10;
   pointer-events: none;
 }

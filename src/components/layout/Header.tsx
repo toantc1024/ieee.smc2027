@@ -158,17 +158,17 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                     >
                       {/* Fixed Title Header */}
                       <div className="relative pb-2.5 mb-3.5 shrink-0">
-                        <h3 className="text-[17px] xl:text-[18.5px] font-black text-[#004776] tracking-tight transition-colors">
+                        <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] transition-colors">
                           {col.title}
                         </h3>
                         {/* Thin track line */}
-                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
                         {/* Thin animated gradient line on column hover */}
                         <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full scale-x-0 group-hover/col:scale-x-100 origin-left transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
                       </div>
 
                       {/* Column Links List */}
-                      <div className="flex flex-col gap-2 flex-1">
+                      <div className="flex flex-col gap-1.5 flex-1">
                         {col.links.map((link) => {
                           const IconComp = getNavIcon(link.icon);
                           return (
@@ -178,26 +178,26 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                               target={link.isExternal ? "_blank" : undefined}
                               rel={link.isExternal ? "noopener noreferrer" : undefined}
                               onClick={closeMenu}
-                              className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-sm hover:bg-slate-50 transition-all duration-150 cursor-pointer min-w-0"
+                              className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-sm hover:bg-blue-50/50 transition-all duration-150 cursor-pointer min-w-0"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-9 h-9 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
-                                  <IconComp className="w-4.5 h-4.5 text-[#115eff] group-hover/item:text-white transition-colors" />
+                                <div className="w-8 h-8 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
+                                  <IconComp className="w-4 h-4 text-[#115eff] group-hover/item:text-white transition-colors" />
                                 </div>
-                                <span className="text-base xl:text-[17.5px] font-bold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
+                                <span className="text-sm sm:text-[15px] font-semibold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
                                   {link.title}
                                 </span>
                                 {link.badge && (
-                                  <span className="text-xs xl:text-[13px] px-2.5 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff]">
+                                  <span className="text-[11px] px-2 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff] shadow-2xs shrink-0">
                                     {link.badge}
                                   </span>
                                 )}
                                 {link.isExternal && (
-                                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
+                                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
                                 )}
                               </div>
                               {link.description && (
-                                <p className="text-[14px] xl:text-[15px] text-slate-600 font-normal leading-relaxed truncate group-hover/item:text-slate-800 transition-colors pl-11.5">
+                                <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed truncate group-hover/item:text-slate-700 transition-colors pl-10.5">
                                   {link.description}
                                 </p>
                               )}
@@ -213,10 +213,10 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                 {activeItem.promoCard && (
                   <div className="w-72 xl:w-84 shrink-0 py-7 pl-6 pr-2 flex flex-col justify-start self-stretch">
                     <div className="relative pb-2.5 mb-3.5">
-                      <h3 className="text-[17px] xl:text-[18.5px] font-black text-[#004776] tracking-tight whitespace-nowrap">
+                      <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] whitespace-nowrap">
                         {activeItem.promoCard.badge || "Featured"}
                       </h3>
-                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
                       <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full" />
                     </div>
 
@@ -226,11 +226,11 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                       target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
                       rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       onClick={closeMenu}
-                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-sm border border-slate-200 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
+                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-sm border border-blue-100/90 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
                     >
                       {/* Dot Pattern in Default state */}
                       <div
-                        className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.3px,transparent_1.3px)] [background-size:12px_12px] opacity-60 group-hover/promo:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
+                        className="absolute inset-0 bg-[radial-gradient(#93c5fd_1.2px,transparent_1.2px)] [background-size:12px_12px] opacity-60 group-hover/promo:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
                         aria-hidden="true"
                       />
 
@@ -243,7 +243,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                           className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
                         />
                         {activeItem.promoCard.badge && (
-                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-3 py-1 rounded-sm text-xs font-bold bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
+                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-sm text-xs font-bold bg-white/95 text-[#115eff] backdrop-blur-sm shadow-xs transition-colors">
                             {activeItem.promoCard.badge}
                           </div>
                         )}
@@ -251,15 +251,15 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
 
                       {/* Bottom Content Area */}
                       <div className="relative z-[2] p-4 flex flex-col gap-1.5">
-                        <h4 className="promo-card-title text-lg sm:text-xl font-bold text-slate-900 transition-colors duration-200 leading-snug">
+                        <h4 className="promo-card-title text-base sm:text-lg font-bold text-slate-900 transition-colors duration-200 leading-snug">
                           {activeItem.promoCard.title}
                         </h4>
                         {activeItem.promoCard.description && (
-                          <p className="promo-card-desc text-sm sm:text-base text-slate-600 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
+                          <p className="promo-card-desc text-xs sm:text-sm text-slate-600 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
                             {activeItem.promoCard.description}
                           </p>
                         )}
-                        <span className="promo-card-cta text-base font-bold text-[#115eff] transition-colors duration-200 inline-flex items-center gap-1.5 mt-1.5 group-hover/promo:gap-2">
+                        <span className="promo-card-cta text-sm font-bold text-[#115eff] transition-colors duration-200 inline-flex items-center gap-1.5 mt-1 group-hover/promo:gap-2">
                           {activeItem.promoCard.ctaText || "Explore Now"}
                           <span aria-hidden="true">›</span>
                         </span>
@@ -398,6 +398,17 @@ export function Header() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -548,35 +559,35 @@ export function Header() {
     <>
       {/* ── Top Utility Bar (Exact HCM-UTE Blue #115eff with page-border-x) ── */}
       {showTopbar && (
-        <div className="navbar-topbar page-border-x-light hidden lg:block bg-[#115eff] text-white py-1.5 relative z-50 text-sm">
+        <div className="navbar-topbar page-border-x-light hidden lg:block bg-[#115eff] text-white py-1 relative z-50 text-xs xl:text-[13px]">
           {/* Flush container matched exactly to site margins */}
           <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex h-9 items-center justify-between">
             {/* Left: Hotline & Email & Badges */}
             <div className="flex items-center gap-3.5 xl:gap-4.5 min-w-0">
               <a
                 href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
-                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-semibold transition-colors shrink-0 text-sm"
+                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-semibold transition-colors shrink-0 text-xs xl:text-[13px]"
                 title="Conference Hotline"
               >
-                <Phone className="w-4 h-4 text-blue-200" />
+                <Phone className="w-3.5 h-3.5 text-blue-200" />
                 <span>{hotline}</span>
               </a>
 
               <a
                 href={`mailto:${email}`}
-                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors shrink-0 text-sm"
+                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors shrink-0 text-xs xl:text-[13px]"
                 title="Conference Secretariat Email"
               >
-                <Mail className="w-4 h-4 text-blue-200" />
+                <Mail className="w-3.5 h-3.5 text-blue-200" />
                 <span>{email}</span>
               </a>
             </div>
 
             {/* Right: Topbar Navigation Links (News, Partnership, CFP PDF, Search) */}
-            <div className="flex items-center gap-2.5 xl:gap-3.5 text-sm">
+            <div className="flex items-center gap-2 xl:gap-3 text-xs xl:text-[13px]">
               <Link
                 href="/#news"
-                className="px-2.5 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium text-sm"
+                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
                 title="Conference News & Updates"
               >
                 News
@@ -586,7 +597,7 @@ export function Header() {
 
               <Link
                 href="/#sponsors"
-                className="px-2.5 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium text-sm"
+                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
                 title="Sponsorship & Industrial Exhibition"
               >
                 Partnership & Exhibition
@@ -598,24 +609,79 @@ export function Header() {
                 href={CONFERENCE_INFO.cfpPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-semibold text-blue-100 text-sm"
+                className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-semibold text-blue-100"
                 title="Download Call for Papers PDF"
               >
-                <FileDown className="w-4 h-4 text-blue-200" />
+                <FileDown className="w-3.5 h-3.5 text-blue-200" />
                 <span>CFP PDF</span>
               </a>
 
               <span className="text-white/30">•</span>
 
-              <button
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                className="px-2.5 py-1 rounded text-blue-100 hover:text-white hover:bg-white/15 transition-colors flex items-center gap-1.5 cursor-pointer text-sm font-medium"
-                title="Search conference topics"
-              >
-                <Search className="w-4 h-4" />
-                <span className="hidden sm:inline">Search</span>
-              </button>
+              {/* Rounded Top Search Bar with Generous Width (Exact HCMUTE Web UI Style) */}
+              <div className="relative flex items-center">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (searchQuery.trim()) {
+                      router.push(`/#tracks`);
+                    } else {
+                      setSearchOpen(true);
+                    }
+                  }}
+                  className="relative flex items-center"
+                >
+                  <div
+                    onClick={() => setSearchOpen(true)}
+                    className="relative flex items-center w-48 lg:w-52 xl:w-68 h-7.5 rounded-full bg-white/15 hover:bg-white/20 border border-white/25 hover:border-white/40 focus-within:bg-white/25 focus-within:border-white/60 transition-all duration-200 shadow-2xs group cursor-pointer"
+                    title="Search tracks, topics, authors, CFP (Click to open or type)"
+                  >
+                    <Search className="w-3.5 h-3.5 text-blue-100 group-hover:text-white absolute left-3 pointer-events-none transition-colors" />
+                    <input
+                      type="text"
+                      placeholder="Search conference, tracks..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (searchQuery.trim()) {
+                            router.push(`/#tracks`);
+                          } else {
+                            setSearchOpen(true);
+                          }
+                        }
+                      }}
+                      className="w-full h-full pl-8.5 pr-8 bg-transparent text-xs text-white placeholder:text-blue-100/75 focus:outline-none cursor-text select-text"
+                    />
+                    {searchQuery ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchQuery("");
+                        }}
+                        className="absolute right-2.5 p-0.5 text-blue-200 hover:text-white transition-colors cursor-pointer"
+                        aria-label="Clear search"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchOpen(true);
+                        }}
+                        className="absolute right-1.5 px-1.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 text-[10px] font-bold text-white tracking-wider cursor-pointer select-none"
+                        title="Open expanded search dialog"
+                      >
+                        ⌘K
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -625,15 +691,15 @@ export function Header() {
       <div className="sticky top-0 z-50 w-full relative">
         <header
           className={cn(
-            "navbar-header page-border-x-dark w-full bg-white transition-shadow duration-200 ease-out border-b border-slate-200",
-            isScrolled && "shadow-[-8px_0_25px_-10px_rgba(0,0,0,0.08),8px_0_25px_-10px_rgba(0,0,0,0.08)]"
+            "navbar-header page-border-x-dark w-full bg-white transition-shadow duration-200 ease-out border-b border-blue-100/80",
+            isScrolled && "shadow-[-8px_0_25px_-10px_rgba(0,71,118,0.08),8px_0_25px_-10px_rgba(0,71,118,0.08)]"
           )}
         >
           {/* Flush container matched exactly to site margins with comfortable height */}
-          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-18 md:h-18">
+          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-[68px]">
             {/* Desktop Navigation on Left, CTA on Right (No Header Logo) */}
-            <div className="hidden lg:flex items-center justify-between w-full gap-2 xl:gap-4 2xl:gap-6 min-w-0">
-              <nav className="flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 relative shrink-0">
+            <div className="hidden lg:flex items-center justify-between w-full gap-2 xl:gap-4 min-w-0">
+              <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
                 {navLinks.map((link, index) => {
                   const hasMegaMenu =
                     link.type !== "link" &&
@@ -666,7 +732,7 @@ export function Header() {
                           }
                         }}
                         className={cn(
-                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-semibold text-[13.5px] xl:text-sm px-2.5 xl:px-3.5 py-2 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                           isMenuOpen
                             ? "bg-[#115eff] text-white shadow-xs"
                             : "text-[#004776] hover:bg-[#115eff] hover:text-white"
@@ -695,10 +761,10 @@ export function Header() {
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-3.5 text-[13px] xl:text-[14px] font-semibold text-[#004776] hover:text-[#115eff] bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-200 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-4 py-2 text-xs xl:text-[13.5px] font-semibold text-[#004776] hover:text-white bg-white hover:bg-[#115eff] border border-blue-100/90 hover:border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
                   title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
                 >
-                  <User className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
+                  <User className="w-3.5 h-3.5 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
                   <span>
                     {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
                   </span>
@@ -708,11 +774,11 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={closeMenu}
-                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-[13px] xl:text-[14px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-4 py-2 text-xs xl:text-[13.5px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
                   >
-                    <FileText className="w-3.5 h-3.5 text-white shrink-0" />
+                    <FileText className="w-3.5 h-3.5 text-current shrink-0" />
                     <span>{ctaLabel}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-current shrink-0" />
                   </a>
                 )}
               </div>
@@ -737,10 +803,10 @@ export function Header() {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="p-2 text-slate-600 hover:text-[#115eff] hover:bg-slate-100 rounded-sm transition-colors cursor-pointer"
+                  className="p-2 text-slate-700 hover:text-[#115eff] hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
                   aria-label="Open search"
                 >
-                  <Search className="w-5 h-5" />
+                  <Search className="w-5 h-5 text-current" />
                 </button>
                 <button
                   type="button"
@@ -776,7 +842,7 @@ export function Header() {
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: SMOOTH_EASE } }}
                   exit={{ opacity: 0, y: -4, transition: { duration: 0.08, ease: "easeOut" } }}
-                  className="w-full bg-white border-x border-b border-slate-200 rounded-b-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08),-8px_15px_25px_-10px_rgba(0,0,0,0.05),8px_15px_25px_-10px_rgba(0,0,0,0.05)] overflow-hidden will-change-[transform,opacity] max-h-[calc(100vh-5.5rem)] flex flex-col"
+                  className="w-full bg-white border-x border-b border-blue-100/90 rounded-b-2xl shadow-[0_20px_40px_-10px_rgba(0,71,118,0.09),-8px_15px_25px_-10px_rgba(0,71,118,0.05),8px_15px_25px_-10px_rgba(0,71,118,0.05)] overflow-hidden will-change-[transform,opacity] max-h-[calc(100vh-5.5rem)] flex flex-col"
                 >
                   <DynamicHeightMenu
                     activeItem={activeItem}
@@ -828,7 +894,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="fixed inset-x-0 top-16 sm:top-18 z-50 bg-white border-b border-slate-200 shadow-2xl max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-4.5rem)] overflow-y-auto overflow-x-hidden flex flex-col divide-y divide-slate-100"
+              className="fixed inset-x-0 top-16 sm:top-[68px] z-50 bg-white border-b border-blue-100/90 shadow-2xl max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-4.25rem)] overflow-y-auto overflow-x-hidden flex flex-col divide-y divide-blue-100/70"
             >
               <div className="px-4 py-3 space-y-1">
                 {mobileNavItems.map((link) => {
@@ -842,14 +908,14 @@ export function Header() {
                   const isExpanded = mobileExpandedId === link.id;
 
                   return (
-                    <div key={link.id} className="border-b border-slate-100/80 last:border-0 pb-1">
+                    <div key={link.id} className="border-b border-blue-50 last:border-0 pb-1">
                       <div className="flex items-center justify-between gap-1">
                         <Link
                           href={link.href}
                           onClick={() => {
                             handleMobileNavClick(link.href);
                           }}
-                          className="py-3 text-base sm:text-lg font-bold flex-1 transition-colors select-none text-[#004776] hover:text-[#115eff]"
+                          className="py-2.5 text-[15px] sm:text-base font-semibold flex-1 transition-colors select-none text-[#004776] hover:text-[#115eff]"
                         >
                           {link.name}
                         </Link>
@@ -857,12 +923,12 @@ export function Header() {
                           <button
                             type="button"
                             onClick={() => setMobileExpandedId(isExpanded ? null : link.id)}
-                            className="p-2.5 text-slate-500 hover:text-[#115eff] cursor-pointer rounded-sm hover:bg-slate-50"
+                            className="p-2 text-slate-500 hover:text-[#115eff] cursor-pointer rounded-sm hover:bg-blue-50/60"
                             aria-label={`Toggle ${link.name} submenu`}
                           >
                             <ChevronDown
                               className={cn(
-                                "w-4.5 h-4.5 transition-transform duration-200",
+                                "w-4 h-4 transition-transform duration-200",
                                 isExpanded && "rotate-180 text-[#115eff]"
                               )}
                             />
@@ -872,7 +938,7 @@ export function Header() {
 
                       {/* Submenu Accordion */}
                       {hasSubs && isExpanded && (
-                        <div className="pl-2 pr-1 py-2 mb-2 space-y-1.5 bg-slate-50/80 rounded-sm border border-slate-100">
+                        <div className="pl-2 pr-1 py-2 mb-2 space-y-1 bg-blue-50/40 rounded-sm border border-blue-100/80">
                           {allSubs.map((sub: NavSubItem) => {
                             const IconComp = getNavIcon(sub.icon);
                             return (
@@ -882,14 +948,14 @@ export function Header() {
                                 target={sub.isExternal ? "_blank" : undefined}
                                 rel={sub.isExternal ? "noopener noreferrer" : undefined}
                                 onClick={() => handleMobileNavClick(sub.href)}
-                                className="flex items-center gap-3 py-2.5 px-3 rounded-sm text-[15px] sm:text-base text-slate-700 hover:text-[#115eff] hover:bg-white transition-colors"
+                                className="flex items-center gap-3 py-2 px-2.5 rounded-sm text-sm text-slate-700 hover:text-[#115eff] hover:bg-white transition-colors"
                               >
-                                <div className="w-7 h-7 rounded-sm bg-blue-50 flex items-center justify-center shrink-0">
-                                  <IconComp className="w-4 h-4 text-[#115eff]" />
+                                <div className="w-7 h-7 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                                  <IconComp className="w-3.5 h-3.5 text-[#115eff]" />
                                 </div>
                                 <span className="font-semibold flex-1 leading-snug">{sub.title}</span>
                                 {sub.badge && (
-                                  <span className="text-xs px-2 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff]">
+                                  <span className="text-xs sm:text-[13px] px-2.5 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff]">
                                     {sub.badge}
                                   </span>
                                 )}
@@ -907,13 +973,13 @@ export function Header() {
               </div>
 
               {/* Mobile CTA and Quick Contacts */}
-              <div className="p-4 space-y-2.5 bg-slate-50/60">
+              <div className="p-4 space-y-2.5 bg-blue-50/30">
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-slate-100 text-[#004776] border border-slate-200 hover:border-slate-300 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] border border-slate-200 hover:border-blue-200 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
                 >
-                  <User className="w-4 h-4 text-[#115eff]" />
+                  <User className="w-4 h-4 text-current shrink-0" />
                   <span>
                     {!isLoggedIn
                       ? "Sign In / Register"
@@ -927,27 +993,27 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full inline-flex items-center justify-center gap-2.5 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-sm shadow-sm transition-colors cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm shadow-sm transition-colors cursor-pointer"
                   >
-                    <FileText className="w-4.5 h-4.5 text-white" />
+                    <FileText className="w-4 h-4 text-current" />
                     <span>{ctaLabel}</span>
-                    <ArrowUpRight className="w-4.5 h-4.5" />
+                    <ArrowUpRight className="w-4 h-4 text-current" />
                   </a>
                 )}
 
-                <div className="grid grid-cols-2 gap-2.5 pt-1 text-sm">
+                <div className="grid grid-cols-2 gap-2.5 pt-1 text-xs sm:text-sm">
                   <a
                     href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
                   >
-                    <Phone className="w-4 h-4 text-[#115eff]" />
+                    <Phone className="w-4 h-4 text-current shrink-0" />
                     <span className="truncate">Hotline</span>
                   </a>
                   <a
                     href={`mailto:${email}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
                   >
-                    <Mail className="w-4 h-4 text-[#115eff]" />
+                    <Mail className="w-4 h-4 text-current shrink-0" />
                     <span className="truncate">Email Us</span>
                   </a>
                 </div>
@@ -957,52 +1023,95 @@ export function Header() {
         )}
       </AnimatePresence>
 
-      {/* ── Search Modal ── */}
+      {/* ── Search Modal (Rounded-2xl with Rounded-full Input & Quick Filter Pills) ── */}
       {searchOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-start justify-center pt-24 px-4">
-          <div className="bg-white rounded-sm max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <div className="flex items-center gap-2">
-                <Search className="w-5 h-5 text-[#115eff]" />
-                <span className="font-bold text-slate-900 text-base">
-                  Search IEEE SMC 2027
-                </span>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-start justify-center pt-20 sm:pt-24 px-4">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                  <Search className="w-4 h-4 text-[#115eff]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">
+                    Search IEEE SMC 2027
+                  </h3>
+                  <p className="text-xs text-slate-500 font-normal">
+                    Topics, papers, authors, committees, sessions, and guidelines
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setSearchOpen(false)}
-                className="text-slate-400 hover:text-slate-700 text-base font-bold cursor-pointer p-1"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Close search"
               >
                 ✕
               </button>
             </div>
 
-            <input
-              type="text"
-              placeholder="Search tracks, authors, venue, CFP..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setSearchOpen(false);
-                  router.push(`/#tracks`);
-                }
-              }}
-              className="w-full px-4 py-3 border border-slate-200/85 rounded-sm text-base focus:outline-none focus:border-[#115eff]"
-              autoFocus
-            />
+            <div className="relative">
+              <Search className="w-4.5 h-4.5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search tracks, authors, venue, CFP, schedule..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSearchOpen(false);
+                    router.push(`/#tracks`);
+                  }
+                }}
+                className="w-full pl-11 pr-4 py-3.5 border border-slate-200 rounded-full text-base focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 transition-all text-slate-900 placeholder:text-slate-400"
+                autoFocus
+              />
+            </div>
 
-            <div className="flex items-center justify-between text-sm text-slate-500 pt-1">
-              <span>Quick: Systems Science • Cybernetics • Submissions</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 pt-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="font-semibold text-slate-600">Quick:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchOpen(false);
+                    router.push(`/#tracks`);
+                  }}
+                  className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-[#004776] hover:text-[#115eff] font-medium transition-colors cursor-pointer"
+                >
+                  Systems Science
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchOpen(false);
+                    router.push(`/#tracks`);
+                  }}
+                  className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-[#004776] hover:text-[#115eff] font-medium transition-colors cursor-pointer"
+                >
+                  Cybernetics
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchOpen(false);
+                    router.push(`/#cfp`);
+                  }}
+                  className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-[#004776] hover:text-[#115eff] font-medium transition-colors cursor-pointer"
+                >
+                  Submissions
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   setSearchOpen(false);
                   router.push(`/#tracks`);
                 }}
-                className="px-4 py-1.5 bg-[#115eff] text-white font-bold text-sm rounded-sm hover:bg-[#0a4de6] cursor-pointer"
+                className="px-5 py-2 bg-[#115eff] text-white font-bold text-sm rounded-full hover:bg-[#0a4de6] shadow-xs cursor-pointer shrink-0 transition-colors self-end sm:self-auto"
               >
-                Go
+                Search
               </button>
             </div>
           </div>

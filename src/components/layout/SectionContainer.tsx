@@ -23,7 +23,7 @@ export function SectionContainer({
   fullWidthBg = "bg-white",
   hasSideBorders = false,
   borderBottom = false,
-  borderColor = "border-slate-200",
+  borderColor = "border-blue-100/80",
   id,
 }: SectionContainerProps) {
   return (

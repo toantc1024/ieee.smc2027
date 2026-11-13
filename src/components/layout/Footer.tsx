@@ -134,10 +134,10 @@ export function Footer() {
                 <span className="text-white/50">•</span>
                 <span>{CONFERENCE_INFO.dates}</span>
               </div>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
+              <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold text-white tracking-tight leading-snug">
                 IEEE SMC 2027 • Ho Chi Minh City, Vietnam
               </h3>
-              <p className="mt-2 text-sm sm:text-base text-blue-100 max-w-2xl font-normal leading-relaxed">
+              <p className="mt-2 text-sm sm:text-[15px] text-blue-100 max-w-2xl font-normal leading-relaxed">
                 The 2027 IEEE International Conference on Systems, Man, and Cybernetics, hosted by Ho Chi Minh City University of Technology and Engineering (HCM-UTE). Theme: <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>.
               </p>
             </div>
@@ -166,10 +166,10 @@ export function Footer() {
           </div>
 
           {/* Main Footer Content Grid */}
-          <div className="relative z-10 px-4 sm:px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="relative z-10 px-4 sm:px-6 py-8 sm:py-10 lg:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
             
             {/* Column 1: HCM-UTE Official Rectangle Logo & Contact Details */}
-            <div className="lg:col-span-5 space-y-5">
+            <div className="lg:col-span-5 space-y-4">
               <div className="space-y-3">
                 <a
                   href="https://hcmute.edu.vn"
@@ -182,7 +182,7 @@ export function Footer() {
                   <img
                     src="/logo/rectangle-logo.png"
                     alt="HCM-UTE • Ho Chi Minh City University of Technology and Engineering"
-                    className="h-10 sm:h-12 w-auto max-w-[280px] sm:max-w-[340px] object-contain drop-shadow-xs select-none"
+                    className="h-10 sm:h-11 w-auto max-w-[260px] sm:max-w-[320px] object-contain drop-shadow-xs select-none"
                   />
                 </a>
                 <p className="text-blue-100/90 text-sm font-medium leading-relaxed max-w-md">
@@ -190,25 +190,25 @@ export function Footer() {
                 </p>
               </div>
 
-              <p className="text-blue-100 text-sm sm:text-base leading-relaxed max-w-md font-normal">
+              <p className="text-blue-100 text-sm leading-relaxed max-w-md font-normal">
                 Hosted by HCM-UTE Vietnam under the theme <em>&ldquo;{CONFERENCE_INFO.theme}&rdquo;</em>. Bringing together worldwide researchers and industry innovators in systems science, human–machine symbiosis, and cybernetics.
               </p>
 
-              <div className="space-y-3.5 text-sm sm:text-base text-blue-100 pt-1">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-4.5 h-4.5 text-white mt-1 shrink-0" />
+              <div className="space-y-3 text-sm text-blue-100 pt-1">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="w-4 h-4 text-white mt-0.5 shrink-0" />
                   <span>
                     <strong>Venue:</strong> {CONFERENCE_INFO.venue}, {CONFERENCE_INFO.address}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4.5 h-4.5 text-white shrink-0" />
+                <div className="flex items-center gap-2.5">
+                  <Phone className="w-4 h-4 text-white shrink-0" />
                   <a href={`tel:${CONFERENCE_INFO.hotlineRaw}`} className="hover:text-white transition-colors">
                     Hotline: {CONFERENCE_INFO.hotline}
                   </a>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4.5 h-4.5 text-white shrink-0" />
+                <div className="flex items-center gap-2.5">
+                  <Mail className="w-4 h-4 text-white shrink-0" />
                   <a href={`mailto:${CONFERENCE_INFO.contactEmail}`} className="hover:text-white transition-colors">
                     Email: {CONFERENCE_INFO.contactEmail}
                   </a>
@@ -235,18 +235,18 @@ export function Footer() {
 
             {/* Categorized Navigation Links with Micro-animations */}
             <div className="lg:col-span-7">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
                 {linkGroups.map((group) => (
                   <div key={group.heading}>
-                    <h4 className="text-white font-bold text-sm sm:text-base mb-4 border-b border-white/15 pb-2">
+                    <h4 className="text-white font-bold text-sm mb-3.5 border-b border-white/20 pb-2">
                       {group.heading}
                     </h4>
-                    <ul className="space-y-2.5">
+                    <ul className="space-y-2">
                       {group.links.map((link) => (
                         <li key={link.label}>
                           <Link
                             href={link.href}
-                            className="text-blue-100 text-sm sm:text-[15px] hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
+                            className="text-blue-100 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
                           >
                             <span>{link.label}</span>
                             <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
@@ -267,11 +267,11 @@ export function Footer() {
       {/* FULL WIDTH DIVIDER & SUB-BAR matching hcmute-website-frontend */}
       <div className="relative border-t border-white/15">
         <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
-          <div className="w-full px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm sm:text-base">
+          <div className="w-full px-4 sm:px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-[13px]">
             <p className="text-blue-100 text-center md:text-left leading-relaxed">
               © {new Date().getFullYear()} IEEE SMC Society & HCM-UTE. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 text-blue-200/90 text-xs sm:text-sm">
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 text-blue-200/90 text-xs sm:text-[13px]">
               <span>Sheraton Saigon Grand Opera Hotel • Ho Chi Minh City</span>
               <span className="hidden sm:inline text-white/30">•</span>
               <span>HCM-UTE (University of Technology and Engineering)</span>

@@ -206,7 +206,7 @@ export function ImportantDates({
 
                       {item.status && (
                         <span
-                          className={`text-xs font-extrabold px-2.5 py-0.5 sm:py-1 rounded-[var(--radius-sm)] shadow-2xs ${
+                          className={`text-xs sm:text-[13px] font-extrabold px-3 py-1 rounded-[var(--radius-sm)] shadow-2xs ${
                             isPrimaryRow
                               ? item.highlight
                                 ? "bg-amber-300 text-slate-950 font-black"

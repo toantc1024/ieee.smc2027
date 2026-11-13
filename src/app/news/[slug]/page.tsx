@@ -274,7 +274,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-2 mb-4">
             <Link
               href="/#news"
-              className="inline-flex items-center px-3 py-1 rounded-sm text-xs font-semibold text-white bg-primary hover:bg-primary/90 shadow-xs transition-colors"
+              className="inline-flex items-center px-3.5 py-1 rounded-sm text-xs sm:text-[13px] font-bold text-white bg-primary hover:bg-primary/90 shadow-xs transition-colors"
             >
               {post.category}
             </Link>

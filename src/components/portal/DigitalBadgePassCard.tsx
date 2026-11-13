@@ -27,7 +27,7 @@ export function DigitalBadgePassCard({
   return (
     <Card className="items-center text-center">
       <div className="w-full bg-[#115eff] text-white rounded-xl p-4">
-        <p className="text-[10px] font-bold text-blue-200">
+        <p className="text-xs font-bold text-blue-100 tracking-wider uppercase">
           IEEE SMC 2027 · Ho Chi Minh City
         </p>
         <h3 className="text-lg font-extrabold mt-0.5">OFFICIAL DELEGATE PASS</h3>

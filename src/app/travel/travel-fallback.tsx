@@ -318,7 +318,7 @@ export function TravelFallbackView() {
 
                       {/* Top Badge (Without #1 #2) */}
                       <div className="absolute top-2.5 left-2.5 z-10">
-                        <span className="text-[11px] font-bold text-white bg-slate-900/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20">
+                        <span className="text-xs sm:text-[13px] font-bold text-white bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xs">
                           {attraction.badge}
                         </span>
                       </div>
