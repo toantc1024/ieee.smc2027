@@ -38,7 +38,7 @@ export function FAQ({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
@@ -48,23 +48,23 @@ export function FAQ({
               <span className="block text-[#004776]">{title}</span>
             )}
           </h2>
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+          <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
             {subtitle}
           </p>
         </div>
       </div>
 
       {/* Category Tabs: Full Width Divider */}
-      <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-slate-50/30 flex flex-wrap items-center gap-2.5">
-        <span className="text-sm sm:text-base font-bold text-slate-700 mr-2">Category:</span>
+      <div className="px-4 sm:px-6 py-3.5 border-b border-blue-100/85 bg-blue-50/35 flex flex-wrap items-center gap-2.5">
+        <span className="text-xs sm:text-sm font-bold text-[#004776] mr-1">Category:</span>
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`min-h-[44px] px-5 py-2.5 text-sm sm:text-base font-bold rounded-[0.26rem] transition-colors cursor-pointer ${
+            className={`min-h-[40px] px-4 py-2 text-xs sm:text-sm font-bold rounded-[0.26rem] transition-colors cursor-pointer ${
               activeCategory === cat
                 ? "bg-[#115eff] text-white shadow-2xs"
-                : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
+                : "bg-white hover:bg-blue-50 text-[#004776] border border-blue-100/90"
             }`}
           >
             {cat}
@@ -73,11 +73,11 @@ export function FAQ({
       </div>
 
       {/* FAQ Accordion List: Aligned in Columns for Exact Text Alignment */}
-      <div className="divide-y divide-slate-200 bg-white">
+      <div className="divide-y divide-blue-100/70 bg-white">
         {filteredFaqs.map((faq, idx) => {
           const isOpen = openIndex === idx;
           return (
-            <div key={idx} className="px-4 sm:px-6 py-5 sm:py-6 transition-colors hover:bg-slate-50/60">
+            <div key={idx} className="px-4 sm:px-6 py-5 sm:py-6 transition-colors hover:bg-blue-50/30">
               <button
                 onClick={() => toggleFaq(idx)}
                 className="w-full text-left flex items-start justify-between gap-4 focus:outline-none cursor-pointer"
@@ -92,11 +92,11 @@ export function FAQ({
 
                   {/* Question & Answer aligned together in column */}
                   <div className="flex-1 min-w-0">
-                    <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 leading-snug block">
+                    <span className="text-base sm:text-[17px] font-bold text-[#004776] leading-snug block">
                       {faq.question}
                     </span>
                     {isOpen && (
-                      <div className="mt-3.5 text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-normal border-t border-slate-100 pt-3 animate-in fade-in duration-200">
+                      <div className="mt-3.5 text-sm sm:text-base text-slate-700 leading-relaxed font-normal border-t border-blue-50 pt-3 animate-in fade-in duration-200">
                         {faq.answer}
                       </div>
                     )}
@@ -117,8 +117,8 @@ export function FAQ({
       </div>
 
       {/* Contact Prompt Footer */}
-      <div className="px-4 sm:px-6 py-6 sm:py-7 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5 text-sm sm:text-base text-slate-700 font-medium">
+      <div className="px-4 sm:px-6 py-6 sm:py-7 bg-blue-50/35 border-t border-blue-100/85 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2.5 text-sm sm:text-base text-[#004776] font-medium">
           <HelpCircle className="w-5 h-5 text-[#115eff] shrink-0" />
           <span>Have an inquiry not answered above regarding registration, visas, or special sessions?</span>
         </div>

@@ -168,8 +168,8 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "group relative aspect-video w-full overflow-hidden rounded-xl border bg-slate-100/70 transition-colors",
-            dragging ? "border-blue-600 ring-2 ring-blue-500/20" : "border-slate-200"
+            "group relative aspect-video w-full overflow-hidden rounded-xl border bg-blue-50/35 transition-colors",
+            dragging ? "border-blue-600 ring-2 ring-blue-500/20" : "border-blue-100/90"
           )}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -237,7 +237,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-slate-200/85 bg-white p-3.5"
+          className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-blue-100/90 bg-white p-3.5"
         >
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#115eff] text-white shadow-xs">
@@ -253,7 +253,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Replace ${field.label}`}
               onClick={() => inputRef.current?.click()}
-              className="h-8 rounded-lg border border-slate-200/85 bg-white px-3 text-xs font-bold text-slate-800 hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
+              className="h-8 rounded-lg border border-blue-100/90 bg-white px-3 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"
             >
               Change
             </button>
@@ -262,7 +262,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="h-8 rounded-lg border border-slate-200/85 bg-white px-3 text-xs font-bold text-slate-800 hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
+              className="h-8 rounded-lg border border-blue-100/90 bg-white px-3 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"
             >
               Library
             </button>
@@ -277,7 +277,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
             "relative flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition-colors",
             dragging
               ? "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30"
-              : "border-slate-200/85 bg-white hover:border-slate-300",
+              : "border-blue-100/90 bg-white hover:border-blue-300",
             isImage ? "min-h-32" : "min-h-24"
           )}
         >
@@ -307,7 +307,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200/85 bg-white hover:border-slate-300 px-4 text-xs font-bold text-slate-800 transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-blue-100/90 bg-white hover:border-blue-300 px-4 text-xs font-bold text-[#004776] transition-colors disabled:opacity-50 cursor-pointer"
             >
               <FolderOpen className="size-3.5 text-slate-600" />
               <span>Library</span>
@@ -349,7 +349,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           setBrokenUrl(null);
           onChange(path, event.target.value);
         }}
-        className="h-10 bg-white text-sm font-medium border-slate-200/85 rounded-lg px-3"
+        className="h-10 bg-white text-sm font-medium border-blue-100/90 rounded-lg px-3"
       />
 
       {field.description && (
@@ -755,7 +755,7 @@ function ArrayField(props: InspectorFieldProps) {
       )}
 
       {items.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200/85 bg-white px-3 py-6 text-center text-sm font-medium text-slate-500">
+        <div className="rounded-xl border border-dashed border-blue-200/80 bg-white px-3 py-6 text-center text-sm font-medium text-slate-500">
           No {field.label.toLowerCase()} yet. Click Add {itemLabel} to create one.
         </div>
       )}
@@ -795,7 +795,7 @@ function ArrayField(props: InspectorFieldProps) {
                   ? "opacity-40 border-dashed border-[#115eff] bg-blue-50/30 scale-[0.99]"
                   : open
                     ? "border-[#115eff] bg-white shadow-xs ring-1 ring-[#115eff]/20"
-                    : "border-slate-200/85 bg-white hover:border-slate-300"
+                    : "border-blue-100/90 bg-white hover:border-blue-300"
               )}
             >
               <div className="flex items-center gap-1 pr-1.5 bg-white">
@@ -813,7 +813,7 @@ function ArrayField(props: InspectorFieldProps) {
                     onClick={() => {
                       if (!didDragRef.current) toggleIndex(index);
                     }}
-                    className="p-2 text-slate-400 group-hover/item:text-[#115eff] hover:bg-slate-100 rounded-l shrink-0 flex items-center justify-center transition-colors"
+                    className="p-2 text-slate-400 group-hover/item:text-[#115eff] hover:bg-blue-50/60 rounded-l shrink-0 flex items-center justify-center transition-colors"
                   >
                     <GripVertical className="size-4" />
                   </div>
@@ -826,7 +826,7 @@ function ArrayField(props: InspectorFieldProps) {
                     }}
                     className="flex min-w-0 flex-1 items-center gap-2.5 py-2.5 pr-2 text-left focus-visible:outline-2 focus-visible:outline-[#004776] cursor-grab active:cursor-grabbing"
                   >
-                    <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-slate-100 border border-slate-200/80 px-1 text-xs font-bold text-slate-800">
+                    <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md bg-blue-50/70 border border-blue-100/90 px-1 text-xs font-bold text-[#004776]">
                       #{index + 1}
                     </span>
                     {thumbnail && (
@@ -834,7 +834,7 @@ function ArrayField(props: InspectorFieldProps) {
                       <img
                         src={thumbnail}
                         alt=""
-                        className="size-7 shrink-0 rounded-md border border-slate-200/80 bg-slate-100 object-cover pointer-events-none"
+                        className="size-7 shrink-0 rounded-md border border-blue-100/90 bg-blue-50/40 object-cover pointer-events-none"
                       />
                     )}
                     <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
@@ -897,7 +897,7 @@ function ArrayField(props: InspectorFieldProps) {
               </div>
 
               {open && (
-                <div className="space-y-4 border-t border-slate-200 p-4 bg-white">
+                <div className="space-y-4 border-t border-blue-100/80 p-4 bg-white">
                   {Object.entries(fields)
                     .filter(([key]) => key !== "id")
                     .map(([key, child]) => (
@@ -963,8 +963,8 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "object") {
     return (
-      <fieldset className="space-y-3 rounded-xl border border-slate-200/85 bg-white p-4">
-        <legend className="px-1.5 text-sm font-bold text-slate-700">{field.label}</legend>
+      <fieldset className="space-y-3 rounded-xl border border-blue-100/90 bg-white p-4">
+        <legend className="px-1.5 text-sm font-bold text-[#004776]">{field.label}</legend>
         {Object.entries(field.fields || {}).map(([key, child]) => (
           <InspectorField
             {...props}
@@ -980,7 +980,7 @@ export function InspectorField(props: InspectorFieldProps) {
 
   if (field.type === "switch") {
     return (
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/85 bg-white px-4 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-100/90 bg-white px-4 py-3">
         <div className="min-w-0">
           <Label htmlFor={id} className="text-sm font-bold text-slate-900 cursor-pointer">
             {field.label}
@@ -1017,7 +1017,7 @@ export function InspectorField(props: InspectorFieldProps) {
           placeholder={field.placeholder}
           aria-describedby={field.description ? descriptionId : undefined}
           onChange={(event) => changeText(event.target.value)}
-          className="min-h-24 resize-y bg-white text-sm font-medium leading-relaxed border-slate-200/85 rounded-lg p-3"
+          className="min-h-24 resize-y bg-white text-sm font-medium leading-relaxed border-blue-100/90 rounded-lg p-3"
         />
       ) : field.type === "select" ? (
         <select
@@ -1030,7 +1030,7 @@ export function InspectorField(props: InspectorFieldProps) {
             );
             onChange(path, option?.value ?? event.target.value);
           }}
-          className="h-10 w-full rounded-lg border border-slate-200/85 bg-white px-3 text-sm font-medium text-slate-900 focus:border-[#115eff] focus:outline-none focus:ring-2 focus:ring-[#115eff]/15"
+          className="h-10 w-full rounded-lg border border-blue-100/90 bg-white px-3 text-sm font-medium text-slate-900 focus:border-[#115eff] focus:outline-none focus:ring-2 focus:ring-[#115eff]/15"
         >
           {field.options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -1054,7 +1054,7 @@ export function InspectorField(props: InspectorFieldProps) {
               ? onChange(path, event.target.value === "" ? "" : Number(event.target.value))
               : changeText(event.target.value)
           }
-          className="h-10 min-w-0 bg-white text-sm font-medium border-slate-200/85 rounded-lg px-3"
+          className="h-10 min-w-0 bg-white text-sm font-medium border-blue-100/90 rounded-lg px-3"
         />
       )}
       {field.description && (

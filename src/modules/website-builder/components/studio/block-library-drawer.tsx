@@ -76,7 +76,7 @@ export function BlockLibraryDrawer() {
   return (
     <div className="flex flex-col h-full bg-white select-none">
       {/* Search + Category Quick Filter */}
-      <div className="p-3 border-b border-slate-200 space-y-2.5 shrink-0 bg-white">
+      <div className="p-3 border-b border-blue-100/80 space-y-2.5 shrink-0 bg-white">
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -84,7 +84,7 @@ export function BlockLibraryDrawer() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search blocks..."
-            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-200/85 bg-white focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 text-slate-900 font-medium"
+            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-blue-100/90 bg-white focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 text-slate-900 font-medium"
           />
           {search && (
             <button
@@ -107,7 +107,7 @@ export function BlockLibraryDrawer() {
               "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
               activeCategory === "all"
                 ? "bg-[#115eff] text-white shadow-xs"
-                : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
+                : "bg-blue-50/50 border border-blue-100/90 text-[#004776] hover:bg-blue-50 hover:border-blue-300"
             )}
           >
             All
@@ -121,7 +121,7 @@ export function BlockLibraryDrawer() {
                 "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer shrink-0",
                 activeCategory === cat
                   ? "bg-[#115eff] text-white shadow-xs"
-                  : "bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
+                  : "bg-blue-50/50 border border-blue-100/90 text-[#004776] hover:bg-blue-50 hover:border-blue-300"
               )}
             >
               {CATEGORY_LABELS[cat] || cat}
@@ -145,13 +145,13 @@ export function BlockLibraryDrawer() {
                 <button
                   type="button"
                   onClick={() => toggleCategory(cat)}
-                  className="w-full flex items-center justify-between px-1 py-1 rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between px-1 py-1 rounded-md hover:bg-blue-50/50 transition-colors cursor-pointer"
                 >
-                  <span className="text-xs font-bold text-slate-700">
+                  <span className="text-xs font-bold text-[#004776]">
                     {CATEGORY_LABELS[cat] || cat}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <span className="rounded-md bg-slate-100 border border-slate-200/80 px-2 py-0.5 text-xs font-bold text-slate-800">
+                    <span className="rounded-md bg-blue-50/60 border border-blue-100/90 px-2 py-0.5 text-xs font-bold text-[#004776]">
                       {items.length}
                     </span>
                     <ChevronDown
@@ -188,10 +188,10 @@ export function BlockLibraryDrawer() {
             className="pointer-events-none fixed z-[100] w-[320px] rounded-2xl border-2 border-blue-500/30 bg-white p-4 text-left shadow-2xl shadow-blue-900/15"
             style={{ top: preview.top, left: preview.left }}
           >
-            <div className="mb-2.5 border-b border-slate-100 pb-2 text-xs font-bold text-slate-800">
+            <div className="mb-2.5 border-b border-blue-100/70 pb-2 text-xs font-bold text-[#004776]">
               {preview.item.label}
             </div>
-            <div className="mb-3 flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2.5">
+            <div className="mb-3 flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-blue-100/90 bg-blue-50/35 p-2.5">
               <ScalableWireframe
                 type={preview.item.type}
                 label={preview.item.label}
@@ -201,7 +201,7 @@ export function BlockLibraryDrawer() {
             <p className="text-xs leading-relaxed text-slate-600">
               {preview.item.description}
             </p>
-            <p className="mt-2 border-t border-slate-100 pt-2 text-[10px] font-semibold text-blue-600">
+            <p className="mt-2 border-t border-blue-100/70 pt-2 text-xs font-semibold text-blue-600">
               Drag onto the canvas or click + to insert
             </p>
           </div>,
@@ -249,8 +249,8 @@ function PaletteItem({
       }}
       onMouseLeave={() => onPreview(null)}
       className={cn(
-        "group flex min-h-[82px] select-none items-center gap-2.5 rounded-xl border bg-white p-3 transition-colors hover:border-slate-300 hover:shadow-2xs cursor-grab active:cursor-grabbing touch-none",
-        isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-slate-200/85"
+        "group flex min-h-[82px] select-none items-center gap-2.5 rounded-xl border bg-white p-3 transition-colors hover:border-blue-300 hover:shadow-2xs cursor-grab active:cursor-grabbing touch-none",
+        isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-blue-100/90"
       )}
     >
       {/* Left-side drag indicator */}
@@ -261,7 +261,7 @@ function PaletteItem({
       >
         <GripVertical className="size-4" />
       </div>
-      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50 p-1 group-hover:border-slate-300">
+      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-blue-100/90 bg-blue-50/35 p-1 group-hover:border-blue-300">
         <ScalableWireframe
           type={item.type}
           label={item.label}
@@ -285,7 +285,7 @@ function PaletteItem({
           event.stopPropagation();
           onAdd(item.type);
         }}
-        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-200/85 bg-white text-slate-700 hover:bg-[#115eff] hover:text-white hover:border-[#115eff] transition-colors cursor-pointer"
+        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-blue-100/90 bg-white text-[#004776] hover:bg-[#115eff] hover:text-white hover:border-[#115eff] transition-colors cursor-pointer"
       >
         <Plus className="size-4" />
       </button>

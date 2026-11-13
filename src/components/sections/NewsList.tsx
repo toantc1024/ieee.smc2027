@@ -337,7 +337,7 @@ export function NewsList({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 relative z-10 w-full">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
@@ -347,7 +347,7 @@ export function NewsList({
               <span className="block text-[#004776]">{title}</span>
             )}
           </h2>
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+          <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
             {subtitle}
           </p>
         </div>
@@ -363,7 +363,7 @@ export function NewsList({
             placeholder="Search news, announcements, tracks, speakers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-[#115eff] !rounded-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
+            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-blue-50/35 hover:bg-blue-50/60 focus:bg-white border border-blue-100/90 hover:border-blue-300 focus:border-[#115eff] !rounded-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
@@ -387,14 +387,14 @@ export function NewsList({
               "shrink-0 rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none",
               activeCategory === "All"
                 ? "bg-primary text-white shadow-xs"
-                : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                : "bg-white text-[#004776]/80 border border-blue-100/90 hover:bg-blue-50/60 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
             )}
           >
             All
           </button>
 
           {/* Separator */}
-          <div className="h-6 w-px shrink-0 bg-neutral-200 dark:bg-border" />
+          <div className="h-6 w-px shrink-0 bg-blue-100 dark:bg-border" />
 
           {/* Scrollable category badges with two-side fade + chevron */}
           <div className="relative min-w-0 flex-1 overflow-hidden">
@@ -410,7 +410,7 @@ export function NewsList({
               <button
                 type="button"
                 onClick={() => scrollCategories("left")}
-                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-blue-100/90 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="size-3.5 text-foreground/80" />
@@ -429,7 +429,7 @@ export function NewsList({
               <button
                 type="button"
                 onClick={() => scrollCategories("right")}
-                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-neutral-200 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-blue-100/90 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="size-3.5 text-foreground/80" />
@@ -453,7 +453,7 @@ export function NewsList({
                     "shrink-0 whitespace-nowrap rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer",
                     activeCategory === cat
                       ? "bg-primary text-white shadow-xs"
-                      : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                      : "bg-white text-[#004776]/80 border border-blue-100/90 hover:bg-blue-50/60 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
                   )}
                 >
                   {cat}
@@ -472,7 +472,7 @@ export function NewsList({
       {/* ------------------------------------------------------------- */}
       <div className="relative w-full pt-1.5 sm:pt-2 pb-10 sm:pb-14 group/carousel">
         {filteredAndSortedItems.length === 0 ? (
-          <div className="mx-4 sm:mx-6 p-12 text-center bg-slate-50 border border-slate-200 rounded-sm text-slate-500 text-sm sm:text-base">
+          <div className="mx-4 sm:mx-6 p-12 text-center bg-blue-50/35 border border-blue-100/90 rounded-sm text-slate-600 text-sm sm:text-base">
             No announcements found matching your filter criteria.
           </div>
         ) : (
@@ -499,7 +499,7 @@ export function NewsList({
                 onClick={() => scrollCards("prev")}
                 variant="light"
                 size="md"
-                className="border-slate-200 bg-white/95 backdrop-blur-xs hover:border-[#115eff]"
+                className="border-blue-100/90 bg-white/95 backdrop-blur-xs hover:border-[#115eff]"
               />
             </div>
 
@@ -525,7 +525,7 @@ export function NewsList({
                 onClick={() => scrollCards("next")}
                 variant="light"
                 size="md"
-                className="border-slate-200 bg-white/95 backdrop-blur-xs hover:border-[#115eff]"
+                className="border-blue-100/90 bg-white/95 backdrop-blur-xs hover:border-[#115eff]"
               />
             </div>
 
@@ -549,7 +549,7 @@ export function NewsList({
                       if (hasDraggedCards.current) return;
                       router.push(detailUrl);
                     }}
-                    className="w-[85vw] sm:w-[350px] lg:w-[380px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-sm bg-white border border-slate-200/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
+                    className="w-[82vw] max-w-[340px] sm:w-[340px] lg:w-[370px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-sm bg-white border border-blue-100/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
                   >
                     {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
                     <GridPattern
@@ -620,7 +620,7 @@ export function NewsList({
                       </div>
 
                       {/* Bottom Action Row: Date + Post Detail Button */}
-                      <div className="pt-3 border-t border-slate-100 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
+                      <div className="pt-3 border-t border-blue-50 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
                         <span className="news-card-date text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200 whitespace-nowrap">
                           {news.date}
                         </span>

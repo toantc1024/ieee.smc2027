@@ -85,7 +85,7 @@ export function PaymentMethods({
         <div className="corner-dot-tr opacity-70 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2]">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">{title.split("&")[0].trim()} &</span>
@@ -96,7 +96,7 @@ export function PaymentMethods({
             )}
           </h2>
 
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium max-w-3xl leading-relaxed">
             {subtitle}
           </p>
         </div>
@@ -104,8 +104,8 @@ export function PaymentMethods({
 
       {/* 2. Fee Table */}
       <div className="px-4 sm:px-6 py-6 sm:py-8">
-        <div className="bg-white border border-slate-200 rounded-sm overflow-hidden shadow-xs">
-          <div className="p-5 sm:p-6 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-white border border-blue-100/90 rounded-sm overflow-hidden shadow-xs">
+          <div className="p-5 sm:p-6 border-b border-blue-100/85 bg-blue-50/35 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-[#004776]">
                 Registration Fee Schedule (IEEE SMC 2027)
@@ -123,7 +123,7 @@ export function PaymentMethods({
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm sm:text-base text-slate-700">
-              <thead className="bg-slate-100/70 text-xs sm:text-sm font-bold text-[#004776] border-b border-slate-200/75">
+              <thead className="bg-blue-50/50 text-xs sm:text-sm font-bold text-[#004776] border-b border-blue-100/90">
                 <tr>
                   <th className="py-4 px-4 sm:px-6">Registration Category</th>
                   <th className="py-4 px-4">Early Bird (Before Jul 05)</th>
@@ -132,7 +132,7 @@ export function PaymentMethods({
                   <th className="py-4 px-4 sm:px-6">Entitlements</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-blue-100/70">
                 {rates.map((rate, idx) => (
                   <tr
                     key={idx}
@@ -174,13 +174,13 @@ export function PaymentMethods({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Channel 1: Domestic Wire / VietQR */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-blue-100/90 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <Building2 className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-500 mb-1.5">
                 Domestic (Vietnam)
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">
@@ -190,7 +190,7 @@ export function PaymentMethods({
                 For authors and delegates in Vietnam paying registration fees via VietQR or Napas 24/7 interbank transfer.
               </p>
 
-              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-sm p-3.5">
+              <div className="space-y-2.5 text-sm bg-blue-50/40 border border-blue-100/90 rounded-sm p-3.5">
                 <div>
                   <span className="text-slate-500 block text-xs">Beneficiary Organization:</span>
                   <span className="font-bold text-slate-900 leading-snug">
@@ -220,9 +220,9 @@ export function PaymentMethods({
                     Vietcombank - Thu Duc Branch, Ho Chi Minh City
                   </span>
                 </div>
-                <div className="pt-1.5 border-t border-slate-200">
+                <div className="pt-1.5 border-t border-blue-100/80">
                   <span className="text-slate-500 block text-xs">Payment Reference:</span>
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-800 bg-white p-2 rounded border border-slate-200 mt-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-800 bg-white p-2 rounded border border-blue-100/90 mt-1">
                     <span>SMC2027 [PaperID] [Author Name]</span>
                     <button
                       onClick={() => handleCopy("syntax", "SMC2027 [PaperID] [Author Name]")}
@@ -239,20 +239,20 @@ export function PaymentMethods({
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+            <div className="mt-4 pt-3 border-t border-blue-50 flex items-center justify-between text-xs sm:text-sm text-slate-500">
               <span>VAT e-Invoice Available</span>
               <span className="text-emerald-600 font-semibold">Automated Reconciliation</span>
             </div>
           </div>
 
           {/* Channel 2: International Wire / SWIFT */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-blue-100/90 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <Globe2 className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-500 mb-1.5">
                 International Authors
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">
@@ -262,7 +262,7 @@ export function PaymentMethods({
                 Recommended for international overseas wire payments in USD. All bank remittance charges must be borne by the sender.
               </p>
 
-              <div className="space-y-2.5 text-sm bg-slate-50 border border-slate-200 rounded-sm p-3.5">
+              <div className="space-y-2.5 text-sm bg-blue-50/40 border border-blue-100/90 rounded-sm p-3.5">
                 <div>
                   <span className="text-slate-500 block text-xs">Beneficiary Name:</span>
                   <span className="font-bold text-slate-900 leading-snug">
@@ -292,7 +292,7 @@ export function PaymentMethods({
                     </button>
                   </div>
                 </div>
-                <div className="pt-1.5 border-t border-slate-200">
+                <div className="pt-1.5 border-t border-blue-100/80">
                   <span className="text-slate-500 block text-xs">Payment Reference:</span>
                   <span className="text-xs font-bold text-slate-800 block mt-1">
                     IEEE SMC 2027 - Paper ID [XXXX]
@@ -301,20 +301,20 @@ export function PaymentMethods({
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+            <div className="mt-4 pt-3 border-t border-blue-50 flex items-center justify-between text-xs sm:text-sm text-slate-500">
               <span>Currency: USD</span>
               <span className="text-[#115eff] font-semibold">SWIFT Verified</span>
             </div>
           </div>
 
           {/* Channel 3: Online Card Portal */}
-          <div className="p-6 sm:p-7 bg-white border border-slate-200 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 bg-white border border-blue-100/90 hover:border-[#115eff] rounded-sm shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
             <div>
               <div className="w-12 h-12 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 flex items-center justify-center mb-4 group-hover:bg-[#115eff] group-hover:text-white transition-colors">
                 <CreditCard className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-500 mb-1.5">
                 Online Portal
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">
@@ -332,24 +332,24 @@ export function PaymentMethods({
                 <p className="text-slate-600 leading-relaxed text-xs sm:text-sm">
                   Upon completion, your registration is instantly confirmed and early-bird status is locked.
                 </p>
-                <div className="flex items-center gap-2 pt-1">
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="px-2.5 py-0.5 bg-white border border-blue-100/90 rounded-sm text-xs font-bold text-[#004776]">
                     VISA
                   </span>
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
+                  <span className="px-2.5 py-0.5 bg-white border border-blue-100/90 rounded-sm text-xs font-bold text-[#004776]">
                     MasterCard
                   </span>
-                  <span className="px-2.5 py-0.5 bg-white border border-slate-200 rounded-sm text-xs font-bold text-slate-700">
+                  <span className="px-2.5 py-0.5 bg-white border border-blue-100/90 rounded-sm text-xs font-bold text-[#004776]">
                     JCB
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100">
+            <div className="mt-6 pt-4 border-t border-blue-50">
               <a
                 href="#cfp"
-                className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
               >
                 <span>Access Payment Portal</span>
                 <ExternalLink className="w-4 h-4" />
@@ -361,7 +361,7 @@ export function PaymentMethods({
 
       {/* 4. VAT Invoice & Notes Notice Box */}
       <div className="px-4 sm:px-6 pb-12">
-        <div className="p-5 sm:p-7 bg-white border border-slate-200 rounded-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xs">
+        <div className="p-5 sm:p-7 bg-white border border-blue-100/90 rounded-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xs">
           <div className="flex items-start gap-4">
             <div className="p-2.5 rounded-sm bg-blue-50 text-[#115eff] border border-blue-100 shrink-0">
               <Receipt className="w-6 h-6" />

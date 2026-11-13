@@ -38,7 +38,7 @@ export function CallForPapers({
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
               {title.includes("&") ? (
                 <>
                   <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
@@ -48,7 +48,7 @@ export function CallForPapers({
                 <span className="block text-[#004776]">{title}</span>
               )}
             </h2>
-            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+            <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
               {subtitle}
             </p>
           </div>
@@ -58,7 +58,7 @@ export function CallForPapers({
             href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-slate-50 text-[#115eff] border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+            className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-blue-50/60 text-[#115eff] border border-blue-100/90 font-bold text-sm sm:text-[15px] rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
           >
             <FileDown className="w-4.5 h-4.5" />
             <span>Download CFP (PDF)</span>
@@ -72,16 +72,16 @@ export function CallForPapers({
       <div className="px-4 sm:px-6 py-8 sm:py-10">
         {/* Intro Banner */}
         <div className="max-w-4xl">
-          <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
             The <strong>2027 IEEE International Conference on Systems, Man, and Cybernetics (IEEE SMC 2027)</strong> invites original research papers, special session papers, workshop proposals, and tutorial presentations in systems science and engineering, human–machine systems, and cybernetics.
           </p>
         </div>
 
         {/* Official Paper Submission Rules Box from PDF */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
+          <div className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] mb-2.5">
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#115eff] mb-2.5">
                 <Image
                   src="/assets/3d/announcement-3d.png"
                   alt="Submission Policy"
@@ -91,23 +91,23 @@ export function CallForPapers({
                 />
                 <span>Official Paper Submission Policy</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight mb-3">
                 Submission Format & Language
               </h3>
-              <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                 {CONFERENCE_INFO.submissionNotice}
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm font-semibold text-slate-600">
-              <Clock className="w-4.5 h-4.5 text-[#115eff]" />
+            <div className="mt-6 pt-4 border-t border-blue-50 flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+              <Clock className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
               <span>Submission Deadline: April 08, 2027 (Workshops, Regular & Special Sessions)</span>
             </div>
           </div>
 
-          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
+          <div className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] mb-2.5">
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#115eff] mb-2.5">
                 <Image
                   src="/assets/3d/verified-badge-3d.png"
                   alt="Proceedings & Copyright"
@@ -117,16 +117,16 @@ export function CallForPapers({
                 />
                 <span>Proceedings & Copyright</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight mb-3">
                 IEEE Xplore® Digital Library Publication
               </h3>
-              <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                 {CONFERENCE_INFO.ieeeXploreNotice}
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm font-semibold text-[#115eff]">
-              <Database className="w-4.5 h-4.5" />
+            <div className="mt-6 pt-4 border-t border-blue-50 flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#115eff]">
+              <Database className="w-4.5 h-4.5 shrink-0" />
               <span>Indexed in Scopus, EI Compendex, and Web of Science</span>
             </div>
           </div>
@@ -136,7 +136,7 @@ export function CallForPapers({
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Regular Papers */}
-          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
@@ -152,12 +152,12 @@ export function CallForPapers({
                   <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Regular Track
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-blue-50/70 text-[#004776] rounded-md">
                     {submissionDeadline}
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight">
                 Regular Research Papers
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -165,7 +165,7 @@ export function CallForPapers({
               </p>
             </div>
             
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-blue-50 text-sm text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Standard IEEE 2-column format (PDF)</span>
@@ -182,7 +182,7 @@ export function CallForPapers({
           </div>
 
           {/* Card 2: Special Sessions */}
-          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
@@ -198,12 +198,12 @@ export function CallForPapers({
                   <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Special Sessions
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-blue-50/70 text-[#004776] rounded-md">
                     {submissionDeadline}
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight">
                 Special Session Papers
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -211,7 +211,7 @@ export function CallForPapers({
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-blue-50 text-sm text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Proposals deadline: Feb 15, 2027</span>
@@ -228,7 +228,7 @@ export function CallForPapers({
           </div>
 
           {/* Card 3: Workshops & Tutorials */}
-          <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
+          <div className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md relative hover:border-[#115eff] hover:shadow-lg transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
@@ -244,12 +244,12 @@ export function CallForPapers({
                   <span className="text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 px-3 py-1 rounded-md">
                     Workshops & Tutorials
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                  <span className="text-xs sm:text-sm font-semibold px-3 py-0.5 bg-blue-50/70 text-[#004776] rounded-md">
                     Feb 15 / Apr 08
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight">
                 Workshops & Tutorials
               </h3>
               <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -257,7 +257,7 @@ export function CallForPapers({
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700 space-y-2.5">
+            <div className="mt-6 pt-4 border-t border-blue-50 text-sm text-slate-700 space-y-2.5">
               <div className="flex items-center gap-2.5">
                 <CheckCircle className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
                 <span>Proposal submission: Feb 15, 2027</span>
@@ -275,14 +275,14 @@ export function CallForPapers({
         </div>
 
         {/* Official CFP Document Download Banner */}
-        <div className="mt-8 p-6 sm:p-7 bg-slate-50 border border-slate-200/80 rounded-md flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 p-6 sm:p-7 bg-blue-50/35 border border-blue-100/90 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <FileDown className="w-9 h-9 text-[#115eff] shrink-0" />
             <div>
-              <h4 className="text-lg sm:text-xl font-bold text-slate-900">
+              <h4 className="text-base sm:text-lg font-bold text-[#004776]">
                 Official Call for Papers (CFP) PDF Document
               </h4>
-              <p className="text-sm sm:text-base text-slate-600 mt-1">
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
                 Official 2-page CFP brochure with complete track topics, submission dates, and committee directory.
               </p>
             </div>
@@ -292,10 +292,10 @@ export function CallForPapers({
             <button
               type="button"
               onClick={() => setShowPdfViewer(!showPdfViewer)}
-              className={`inline-flex items-center justify-center gap-2 min-h-[48px] px-5 py-3 font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs cursor-pointer ${
+              className={`inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-2xs cursor-pointer ${
                 showPdfViewer
                   ? "bg-[#115eff] hover:bg-[#0a4de6] text-white border border-[#115eff]"
-                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200"
+                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-blue-100/90"
               }`}
             >
               <span>{showPdfViewer ? "Hide PDF Preview" : "Preview PDF (Scrollable)"}</span>
@@ -305,7 +305,7 @@ export function CallForPapers({
               href={cfpPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
             >
               <span>Open CFP PDF</span>
               <ExternalLink className="w-4 h-4" />
@@ -315,8 +315,8 @@ export function CallForPapers({
 
         {/* Vertical Scrollable PDF Viewer */}
         {showPdfViewer && (
-          <div className="mt-4 border border-slate-200 rounded-md overflow-hidden bg-slate-100 shadow-sm">
-            <div className="px-4 py-2.5 bg-slate-200/80 border-b border-slate-200 flex items-center justify-between text-xs font-semibold text-slate-700">
+          <div className="mt-4 border border-blue-100/90 rounded-md overflow-hidden bg-blue-50/40 shadow-sm">
+            <div className="px-4 py-2.5 bg-blue-50/80 border-b border-blue-100/90 flex items-center justify-between text-xs font-semibold text-[#004776]">
               <span>Official 2-Page Brochure (Vertical Scroll)</span>
               <a
                 href={cfpPdfUrl}

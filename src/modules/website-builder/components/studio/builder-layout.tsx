@@ -37,6 +37,7 @@ export function BuilderLayout() {
   } = useBuilderStore();
 
   const [saving, setSaving] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState<"blocks" | "canvas" | "inspector">("canvas");
 
   useEffect(() => {
     window.addEventListener("keydown", handleBuilderShortcut);
@@ -140,21 +141,53 @@ export function BuilderLayout() {
           {/* Sub-toolbar */}
           <SubToolbar />
 
-          {/* Tri-Panel Studio Grid — fixed columns in edit mode with horizontal overflow on small screens */}
+          {/* Mobile / Tablet Panel Switcher (< lg) */}
+          {!isPreview && (
+            <div className="lg:hidden grid grid-cols-3 p-1.5 border-b border-blue-100/80 bg-white gap-1.5 text-xs font-bold shrink-0">
+              {(
+                [
+                  { id: "blocks", label: "Blocks" },
+                  { id: "canvas", label: "Canvas" },
+                  { id: "inspector", label: "Inspector" },
+                ] as const
+              ).map((panel) => (
+                <button
+                  key={panel.id}
+                  type="button"
+                  onClick={() => setMobilePanel(panel.id)}
+                  className={cn(
+                    "h-8 rounded-md transition-colors flex items-center justify-center cursor-pointer",
+                    mobilePanel === panel.id
+                      ? "bg-[#115eff] text-white shadow-xs"
+                      : "text-[#004776] hover:bg-blue-50/70"
+                  )}
+                >
+                  {panel.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Tri-Panel Studio Grid — 1-col switcher on < lg, 3-col studio on lg+ */}
           <BuilderDndContext>
           <div
             className={cn(
-              "flex-1 min-h-0 relative overflow-x-auto overflow-y-hidden bg-slate-50 grid",
+              "flex-1 min-h-0 relative overflow-hidden bg-slate-50 grid",
               isPreview
                 ? "grid-cols-1"
-                : "grid-cols-[260px_minmax(360px,1fr)_340px] lg:grid-cols-[280px_minmax(420px,1fr)_380px] xl:grid-cols-[300px_minmax(480px,1fr)_420px]"
+                : "grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_320px] xl:grid-cols-[288px_minmax(0,1fr)_360px]"
             )}
           >
             {/* Left Drawer */}
             {!isPreview && (
-              <aside className="min-w-0 shrink-0 border-r border-slate-200/75 bg-white flex flex-col h-full overflow-hidden z-20">
+              <aside
+                className={cn(
+                  "min-w-0 shrink-0 lg:border-r border-blue-100/85 bg-white flex-col h-full overflow-hidden z-20",
+                  mobilePanel === "blocks" ? "flex" : "hidden lg:flex"
+                )}
+              >
                 {/* Segmented Tab Header */}
-                <div className="grid grid-cols-4 p-1.5 border-b border-slate-200/75 bg-white gap-1 text-xs font-bold text-slate-700">
+                <div className="grid grid-cols-4 p-1.5 border-b border-blue-100/80 bg-white gap-1 text-xs font-bold text-[#004776]">
                   <button
                     type="button"
                     onClick={() => setSidebarTab("library")}
@@ -223,13 +256,23 @@ export function BuilderLayout() {
             )}
 
             {/* Center Fluid Canvas */}
-            <main className="flex-1 h-full min-w-0 overflow-hidden relative">
+            <main
+              className={cn(
+                "flex-1 h-full min-w-0 overflow-hidden relative",
+                !isPreview && mobilePanel !== "canvas" ? "hidden lg:block" : "block"
+              )}
+            >
               <BuilderCanvas />
             </main>
 
             {/* Right Property Inspector — always mounted in edit mode like HCM-UTE */}
             {!isPreview && (
-              <aside className="min-w-0 shrink-0 border-l border-slate-200/75 bg-white flex flex-col h-full overflow-hidden z-20">
+              <aside
+                className={cn(
+                  "min-w-0 shrink-0 lg:border-l border-blue-100/85 bg-white flex-col h-full overflow-hidden z-20",
+                  mobilePanel === "inspector" ? "flex" : "hidden lg:flex"
+                )}
+              >
                 <PropertyInspector />
               </aside>
             )}

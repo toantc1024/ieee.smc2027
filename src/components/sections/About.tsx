@@ -37,8 +37,8 @@ export function About({ theme = CONFERENCE_INFO.theme, publicationsTitle = "Affi
         </div>
 
         {/* Right: Bigger Affiliated IEEE SMC Society Publications */}
-        <div className="lg:col-span-7 p-6 sm:p-7 bg-slate-50 border border-slate-200 rounded-md shadow-2xs">
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
+        <div className="lg:col-span-7 p-6 sm:p-7 bg-blue-50/35 border border-blue-100/90 rounded-md shadow-2xs">
+          <h3 className="text-base sm:text-lg font-bold text-[#004776] mb-4 pb-3 border-b border-blue-100/80">
             {publicationsTitle}
           </h3>
           <ul className="space-y-3">
@@ -48,7 +48,7 @@ export function About({ theme = CONFERENCE_INFO.theme, publicationsTitle = "Affi
                   href={pub.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3.5 sm:p-4 bg-white border border-slate-200 hover:border-[#115eff] rounded-md flex items-center justify-between transition-all hover:shadow-xs group block"
+                  className="p-3.5 sm:p-4 bg-white border border-blue-100/90 hover:border-[#115eff] rounded-md flex items-center justify-between transition-all hover:shadow-xs group block"
                 >
                   <span className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#115eff] transition-colors pr-3">
                     {pub.name}

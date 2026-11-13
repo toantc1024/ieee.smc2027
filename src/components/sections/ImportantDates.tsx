@@ -100,7 +100,7 @@ export function ImportantDates({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 relative z-10 w-full">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">
@@ -115,7 +115,7 @@ export function ImportantDates({
             )}
           </h2>
           {subtitle && (
-            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+            <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
               {subtitle}
             </p>
           )}
@@ -124,40 +124,40 @@ export function ImportantDates({
 
       {/* Simple Full-Width Block */}
       <div className="px-4 sm:px-6 pb-12 sm:pb-16 w-full">
-        <div className="w-full bg-white border border-slate-200/85 rounded-[var(--radius)] overflow-hidden shadow-2xs">
+        <div className="w-full bg-white border border-blue-100/85 rounded-[var(--radius)] overflow-hidden shadow-2xs">
           {/* Table Header: Ensures deadlines align in one dedicated column */}
-          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 bg-slate-100/90 font-extrabold text-base sm:text-lg lg:text-xl text-[#004776] border-b-2 border-slate-200/85">
+          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 bg-blue-50/50 font-bold text-sm sm:text-base lg:text-[17px] text-[#004776] border-b border-blue-100/90">
             <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2.5">
               <span>Milestone / Event</span>
             </div>
             <div className="sm:col-span-5 lg:col-span-4 flex items-center gap-2.5">
-              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#115eff]" />
+              <Calendar className="w-5 h-5 text-[#115eff]" />
               <span>Deadline</span>
             </div>
           </div>
 
           {/* Alternating Rows: Blue Primary with White Text & White with Blue-Black Text */}
-          <div className="divide-y divide-slate-200/60">
+          <div className="divide-y divide-blue-100/70">
             {dates.map((item, idx) => {
               const isPrimaryRow = idx % 2 === 0;
 
               return (
                 <div
                   key={item.id}
-                  className={`p-5 sm:p-6 lg:px-8 transition-colors ${
+                  className={`p-4 sm:p-5 lg:px-8 transition-colors ${
                     isPrimaryRow
                       ? "bg-[#115eff] text-white hover:bg-[#0a4de6]"
                       : "bg-white text-[#004776] hover:bg-blue-50/50"
                   }`}
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 items-start sm:items-center gap-2.5 sm:gap-4">
                     {/* Event / Milestone Title Column */}
                     <div className="sm:col-span-7 lg:col-span-8">
                       <a
                         href={viewDetailsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-base sm:text-lg lg:text-xl font-bold leading-snug inline-block transition-colors ${
+                        className={`text-[15px] sm:text-base lg:text-[17px] font-bold leading-snug inline-block transition-colors ${
                           isPrimaryRow
                             ? "text-white hover:text-blue-100 underline-offset-4 hover:underline"
                             : "text-[#004776] hover:text-[#115eff]"
@@ -168,9 +168,9 @@ export function ImportantDates({
                     </div>
 
                     {/* Deadline Column: Perfectly aligned into one single column */}
-                    <div className="sm:col-span-5 lg:col-span-4 flex flex-wrap items-center gap-2 sm:gap-3">
+                    <div className="sm:col-span-5 lg:col-span-4 flex flex-wrap items-center gap-2 sm:gap-2.5">
                       <span
-                        className={`text-sm sm:text-base font-bold ${
+                        className={`text-xs sm:text-sm font-bold ${
                           isPrimaryRow ? "text-blue-100" : "text-slate-500"
                         }`}
                       >
@@ -178,16 +178,16 @@ export function ImportantDates({
                       </span>
 
                       {item.extendedDeadline ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span
-                            className={`line-through font-medium text-sm sm:text-base ${
+                            className={`line-through font-medium text-xs sm:text-sm ${
                               isPrimaryRow ? "text-blue-200" : "text-slate-400"
                             }`}
                           >
                             {item.originalDeadline}
                           </span>
                           <span
-                            className={`text-base sm:text-lg font-extrabold ${
+                            className={`text-sm sm:text-base font-bold ${
                               isPrimaryRow ? "text-white" : "text-[#004776]"
                             }`}
                           >
@@ -196,7 +196,7 @@ export function ImportantDates({
                         </div>
                       ) : (
                         <span
-                          className={`text-base sm:text-lg font-extrabold ${
+                          className={`text-sm sm:text-base font-bold ${
                             isPrimaryRow ? "text-white" : "text-[#004776]"
                           }`}
                         >
@@ -206,10 +206,10 @@ export function ImportantDates({
 
                       {item.status && (
                         <span
-                          className={`text-xs sm:text-[13px] font-extrabold px-3 py-1 rounded-[var(--radius-sm)] shadow-2xs ${
+                          className={`text-xs font-bold px-2.5 py-0.5 rounded-[var(--radius-sm)] shadow-2xs ${
                             isPrimaryRow
                               ? item.highlight
-                                ? "bg-amber-300 text-slate-950 font-black"
+                                ? "bg-amber-300 text-slate-950 font-extrabold"
                                 : "bg-white text-[#115eff]"
                               : item.highlight
                               ? "bg-blue-100 text-[#115eff] border border-blue-200"
@@ -227,8 +227,8 @@ export function ImportantDates({
           </div>
 
           {/* Action Row with View Details Link & Timezone Notice */}
-          <div className="p-5 sm:p-6 lg:px-8 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="text-sm sm:text-base text-slate-600 flex items-center gap-2.5">
+          <div className="p-4 sm:p-6 lg:px-8 bg-blue-50/40 border-t border-blue-100/85 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="text-xs sm:text-sm text-slate-600 flex items-center gap-2.5">
               <Clock className="w-4.5 h-4.5 text-[#115eff] shrink-0" />
               <span>
                 All submission deadlines are set to{" "}
