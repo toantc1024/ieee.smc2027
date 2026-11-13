@@ -23,6 +23,7 @@ import {
   NavSubItem,
   NavColumnItem,
   DEFAULT_HEADER_DATA,
+  normalizeHeaderConfig,
 } from "@/lib/header-config";
 import { getNavIcon } from "@/lib/nav-icons";
 import { cn } from "@/lib/utils";
@@ -143,6 +144,44 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                 {columns.map((col, idx) => {
                   const isFirst = idx === 0;
                   const isLast = idx === columns.length - 1 && !activeItem.promoCard;
+                  const hasColPromo = Boolean(col.promoCard);
+                  const colPromoTop = col.promoPosition === "top";
+
+                  const colPromoEl = hasColPromo && col.promoCard ? (
+                    <Link
+                      href={col.promoCard.href || "/#cfp"}
+                      onClick={closeMenu}
+                      className="group/colpromo block rounded-lg overflow-hidden border border-blue-100 bg-gradient-to-br from-[#004776] to-[#0a3161] text-white p-3.5 hover:shadow-md transition-all"
+                    >
+                      {col.promoCard.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={col.promoCard.image}
+                          alt={col.promoCard.title}
+                          className="w-full h-24 object-cover rounded mb-2.5 border border-white/15"
+                        />
+                      )}
+                      {col.promoCard.badge && (
+                        <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/15 text-blue-100 mb-1.5">
+                          {col.promoCard.badge}
+                        </span>
+                      )}
+                      <div className="text-xs font-bold leading-snug group-hover/colpromo:text-amber-300 transition-colors">
+                        {col.promoCard.title}
+                      </div>
+                      {col.promoCard.description && (
+                        <p className="text-[11px] text-blue-100/85 mt-1 line-clamp-2">
+                          {col.promoCard.description}
+                        </p>
+                      )}
+                      {col.promoCard.ctaText && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 mt-2">
+                          {col.promoCard.ctaText}
+                          <ArrowUpRight className="w-3 h-3" />
+                        </span>
+                      )}
+                    </Link>
+                  ) : null;
 
                   return (
                     <div
@@ -158,7 +197,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                     >
                       {/* Fixed Title Header */}
                       <div className="relative pb-2.5 mb-3.5 shrink-0">
-                        <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] transition-colors">
+                        <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] transition-colors whitespace-pre-line">
                           {col.title}
                         </h3>
                         {/* Thin track line */}
@@ -167,44 +206,50 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                         <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full scale-x-0 group-hover/col:scale-x-100 origin-left transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
                       </div>
 
+                      {colPromoTop && colPromoEl && <div className="mb-3">{colPromoEl}</div>}
+
                       {/* Column Links List */}
-                      <div className="flex flex-col gap-1.5 flex-1">
-                        {col.links.map((link) => {
-                          const IconComp = getNavIcon(link.icon);
-                          return (
-                            <Link
-                              key={link.id}
-                              href={link.href}
-                              target={link.isExternal ? "_blank" : undefined}
-                              rel={link.isExternal ? "noopener noreferrer" : undefined}
-                              onClick={closeMenu}
-                              className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-sm hover:bg-blue-50/50 transition-all duration-150 cursor-pointer min-w-0"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-8 h-8 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
-                                  <IconComp className="w-4 h-4 text-[#115eff] group-hover/item:text-white transition-colors" />
-                                </div>
-                                <span className="text-sm sm:text-[15px] font-semibold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight truncate">
-                                  {link.title}
-                                </span>
-                                {link.badge && (
-                                  <span className="text-[11px] px-2 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff] shadow-2xs shrink-0">
-                                    {link.badge}
+                      {col.type !== "promo-card" && (
+                        <div className="flex flex-col gap-1.5 flex-1">
+                          {col.links.map((link) => {
+                            const IconComp = getNavIcon(link.icon);
+                            return (
+                              <Link
+                                key={link.id}
+                                href={link.href}
+                                target={link.isExternal ? "_blank" : undefined}
+                                rel={link.isExternal ? "noopener noreferrer" : undefined}
+                                onClick={closeMenu}
+                                className="group/item flex flex-col gap-1 py-2 px-2.5 rounded-sm hover:bg-blue-50/50 transition-all duration-150 cursor-pointer min-w-0"
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="w-8 h-8 rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover/item:bg-[#115eff] group-hover/item:border-[#115eff] transition-colors">
+                                    <IconComp className="w-4 h-4 text-[#115eff] group-hover/item:text-white transition-colors" />
+                                  </div>
+                                  <span className="text-sm sm:text-[15px] font-semibold text-slate-900 group-hover/item:text-[#115eff] transition-colors leading-tight whitespace-pre-line min-w-0">
+                                    {link.title}
                                   </span>
+                                  {link.badge && (
+                                    <span className="text-[11px] px-2 py-0.5 rounded-sm font-bold bg-blue-100 text-[#115eff] shadow-2xs shrink-0">
+                                      {link.badge}
+                                    </span>
+                                  )}
+                                  {link.isExternal && (
+                                    <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
+                                  )}
+                                </div>
+                                {link.description && (
+                                  <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed truncate group-hover/item:text-slate-700 transition-colors pl-10.5">
+                                    {link.description}
+                                  </p>
                                 )}
-                                {link.isExternal && (
-                                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-[#115eff] shrink-0 transition-colors" />
-                                )}
-                              </div>
-                              {link.description && (
-                                <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed truncate group-hover/item:text-slate-700 transition-colors pl-10.5">
-                                  {link.description}
-                                </p>
-                              )}
-                            </Link>
-                          );
-                        })}
-                      </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {!colPromoTop && colPromoEl && <div className="mt-3">{colPromoEl}</div>}
                     </div>
                   );
                 })}
@@ -322,20 +367,29 @@ export function Header() {
       .then((res) => res.json())
       .then((res) => {
         if (res.header) {
-          const links: NavLinkItem[] = res.header.navLinks || DEFAULT_HEADER_DATA.navLinks;
-          const hasHome = links.some((l) => l.href === "/" || l.id === "nav-home");
-          const finalLinks = hasHome
-            ? links
-            : [{ id: "nav-home", name: "Home", href: "/", type: "link" as const }, ...links];
-
-          setHeaderConfig({
-            ...DEFAULT_HEADER_DATA,
-            ...res.header,
-            navLinks: finalLinks,
-          });
+          setHeaderConfig(normalizeHeaderConfig(res.header));
         }
       })
       .catch(() => {});
+
+    const onUpdated = (e: Event) => {
+      const detail = (e as CustomEvent<HeaderConfig>).detail;
+      if (detail) setHeaderConfig(normalizeHeaderConfig(detail));
+    };
+    window.addEventListener("smc:header-updated", onUpdated);
+
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      channel = new BroadcastChannel("smc_header_sync");
+      channel.onmessage = (ev) => {
+        if (ev.data) setHeaderConfig(normalizeHeaderConfig(ev.data));
+      };
+    }
+
+    return () => {
+      window.removeEventListener("smc:header-updated", onUpdated);
+      channel?.close();
+    };
   }, []);
 
   const rawNavLinks = headerConfig.navLinks || DEFAULT_HEADER_DATA.navLinks;
@@ -359,6 +413,13 @@ export function Header() {
   const hotline = headerConfig.topbar?.hotline || CONFERENCE_INFO.hotline;
   const email = headerConfig.topbar?.email || CONFERENCE_INFO.contactEmail;
   const showTopbar = headerConfig.topbar?.enabled !== false;
+  const showTopbarSearch = headerConfig.topbar?.showSearch !== false;
+  const searchPlaceholder = headerConfig.topbar?.searchPlaceholder || "Search conference, tracks...";
+  const topbarQuickLinks =
+    headerConfig.topbar?.quickLinks && headerConfig.topbar.quickLinks.length > 0
+      ? headerConfig.topbar.quickLinks
+      : DEFAULT_HEADER_DATA.topbar?.quickLinks || [];
+  const isSticky = headerConfig.sticky !== false;
   const ctaLabel = headerConfig.ctaButton?.label || "Submit Paper";
   const ctaHref = headerConfig.ctaButton?.href || "/#cfp";
   const showCta = headerConfig.ctaButton?.enabled !== false;
@@ -583,112 +644,109 @@ export function Header() {
               </a>
             </div>
 
-            {/* Right: Topbar Navigation Links (News, Partnership, CFP PDF, Search) */}
+            {/* Right: Topbar Navigation Links & Search */}
             <div className="flex items-center gap-2 xl:gap-3 text-xs sm:text-[13px]">
-              <Link
-                href="/#news"
-                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
-                title="Conference News & Updates"
-              >
-                News
-              </Link>
+              {topbarQuickLinks.map((ql, idx) => (
+                <React.Fragment key={ql.id}>
+                  {idx > 0 && <span className="text-white/30">•</span>}
+                  {ql.isExternal || ql.href.endsWith(".pdf") ? (
+                    <a
+                      href={ql.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/cfp px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-medium text-blue-100"
+                    >
+                      {ql.href.endsWith(".pdf") && (
+                        <FileDown className="size-3.5 text-current opacity-85 group-hover/cfp:opacity-100 shrink-0 transition-opacity" />
+                      )}
+                      <span>{ql.label}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={ql.href}
+                      className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
+                    >
+                      {ql.label}
+                    </Link>
+                  )}
+                </React.Fragment>
+              ))}
 
-              <span className="text-white/30">•</span>
-
-              <Link
-                href="/#sponsors"
-                className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
-                title="Sponsorship & Industrial Exhibition"
-              >
-                Partnership & Exhibition
-              </Link>
-
-              <span className="text-white/30">•</span>
-
-              <a
-                href={CONFERENCE_INFO.cfpPdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/cfp px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-medium text-blue-100"
-                title="Download Call for Papers PDF"
-              >
-                <FileDown className="size-3.5 text-current opacity-85 group-hover/cfp:opacity-100 shrink-0 transition-opacity" />
-                <span>CFP PDF</span>
-              </a>
-
-              <span className="text-white/30">•</span>
-
-              {/* Rounded Top Search Bar with Generous Width (Exact HCMUTE Web UI Style) */}
-              <div className="relative flex items-center">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (searchQuery.trim()) {
-                      router.push(`/#tracks`);
-                    } else {
-                      setSearchOpen(true);
-                    }
-                  }}
-                  className="relative flex items-center"
-                >
-                  <div
-                    onClick={() => setSearchOpen(true)}
-                    className="relative flex items-center w-48 lg:w-52 xl:w-68 h-7.5 rounded-full bg-white/15 hover:bg-white/20 border border-white/25 hover:border-white/40 focus-within:bg-white/25 focus-within:border-white/60 transition-all duration-200 shadow-2xs group cursor-pointer"
-                    title="Search tracks, topics, authors, CFP (Click to open or type)"
-                  >
-                    <Search className="size-3.5 text-blue-100 group-hover:text-white absolute left-3 pointer-events-none transition-colors" />
-                    <input
-                      type="text"
-                      placeholder="Search conference, tracks..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          if (searchQuery.trim()) {
-                            router.push(`/#tracks`);
-                          } else {
-                            setSearchOpen(true);
-                          }
+              {showTopbarSearch && (
+                <>
+                  {topbarQuickLinks.length > 0 && <span className="text-white/30">•</span>}
+                  <div className="relative flex items-center">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (searchQuery.trim()) {
+                          router.push(`/#tracks`);
+                        } else {
+                          setSearchOpen(true);
                         }
                       }}
-                      className="w-full h-full pl-8.5 pr-8 bg-transparent text-xs sm:text-[13px] text-white placeholder:text-blue-100/75 focus:outline-none cursor-text select-text"
-                    />
-                    {searchQuery ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSearchQuery("");
-                        }}
-                        className="absolute right-2.5 p-0.5 text-blue-200 hover:text-white transition-colors cursor-pointer"
-                        aria-label="Clear search"
+                      className="relative flex items-center"
+                    >
+                      <div
+                        onClick={() => setSearchOpen(true)}
+                        className="relative flex items-center w-48 lg:w-52 xl:w-68 h-7.5 rounded-full bg-white/15 hover:bg-white/20 border border-white/25 hover:border-white/40 focus-within:bg-white/25 focus-within:border-white/60 transition-all duration-200 shadow-2xs group cursor-pointer"
+                        title="Search tracks, topics, authors, CFP"
                       >
-                        <X className="w-3 h-3" />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSearchOpen(true);
-                        }}
-                        className="absolute right-1.5 px-1.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 text-[10px] font-bold text-white tracking-wider cursor-pointer select-none"
-                        title="Open expanded search dialog"
-                      >
-                        ⌘K
-                      </button>
-                    )}
+                        <Search className="size-3.5 text-blue-100 group-hover:text-white absolute left-3 pointer-events-none transition-colors" />
+                        <input
+                          type="text"
+                          placeholder={searchPlaceholder}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (searchQuery.trim()) {
+                                router.push(`/#tracks`);
+                              } else {
+                                setSearchOpen(true);
+                              }
+                            }
+                          }}
+                          className="w-full h-full pl-8.5 pr-8 bg-transparent text-xs sm:text-[13px] text-white placeholder:text-blue-100/75 focus:outline-none cursor-text select-text"
+                        />
+                        {searchQuery ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSearchQuery("");
+                            }}
+                            className="absolute right-2.5 p-0.5 text-blue-200 hover:text-white transition-colors cursor-pointer"
+                            aria-label="Clear search"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSearchOpen(true);
+                            }}
+                            className="absolute right-1.5 px-1.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 text-[10px] font-bold text-white tracking-wider cursor-pointer select-none"
+                            title="Open expanded search dialog"
+                          >
+                            ⌘K
+                          </button>
+                        )}
+                      </div>
+                    </form>
                   </div>
-                </form>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* ── Sticky Header + Full Width Mega Menu Dropdown Container ── */}
-      <div className="sticky top-0 z-50 w-full relative">
+      <div className={cn(isSticky ? "sticky top-0 z-50 w-full relative" : "relative z-50 w-full")}>
         <header
           className={cn(
             "navbar-header page-border-x-dark w-full bg-white transition-shadow duration-200 ease-out border-b border-blue-100/80",

@@ -87,7 +87,8 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
     return (
       (pathname.startsWith("/admin/pages/") && pathname !== "/admin/pages") ||
       pathname === "/admin/posts/create" ||
-      (pathname.startsWith("/admin/posts/") && pathname.endsWith("/edit"))
+      (pathname.startsWith("/admin/posts/") && pathname.endsWith("/edit")) ||
+      pathname.startsWith("/admin/header")
     );
   }, [pathname]);
 
