@@ -66,7 +66,10 @@ const CARD_STATIC_CLASSES = cn(
 function CommitteeCard({ member }: { member: CommitteeMember }) {
   if (!member) return null;
   const name = member.name?.trim() || "Committee Member";
-  const photo = member.photo ?? CHAIR_PHOTO_MAP[name];
+  const photo =
+    typeof member.photo === "string" && member.photo.trim().length > 0
+      ? member.photo.trim()
+      : CHAIR_PHOTO_MAP[name];
   const [imgError, setImgError] = useState(false);
   const initials =
     (name || "CM")
@@ -115,6 +118,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
                 src={photo}
                 alt={name}
                 fill
+                unoptimized={photo.startsWith("/api/")}
                 draggable={false}
                 className="object-cover object-bottom scale-105 origin-bottom pointer-events-none select-none"
                 sizes="(max-width: 640px) 150px, (max-width: 768px) 175px, (max-width: 1024px) 195px, (max-width: 1280px) 210px, 220px"

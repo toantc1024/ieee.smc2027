@@ -19,7 +19,9 @@ export function StudioClient({ pageId }: { pageId: string }) {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/admin/pages/${pageId}`);
+        const res = await fetch(`/api/admin/pages/${pageId}`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to load page data");
 

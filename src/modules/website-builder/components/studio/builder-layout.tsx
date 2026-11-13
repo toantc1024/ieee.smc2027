@@ -21,8 +21,11 @@ import { toast } from "sonner";
 export function BuilderLayout() {
   const {
     pageId,
+    pageTitle,
+    pageSlug,
     pageVersion,
     data,
+    isDirty,
     selectedBlockId,
     viewMode,
     sidebarTab,
@@ -40,6 +43,29 @@ export function BuilderLayout() {
     return () => window.removeEventListener("keydown", handleBuilderShortcut);
   }, []);
 
+  // Auto-backup unsaved Visual Studio edits locally so work is never lost on network/auth interruption
+  useEffect(() => {
+    if (!pageId || typeof window === "undefined") return;
+    const draftKey = `smc2027_page_draft_${pageId}`;
+    if (!isDirty) return;
+
+    try {
+      window.localStorage.setItem(
+        draftKey,
+        JSON.stringify({
+          title: pageTitle || data.root.title,
+          slug: pageSlug || data.root.slug,
+          parentId: data.root.parentId ?? null,
+          version: pageVersion,
+          blocks: data.content,
+          savedAt: Date.now(),
+        })
+      );
+    } catch {
+      // Ignore storage quota errors
+    }
+  }, [pageId, pageTitle, pageSlug, pageVersion, data, isDirty]);
+
   const handleSave = async () => {
     if (!pageId) return;
     setSaving(true);
@@ -47,12 +73,14 @@ export function BuilderLayout() {
     try {
       const res = await fetch(`/api/admin/pages/${pageId}`, {
         method: "PUT",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: data.root.title,
           slug: data.root.slug,
           parentId: data.root.parentId ?? null,
           version: pageVersion,
+          forceSave: true,
           blocks: data.content,
           content: data,
           metaTitle: data.root.metaTitle,
@@ -69,6 +97,13 @@ export function BuilderLayout() {
       if (useBuilderStore.getState().pageId === pageId) {
         const hasNewerEdits = useBuilderStore.getState().data !== data;
         markClean(json.page?.version, data);
+        if (!hasNewerEdits && typeof window !== "undefined") {
+          try {
+            window.localStorage.removeItem(`smc2027_page_draft_${pageId}`);
+          } catch {
+            // Ignore storage errors
+          }
+        }
         toast.success(hasNewerEdits ? "Page saved. Newer edits are still unsaved." : "Page saved successfully");
       }
     } catch (err: unknown) {

@@ -47,6 +47,9 @@ export async function POST(
     });
 
     revalidatePagePaths(updated.slug);
+    if (updated.slug === "committees") {
+      revalidatePagePaths("home");
+    }
 
     return apiSuccess({ page: formatPageRecord(updated) });
   } catch (error: unknown) {

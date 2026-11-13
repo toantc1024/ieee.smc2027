@@ -67,6 +67,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
     try {
       const res = await fetch(`/api/admin/pages/${pageId}/publish`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPublished: nextPublished }),
       });

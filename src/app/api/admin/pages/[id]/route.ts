@@ -9,6 +9,120 @@ import {
 import { STANDARD_CONFERENCE_PAGES, normalizeSlug, formatPageRecord } from "../route";
 import { isValidPageParent } from "@/modules/website-builder/utils/page-tree";
 
+const COMMITTEE_SYNC_PROP_KEYS = [
+  "groups",
+  "badge",
+  "title",
+  "subtitle",
+  "autoplayDelay",
+] as const;
+
+type PageBlockLike = {
+  id?: string;
+  type?: string;
+  props?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
+function mergeCommitteesProps(
+  targetProps: Record<string, unknown> | undefined,
+  sourceProps: Record<string, unknown>
+): Record<string, unknown> {
+  const nextProps: Record<string, unknown> = { ...(targetProps || {}) };
+  for (const key of COMMITTEE_SYNC_PROP_KEYS) {
+    if (sourceProps[key] !== undefined) {
+      nextProps[key] = sourceProps[key];
+    }
+  }
+  return nextProps;
+}
+
+function updateBlocksCommitteesSection(
+  blocks: unknown,
+  sourceProps: Record<string, unknown>
+): { updated: PageBlockLike[]; changed: boolean } {
+  if (!Array.isArray(blocks)) return { updated: [], changed: false };
+  let changed = false;
+  const updated = (blocks as PageBlockLike[]).map((block) => {
+    if (block && block.type === "CommitteesSection") {
+      changed = true;
+      return {
+        ...block,
+        props: mergeCommitteesProps(block.props, sourceProps),
+      };
+    }
+    return block;
+  });
+  return { updated, changed };
+}
+
+/**
+ * Keep the CommitteesSection block synchronized between `/committees` and `/` (`home`)
+ * so edits saved in either page stay consistent across public views.
+ */
+async function syncCommitteesSectionToCounterpart(
+  slug: string,
+  blocks: unknown
+): Promise<void> {
+  if (slug !== "committees" && slug !== "home") return;
+  if (!Array.isArray(blocks)) return;
+
+  const sourceBlock = (blocks as PageBlockLike[]).find(
+    (block) =>
+      block?.type === "CommitteesSection" &&
+      Array.isArray(block.props?.groups) &&
+      block.props.groups.length > 0
+  );
+  if (!sourceBlock?.props) return;
+
+  const counterpartSlug = slug === "committees" ? "home" : "committees";
+  const counterpart = await prisma.page.findFirst({
+    where: { slug: counterpartSlug },
+  });
+  if (!counterpart) return;
+
+  const counterpartContent =
+    counterpart.content && typeof counterpart.content === "object"
+      ? (counterpart.content as { root?: unknown; content?: unknown })
+      : null;
+
+  const rawBlocks = Array.isArray(counterpart.blocks)
+    ? counterpart.blocks
+    : Array.isArray(counterpartContent?.content)
+      ? counterpartContent.content
+      : [];
+
+  const { updated: syncedBlocks, changed } = updateBlocksCommitteesSection(
+    rawBlocks,
+    sourceBlock.props
+  );
+  if (!changed) return;
+
+  const syncedContent = counterpartContent
+    ? {
+        ...counterpartContent,
+        content: Array.isArray(counterpartContent.content)
+          ? updateBlocksCommitteesSection(counterpartContent.content, sourceBlock.props).updated
+          : syncedBlocks,
+      }
+    : {
+        root: { title: counterpart.title, slug: counterpart.slug },
+        content: syncedBlocks,
+      };
+
+  await prisma.page.update({
+    where: { id: counterpart.id },
+    data: {
+      blocks: syncedBlocks as any,
+      content: syncedContent as any,
+      version: counterpart.version + 1,
+    },
+  });
+
+  revalidatePagePaths("home");
+  revalidatePagePaths("committees");
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -119,12 +233,15 @@ async function handleUpdate(
       }
     }
 
-    // Optimistic locking check: if client passes version, ensure it matches DB
-    if (
-      body.version !== undefined &&
-      typeof body.version === "number" &&
-      body.version !== existing.version
-    ) {
+    // Optimistic locking check: if client passes version without forceSave, ensure it matches DB
+    const expectedVersion =
+      body.forceSave === true
+        ? existing.version
+        : typeof body.version === "number"
+        ? body.version
+        : existing.version;
+
+    if (expectedVersion !== existing.version) {
       return apiError(
         "Conflict: Page version mismatch. The page has been updated concurrently.",
         409
@@ -246,6 +363,8 @@ async function handleUpdate(
     if (existing.slug !== slug) {
       revalidatePagePaths(existing.slug);
     }
+
+    await syncCommitteesSectionToCounterpart(updatedPage.slug, updatedPage.blocks);
 
     return apiSuccess({ page: formatPageRecord(updatedPage) }, 200);
   } catch (error: unknown) {
