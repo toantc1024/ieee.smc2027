@@ -18,6 +18,7 @@ import { GridPattern } from "@/components/ui/grid-pattern";
 import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { POSTS_SYNC_CHANNEL } from "@/lib/post-sync";
 
 import { DEFAULT_NEWS_ITEMS, getNewsDetailUrl, type NewsItem } from "@/data/news-data";
 export { DEFAULT_NEWS_ITEMS, getNewsDetailUrl, type NewsItem };
@@ -40,9 +41,11 @@ export function NewsList({
 
   useEffect(() => {
     let isMounted = true;
-    fetch("/api/posts")
-      .then((res) => res.json())
-      .then((data) => {
+
+    const loadPosts = async () => {
+      try {
+        const res = await fetch("/api/posts", { cache: "no-store" });
+        const data = await res.json();
         if (
           isMounted &&
           data.success &&
@@ -85,13 +88,44 @@ export function NewsList({
           );
           setItems(mapped);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Failed to load live news posts:", err);
-      });
+      }
+    };
+
+    void loadPosts();
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void loadPosts();
+      }
+    }, 6000);
+
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === "visible") {
+        void loadPosts();
+      }
+    };
+
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = () => {
+        void loadPosts();
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      if (channel) channel.close();
     };
   }, []);
 

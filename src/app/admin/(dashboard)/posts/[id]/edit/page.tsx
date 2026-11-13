@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PostEditorForm } from "@/components/admin/posts/PostEditorForm";
+import type { PostVersionSnapshot } from "@/lib/post-sync";
 
 export default function EditPostPage({
   params,
@@ -24,12 +25,15 @@ export default function EditPostPage({
     coverImage: string | null;
     category: string;
     status: "DRAFT" | "PUBLISHED";
+    version?: number;
+    histories?: PostVersionSnapshot[];
+    updatedAt?: string;
   } | null>(null);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/admin/posts/${id}`)
+    fetch(`/api/admin/posts/${id}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data.post) {
@@ -42,6 +46,9 @@ export default function EditPostPage({
             coverImage: data.post.coverImage || null,
             category: data.post.category || "Announcements",
             status: data.post.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
+            version: data.post.version ?? data.version ?? 1,
+            histories: data.post.histories ?? data.histories ?? [],
+            updatedAt: data.post.updatedAt,
           });
         } else {
           toast.error(data.error || "Post not found");

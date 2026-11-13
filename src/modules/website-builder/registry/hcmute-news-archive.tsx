@@ -4,10 +4,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { POSTS_SYNC_CHANNEL } from "@/lib/post-sync";
 
-export type Post = { id: string; title: string; slug: string; summary?: string | null; content?: string; coverImage?: string | null; category?: string | null; publishedAt?: string | null; createdAt?: string | null; views?: number };
+export type Post = { id: string; title: string; slug: string; summary?: string | null; content?: string; coverImage?: string | null; category?: string | null; publishedAt?: string | null; createdAt?: string | null; updatedAt?: string | null; views?: number };
 export async function loadPublishedPosts(signal?: AbortSignal): Promise<Post[]> {
-  const response = await fetch("/api/posts", { signal });
+  const response = await fetch("/api/posts", { signal, cache: "no-store" });
   if (!response.ok) throw new Error("Unable to load posts");
   const result = await response.json();
   if (!Array.isArray(result.posts)) throw new Error("Invalid posts response");
@@ -31,7 +32,21 @@ export function NewsArchive({ headerTitle = "News and events", headerSubtitle = 
       } catch (error) { if (!controller.signal.aborted) { console.error(error); setStatus("error"); } }
     }
     void load();
-    return () => controller.abort();
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") void load();
+    }, 6000);
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = () => void load();
+    } catch {
+      // BroadcastChannel unavailable
+    }
+    return () => {
+      controller.abort();
+      window.clearInterval(intervalId);
+      if (channel) channel.close();
+    };
   }, []);
   const categories = useMemo(() => Array.from(new Set(posts.map((post) => post.category || "General"))), [posts]);
   const filtered = useMemo(() => filterNewsPosts(posts, category, query), [posts, category, query]);
@@ -67,7 +82,21 @@ export function PostDetail({ postSlug = "", showBreadcrumb = true, showCoverImag
       } catch { if (!controller.signal.aborted) setStatus("error"); }
     }
     void load();
-    return () => controller.abort();
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") void load();
+    }, 6000);
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = () => void load();
+    } catch {
+      // BroadcastChannel unavailable
+    }
+    return () => {
+      controller.abort();
+      window.clearInterval(intervalId);
+      if (channel) channel.close();
+    };
   }, [postSlug]);
   const hasCustom = Boolean(customTitle || customContent);
   if (!hasCustom && status === "loading") return <section className="mx-auto max-w-4xl space-y-5 px-4 py-10" role="status" aria-label="Loading article"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-3/4" /><Skeleton className="aspect-video w-full rounded-2xl" /><div className="space-y-2.5"><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-5/6" /><Skeleton className="h-4 w-2/3" /></div></section>;

@@ -68,6 +68,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 
 export interface TiptapEditorHandle {
   insertImage: (src: string, alt?: string) => boolean;
+  setContent: (html: string) => boolean;
 }
 
 interface TiptapEditorProps {
@@ -162,6 +163,10 @@ export function TiptapEditor({
 
   useImperativeHandle(editorRef, () => ({
     insertImage: (src, alt = "") => editor?.chain().focus().insertImageBlock({ src, alt, caption: alt, width: 100, alignment: "center", layoutMode: "inline" }).run() ?? false,
+    setContent: (html: string) => {
+      if (!editor) return false;
+      return editor.commands.setContent(html, { emitUpdate: false });
+    },
   }), [editor]);
 
   useEffect(() => {

@@ -26,6 +26,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 async function getPostData(slug: string) {
   try {
     // 1. Lookup in PostgreSQL
@@ -84,6 +86,7 @@ async function getPostData(slug: string) {
           category: post.category,
           views: (post.views || 0) + 1,
           publishedAt: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+          updatedAt: post.updatedAt.toISOString(),
           authorName: post.author?.name || "IEEE SMC 2027 Organizing Committee",
         },
         relatedPosts: related.map((r) => ({
@@ -139,6 +142,7 @@ async function getPostData(slug: string) {
         category: defaultItem.category,
         views: defaultItem.viewCount || 1420,
         publishedAt: `${defaultItem.year}-${defaultItem.month}-${defaultItem.day}`,
+        updatedAt: undefined,
         authorName: "IEEE SMC 2027 Organizing Committee",
       },
       relatedPosts: related,
@@ -331,6 +335,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             title={post.title}
             slug={post.slug}
             summary={post.summary || ""}
+            initialUpdatedAt={post.updatedAt}
           />
 
           {/* Main Article Content - Takes Remaining Width, No Box Border! */}

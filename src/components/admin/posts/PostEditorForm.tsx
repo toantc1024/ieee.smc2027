@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -19,6 +19,9 @@ import {
   X,
   Upload,
   Rocket,
+  History,
+  RotateCcw,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -34,11 +37,37 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { TiptapEditor, type TiptapEditorHandle } from "@/components/admin/TiptapEditor";
 import { ImageInsertModal } from "@/components/admin/tiptap/ImageInsertModal";
 import { uploadPostMedia } from "@/components/admin/tiptap/upload";
 import { POST_CATEGORIES } from "@/app/admin/(dashboard)/posts/page";
 import { cn } from "@/lib/utils";
+import {
+  POSTS_SYNC_CHANNEL,
+  broadcastPostSync,
+  type PostVersionSnapshot,
+} from "@/lib/post-sync";
+
+interface PolledPostPayload {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  content: string;
+  coverImage: string | null;
+  category: string;
+  status: string;
+  updatedAt?: string;
+  version?: number;
+  histories?: PostVersionSnapshot[];
+}
 
 interface PostEditorFormProps {
   initialData?: {
@@ -50,6 +79,9 @@ interface PostEditorFormProps {
     coverImage: string | null;
     category: string;
     status: "DRAFT" | "PUBLISHED";
+    version?: number;
+    histories?: PostVersionSnapshot[];
+    updatedAt?: string;
   };
   isEditMode?: boolean;
   onSave?: (data: {
@@ -90,10 +122,21 @@ export function PostEditorForm({
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<"attributes" | "files">("attributes");
 
-  // Modals
+  // Modals & Version Polling
   const [showCoverModal, setShowCoverModal] = useState(false);
   const [showContentImageModal, setShowContentImageModal] = useState(false);
   const [showDirtyBackDialog, setShowDirtyBackDialog] = useState(false);
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+
+  const [version, setVersion] = useState<number>(initialData?.version ?? 1);
+  const [histories, setHistories] = useState<PostVersionSnapshot[]>(
+    initialData?.histories ?? []
+  );
+  const [lastSyncedUpdatedAt, setLastSyncedUpdatedAt] = useState<string>(
+    initialData?.updatedAt || ""
+  );
+  const [remoteNewerPost, setRemoteNewerPost] = useState<PolledPostPayload | null>(null);
+  const [restoringVersion, setRestoringVersion] = useState<number | null>(null);
 
   // Track initial state for dirty detection
   const [initialSnapshot, setInitialSnapshot] = useState({
@@ -114,6 +157,154 @@ export function PostEditorForm({
     coverImage !== initialSnapshot.coverImage ||
     category !== initialSnapshot.category ||
     status !== initialSnapshot.status;
+
+  const applySyncedPost = useCallback((remote: PolledPostPayload) => {
+    const nextStatus: "DRAFT" | "PUBLISHED" =
+      remote.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT";
+    const nextSnapshot = {
+      title: remote.title || "",
+      slug: remote.slug || "",
+      summary: remote.summary || "",
+      content: remote.content || "",
+      coverImage: remote.coverImage || null,
+      category: remote.category || "Announcements",
+      status: nextStatus,
+    };
+    setTitle(nextSnapshot.title);
+    setSlug(nextSnapshot.slug);
+    setSummary(nextSnapshot.summary);
+    setContent(nextSnapshot.content);
+    setCoverImage(nextSnapshot.coverImage);
+    setCategory(nextSnapshot.category);
+    setStatus(nextStatus);
+    setInitialSnapshot(nextSnapshot);
+    editorRef.current?.setContent(nextSnapshot.content);
+    if (typeof remote.version === "number") {
+      setVersion(remote.version);
+    }
+    if (Array.isArray(remote.histories)) {
+      setHistories(remote.histories);
+    }
+    if (remote.updatedAt) {
+      setLastSyncedUpdatedAt(remote.updatedAt);
+    }
+    setRemoteNewerPost(null);
+  }, []);
+
+  const pollPostVersion = useCallback(async () => {
+    if (!isEditMode || !initialData?.id || isSaving) return;
+    try {
+      const res = await fetch(`/api/admin/posts/${initialData.id}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const remote: PolledPostPayload | undefined = data.post;
+      if (!remote) return;
+
+      const remoteHistories = Array.isArray(remote.histories)
+        ? remote.histories
+        : Array.isArray(data.histories)
+          ? data.histories
+          : null;
+      if (remoteHistories) {
+        setHistories(remoteHistories);
+      }
+
+      const remoteVer = remote.version ?? data.version ?? version;
+      const hasNewerVersion =
+        (remote.updatedAt && lastSyncedUpdatedAt && remote.updatedAt !== lastSyncedUpdatedAt) ||
+        remoteVer > version;
+
+      if (hasNewerVersion) {
+        if (!isDirty) {
+          applySyncedPost({
+            ...remote,
+            version: remoteVer,
+            histories: remoteHistories ?? undefined,
+          });
+        } else {
+          setRemoteNewerPost({
+            ...remote,
+            version: remoteVer,
+            histories: remoteHistories ?? undefined,
+          });
+        }
+      }
+    } catch {
+      // Ignore transient polling failures
+    }
+  }, [applySyncedPost, initialData?.id, isDirty, isEditMode, isSaving, lastSyncedUpdatedAt, version]);
+
+  useEffect(() => {
+    if (!isEditMode || !initialData?.id) return;
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void pollPostVersion();
+      }
+    }, 4000);
+
+    const handleFocusOrVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void pollPostVersion();
+      }
+    };
+
+    window.addEventListener("focus", handleFocusOrVisibility);
+    document.addEventListener("visibilitychange", handleFocusOrVisibility);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = (event) => {
+        if (event.data?.id === initialData.id) {
+          void pollPostVersion();
+        }
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleFocusOrVisibility);
+      document.removeEventListener("visibilitychange", handleFocusOrVisibility);
+      if (channel) channel.close();
+    };
+  }, [initialData?.id, isEditMode, pollPostVersion]);
+
+  const handleRestoreVersion = async (targetVersion: number) => {
+    if (!initialData?.id) return;
+    setRestoringVersion(targetVersion);
+    try {
+      const res = await fetch(`/api/admin/posts/${initialData.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restoreVersion: targetVersion }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to restore version");
+
+      const restored = data.post;
+      if (restored) {
+        applySyncedPost(restored);
+        broadcastPostSync({
+          type: "POST_UPDATED",
+          id: restored.id,
+          slug: restored.slug,
+          version: restored.version,
+          updatedAt: restored.updatedAt,
+        });
+      }
+      setShowHistoryDialog(false);
+      toast.success(`Restored version v${targetVersion}`);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to restore version");
+    } finally {
+      setRestoringVersion(null);
+    }
+  };
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -180,12 +371,33 @@ export function PostEditorForm({
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to save post");
+        const savedPost = data.post || data.data?.post;
         setStatus(targetStatus);
         setInitialSnapshot({ ...payload });
+        setRemoteNewerPost(null);
+        if (typeof savedPost?.version === "number") {
+          setVersion(savedPost.version);
+        } else if (typeof data.version === "number") {
+          setVersion(data.version);
+        }
+        if (Array.isArray(savedPost?.histories)) {
+          setHistories(savedPost.histories);
+        } else if (Array.isArray(data.histories)) {
+          setHistories(data.histories);
+        }
+        if (savedPost?.updatedAt) {
+          setLastSyncedUpdatedAt(savedPost.updatedAt);
+        }
+        broadcastPostSync({
+          type: "POST_UPDATED",
+          id: initialData.id,
+          slug: savedPost?.slug || payload.slug,
+          version: savedPost?.version ?? data.version,
+          updatedAt: savedPost?.updatedAt,
+        });
         toast.success(
           targetStatus === "PUBLISHED" ? "Post published successfully" : "Draft saved successfully"
         );
-        router.push(`/admin/posts/${initialData.id}`);
       } else {
         const res = await fetch("/api/admin/posts", {
           method: "POST",
@@ -197,9 +409,17 @@ export function PostEditorForm({
         toast.success(
           targetStatus === "PUBLISHED" ? "Post published successfully" : "Draft created successfully"
         );
-        const createdId = data.data?.post?.id || data.post?.id || data.id;
+        const createdPost = data.data?.post || data.post;
+        const createdId = createdPost?.id || data.id;
+        broadcastPostSync({
+          type: "POST_UPDATED",
+          id: createdId,
+          slug: createdPost?.slug || payload.slug,
+          version: createdPost?.version ?? data.version ?? 1,
+          updatedAt: createdPost?.updatedAt,
+        });
         if (createdId) {
-          router.push(`/admin/posts/${createdId}`);
+          router.push(`/admin/posts/${createdId}/edit`);
         } else {
           router.push("/admin/posts");
         }
@@ -255,7 +475,7 @@ export function PostEditorForm({
             />
           </div>
 
-          {/* Status Badge */}
+          {/* Status & Version Controls */}
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
             <span
               className={cn(
@@ -273,6 +493,36 @@ export function PostEditorForm({
               />
               {status === "PUBLISHED" ? "Published" : "Draft"}
             </span>
+
+            {isEditMode && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setShowHistoryDialog(true)}
+                className="h-8 px-2.5 gap-1.5 text-xs font-semibold rounded-full border-slate-200 bg-white hover:bg-slate-50 text-slate-700 cursor-pointer"
+                title="Open version history"
+              >
+                <History className="size-3.5 text-[#115eff]" />
+                <span>v{version}</span>
+              </Button>
+            )}
+
+            {remoteNewerPost && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  applySyncedPost(remoteNewerPost);
+                  toast.success(`Synced to v${remoteNewerPost.version || version}`);
+                }}
+                className="h-8 px-2.5 gap-1.5 text-xs font-semibold rounded-full border-blue-300 bg-blue-50 text-[#115eff] hover:bg-blue-100 cursor-pointer"
+              >
+                <RefreshCw className="size-3" />
+                <span>Sync v{remoteNewerPost.version}</span>
+              </Button>
+            )}
           </div>
 
           {/* Header Action Buttons */}
@@ -791,6 +1041,89 @@ export function PostEditorForm({
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {/* ── Post Version History Dialog ── */}
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <History className="size-4 text-[#115eff]" />
+              <span>Version History</span>
+              <Badge variant="outline" className="ml-1 text-xs font-mono">
+                v{version}
+              </Badge>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Automatically polled revisions for this article. Restore any saved version.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 mt-2">
+            {histories.length === 0 ? (
+              <p className="text-sm text-slate-500 py-8 text-center">
+                No revision history recorded yet.
+              </p>
+            ) : (
+              histories.map((entry) => {
+                const isCurrent = entry.version === version;
+                return (
+                  <div
+                    key={entry.id}
+                    className={cn(
+                      "rounded-xl border p-3 flex items-start justify-between gap-3 transition-colors",
+                      isCurrent
+                        ? "border-blue-200 bg-blue-50/50"
+                        : "border-slate-200 bg-white hover:bg-slate-50/70"
+                    )}
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold font-mono text-slate-900">
+                          v{entry.version}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "text-[10px] px-1.5 py-0 h-5",
+                            entry.status === "PUBLISHED"
+                              ? "border-blue-200 bg-blue-50 text-[#115eff]"
+                              : "border-slate-200 bg-slate-100 text-slate-600"
+                          )}
+                        >
+                          {entry.status}
+                        </Badge>
+                        {isCurrent && (
+                          <span className="text-[11px] font-semibold text-[#115eff]">
+                            Current
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs font-medium text-slate-800 truncate">
+                        {entry.title || "Untitled"}
+                      </p>
+                      <p className="text-[11px] text-slate-500">
+                        {new Date(entry.updatedAt).toLocaleString()} · {entry.savedBy}
+                      </p>
+                    </div>
+                    {!isCurrent && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={restoringVersion !== null}
+                        onClick={() => handleRestoreVersion(entry.version)}
+                        className="h-8 px-2.5 text-xs font-semibold shrink-0 cursor-pointer"
+                      >
+                        <RotateCcw className="size-3.5 mr-1" />
+                        {restoringVersion === entry.version ? "Restoring..." : "Restore"}
+                      </Button>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

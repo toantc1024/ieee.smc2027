@@ -31,6 +31,7 @@ import { DataTable } from "@/components/admin/data-table/DataTable";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
 import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
+import { POSTS_SYNC_CHANNEL, broadcastPostSync } from "@/lib/post-sync";
 
 interface PostItem {
   id: string;
@@ -42,8 +43,10 @@ interface PostItem {
   category: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   views: number;
+  version?: number;
   publishedAt: string | null;
   createdAt: string;
+  updatedAt?: string;
   author?: {
     name: string;
     email: string;
@@ -116,23 +119,61 @@ export default function PostsManagementPage() {
     return posts;
   }, [posts, activeTab]);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
+  const fetchPosts = useCallback(async (silent = false) => {
+    if (!silent) {
+      setLoading(true);
+    }
     try {
-      const res = await fetch("/api/admin/posts");
+      const res = await fetch("/api/admin/posts", { cache: "no-store" });
       const data = await res.json();
       if (data.posts) {
         setPosts(data.posts);
       }
     } catch {
-      toast.error("Failed to load posts list");
+      if (!silent) {
+        toast.error("Failed to load posts list");
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    fetchPosts();
+    void fetchPosts(false);
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void fetchPosts(true);
+      }
+    }, 5000);
+
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === "visible") {
+        void fetchPosts(true);
+      }
+    };
+
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = () => {
+        void fetchPosts(true);
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      if (channel) channel.close();
+    };
   }, [fetchPosts]);
 
   // Delete post
@@ -145,8 +186,9 @@ export default function PostsManagementPage() {
       throw new Error(data.error || "Failed to delete post");
     }
 
+    broadcastPostSync({ type: "POST_DELETED", id });
     toast.success("Post deleted successfully");
-    await fetchPosts();
+    await fetchPosts(true);
   };
 
   // Batch actions
@@ -206,6 +248,7 @@ export default function PostsManagementPage() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update status");
+        broadcastPostSync({ type: "POST_UPDATED", id: postId });
         toast.success(
           `Status changed to ${
             newStatus === "PUBLISHED"
@@ -216,7 +259,7 @@ export default function PostsManagementPage() {
           }`
         );
       } catch (err: unknown) {
-        await fetchPosts();
+        await fetchPosts(true);
         toast.error(err instanceof Error ? err.message : "Failed to update status");
       }
     },
@@ -238,9 +281,10 @@ export default function PostsManagementPage() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update category");
+        broadcastPostSync({ type: "POST_UPDATED", id: postId });
         toast.success(`Category updated to ${newCategory}`);
       } catch (err: unknown) {
-        await fetchPosts();
+        await fetchPosts(true);
         toast.error(err instanceof Error ? err.message : "Failed to update category");
       }
     },
@@ -337,13 +381,16 @@ export default function PostsManagementPage() {
                 </p>
               )}
 
-              {/* Slug tag with safe truncation */}
-              <div className="pt-0.5 min-w-0 max-w-full overflow-hidden">
+              {/* Slug tag & Version badge with safe truncation */}
+              <div className="pt-0.5 min-w-0 max-w-full overflow-hidden flex items-center gap-1.5 flex-wrap">
                 <span
                   className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
                   title={`/${item.slug}`}
                 >
                   /{item.slug}
+                </span>
+                <span className="text-xs font-mono font-semibold text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">
+                  v{item.version || 1}
                 </span>
               </div>
             </div>
@@ -624,7 +671,7 @@ export default function PostsManagementPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={fetchPosts}
+              onClick={() => fetchPosts(false)}
               disabled={loading}
               className="gap-1.5 text-xs sm:text-sm text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg shadow-sm font-semibold h-9 px-3"
               title="Refresh"

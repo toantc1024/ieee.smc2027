@@ -36,6 +36,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { POSTS_SYNC_CHANNEL, broadcastPostSync } from "@/lib/post-sync";
 
 interface PostDetail {
   id: string;
@@ -47,6 +48,7 @@ interface PostDetail {
   category: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   views: number;
+  version?: number;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -75,35 +77,82 @@ export default function PostDetailPage({
   const [coverImgError, setCoverImgError] = useState(false);
 
   const fetchPost = useCallback(
-    async (isManualRefresh = false) => {
-      if (isManualRefresh) {
+    async (mode: "initial" | "manual" | "poll" = "initial") => {
+      if (mode === "manual") {
         setRefreshing(true);
-      } else {
+      } else if (mode === "initial") {
         setLoading(true);
       }
 
       try {
-        const res = await fetch(`/api/admin/posts/${id}`);
+        const res = await fetch(`/api/admin/posts/${id}`, { cache: "no-store" });
         const data = await res.json();
         if (data.post) {
-          setPost(data.post);
-          if (isManualRefresh) toast.success("Post data refreshed");
-        } else {
+          setPost((prev) => {
+            if (
+              mode === "poll" &&
+              prev &&
+              prev.updatedAt === data.post.updatedAt &&
+              prev.version === data.post.version &&
+              prev.status === data.post.status
+            ) {
+              return prev;
+            }
+            return data.post;
+          });
+          if (mode === "manual") toast.success("Post data refreshed");
+        } else if (mode !== "poll") {
           toast.error(data.error || "Post not found");
         }
       } catch (err: unknown) {
-        toast.error(err instanceof Error ? err.message : "Failed to load post");
+        if (mode !== "poll") {
+          toast.error(err instanceof Error ? err.message : "Failed to load post");
+        }
       } finally {
-        setLoading(false);
-        setRefreshing(false);
+        if (mode === "initial") setLoading(false);
+        if (mode === "manual") setRefreshing(false);
       }
     },
     [id]
   );
 
   useEffect(() => {
-    fetchPost();
-  }, [fetchPost]);
+    void fetchPost("initial");
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void fetchPost("poll");
+      }
+    }, 4000);
+
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === "visible") {
+        void fetchPost("poll");
+      }
+    };
+
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = (event) => {
+        if (!event.data?.id || event.data.id === id) {
+          void fetchPost("poll");
+        }
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      if (channel) channel.close();
+    };
+  }, [fetchPost, id]);
 
   const handleTogglePublish = async () => {
     if (!post) return;
@@ -119,7 +168,21 @@ export default function PostDetailPage({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update status");
 
-      setPost((prev) => (prev ? { ...prev, status: newStatus } : null));
+      const updatedPost = data.post || data.data?.post;
+      setPost((prev) =>
+        updatedPost
+          ? { ...prev, ...updatedPost }
+          : prev
+            ? { ...prev, status: newStatus }
+            : null
+      );
+      broadcastPostSync({
+        type: "POST_UPDATED",
+        id: post.id,
+        slug: post.slug,
+        version: updatedPost?.version,
+        updatedAt: updatedPost?.updatedAt,
+      });
       toast.success(
         newStatus === "PUBLISHED" ? "Post published successfully" : "Post unpublished successfully"
       );
@@ -285,6 +348,9 @@ export default function PostDetailPage({
             <span className="text-slate-900 truncate min-w-0">
               {post.title}
             </span>
+            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono font-semibold bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+              v{post.version || 1}
+            </span>
           </div>
         </div>
 
@@ -370,7 +436,7 @@ export default function PostDetailPage({
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => fetchPost(true)}
+            onClick={() => fetchPost("manual")}
             disabled={refreshing}
             className="size-9 p-0 cursor-pointer text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg inline-flex items-center justify-center shrink-0"
             title="Refresh post details"

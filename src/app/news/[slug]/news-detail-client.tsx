@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Share2,
   Copy,
@@ -15,22 +16,85 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { POSTS_SYNC_CHANNEL } from "@/lib/post-sync";
 
 export interface NewsDetailClientProps {
   title: string;
   slug: string;
   summary?: string;
+  initialUpdatedAt?: string;
 }
 
 /**
  * Sticky Left Toolbar and Mobile Floating Dock matching HCMUTE design.
  * Features rounded-full pills, zoom controls, share triggers, and smooth scroll navigation.
  */
-export function NewsDetailToolbar({ title, slug, summary }: NewsDetailClientProps) {
+export function NewsDetailToolbar({
+  title,
+  slug,
+  summary,
+  initialUpdatedAt,
+}: NewsDetailClientProps) {
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const lastUpdatedAtRef = useRef<string | undefined>(initialUpdatedAt);
+
+  useEffect(() => {
+    lastUpdatedAtRef.current = initialUpdatedAt;
+  }, [initialUpdatedAt]);
+
+  useEffect(() => {
+    if (!slug) return;
+
+    const checkPostUpdates = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const res = await fetch(
+          `/api/posts/${encodeURIComponent(slug)}?poll=1`,
+          { cache: "no-store" }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        const nextUpdatedAt: string | undefined = data?.post?.updatedAt;
+        if (nextUpdatedAt && nextUpdatedAt !== lastUpdatedAtRef.current) {
+          lastUpdatedAtRef.current = nextUpdatedAt;
+          router.refresh();
+        }
+      } catch {
+        // Ignore transient polling errors
+      }
+    };
+
+    const intervalId = window.setInterval(checkPostUpdates, 5000);
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === "visible") {
+        void checkPostUpdates();
+      }
+    };
+
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POSTS_SYNC_CHANNEL);
+      channel.onmessage = () => {
+        void checkPostUpdates();
+      };
+    } catch {
+      // BroadcastChannel unavailable
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      if (channel) channel.close();
+    };
+  }, [router, slug]);
 
   // Reading progress tracker & scroll-to-top trigger
   useEffect(() => {
