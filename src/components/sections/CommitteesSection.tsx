@@ -71,6 +71,10 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
       ? member.photo.trim()
       : CHAIR_PHOTO_MAP[name];
   const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [photo]);
   const initials =
     (name || "CM")
       .split(" ")
@@ -385,7 +389,7 @@ function CommitteeGroupCarousel({
           <div className="flex flex-wrap sm:flex-nowrap justify-center items-stretch gap-3 sm:gap-4 py-2">
             {members.map((member, idx) => (
               <div
-                key={`${member.name || "member"}-${idx}`}
+                key={`${member.name || "member"}-${member.photo || ""}-${idx}`}
                 className={CARD_STATIC_CLASSES}
               >
                 <CommitteeCard member={member} />
@@ -411,7 +415,7 @@ function CommitteeGroupCarousel({
               <CarouselContent className="py-2 items-stretch cursor-grab active:cursor-grabbing">
                 {carouselMembers.map((member, idx) => (
                   <CarouselItem
-                    key={`${member.name || "member"}-${idx}`}
+                    key={`${member.name || "member"}-${member.photo || ""}-${idx}`}
                     className={cn(SLIDE_BASIS_CLASSES, "shrink-0 flex")}
                   >
                     <div className="w-full h-full flex">

@@ -37,22 +37,51 @@ function mergeCommitteesProps(
   return nextProps;
 }
 
+function hasNonEmptyProps(props: unknown): boolean {
+  return Boolean(props && typeof props === "object" && Object.keys(props).length > 0);
+}
+
 function updateBlocksCommitteesSection(
   blocks: unknown,
   sourceProps: Record<string, unknown>
 ): { updated: PageBlockLike[]; changed: boolean } {
   if (!Array.isArray(blocks)) return { updated: [], changed: false };
+  const blockList = blocks as PageBlockLike[];
+  const hasCommitteesSection = blockList.some((b) => b?.type === "CommitteesSection");
+
   let changed = false;
-  const updated = (blocks as PageBlockLike[]).map((block) => {
-    if (block && block.type === "CommitteesSection") {
+  const updated: PageBlockLike[] = [];
+
+  for (const block of blockList) {
+    if (!block) {
+      updated.push(block);
+      continue;
+    }
+    if (block.type === "CommitteesSection") {
       changed = true;
-      return {
+      updated.push({
         ...block,
         props: mergeCommitteesProps(block.props, sourceProps),
-      };
+      });
+      continue;
     }
-    return block;
-  });
+    if (block.type === "Committee") {
+      changed = true;
+      if (hasCommitteesSection) {
+        // Strip redundant legacy Committee block when CommitteesSection is already present
+        continue;
+      }
+      // Upgrade standalone Committee block to CommitteesSection with synced props
+      updated.push({
+        ...block,
+        type: "CommitteesSection",
+        props: mergeCommitteesProps(block.props, sourceProps),
+      });
+      continue;
+    }
+    updated.push(block);
+  }
+
   return { updated, changed };
 }
 
@@ -233,9 +262,10 @@ async function handleUpdate(
       }
     }
 
-    // Optimistic locking check: if client passes version without forceSave, ensure it matches DB
+    // Optimistic locking check: enforce strict version match on PATCH unless forceSave is set;
+    // PUT saves from Visual Studio always succeed cleanly against the current DB version.
     const expectedVersion =
-      body.forceSave === true
+      request.method !== "PATCH" || body.forceSave === true
         ? existing.version
         : typeof body.version === "number"
         ? body.version
@@ -263,25 +293,6 @@ async function handleUpdate(
           return apiError(`A page with slug '${slug}' already exists`, 409);
         }
       }
-    }
-
-    // Sync blocks and content AST
-    let blocks: any = existing.blocks;
-    let content: any = existing.content;
-
-    if (body.content !== undefined) {
-      content = body.content;
-      if (Array.isArray(body.blocks)) {
-        blocks = body.blocks;
-      } else if (content && Array.isArray(content.content)) {
-        blocks = content.content;
-      }
-    } else if (body.blocks !== undefined) {
-      blocks = Array.isArray(body.blocks) ? body.blocks : [];
-      content = {
-        root: (existing.content as any)?.root || { title, slug },
-        content: blocks,
-      };
     }
 
     const isPublished =
@@ -315,6 +326,52 @@ async function handleUpdate(
       }
     }
 
+    // Sync blocks and content AST so both fields stay 100% identical
+    let blocks: PageBlockLike[] = Array.isArray(existing.blocks)
+      ? (existing.blocks as PageBlockLike[])
+      : [];
+
+    if (Array.isArray(body.blocks)) {
+      blocks = body.blocks;
+    } else if (body.content && typeof body.content === "object" && Array.isArray(body.content.content)) {
+      blocks = body.content.content;
+    } else if (body.blocks !== undefined) {
+      blocks = [];
+    }
+
+    if (slug === "home" || slug === "committees") {
+      const hasCommitteesSection = blocks.some((b) => b?.type === "CommitteesSection");
+      if (hasCommitteesSection) {
+        blocks = blocks.filter(
+          (b) => !(b?.type === "Committee" && !hasNonEmptyProps(b.props))
+        );
+      }
+    }
+
+    const baseContent =
+      body.content !== undefined && body.content && typeof body.content === "object"
+        ? (body.content as Record<string, unknown>)
+        : existing.content && typeof existing.content === "object"
+        ? (existing.content as Record<string, unknown>)
+        : {};
+    const existingRoot =
+      baseContent.root && typeof baseContent.root === "object"
+        ? (baseContent.root as Record<string, unknown>)
+        : {};
+
+    const content: any = {
+      ...baseContent,
+      root: {
+        ...existingRoot,
+        title,
+        slug,
+        parentId,
+        metaTitle,
+        metaDescription,
+      },
+      content: blocks,
+    };
+
     const orderIndex =
       typeof body.orderIndex === "number" ? body.orderIndex : existing.orderIndex;
 
@@ -331,7 +388,7 @@ async function handleUpdate(
         data: {
           slug,
           title,
-          blocks,
+          blocks: blocks as any,
           content,
           isPublished,
           metaTitle,

@@ -63,7 +63,6 @@ const DEFAULT_HOME_BLOCKS = [
     hidden: false,
   },
   { id: "about-1", type: "About", props: {}, hidden: false },
-  { id: "committee-1", type: "Committee", props: {}, hidden: false },
   {
     id: "committees-section-1",
     type: "CommitteesSection",
@@ -132,7 +131,6 @@ export const STANDARD_CONFERENCE_PAGES = [
         },
         hidden: false,
       },
-      { id: "committee-1", type: "Committee", props: {}, hidden: false },
       {
         id: "contact-1",
         type: "ContactCards",
