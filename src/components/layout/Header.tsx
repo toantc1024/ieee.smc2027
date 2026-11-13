@@ -138,7 +138,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
               exit="exit"
               className="w-full transform-gpu will-change-[transform,opacity]"
             >
-              <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80">
+              <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-blue-100/80">
                 {/* Columns Section */}
                 {columns.map((col, idx) => {
                   const isFirst = idx === 0;
@@ -566,25 +566,25 @@ export function Header() {
             <div className="flex items-center gap-3.5 xl:gap-4.5 min-w-0">
               <a
                 href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
-                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-semibold transition-colors shrink-0 text-xs xl:text-[13px]"
+                className="group/phone flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors shrink-0 text-xs sm:text-[13px]"
                 title="Conference Hotline"
               >
-                <Phone className="w-3.5 h-3.5 text-blue-200" />
+                <Phone className="size-3.5 text-current opacity-85 group-hover/phone:opacity-100 shrink-0 transition-opacity" />
                 <span>{hotline}</span>
               </a>
 
               <a
                 href={`mailto:${email}`}
-                className="flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors shrink-0 text-xs xl:text-[13px]"
+                className="group/email flex items-center gap-1.5 text-blue-100 hover:text-white font-medium transition-colors shrink-0 text-xs sm:text-[13px]"
                 title="Conference Secretariat Email"
               >
-                <Mail className="w-3.5 h-3.5 text-blue-200" />
+                <Mail className="size-3.5 text-current opacity-85 group-hover/email:opacity-100 shrink-0 transition-opacity" />
                 <span>{email}</span>
               </a>
             </div>
 
             {/* Right: Topbar Navigation Links (News, Partnership, CFP PDF, Search) */}
-            <div className="flex items-center gap-2 xl:gap-3 text-xs xl:text-[13px]">
+            <div className="flex items-center gap-2 xl:gap-3 text-xs sm:text-[13px]">
               <Link
                 href="/#news"
                 className="px-2 py-0.5 rounded text-blue-100 hover:text-white hover:bg-white/10 transition-colors font-medium"
@@ -609,10 +609,10 @@ export function Header() {
                 href={CONFERENCE_INFO.cfpPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-semibold text-blue-100"
+                className="group/cfp px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-medium text-blue-100"
                 title="Download Call for Papers PDF"
               >
-                <FileDown className="w-3.5 h-3.5 text-blue-200" />
+                <FileDown className="size-3.5 text-current opacity-85 group-hover/cfp:opacity-100 shrink-0 transition-opacity" />
                 <span>CFP PDF</span>
               </a>
 
@@ -636,7 +636,7 @@ export function Header() {
                     className="relative flex items-center w-48 lg:w-52 xl:w-68 h-7.5 rounded-full bg-white/15 hover:bg-white/20 border border-white/25 hover:border-white/40 focus-within:bg-white/25 focus-within:border-white/60 transition-all duration-200 shadow-2xs group cursor-pointer"
                     title="Search tracks, topics, authors, CFP (Click to open or type)"
                   >
-                    <Search className="w-3.5 h-3.5 text-blue-100 group-hover:text-white absolute left-3 pointer-events-none transition-colors" />
+                    <Search className="size-3.5 text-blue-100 group-hover:text-white absolute left-3 pointer-events-none transition-colors" />
                     <input
                       type="text"
                       placeholder="Search conference, tracks..."
@@ -652,7 +652,7 @@ export function Header() {
                           }
                         }
                       }}
-                      className="w-full h-full pl-8.5 pr-8 bg-transparent text-xs text-white placeholder:text-blue-100/75 focus:outline-none cursor-text select-text"
+                      className="w-full h-full pl-8.5 pr-8 bg-transparent text-xs sm:text-[13px] text-white placeholder:text-blue-100/75 focus:outline-none cursor-text select-text"
                     />
                     {searchQuery ? (
                       <button
@@ -732,7 +732,7 @@ export function Header() {
                           }
                         }}
                         className={cn(
-                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-semibold text-[13.5px] xl:text-sm px-2.5 xl:px-3.5 py-2 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          "group/btn inline-flex items-center gap-1.5 font-semibold text-sm px-3 xl:px-3.5 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                           isMenuOpen
                             ? "bg-[#115eff] text-white shadow-xs"
                             : "text-[#004776] hover:bg-[#115eff] hover:text-white"
@@ -743,10 +743,8 @@ export function Header() {
                         {hasMegaMenu && (
                           <ChevronDown
                             className={cn(
-                              "w-3.5 h-3.5 transition-transform duration-200",
-                              isMenuOpen
-                                ? "text-white rotate-180"
-                                : "text-slate-400 group-hover/btn:text-white"
+                              "size-4 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
+                              isMenuOpen && "text-white rotate-180 opacity-100"
                             )}
                           />
                         )}
@@ -761,10 +759,10 @@ export function Header() {
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={closeMenu}
-                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-4 py-2 text-xs xl:text-[13.5px] font-semibold text-[#004776] hover:text-white bg-white hover:bg-[#115eff] border border-blue-100/90 hover:border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-sm font-semibold text-[#004776] hover:text-white bg-white hover:bg-[#115eff] border border-blue-200/90 hover:border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
                   title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
                 >
-                  <User className="w-3.5 h-3.5 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
+                  <User className="size-4 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
                   <span>
                     {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
                   </span>
@@ -774,11 +772,11 @@ export function Header() {
                   <a
                     href={ctaHref}
                     onClick={closeMenu}
-                    className="inline-flex items-center justify-center gap-1.5 h-10 px-3 xl:px-4 py-2 text-xs xl:text-[13.5px] font-bold text-white bg-[#115eff] hover:bg-[#0a4de6] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                    className="inline-flex items-center justify-center gap-1.5 h-10 px-4 xl:px-4.5 text-sm font-semibold text-white bg-[#115eff] hover:bg-[#0a4de6] border border-[#115eff] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
                   >
-                    <FileText className="w-3.5 h-3.5 text-current shrink-0" />
+                    <FileText className="size-4 text-current shrink-0" />
                     <span>{ctaLabel}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-current shrink-0" />
+                    <ArrowUpRight className="size-4 text-current shrink-0" />
                   </a>
                 )}
               </div>
@@ -977,7 +975,7 @@ export function Header() {
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] border border-slate-200 hover:border-blue-200 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] border border-blue-100/90 hover:border-blue-300 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
                 >
                   <User className="w-4 h-4 text-current shrink-0" />
                   <span>
@@ -1004,14 +1002,14 @@ export function Header() {
                 <div className="grid grid-cols-2 gap-2.5 pt-1 text-xs sm:text-sm">
                   <a
                     href={`tel:${CONFERENCE_INFO.hotlineRaw}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-blue-100/90 hover:border-blue-300 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
                   >
                     <Phone className="w-4 h-4 text-current shrink-0" />
                     <span className="truncate">Hotline</span>
                   </a>
                   <a
                     href={`mailto:${email}`}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-slate-200 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
+                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm bg-white border border-blue-100/90 hover:border-blue-300 text-[#004776] hover:text-[#115eff] font-semibold transition-colors"
                   >
                     <Mail className="w-4 h-4 text-current shrink-0" />
                     <span className="truncate">Email Us</span>
@@ -1026,8 +1024,8 @@ export function Header() {
       {/* ── Search Modal (Rounded-2xl with Rounded-full Input & Quick Filter Pills) ── */}
       {searchOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-start justify-center pt-20 sm:pt-24 px-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-blue-100/90 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-blue-100/70">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
                   <Search className="w-4 h-4 text-[#115eff]" />
@@ -1064,7 +1062,7 @@ export function Header() {
                     router.push(`/#tracks`);
                   }
                 }}
-                className="w-full pl-11 pr-4 py-3.5 border border-slate-200 rounded-full text-base focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 transition-all text-slate-900 placeholder:text-slate-400"
+                className="w-full pl-11 pr-4 py-3.5 border border-blue-100/90 rounded-full text-base focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 transition-all text-slate-900 placeholder:text-slate-400"
                 autoFocus
               />
             </div>

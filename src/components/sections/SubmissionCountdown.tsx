@@ -58,11 +58,11 @@ export function SubmissionCountdown({
               />
             </div>
             <div className="space-y-2 text-left min-w-0">
-              <h2 className="font-black tracking-tight leading-tight">
-                <span className="block text-xl sm:text-2xl lg:text-3xl text-slate-900">
+              <h2 className="font-bold tracking-tight leading-tight">
+                <span className="block text-lg sm:text-xl lg:text-2xl text-[#004776]">
                   {title}
                 </span>
-                <span className="block text-2xl sm:text-3xl lg:text-4xl text-[#115eff] mt-0.5">
+                <span className="block text-xl sm:text-2xl lg:text-3xl text-[#115eff] mt-0.5">
                   {deadlineText}
                 </span>
               </h2>
@@ -100,10 +100,10 @@ export function SubmissionCountdown({
           </div>
 
           {/* Right Group: Action Buttons */}
-          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-start lg:justify-end">
+          <div className="flex flex-wrap items-center gap-3 shrink-0 w-full sm:w-auto justify-start lg:justify-end">
             <a
               href="#cfp"
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-sm hover:shadow-md group whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 sm:py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-sm hover:shadow-md group whitespace-nowrap"
             >
               <span>Author Guidelines</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -113,7 +113,7 @@ export function SubmissionCountdown({
               href={CONFERENCE_INFO.cfpPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-slate-200 font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-blue-100/90 hover:border-blue-300 font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
             >
               <FileDown className="w-4 h-4" />
               <span>CFP (PDF)</span>

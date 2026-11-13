@@ -44,15 +44,13 @@ interface CommitteesSectionProps {
 }
 
 // Responsive card widths (content box width)
-// Sized so that 5 cards (5 * 215 + 4 * 16 = 1139px) fit comfortably within the site width without overflow
 const CARD_WIDTH_CLASSES =
-  "w-[150px] sm:w-[170px] md:w-[190px] lg:w-[205px] xl:w-[215px]";
+  "w-[168px] sm:w-[190px] md:w-[210px] lg:w-[225px] xl:w-[240px]";
 
 // Direct flex-basis for CarouselItem slides (matching CARD_WIDTH + CarouselItem pl-3/pl-4 gutter)
 // pl-3 is 12px (mobile), pl-4 is 16px (sm and above)
-// 150 + 12 = 162px; 170 + 16 = 186px; 190 + 16 = 206px; 205 + 16 = 221px; 215 + 16 = 231px
 const SLIDE_BASIS_CLASSES =
-  "basis-[162px] sm:basis-[186px] md:basis-[206px] lg:basis-[221px] xl:basis-[231px]";
+  "basis-[180px] sm:basis-[206px] md:basis-[226px] lg:basis-[241px] xl:basis-[256px]";
 
 // Static card dimensions for non-overflowing views
 const CARD_STATIC_CLASSES = cn(
@@ -87,9 +85,9 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
   return (
     <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
       {/* The Card Box */}
-      <div className="relative rounded-sm bg-white border border-slate-200 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
-        {/* Top: Image Canvas with Slate/White Background (Hover: Solid Primary Blue #115eff) */}
-        <div className="relative w-full aspect-[3/4] bg-slate-50/70 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0 pointer-events-none select-none">
+      <div className="relative rounded-sm bg-white border border-blue-100/90 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
+        {/* Top: Image Canvas with Soft Blue-White Background (Hover: Solid Primary Blue #115eff) */}
+        <div className="relative w-full aspect-[3/4] bg-blue-50/35 group-hover/card:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0 pointer-events-none select-none">
           {/* Clipped background elements (dots only) behind the cutout */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Blue Dot Pattern */}
@@ -139,24 +137,24 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
         </div>
 
         {/* Bottom Details Section: Consistent vertical height across all cards */}
-        <div className="relative z-20 w-full p-2.5 sm:p-3 md:p-3.5 bg-white group-hover/card:bg-[#115eff] border-t border-slate-200 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[105px] sm:min-h-[115px] md:min-h-[120px]">
+        <div className="relative z-20 w-full p-3 sm:p-3.5 md:p-4 bg-white group-hover/card:bg-[#115eff] border-t border-blue-100/85 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[112px] sm:min-h-[120px]">
           <div className="relative z-10">
-            <span className="inline-block text-[10px] sm:text-xs font-bold text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
+            <span className="inline-block text-xs font-bold text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
               {member.role || "Committee Member"}
             </span>
-            <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
+            <h4 className="text-sm sm:text-[15px] font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
               {name}
             </h4>
-            <p className="text-[11px] sm:text-xs text-slate-500 group-hover/card:!text-white/80 mt-0.5 font-normal leading-snug transition-colors duration-300 line-clamp-1">
+            <p className="text-xs text-slate-600 group-hover/card:!text-white/85 mt-0.5 font-normal leading-snug transition-colors duration-300 line-clamp-1">
               {member.affiliation || "\u00A0"}
             </p>
           </div>
 
-          <div className="mt-2 sm:mt-2.5 pt-2 border-t border-slate-100 group-hover/card:border-white/20 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 group-hover/card:text-white/80 transition-colors duration-300 gap-1">
-            <span className="font-semibold text-slate-700 group-hover/card:text-white truncate">
+          <div className="mt-2 sm:mt-2.5 pt-2 border-t border-blue-50 group-hover/card:border-white/20 flex items-center justify-between text-xs text-slate-600 group-hover/card:text-white/85 transition-colors duration-300 gap-1">
+            <span className="font-semibold text-[#004776] group-hover/card:text-white truncate">
               {member.country || "Vietnam"}
             </span>
-            <span className="text-[#004776] group-hover/card:text-white/80 text-[10px] font-semibold shrink-0">
+            <span className="text-[#004776]/75 group-hover/card:text-white/85 text-xs font-semibold shrink-0">
               IEEE SMC
             </span>
           </div>
@@ -309,7 +307,7 @@ function CommitteeGroupCarousel({
 
       const w = window.innerWidth;
       const cardWidth =
-        w < 640 ? 150 : w < 768 ? 170 : w < 1024 ? 190 : w < 1280 ? 205 : 215;
+        w < 640 ? 168 : w < 768 ? 190 : w < 1024 ? 210 : w < 1280 ? 225 : 240;
       const gap = w < 640 ? 12 : 16;
       const totalRequiredWidth =
         memberCount * cardWidth + (memberCount - 1) * gap;
@@ -376,7 +374,7 @@ function CommitteeGroupCarousel({
       {/* Row Container */}
       <div ref={containerRef} className="relative w-full">
         {memberCount === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200/85 bg-slate-50/70 p-6 sm:p-8 text-center">
+          <div className="rounded-xl border border-dashed border-blue-200/80 bg-blue-50/35 p-6 sm:p-8 text-center">
             <p className="text-sm font-semibold text-slate-600">
               No committee members in &ldquo;{groupName}&rdquo; yet.
             </p>
@@ -447,16 +445,16 @@ export function CommitteesSection({
   return (
     <SectionContainer id="committees" fullWidthBg="bg-white">
       {/* 1. Page / Section Header */}
-      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-8 w-full border-b border-slate-200">
+      <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-8 w-full border-b border-blue-100/85">
         <div className="corner-dot-tr opacity-70 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2]">
             <span className="block text-[#004776]">{title}</span>
             <span className="block text-[#115eff]">& Leadership</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium max-w-3xl leading-relaxed">
             {subtitle}
           </p>
         </div>

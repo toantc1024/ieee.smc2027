@@ -105,11 +105,11 @@ export function PixelUnitInput({
         )}
       </div>
 
-      <div className="flex items-center h-10 rounded-lg border border-slate-200/85 bg-white focus-within:border-[#115eff] focus-within:ring-2 focus-within:ring-[#115eff]/15 overflow-hidden">
+      <div className="flex items-center h-10 rounded-lg border border-blue-100/90 bg-white focus-within:border-[#115eff] focus-within:ring-2 focus-within:ring-[#115eff]/15 overflow-hidden">
         <button
           type="button"
           onClick={() => handleStep(-step)}
-          className="h-full px-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0 border-r border-slate-200/75"
+          className="h-full px-2.5 text-slate-600 hover:text-[#004776] hover:bg-blue-50/60 transition-colors cursor-pointer shrink-0 border-r border-blue-100/80"
           aria-label={`Decrease ${label}`}
         >
           <Minus className="w-3.5 h-3.5" />
@@ -129,14 +129,14 @@ export function PixelUnitInput({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="h-full px-2.5 text-xs font-bold text-slate-700 hover:text-[#004776] hover:bg-slate-100 flex items-center gap-1 border-l border-slate-200/75 transition-colors cursor-pointer shrink-0"
+              className="h-full px-2.5 text-xs font-bold text-slate-700 hover:text-[#004776] hover:bg-blue-50/60 flex items-center gap-1 border-l border-blue-100/80 transition-colors cursor-pointer shrink-0"
               aria-label={`${label} presets`}
             >
               <span>px</span>
               <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-56 p-2.5 space-y-2">
+          <PopoverContent align="end" className="w-56 p-2.5 space-y-2 border-blue-100/90">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-900">{label}</span>
               <button
@@ -165,7 +165,7 @@ export function PixelUnitInput({
                       "h-7 rounded-md text-xs font-bold border transition-colors cursor-pointer",
                       active
                         ? "bg-[#115eff] text-white border-[#115eff] shadow-xs"
-                        : "bg-white text-slate-800 border-slate-200/85 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
+                        : "bg-white text-slate-800 border-blue-100/90 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
                     )}
                   >
                     {preset}
@@ -174,7 +174,7 @@ export function PixelUnitInput({
               })}
             </div>
             {allowNegative && (
-              <div className="pt-1.5 border-t border-slate-200/75 space-y-1">
+              <div className="pt-1.5 border-t border-blue-100/80 space-y-1">
                 <span className="text-xs font-bold text-slate-600 block">Negative Offset</span>
                 <div className="grid grid-cols-4 gap-1">
                   {NEGATIVE_PRESETS.map((preset) => {
@@ -191,7 +191,7 @@ export function PixelUnitInput({
                           "h-7 rounded-md text-xs font-bold border transition-colors cursor-pointer",
                           active
                             ? "bg-[#115eff] text-white border-[#115eff] shadow-xs"
-                            : "bg-white text-slate-800 border-slate-200/85 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
+                            : "bg-white text-slate-800 border-blue-100/90 hover:border-blue-400 hover:text-[#115eff] hover:bg-blue-50/40"
                         )}
                       >
                         {preset}

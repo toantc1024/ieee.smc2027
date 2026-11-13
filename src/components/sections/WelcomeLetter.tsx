@@ -77,7 +77,7 @@ export function WelcomeLetter({
 
         <div className="space-y-3 w-full relative z-10">
           {/* Big Bold 2-Line Headline matching HCMUTE signature style */}
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
             {heading ? <span className="block text-[#004776]">{heading}</span> : <><span className="block text-[#004776]">
               Join us at the {conferenceName}
             </span>
@@ -87,7 +87,7 @@ export function WelcomeLetter({
           </h2>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+          <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
             {title}
           </p>
           {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
@@ -137,10 +137,10 @@ export function WelcomeLetter({
                 {chairs.map((chair) => (
                   <div key={chair.name} className="group relative flex flex-col">
                     {/* The Card Box - Clean overflow-hidden container */}
-                    <div className="relative rounded-sm bg-white border border-slate-200 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
+                    <div className="relative rounded-sm bg-white border border-blue-100/90 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
                       
-                      {/* Top: Image Canvas with White Background (Hover: Solid Primary Blue) */}
-                      <div className="relative w-full h-64 sm:h-72 bg-slate-50/70 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
+                      {/* Top: Image Canvas with Soft Blue-White Background (Hover: Solid Primary Blue) */}
+                      <div className="relative w-full h-64 sm:h-72 bg-blue-50/35 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
                         {/* Clipped background elements (dots only) behind the cutout */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                           {/* Blue Dot Pattern */}
@@ -176,12 +176,12 @@ export function WelcomeLetter({
                       </div>
 
                       {/* Bottom Details Section - Center Aligned */}
-                      <div className="relative z-20 w-full p-4 sm:p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
+                      <div className="relative z-20 w-full p-4 sm:p-5 bg-white group-hover:bg-[#115eff] border-t border-blue-100/85 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
                         <div className="relative z-10 flex flex-col items-center text-center">
-                          <span className="inline-block text-[11px] sm:text-xs font-bold mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
+                          <span className="inline-block text-xs font-bold mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
                             {chair.role}
                           </span>
-                          <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
+                          <h4 className="text-base sm:text-[17px] font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">
                             {chair.name}
                           </h4>
                           <p className="text-xs sm:text-sm text-[#004776]/80 group-hover:!text-white/90 mt-1 font-medium leading-relaxed transition-colors duration-300">

@@ -84,7 +84,7 @@ function SponsorLogoBadge({ type }: { type: SponsorItem["logoType"] }) {
   }
 
   return (
-    <div className="w-12 h-12 rounded-[0.26rem] bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700 mb-3 group-hover:border-[#115eff] group-hover:text-[#115eff] transition-colors">
+    <div className="w-12 h-12 rounded-[0.26rem] bg-blue-50/70 border border-blue-100/90 flex items-center justify-center text-[#004776] mb-3 group-hover:border-[#115eff] group-hover:text-[#115eff] transition-colors">
       <Building2 className="w-6 h-6" />
     </div>
   );
@@ -111,7 +111,7 @@ export function Sponsors({
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2] w-full">
               {title === "Sponsors & Partners & Supporting Societies" ? (
                 <>
                   <span className="block text-[#004776]">Sponsors & Partners</span>
@@ -126,15 +126,14 @@ export function Sponsors({
                 <span className="block text-[#004776]">{title}</span>
               )}
             </h2>
-            <p className="text-base sm:text-lg text-[#004776]/80 font-medium">
+            <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium">
               {subtitle}
             </p>
           </div>
         
-        {/* Customized Taller Button with 25% Larger Text */}
         <a
           href={`mailto:${CONFERENCE_INFO.contactEmail}`}
-          className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-7 py-3.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-base rounded-sm transition-all shadow-sm hover:shadow-md"
+          className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-all shadow-sm hover:shadow-md self-start md:self-auto"
         >
           <span>Download Sponsorship Prospectus</span>
           <ArrowUpRight className="w-4 h-4" />
@@ -145,29 +144,29 @@ export function Sponsors({
       {/* Sponsors Grid: Content aligned with header */}
       <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {/* Official Society Co-Sponsorship Banner Lockup */}
-        <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-sm flex flex-col items-center justify-center text-center">
-          <span className="text-xs sm:text-sm font-bold text-slate-500 mb-4">
-            Official Technical Co-Sponsorship & Society Society Affiliation
+        <div className="w-full p-5 sm:p-8 bg-blue-50/40 border border-blue-100/90 rounded-sm flex flex-col items-center justify-center text-center">
+          <span className="text-xs sm:text-sm font-bold text-[#004776]/75 mb-4">
+            Official Technical Co-Sponsorship & Society Affiliation
           </span>
           <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {sponsors.map((s, index) => (
             <div
               key={index}
-              className="p-5 bg-slate-50/70 border border-slate-200 rounded-sm text-center flex flex-col items-center justify-between min-h-[168px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
+              className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
             >
               {s.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={s.logo} alt={s.name} className="mb-3 h-12 w-full object-contain" />
               ) : <SponsorLogoBadge type={s.logoType} />}
               
-              <div className="w-full">
-                <div className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#115eff] transition-colors leading-snug">
+              <div className="w-full pt-2 border-t border-blue-50">
+                <div className="text-sm sm:text-base font-bold text-[#004776] group-hover:text-[#115eff] transition-colors leading-snug">
                   {s.shortName}
                 </div>
-                <div className="mt-1 text-xs sm:text-sm text-slate-500 font-medium line-clamp-2">
+                <div className="mt-1 text-xs text-slate-600 font-medium line-clamp-2">
                   {s.type}
                 </div>
               </div>
