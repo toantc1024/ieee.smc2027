@@ -91,7 +91,7 @@ export function ScheduleTimelineSection({
     <SectionContainer id="schedule" fullWidthBg="bg-slate-50">
       <div className="px-4 sm:px-6 pt-10 sm:pt-14 pb-6 w-full">
         <div className="space-y-3 max-w-4xl">
-          <h2 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
             {title}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 font-medium">
@@ -127,7 +127,7 @@ export function ScheduleTimelineSection({
         {/* Active Day Overview Banner */}
         <div className="mt-6 p-4 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-xs">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+            <span className="text-xs font-bold text-blue-600">
               {activeDay.dateStr}
             </span>
             <h3 className="text-lg font-bold text-slate-900">{activeDay.theme}</h3>

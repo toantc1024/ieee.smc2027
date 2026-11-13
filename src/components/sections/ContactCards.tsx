@@ -51,7 +51,7 @@ export function ContactCards({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             <span className="block text-[#004776]">{title}</span>
             <span className="block text-[#115eff]">& Get in Touch</span>
           </h2>
@@ -96,7 +96,7 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   E-mail
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">
@@ -179,7 +179,7 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   Location
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">
@@ -269,7 +269,7 @@ export function ContactCards({
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
+                <div className="text-xs sm:text-sm font-bold text-slate-400 group-hover:!text-blue-100 mb-1.5 transition-colors duration-300">
                   Website & Hotline
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:!text-white mb-2 leading-snug transition-colors duration-300">

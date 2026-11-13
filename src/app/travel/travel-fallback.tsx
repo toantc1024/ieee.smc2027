@@ -58,7 +58,7 @@ export function TravelFallbackView() {
               <span>Back to Home</span>
             </Link>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2]">
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2]">
               <span className="block text-[#004776]">Travel &amp; Accommodation</span>
               <span className="block text-[#115eff]">&amp; Ho Chi Minh City Guide</span>
             </h1>
@@ -92,7 +92,7 @@ export function TravelFallbackView() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                     Sheraton Saigon Grand Opera Hotel
                   </h2>
-                  <p className="mt-1 text-xs font-semibold text-[#115eff] uppercase tracking-wider">
+                  <p className="mt-1 text-xs font-semibold text-[#115eff]">
                     Official Conference Venue &amp; Headquarters
                   </p>
 

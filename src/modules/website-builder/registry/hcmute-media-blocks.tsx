@@ -123,7 +123,7 @@ export function VideoPlayer({
     return (
       <div
         className={cn(
-          "w-full flex flex-col items-center justify-center p-12 bg-slate-900/10 dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 text-muted-foreground text-xs gap-2 min-h-[220px]",
+          "w-full flex flex-col items-center justify-center p-12 bg-slate-900/10 dark:bg-slate-900 border border-dashed border-slate-200/85 dark:border-slate-800 text-muted-foreground text-xs gap-2 min-h-[220px]",
           aspectClass,
           rounded,
           className,

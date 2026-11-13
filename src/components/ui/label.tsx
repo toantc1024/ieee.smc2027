@@ -9,7 +9,7 @@ export function Label({
     <label
       data-slot="label"
       className={cn(
-        "text-xs font-bold uppercase tracking-wider text-slate-500 select-none",
+        "text-sm font-semibold text-slate-700 select-none",
         className
       )}
       {...props}

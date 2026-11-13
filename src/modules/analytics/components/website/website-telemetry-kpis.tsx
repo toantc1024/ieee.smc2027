@@ -121,7 +121,7 @@ export function WebsiteTelemetryKpis({
       <div className="flex items-center justify-between p-3.5 rounded-2xl bg-card border border-border/70 shadow-2xs">
         <div className="flex items-center gap-2.5">
           <span className="size-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             Live Active Visitors:
           </span>
           <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-lg border border-blue-500/20 tabular-nums">

@@ -6,7 +6,7 @@ import { Layers } from "lucide-react";
 import { getBlockDefinition } from "../../registry";
 import { useBuilderStore } from "../../store/builder-store";
 import { resolveCanvasDrop } from "../../utils/canvas-drop";
-import { COLUMN_SLOT_KEYS, type ColumnSlotKey } from "../../utils/block-tree";
+import { COLUMN_SLOT_KEYS, findBlock, type ColumnSlotKey } from "../../utils/block-tree";
 
 const collisionDetection: CollisionDetection = (args) => {
   const pointer = pointerWithin(args);
@@ -18,16 +18,27 @@ const collisionDetection: CollisionDetection = (args) => {
 
 export function BuilderDndContext({ children }: { children: React.ReactNode }) {
   const [paletteType, setPaletteType] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
-  const definition = paletteType ? getBlockDefinition(paletteType) : undefined;
+  const activeCanvasBlock = !paletteType && activeId
+    ? findBlock(useBuilderStore.getState().data.content, activeId)
+    : undefined;
+  const activeType = paletteType || activeCanvasBlock?.type || null;
+  const definition = activeType ? getBlockDefinition(activeType) : undefined;
   const Icon = definition?.icon || Layers;
 
   function onDragStart(event: DragStartEvent) {
+    setActiveId(String(event.active.id));
     setPaletteType(event.active.data.current?.isPalette ? event.active.data.current.type : null);
   }
 
-  function onDragEnd({ active, over }: DragEndEvent) {
+  function clearDragState() {
     setPaletteType(null);
+    setActiveId(null);
+  }
+
+  function onDragEnd({ active, over }: DragEndEvent) {
+    clearDragState();
     if (!over) return;
     const { data, insertBlockAt, moveBlock, insertIntoColumn, moveIntoColumn, insertIntoContainer, moveIntoContainer, moveToRoot } = useBuilderStore.getState();
     const isPalette = Boolean(active.data.current?.isPalette);
@@ -62,8 +73,26 @@ export function BuilderDndContext({ children }: { children: React.ReactNode }) {
     moveBlock(drop.from, drop.to);
   }
 
-  return <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={onDragStart} onDragCancel={() => setPaletteType(null)} onDragEnd={onDragEnd}>
-    {children}
-    <DragOverlay dropAnimation={null}>{definition && <div className="flex w-60 items-center gap-3 rounded-xl border border-blue-400 bg-white p-3 text-xs font-bold text-slate-800 shadow-xl"><span className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600"><Icon className="size-4" /></span>{definition.label}</div>}</DragOverlay>
-  </DndContext>;
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={collisionDetection}
+      autoScroll={{ enabled: true, threshold: { x: 0.2, y: 0.2 }, acceleration: 14 }}
+      onDragStart={onDragStart}
+      onDragCancel={clearDragState}
+      onDragEnd={onDragEnd}
+    >
+      {children}
+      <DragOverlay dropAnimation={null}>
+        {definition && (
+          <div className="flex w-60 items-center gap-3 rounded-xl border border-blue-400/80 bg-white p-3 text-xs font-bold text-slate-800 shadow-xl">
+            <span className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <Icon className="size-4" />
+            </span>
+            <span className="truncate">{definition.label}</span>
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
+  );
 }

@@ -270,14 +270,14 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-2 mb-4">
             <Link
               href="/#news"
-              className="inline-flex items-center px-3 py-1 rounded-sm text-xs font-semibold uppercase tracking-wider text-white bg-primary hover:bg-primary/90 shadow-xs transition-colors"
+              className="inline-flex items-center px-3 py-1 rounded-sm text-xs font-semibold text-white bg-primary hover:bg-primary/90 shadow-xs transition-colors"
             >
               {post.category}
             </Link>
           </div>
 
           {/* Title - Full Width */}
-          <h1 className="w-full text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-[#004776] leading-tight mb-6">
+          <h1 className="w-full text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#004776] leading-tight mb-6">
             {post.title}
           </h1>
 
@@ -356,8 +356,8 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
             />
 
             {/* Article Subject Tags */}
-            <div className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase mr-2">
+            <div className="pt-6 border-t border-slate-200/75 flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mr-2">
                 <Tag className="size-3.5 text-primary" />
                 <span>Tags:</span>
               </div>
@@ -422,11 +422,11 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           <div className="rounded-sm border border-slate-200/90 bg-white p-6 shadow-2xs flex flex-col justify-between gap-5">
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="text-base sm:text-lg font-bold text-[#004776] uppercase tracking-wide flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#004776] flex items-center gap-2">
                   <Calendar className="size-4 text-primary" />
                   <span>Important Dates</span>
                 </h3>
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-0.5 rounded-sm border border-primary/20">
+                <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-0.5 rounded-sm border border-primary/20">
                   2027
                 </span>
               </div>
@@ -487,7 +487,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           <div className="rounded-sm border border-slate-200/90 bg-white p-6 shadow-2xs flex flex-col justify-between gap-5">
             <div className="space-y-4">
               <div className="border-b border-slate-100 pb-3">
-                <h3 className="text-base sm:text-lg font-bold text-[#004776] uppercase tracking-wide flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#004776] flex items-center gap-2">
                   <Download className="size-4 text-primary" />
                   <span>Conference Resources</span>
                 </h3>
@@ -559,7 +559,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
           <section className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight uppercase">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight">
                   More Announcements &amp; Updates
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 mt-0.5 font-normal">

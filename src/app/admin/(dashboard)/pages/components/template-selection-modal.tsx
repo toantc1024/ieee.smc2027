@@ -221,7 +221,7 @@ export function TemplateSelectionModal({
 
         <div className="flex-1 overflow-y-auto py-5 space-y-6">
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+            <h4 className="text-xs font-semibold text-slate-400 mb-3">
               Conference Presets
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -271,8 +271,8 @@ export function TemplateSelectionModal({
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/75 space-y-4">
+            <h4 className="text-xs font-semibold text-slate-500">
               Page Details
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -70,7 +70,7 @@ export function TimelineMilestonesBlock({
             <Clock className="size-3.5" />
             <span>Milestones</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (

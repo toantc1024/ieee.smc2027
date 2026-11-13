@@ -214,7 +214,7 @@ export function ImageBlockView({
                 onChange={(e) =>
                   updateAttributes({ rounded: e.target.checked })
                 }
-                className="rounded border-slate-300"
+                className="rounded border-slate-200/85"
               />
               <span>Rounded corners</span>
             </label>

@@ -239,7 +239,7 @@ function DataSheetBlockRender({
                   {headerList.map((col, idx) => (
                     <th
                       key={idx}
-                      className="py-3 px-4 font-semibold text-xs sm:text-sm uppercase tracking-wider border-r border-white/15 last:border-r-0"
+                      className="py-3 px-4 font-semibold text-xs sm:text-sm border-r border-white/15 last:border-r-0"
                     >
                       {col}
                     </th>

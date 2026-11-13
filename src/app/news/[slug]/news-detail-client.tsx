@@ -367,7 +367,7 @@ export function NewsDetailShareBar({ title, slug, summary }: NewsDetailClientPro
 
       {/* Share Buttons Group */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-bold text-[#004776] uppercase tracking-wider mr-1 hidden md:inline">
+        <span className="text-xs font-bold text-[#004776] mr-1 hidden md:inline">
           Share:
         </span>
 

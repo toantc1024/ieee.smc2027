@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Loader2,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -100,9 +101,23 @@ export function MediaFileGrid({
       </div>
 
       {loading ? (
-        <div className="py-16 flex flex-col items-center justify-center text-slate-400 gap-2">
-          <Loader2 className="size-7 animate-spin text-[#115eff]" />
-          <span className="text-xs font-medium">Loading media catalog...</span>
+        <div
+          role="status"
+          aria-label="Loading media catalog"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 py-4"
+        >
+          {Array.from({ length: 10 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="rounded-xl border border-slate-200/75 bg-white overflow-hidden"
+            >
+              <Skeleton className="aspect-square w-full rounded-none" />
+              <div className="p-2.5 space-y-2">
+                <Skeleton className="h-3.5 w-4/5" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : files.length === 0 ? (
         <div className="py-16 text-center space-y-3">
@@ -141,7 +156,7 @@ export function MediaFileGrid({
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 text-[#115eff]">
                       <FileText className="size-10" />
-                      <span className="text-[10px] font-bold uppercase">
+                      <span className="text-[10px] font-bold">
                         {item.mimeType}
                       </span>
                     </div>

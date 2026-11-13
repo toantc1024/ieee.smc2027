@@ -21,7 +21,7 @@ export function WorkshopTutorialSection({
     <SectionContainer id="workshops" fullWidthBg="bg-white">
       <div className="px-4 sm:px-6 pt-10 sm:pt-14 pb-8 w-full">
         <div className="space-y-3 max-w-4xl">
-          <h2 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
             {title}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 font-medium">

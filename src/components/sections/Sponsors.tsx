@@ -111,7 +111,7 @@ export function Sponsors({
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
               {title === "Sponsors & Partners & Supporting Societies" ? (
                 <>
                   <span className="block text-[#004776]">Sponsors & Partners</span>
@@ -146,7 +146,7 @@ export function Sponsors({
       <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {/* Official Society Co-Sponsorship Banner Lockup */}
         <div className="w-full p-6 sm:p-8 bg-slate-50/70 border border-slate-200 rounded-sm flex flex-col items-center justify-center text-center">
-          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
+          <span className="text-xs sm:text-sm font-bold text-slate-500 mb-4">
             Official Technical Co-Sponsorship & Society Society Affiliation
           </span>
           <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />

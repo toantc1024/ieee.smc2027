@@ -18,7 +18,7 @@ export function Committee() {
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             <span className="block text-[#004776]">Organizing Committee</span>
             <span className="block text-[#115eff]">& Leadership</span>
           </h2>

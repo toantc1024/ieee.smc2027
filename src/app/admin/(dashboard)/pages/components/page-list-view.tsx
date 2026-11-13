@@ -322,7 +322,7 @@ export function PageListView() {
               /{node.slug}
             </span>
             {isHome && (
-              <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 shrink-0">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 shrink-0">
                 Home
               </span>
             )}
@@ -628,7 +628,7 @@ export function PageListView() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <thead className="bg-slate-50 border-b border-slate-200/75 text-xs font-semibold text-slate-500">
                 <tr>
                   <th className="py-3 px-4 w-10">
                     <input
@@ -638,7 +638,7 @@ export function PageListView() {
                         selectedIds.length === filteredPages.length
                       }
                       onChange={handleSelectAll}
-                      className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-200/85 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
                   <th className="py-3 px-4">Page Title & Slug</th>
@@ -671,7 +671,7 @@ export function PageListView() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectPage(page.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="w-4 h-4 rounded border-slate-200/85 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                       </td>
                       <td className="py-3 px-4">
@@ -686,7 +686,7 @@ export function PageListView() {
                             /{page.slug}
                           </span>
                           {isHome && (
-                            <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
                               Home
                             </span>
                           )}

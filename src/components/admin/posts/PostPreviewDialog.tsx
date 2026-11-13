@@ -47,7 +47,7 @@ export function PostPreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto font-sans p-6 sm:p-8">
         <DialogHeader className="pb-3 border-b border-slate-100 flex items-center justify-between">
-          <DialogTitle className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+          <DialogTitle className="text-sm font-semibold text-slate-500 flex items-center gap-2">
             <Eye className="size-4 text-[#115eff]" />
             Post Preview
           </DialogTitle>

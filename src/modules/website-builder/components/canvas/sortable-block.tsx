@@ -73,6 +73,7 @@ export function SortableBlock({
     attributes,
     listeners,
     setNodeRef: setSortableRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -135,13 +136,9 @@ export function SortableBlock({
       data-builder-block={block.id}
       data-builder-state={isSelected ? "selected" : isHovered ? "hovered" : "idle"}
       data-builder-hidden={isHidden ? "true" : "false"}
-      {...attributes}
-      onPointerDown={(event) => {
-        const target = event.target as HTMLElement;
-        if (target.closest("[data-builder-controls], [data-builder-nested], [data-builder-dropzone]")) return;
-        listeners?.onPointerDown?.(event);
-      }}
       onClick={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest("[data-builder-controls], [data-builder-nested]")) return;
         e.stopPropagation();
         selectBlock(block.id);
       }}
@@ -153,7 +150,7 @@ export function SortableBlock({
       }}
       onMouseLeave={() => { if (useBuilderStore.getState().hoveredBlockId === block.id) hoverBlock(null); }}
       className={cn(
-        "relative group select-none font-sans w-full cursor-grab active:cursor-grabbing touch-none"
+        "relative group select-none font-sans w-full"
       )}
     >
       {/* Top half droppable seam detector (only intercepts pointer when dragging) */}
@@ -213,6 +210,7 @@ export function SortableBlock({
         >
           {/* Drag Grip Handle + Block Name */}
           <div
+            ref={setActivatorNodeRef}
             {...attributes}
             {...listeners}
             className="flex items-center gap-2 px-1.5 py-1 text-white font-bold select-none shrink-0 cursor-grab active:cursor-grabbing touch-none"
@@ -352,9 +350,18 @@ export function SortableBlock({
 
       {/* Render Component Body */}
       <div
+        onClickCapture={(e) => {
+          const target = e.target as HTMLElement;
+          if (!target.closest("[data-builder-nested], [data-builder-controls]") && selectedBlockId !== block.id) {
+            selectBlock(block.id);
+          }
+          if (target.closest("a[href]")) {
+            e.preventDefault();
+          }
+        }}
+        onSubmitCapture={(e) => e.preventDefault()}
         className={cn(
           "min-h-[48px] w-full flex flex-col justify-center",
-          block.type !== "ColumnsSlot" && block.type !== "Container" && "pointer-events-none",
           presentation.className
         )}
         style={presentation.style}

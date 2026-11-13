@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   Lock,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface OAuthSettings {
   clientId: string;
@@ -145,6 +146,38 @@ export default function AdminOAuthPage() {
     (origin) => `${origin.replace(/\/$/, "")}/api/auth/callback/google`
   );
 
+  if (loading) {
+    return (
+      <div
+        role="status"
+        aria-label="Loading OAuth settings"
+        className="space-y-8 max-w-5xl mx-auto pb-12 font-sans"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/75">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-80 max-w-full" />
+          </div>
+          <Skeleton className="h-9 w-36 rounded-lg" />
+        </div>
+        <div className="rounded-xl border border-slate-200/75 bg-white p-6 space-y-4">
+          <Skeleton className="h-5 w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-11 w-full rounded-lg" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <Skeleton className="h-11 w-full rounded-lg" />
+        </div>
+        <div className="rounded-xl border border-slate-200/75 bg-white p-6 space-y-3">
+          <Skeleton className="h-5 w-52" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-5/6 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12 font-sans">
       {/* 1. Header Banner */}
@@ -183,7 +216,7 @@ export default function AdminOAuthPage() {
       <div className="relative overflow-hidden rounded-xl bg-slate-900 text-white p-5 sm:p-6 shadow-xs border border-slate-800">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-bold tracking-wide uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-bold">
               <Bot className="w-4 h-4 text-amber-300" />
               <span>Autonomous Agent Ready</span>
             </div>
@@ -219,7 +252,7 @@ export default function AdminOAuthPage() {
                   Authorized JavaScript Origins
                 </h3>
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-bold text-slate-400">
                 Browser
               </span>
             </div>
@@ -293,7 +326,7 @@ export default function AdminOAuthPage() {
                   Authorized Redirect URIs
                 </h3>
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-bold text-slate-400">
                 Web Server
               </span>
             </div>
@@ -400,7 +433,7 @@ export default function AdminOAuthPage() {
         <form onSubmit={handleSave} className="space-y-6">
           {/* Client ID */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+            <label className="block text-xs font-bold text-slate-700">
               Google Client ID
             </label>
             <div className="relative">
@@ -434,7 +467,7 @@ export default function AdminOAuthPage() {
           {/* Client Secret */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-bold text-slate-700">
                 Google Client Secret
               </label>
               {hasSecret && (
@@ -470,7 +503,7 @@ export default function AdminOAuthPage() {
 
           {/* App URL */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+            <label className="block text-xs font-bold text-slate-700">
               Application Public URL
             </label>
             <input

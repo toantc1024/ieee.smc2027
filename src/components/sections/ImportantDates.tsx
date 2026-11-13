@@ -100,7 +100,7 @@ export function ImportantDates({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 relative z-10 w-full">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">
@@ -124,9 +124,9 @@ export function ImportantDates({
 
       {/* Simple Full-Width Block */}
       <div className="px-4 sm:px-6 pb-12 sm:pb-16 w-full">
-        <div className="w-full bg-white border border-slate-300 rounded-[var(--radius)] overflow-hidden shadow-2xs">
+        <div className="w-full bg-white border border-slate-200/85 rounded-[var(--radius)] overflow-hidden shadow-2xs">
           {/* Table Header: Ensures deadlines align in one dedicated column */}
-          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 bg-slate-100/90 font-extrabold text-base sm:text-lg lg:text-xl uppercase tracking-wider text-[#004776] border-b-2 border-slate-300">
+          <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 bg-slate-100/90 font-extrabold text-base sm:text-lg lg:text-xl text-[#004776] border-b-2 border-slate-200/85">
             <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2.5">
               <span>Milestone / Event</span>
             </div>
@@ -170,7 +170,7 @@ export function ImportantDates({
                     {/* Deadline Column: Perfectly aligned into one single column */}
                     <div className="sm:col-span-5 lg:col-span-4 flex flex-wrap items-center gap-2 sm:gap-3">
                       <span
-                        className={`text-sm sm:text-base font-bold uppercase tracking-wider ${
+                        className={`text-sm sm:text-base font-bold ${
                           isPrimaryRow ? "text-blue-100" : "text-slate-500"
                         }`}
                       >
@@ -206,7 +206,7 @@ export function ImportantDates({
 
                       {item.status && (
                         <span
-                          className={`text-xs font-extrabold px-2.5 py-0.5 sm:py-1 uppercase tracking-wider rounded-[var(--radius-sm)] shadow-2xs ${
+                          className={`text-xs font-extrabold px-2.5 py-0.5 sm:py-1 rounded-[var(--radius-sm)] shadow-2xs ${
                             isPrimaryRow
                               ? item.highlight
                                 ? "bg-amber-300 text-slate-950 font-black"

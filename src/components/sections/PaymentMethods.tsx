@@ -85,7 +85,7 @@ export function PaymentMethods({
         <div className="corner-dot-tr opacity-70 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight leading-[1.15]">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">{title.split("&")[0].trim()} &</span>
@@ -123,7 +123,7 @@ export function PaymentMethods({
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm sm:text-base text-slate-700">
-              <thead className="bg-slate-100/70 text-xs sm:text-sm uppercase tracking-wider font-bold text-[#004776] border-b border-slate-200">
+              <thead className="bg-slate-100/70 text-xs sm:text-sm font-bold text-[#004776] border-b border-slate-200/75">
                 <tr>
                   <th className="py-4 px-4 sm:px-6">Registration Category</th>
                   <th className="py-4 px-4">Early Bird (Before Jul 05)</th>
@@ -143,7 +143,7 @@ export function PaymentMethods({
                     <td className="py-4 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2 text-sm sm:text-base">
                       <span>{rate.category}</span>
                       {rate.popular && (
-                        <span className="px-2 py-0.5 rounded-sm text-xs font-extrabold uppercase bg-[#115eff] text-white">
+                        <span className="px-2 py-0.5 rounded-sm text-xs font-extrabold bg-[#115eff] text-white">
                           Main
                         </span>
                       )}
@@ -180,7 +180,7 @@ export function PaymentMethods({
                 <Building2 className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
                 Domestic (Vietnam)
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">
@@ -252,7 +252,7 @@ export function PaymentMethods({
                 <Globe2 className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
                 International Authors
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">
@@ -314,7 +314,7 @@ export function PaymentMethods({
                 <CreditCard className="w-6 h-6" />
               </div>
 
-              <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <div className="text-xs sm:text-sm font-bold text-slate-400 mb-1.5">
                 Online Portal
               </div>
               <h4 className="text-lg sm:text-xl font-bold text-[#004776] mb-2 leading-snug">

@@ -285,7 +285,7 @@ export function KeynoteSpeakersBlock({
             )}
             <h2
               className={cn(
-                "text-2xl sm:text-3xl lg:text-[2.75rem] uppercase font-bold tracking-tight lg:leading-[1.25]",
+                "text-2xl sm:text-3xl lg:text-[2.75rem] font-bold tracking-tight lg:leading-[1.25]",
                 titleColorClass
               )}
               style={titleInlineStyle}
@@ -402,12 +402,12 @@ export function KeynoteSpeakersBlock({
                       className="relative z-10 space-y-2.5 sm:space-y-3 text-white text-left"
                     >
                       {currentSpeaker.group && (
-                        <span className="inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-white/20 text-white backdrop-blur-xs">
+                        <span className="inline-block px-3 py-1 rounded-md text-xs font-bold bg-white/20 text-white backdrop-blur-xs">
                           {currentSpeaker.group}
                         </span>
                       )}
 
-                      <h3 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white leading-tight uppercase">
+                      <h3 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white leading-tight">
                         {currentSpeaker.name}
                       </h3>
 
@@ -483,12 +483,12 @@ export function KeynoteSpeakersBlock({
                           className="object-contain object-bottom group-hover:scale-105 transition-transform duration-200"
                         />}
                         {speaker.group && (
-                          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-white/90 text-slate-800 backdrop-blur-xs shadow-2xs">
+                          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/90 text-slate-800 backdrop-blur-xs shadow-2xs">
                             {speaker.group}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs font-bold text-foreground dark:text-white line-clamp-1 uppercase">
+                      <p className="text-xs font-bold text-foreground dark:text-white line-clamp-1">
                         {speaker.name}
                       </p>
                       <p className="text-[11px] text-muted-foreground line-clamp-1">
@@ -560,7 +560,7 @@ export function KeynoteSpeakersBlock({
                     {speaker.group && (
                       <div className="absolute top-2.5 left-2.5 z-10">
                         <span className={cn(
-                          "inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide shadow-2xs backdrop-blur-xs",
+                          "inline-block px-2.5 py-1 rounded-md text-[10px] font-bold shadow-2xs backdrop-blur-xs",
                           isPrimaryBg
                             ? "bg-white text-primary"
                             : "bg-white/95 text-primary dark:bg-zinc-900/95 dark:text-blue-300 border border-slate-200/80 dark:border-zinc-700"
@@ -576,7 +576,7 @@ export function KeynoteSpeakersBlock({
                     <div className="relative z-10 space-y-1.5 sm:space-y-2 min-w-0 text-left">
                       {/* Name - font-bold, responsive text size */}
                       <h3 className={cn(
-                        "text-base sm:text-lg lg:text-xl font-bold uppercase leading-snug tracking-tight break-words",
+                        "text-base sm:text-lg lg:text-xl font-bold leading-snug tracking-tight break-words",
                         isPrimaryBg ? "text-white" : "text-slate-900 dark:text-white"
                       )}>
                         {speaker.name}
@@ -629,7 +629,7 @@ export function KeynoteSpeakersBlock({
                             : "bg-slate-100/70 dark:bg-zinc-800/60 border border-slate-200/70 dark:border-zinc-700/60"
                         )}>
                           <span className={cn(
-                            "text-[10px] font-bold uppercase tracking-wider",
+                            "text-[10px] font-bold",
                             isPrimaryBg ? "text-blue-200" : "text-slate-500"
                           )}>
                             {"Keynote topic:"}

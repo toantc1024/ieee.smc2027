@@ -18,10 +18,6 @@ export default function NotFound() {
       <div className="max-w-lg w-full text-center space-y-6 bg-white/90 backdrop-blur-2xl p-8 sm:p-12 rounded-3xl border border-slate-200/90 shadow-2xl shadow-blue-950/5 relative z-10 animate-in fade-in zoom-in-95 duration-200">
         {/* Floating 3D 404 Visual Stage */}
         <div className="relative flex flex-col items-center justify-center pt-2">
-          {/* Decorative Sparkles */}
-          <div className="absolute -top-1 -right-2 text-amber-400 select-none pointer-events-none text-sm animate-pulse">
-            ✦
-          </div>
           <div className="absolute top-1/2 -left-4 text-[#115eff] text-xs select-none pointer-events-none animate-bounce">
             ◆
           </div>
@@ -44,7 +40,7 @@ export default function NotFound() {
 
         {/* 404 Heading & Description */}
         <div className="space-y-2.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[#115eff] text-xs font-extrabold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[#115eff] text-xs font-extrabold">
             <span>Error 404 • Not Found</span>
           </div>
 

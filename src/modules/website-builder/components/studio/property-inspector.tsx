@@ -97,7 +97,7 @@ export function PropertyInspector() {
               "h-8 px-2.5 rounded-md border text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer",
               isHidden
                 ? "border-amber-600 bg-amber-600 text-white"
-                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900"
+                : "border-slate-200/85 bg-white text-slate-700 hover:border-slate-300 hover:text-slate-900"
             )}
             title={isHidden ? "Show section on page" : "Hide section on page"}
           >
@@ -112,7 +112,7 @@ export function PropertyInspector() {
               "h-8 px-2.5 rounded-md border text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer",
               isJsonOpen
                 ? "border-[#115eff] bg-[#115eff] text-white shadow-xs"
-                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900"
+                : "border-slate-200/85 bg-white text-slate-700 hover:border-slate-300 hover:text-slate-900"
             )}
             title="Toggle JSON Data Editor"
           >
@@ -126,7 +126,7 @@ export function PropertyInspector() {
               removeBlock(selectedBlock.id);
               toast.success(`Removed "${def?.label || selectedBlock.type}"`);
             }}
-            className="h-8 w-8 rounded-md border border-slate-300 bg-white text-slate-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 flex items-center justify-center transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-md border border-slate-200/85 bg-white text-slate-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 flex items-center justify-center transition-colors cursor-pointer"
             title="Delete Block"
           >
             <Trash2 className="w-4 h-4" />
@@ -136,7 +136,7 @@ export function PropertyInspector() {
 
       {/* Primary Pill Tabs: Content | Styles without redundant icons */}
       {!isJsonOpen && (
-        <div className="grid grid-cols-2 p-2 border-b border-slate-200 bg-slate-100 gap-2 shrink-0">
+        <div className="grid grid-cols-2 p-2 border-b border-slate-200/75 bg-slate-100 gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setInspectorTab("content")}
@@ -144,7 +144,7 @@ export function PropertyInspector() {
               "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "content"
                 ? "bg-[#115eff] text-white shadow-xs font-bold"
-                : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
+                : "bg-white border border-slate-200/85 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
             Content
@@ -156,7 +156,7 @@ export function PropertyInspector() {
               "h-10 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer",
               inspectorTab === "styles"
                 ? "bg-[#115eff] text-white shadow-xs font-bold"
-                : "bg-white border border-slate-300 text-slate-700 font-bold hover:text-slate-900"
+                : "bg-white border border-slate-200/85 text-slate-700 font-bold hover:text-slate-900"
             )}
           >
             Styles
@@ -233,7 +233,7 @@ function StylesInspectorPanel({
   return (
     <div className="space-y-4 p-4 select-text">
       {/* Visibility & Side Borders */}
-      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-slate-200/85 bg-white p-4">
         <div className="flex items-center justify-between gap-3">
           <Label htmlFor="inspector-visible-switch" className="text-sm font-bold text-slate-900 cursor-pointer">
             Visible on Website
@@ -245,7 +245,7 @@ function StylesInspectorPanel({
           />
         </div>
 
-        <div className="border-t border-slate-200 pt-3 flex items-center justify-between gap-3">
+        <div className="border-t border-slate-200/75 pt-3 flex items-center justify-between gap-3">
           <Label htmlFor="section-side-borders" className="text-sm font-bold text-slate-900 cursor-pointer">
             Hide Side Borders
           </Label>
@@ -260,8 +260,8 @@ function StylesInspectorPanel({
       </div>
 
       {/* Colors & Gradients */}
-      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
-        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+      <div className="space-y-3 rounded-xl border border-slate-200/85 bg-white p-4">
+        <h5 className="text-xs font-bold text-slate-700">
           Colors & Background
         </h5>
 
@@ -288,9 +288,9 @@ function StylesInspectorPanel({
       </div>
 
       {/* Text Alignment */}
-      <div className="space-y-2.5 rounded-xl border border-slate-300 bg-white p-4">
+      <div className="space-y-2.5 rounded-xl border border-slate-200/85 bg-white p-4">
         <div className="flex items-center justify-between">
-          <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+          <h5 className="text-xs font-bold text-slate-700">
             Text Alignment
           </h5>
           {textAlign && (
@@ -303,7 +303,7 @@ function StylesInspectorPanel({
             </button>
           )}
         </div>
-        <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 border border-slate-200">
+        <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 border border-slate-200/75">
           {[
             { value: "left", label: "Left", icon: AlignLeft },
             { value: "center", label: "Center", icon: AlignCenter },
@@ -334,8 +334,8 @@ function StylesInspectorPanel({
       </div>
 
       {/* Spacing Controls */}
-      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4">
-        <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+      <div className="space-y-3 rounded-xl border border-slate-200/85 bg-white p-4">
+        <h5 className="text-xs font-bold text-slate-700">
           Section Spacing
         </h5>
         <div className="grid grid-cols-2 gap-3">
@@ -365,7 +365,7 @@ function StylesInspectorPanel({
       </div>
 
       {/* Custom CSS */}
-      <div className="space-y-2 rounded-xl border border-slate-300 bg-white p-4">
+      <div className="space-y-2 rounded-xl border border-slate-200/85 bg-white p-4">
         <Label htmlFor="custom-css-classes" className="text-sm font-bold text-slate-900">
           Custom CSS Classes
         </Label>
@@ -376,7 +376,7 @@ function StylesInspectorPanel({
             onUpdateStyles({ className: e.target.value, customClass: e.target.value })
           }
           placeholder="py-12 bg-slate-50"
-          className="text-sm font-medium h-10 bg-white border-slate-300"
+          className="text-sm font-medium h-10 bg-white border-slate-200/85"
         />
       </div>
     </div>

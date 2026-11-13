@@ -129,7 +129,7 @@ export function Footer() {
           {/* Top Banner: Host University & CFP Action Bar */}
           <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 border-b border-white/15 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             <div className="lg:col-span-8">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/15 border border-white/25 text-xs font-semibold text-white uppercase tracking-wider mb-2.5 backdrop-blur-xs">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5 backdrop-blur-xs">
                 <span>Flagship Conference</span>
                 <span className="text-white/50">•</span>
                 <span>{CONFERENCE_INFO.dates}</span>
@@ -238,7 +238,7 @@ export function Footer() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
                 {linkGroups.map((group) => (
                   <div key={group.heading}>
-                    <h4 className="text-white font-bold text-sm sm:text-base uppercase tracking-wider mb-4 border-b border-white/15 pb-2">
+                    <h4 className="text-white font-bold text-sm sm:text-base mb-4 border-b border-white/15 pb-2">
                       {group.heading}
                     </h4>
                     <ul className="space-y-2.5">

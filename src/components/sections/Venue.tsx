@@ -69,7 +69,7 @@ export function Venue({
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
               {title === "Travel & Accommodation & Ho Chi Minh City Guide" ? (
                 <>
                   <span className="block text-[#004776]">Travel & Accommodation</span>
@@ -204,7 +204,7 @@ export function Venue({
             {/* Bottom Caption Pill */}
             <div className="absolute bottom-4 left-4 right-4 z-10">
               <div className="p-3.5 rounded-sm bg-black/40 backdrop-blur-md border border-white/15 text-white">
-                <p className="text-[11px] uppercase tracking-wider text-blue-300 font-semibold mb-0.5">
+                <p className="text-[11px] text-blue-300 font-semibold mb-0.5">
                   Official Conference Venue
                 </p>
                 <p className="text-sm sm:text-base font-bold text-white">

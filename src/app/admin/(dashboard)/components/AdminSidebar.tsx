@@ -334,7 +334,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     <p className="text-[11.5px] font-medium text-white/80 leading-tight drop-shadow-xs">
                       {greeting}
                     </p>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-tight text-white truncate mt-0.5 drop-shadow-xs group-hover/greeting-card:text-white transition-colors">
+                    <p className="text-xs sm:text-sm font-semibold tracking-tight text-white truncate mt-0.5 drop-shadow-xs group-hover/greeting-card:text-white transition-colors">
                       {displayName}
                     </p>
                   </div>
@@ -786,7 +786,7 @@ function NavGroup({ group, isActive }: NavGroupProps) {
             sideOffset={10}
             className="w-56 p-1.5 rounded-xl border border-border bg-popover shadow-lg space-y-1 z-50"
           >
-            <div className="px-2.5 py-1.5 text-xs font-semibold text-foreground/70 uppercase tracking-wider border-b border-border/50">
+            <div className="px-2.5 py-1.5 text-xs font-semibold text-foreground/70 border-b border-border/50">
               <span>{groupLabel}</span>
             </div>
             {group.items.map((item) => {

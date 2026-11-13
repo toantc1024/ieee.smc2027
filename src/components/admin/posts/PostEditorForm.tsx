@@ -729,7 +729,7 @@ export function PostEditorForm({
             <button
               type="button"
               onClick={() => setIsLeftSidebarOpen(true)}
-              className="mt-auto cursor-pointer py-2 px-1 text-xs font-semibold tracking-wider text-slate-400 hover:text-slate-700 transition-colors [writing-mode:vertical-rl] rotate-180 uppercase select-none"
+              className="mt-auto cursor-pointer py-2 px-1 text-xs font-semibold text-slate-400 hover:text-slate-700 transition-colors [writing-mode:vertical-rl] rotate-180 select-none"
               title="Click to expand"
             >
               Post Details

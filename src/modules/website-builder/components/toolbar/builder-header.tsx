@@ -100,12 +100,12 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
   }, [onSave]);
 
   return (
-    <header className="h-13 min-h-[52px] border-b border-slate-200 bg-white px-3 sm:px-4 flex items-center justify-between gap-3 select-none shrink-0 z-30">
+    <header className="h-13 min-h-[52px] border-b border-slate-200/75 bg-white px-3 sm:px-4 flex items-center justify-between gap-3 overflow-x-auto [scrollbar-width:none] select-none shrink-0 z-30">
       {/* Left: Back Button + HCM-UTE Full-Flex Clickable Title Bar */}
-      <div className="flex items-center gap-2.5 flex-1 min-w-0 max-w-xl">
+      <div className="flex items-center gap-2.5 flex-1 min-w-[200px] max-w-xl">
         <Link
           href="/admin/pages"
-          className="h-8 w-8 rounded-lg border border-slate-200/80 bg-white text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/40 flex items-center justify-center transition-colors shrink-0"
+          className="h-8 w-8 rounded-lg border border-slate-200/75 bg-white text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/40 flex items-center justify-center transition-colors shrink-0"
           title="Back to Pages"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -120,7 +120,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
             "flex-1 min-w-0 h-8 rounded-lg border px-2.5 flex items-center justify-between gap-2 transition-colors cursor-text",
             editingTitle
               ? "border-blue-600 bg-white ring-2 ring-blue-500/15"
-              : "border-slate-200 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-300"
+              : "border-slate-200/75 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-300/80"
           )}
         >
           {editingTitle ? (
@@ -203,7 +203,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
       <div className="flex items-center gap-2 shrink-0">
         {/* Published / Draft Status Dot Pill */}
         <div
-          className="hidden xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-800"
+          className="hidden xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-slate-200/85 bg-white text-xs font-bold text-slate-800"
         >
           <span
             className={cn(
@@ -222,7 +222,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
           disabled={!pageId || publishing}
           onClick={handleTogglePublish}
           className={cn(
-            "h-8 px-3 text-xs font-bold gap-1.5 cursor-pointer shadow-none border-slate-300 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-400",
+            "h-8 px-3 text-xs font-bold gap-1.5 cursor-pointer shadow-none border-slate-200/85 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-300",
             isPublished && "hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50"
           )}
         >
@@ -246,7 +246,7 @@ export function BuilderHeader({ onSave, saving = false }: BuilderHeaderProps) {
             "h-8 px-3.5 text-xs font-bold min-w-[88px] gap-1.5 shadow-xs transition-colors cursor-pointer",
             isDirty
               ? "bg-[#115eff] hover:bg-[#0a4de6] text-white"
-              : "border border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100"
+              : "border border-slate-200/85 bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100"
           )}
         >
           {saving ? (

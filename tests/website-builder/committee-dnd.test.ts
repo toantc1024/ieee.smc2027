@@ -104,6 +104,8 @@ test("ArrayField in inspector renders GripVertical drag handles with accessibili
   assert.match(markup, /aria-label="Drag to reorder Group B"/);
   assert.match(markup, /title="Drag to reorder position"/);
   assert.match(markup, /draggable="true"/);
+  assert.match(markup, /group\/item/);
+  assert.match(markup, /group-hover\/item:opacity-100/);
 });
 
 test("Reordering array items preserves nested data integrity", () => {

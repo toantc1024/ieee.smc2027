@@ -213,9 +213,9 @@ export default function AdminCheckInPage() {
       </div>
 
       {/* ── Recent Check-ins List ── */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
+      <div className="bg-white border border-slate-200/75 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b pb-3">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+          <h3 className="text-sm font-bold text-slate-900">
             Recent Check-Ins
           </h3>
           <span className="text-xs text-slate-400">

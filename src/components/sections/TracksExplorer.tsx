@@ -82,7 +82,7 @@ export function TracksExplorer({
         <div className="corner-grid-dark-tr opacity-40 pointer-events-none" />
 
         <div className="space-y-3 relative z-10 flex-1">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-blue-100">{title.split("&")[0].trim()}</span>

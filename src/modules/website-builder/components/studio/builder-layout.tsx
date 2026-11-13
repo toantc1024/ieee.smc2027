@@ -105,21 +105,21 @@ export function BuilderLayout() {
           {/* Sub-toolbar */}
           <SubToolbar />
 
-          {/* Tri-Panel Studio Grid — fixed columns in edit mode so selecting blocks never jumps the canvas */}
+          {/* Tri-Panel Studio Grid — fixed columns in edit mode with horizontal overflow on small screens */}
           <BuilderDndContext>
           <div
             className={cn(
-              "flex-1 min-h-0 relative overflow-hidden bg-slate-50 grid",
+              "flex-1 min-h-0 relative overflow-x-auto overflow-y-hidden bg-slate-50 grid",
               isPreview
                 ? "grid-cols-1"
-                : "grid-cols-[280px_minmax(0,1fr)_380px] xl:grid-cols-[300px_minmax(0,1fr)_420px]"
+                : "grid-cols-[260px_minmax(360px,1fr)_340px] lg:grid-cols-[280px_minmax(420px,1fr)_380px] xl:grid-cols-[300px_minmax(480px,1fr)_420px]"
             )}
           >
             {/* Left Drawer */}
             {!isPreview && (
-              <aside className="min-w-0 shrink-0 border-r border-slate-200 bg-white flex flex-col h-full overflow-hidden z-20">
+              <aside className="min-w-0 shrink-0 border-r border-slate-200/75 bg-white flex flex-col h-full overflow-hidden z-20">
                 {/* Segmented Tab Header */}
-                <div className="grid grid-cols-4 p-1.5 border-b border-slate-200 bg-white gap-1 text-xs font-bold text-slate-700">
+                <div className="grid grid-cols-4 p-1.5 border-b border-slate-200/75 bg-white gap-1 text-xs font-bold text-slate-700">
                   <button
                     type="button"
                     onClick={() => setSidebarTab("library")}
@@ -194,7 +194,7 @@ export function BuilderLayout() {
 
             {/* Right Property Inspector — always mounted in edit mode like HCM-UTE */}
             {!isPreview && (
-              <aside className="min-w-0 shrink-0 border-l border-slate-200 bg-white flex flex-col h-full overflow-hidden z-20">
+              <aside className="min-w-0 shrink-0 border-l border-slate-200/75 bg-white flex flex-col h-full overflow-hidden z-20">
                 <PropertyInspector />
               </aside>
             )}

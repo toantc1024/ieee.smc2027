@@ -102,7 +102,7 @@ export function PagePreviewModal({ open, onClose }: PagePreviewModalProps) {
             style={{ width: PREVIEW_WIDTHS[device] }}
             className={cn(
               "bg-white min-h-full overflow-x-hidden transition-all duration-150",
-              device !== "desktop" && "rounded-2xl border border-slate-300 shadow-xl"
+              device !== "desktop" && "rounded-2xl border border-slate-200/85 shadow-xl"
             )}
           >
             {visibleBlocks.length === 0 ? (

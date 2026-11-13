@@ -96,7 +96,7 @@ export function StatsChartBlock({
             <TrendingUp className="size-3.5" />
             <span>Metrics & statistics</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (

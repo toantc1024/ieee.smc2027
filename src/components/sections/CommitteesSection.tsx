@@ -133,7 +133,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
         {/* Bottom Details Section: Consistent vertical height across all cards */}
         <div className="relative z-20 w-full p-2.5 sm:p-3 md:p-3.5 bg-white group-hover/card:bg-[#115eff] border-t border-slate-200 group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[105px] sm:min-h-[115px] md:min-h-[120px]">
           <div className="relative z-10">
-            <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
+            <span className="inline-block text-[10px] sm:text-xs font-bold text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
               {member.role || "Committee Member"}
             </span>
             <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
@@ -368,7 +368,7 @@ function CommitteeGroupCarousel({
       {/* Row Container */}
       <div ref={containerRef} className="relative w-full">
         {memberCount === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-6 sm:p-8 text-center">
+          <div className="rounded-xl border border-dashed border-slate-200/85 bg-slate-50/70 p-6 sm:p-8 text-center">
             <p className="text-sm font-semibold text-slate-600">
               No committee members in &ldquo;{groupName}&rdquo; yet.
             </p>
@@ -443,7 +443,7 @@ export function CommitteesSection({
         <div className="corner-dot-tr opacity-70 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight leading-[1.15]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]">
             <span className="block text-[#004776]">{title}</span>
             <span className="block text-[#115eff]">& Leadership</span>
           </h1>

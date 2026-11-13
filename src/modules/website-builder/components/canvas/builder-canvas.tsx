@@ -79,7 +79,7 @@ function BottomCanvasDropzone({
           <button
             type="button"
             onClick={onPasteEnd}
-            className="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-slate-200/85 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <ClipboardPaste className="w-3.5 h-3.5" />
             <span>Paste Block</span>
@@ -169,115 +169,122 @@ export function BuilderCanvas() {
       onClick={() => selectBlock(null)}
       onMouseLeave={() => hoverBlock(null)}
       className={cn(
-        "relative flex-1 h-full overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] flex flex-col items-center",
+        "relative flex-1 h-full overflow-auto [scrollbar-gutter:stable]",
         isPreview
-          ? "bg-white p-0"
-          : "p-6 pb-20 bg-[#edf2f7] bg-[radial-gradient(#94a3b8_1.25px,transparent_1.25px)] [background-size:24px_24px]"
+          ? "bg-white"
+          : "bg-[#edf2f7] bg-[radial-gradient(#94a3b8_1.1px,transparent_1.1px)] [background-size:24px_24px]"
       )}
     >
-      {/* Physical Outer Shell — NO width/height CSS transition so image loads never oscillate */}
       <div
         className={cn(
-          "relative shrink-0",
-          !isPreview &&
-            "shadow-[0_20px_60px_-15px_rgba(15,23,42,0.16)] rounded-xl ring-1 ring-slate-900/10 bg-white"
+          "min-w-full w-fit flex flex-col items-center",
+          isPreview ? "min-h-full w-full" : "p-6 pb-20"
         )}
-        style={{
-          width: isPreview ? "100%" : visualWidth,
-          height: isScaled ? visualHeight : "auto",
-          minHeight: isPreview ? "100%" : isScaled ? visualHeight : 640,
-          overflow: "visible",
-        }}
       >
-        {/* Inner Canonical Artboard */}
+        {/* Physical Outer Shell — NO width/height CSS transition so image loads never oscillate */}
         <div
-          ref={artboardRef}
-          style={
-            isPreview
-              ? { width: "100%" }
-              : isScaled
-                ? {
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: baseWidth,
-                    transform: `scale(${activeScale})`,
-                    transformOrigin: "0 0",
-                  }
-                : {
-                    position: "relative",
-                    width: baseWidth,
-                  }
-          }
-          className="flex flex-col min-h-[640px] bg-white rounded-xl"
+          className={cn(
+            "relative shrink-0",
+            !isPreview &&
+              "shadow-[0_20px_60px_-15px_rgba(15,23,42,0.14)] rounded-xl ring-1 ring-slate-900/8 bg-white"
+          )}
+          style={{
+            width: isPreview ? "100%" : visualWidth,
+            height: isScaled ? visualHeight : "auto",
+            minHeight: isPreview ? "100%" : isScaled ? visualHeight : 640,
+            overflow: "visible",
+          }}
         >
-          <SortableContext
-            items={blockIds}
-            strategy={verticalListSortingStrategy}
+          {/* Inner Canonical Artboard */}
+          <div
+            ref={artboardRef}
+            style={
+              isPreview
+                ? { width: "100%" }
+                : isScaled
+                  ? {
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: baseWidth,
+                      transform: `scale(${activeScale})`,
+                      transformOrigin: "0 0",
+                    }
+                  : {
+                      position: "relative",
+                      width: baseWidth,
+                    }
+            }
+            className="flex flex-col min-h-[640px] bg-white rounded-xl"
           >
-            {data.content.length === 0 ? (
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="py-24 px-6 text-center space-y-4"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-[#115eff] text-white flex items-center justify-center mx-auto shadow-xs">
-                  <Plus className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">
-                  Your Page Canvas is Empty
-                </h3>
-                <p className="text-sm font-medium text-slate-500 max-w-sm mx-auto">
-                  Select or drag a section from the Blocks panel on the left to start building this page.
-                </p>
-                <div className="flex items-center justify-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setSidebarTab("library")}
-                    className="px-5 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold shadow-xs transition-colors cursor-pointer"
-                  >
-                    Open Block Library
-                  </button>
-                  {clipboardBlock && (
+            <SortableContext
+              items={blockIds}
+              strategy={verticalListSortingStrategy}
+            >
+              {data.content.length === 0 ? (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="py-24 px-6 text-center space-y-4"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#115eff] text-white flex items-center justify-center mx-auto shadow-xs">
+                    <Plus className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Your Page Canvas is Empty
+                  </h3>
+                  <p className="text-sm font-medium text-slate-500 max-w-sm mx-auto">
+                    Select or drag a section from the Blocks panel on the left to start building this page.
+                  </p>
+                  <div className="flex items-center justify-center gap-2 pt-1">
                     <button
                       type="button"
-                      onClick={() => {
-                        pasteBlock();
-                        toast.success("Pasted block to canvas");
-                      }}
-                      className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-800 text-sm font-bold transition-colors cursor-pointer"
+                      onClick={() => setSidebarTab("library")}
+                      className="px-5 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold shadow-xs transition-colors cursor-pointer"
                     >
-                      Paste Block
+                      Open Block Library
                     </button>
-                  )}
+                    {clipboardBlock && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          pasteBlock();
+                          toast.success("Pasted block to canvas");
+                        }}
+                        className="px-5 py-2.5 rounded-lg border border-slate-200/85 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-800 text-sm font-bold transition-colors cursor-pointer"
+                      >
+                        Paste Block
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              data.content.map((block, idx) => (
-                <SortableBlock
-                  key={block.id}
-                  block={block}
-                  index={idx}
-                  totalBlocks={data.content.length}
-                  effectiveZoom={effectiveZoom}
-                />
-              ))
-            )}
-          </SortableContext>
+              ) : (
+                data.content.map((block, idx) => (
+                  <SortableBlock
+                    key={block.id}
+                    block={block}
+                    index={idx}
+                    totalBlocks={data.content.length}
+                    effectiveZoom={effectiveZoom}
+                  />
+                ))
+              )}
+            </SortableContext>
 
-          {/* Bottom Canvas Dropzone */}
-          {!isPreview && data.content.length > 0 && (
-            <div className="px-6 pb-10">
-              <BottomCanvasDropzone
-                counterScale={counterScale}
-                hasClipboard={Boolean(clipboardBlock)}
-                onOpenLibrary={() => setSidebarTab("library")}
-                onPasteEnd={() => {
-                  pasteBlock();
-                  toast.success("Pasted block at end of page");
-                }}
-              />
-            </div>
-          )}
+            {/* Bottom Canvas Dropzone */}
+            {!isPreview && data.content.length > 0 && (
+              <div className="px-6 pb-10">
+                <BottomCanvasDropzone
+                  counterScale={counterScale}
+                  hasClipboard={Boolean(clipboardBlock)}
+                  onOpenLibrary={() => setSidebarTab("library")}
+                  onPasteEnd={() => {
+                    pasteBlock();
+                    toast.success("Pasted block at end of page");
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

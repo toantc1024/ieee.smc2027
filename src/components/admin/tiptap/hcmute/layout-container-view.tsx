@@ -425,7 +425,7 @@ export default function LayoutContainerView({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="border border-slate-300 bg-white text-slate-700" onClick={extractInnerBlocks}>
+            <AlertDialogAction className="border border-slate-200/85 bg-white text-slate-700" onClick={extractInnerBlocks}>
               Keep content
             </AlertDialogAction>
             <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={deleteLayout}>

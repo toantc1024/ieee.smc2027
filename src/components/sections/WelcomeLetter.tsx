@@ -77,7 +77,7 @@ export function WelcomeLetter({
 
         <div className="space-y-3 w-full relative z-10">
           {/* Big Bold 2-Line Headline matching HCMUTE signature style */}
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             {heading ? <span className="block text-[#004776]">{heading}</span> : <><span className="block text-[#004776]">
               Join us at the {conferenceName}
             </span>
@@ -178,7 +178,7 @@ export function WelcomeLetter({
                       {/* Bottom Details Section - Center Aligned */}
                       <div className="relative z-20 w-full p-4 sm:p-5 bg-white group-hover:bg-[#115eff] border-t border-slate-200 group-hover:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 items-center text-center">
                         <div className="relative z-10 flex flex-col items-center text-center">
-                          <span className="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
+                          <span className="inline-block text-[11px] sm:text-xs font-bold mb-2 px-2.5 py-0.5 rounded transition-colors bg-blue-50 text-[#115eff] border border-blue-200 group-hover:bg-white group-hover:text-[#115eff] group-hover:border-white">
                             {chair.role}
                           </span>
                           <h4 className="text-base sm:text-lg font-bold text-[#004776] group-hover:!text-white tracking-tight leading-snug transition-colors duration-300">

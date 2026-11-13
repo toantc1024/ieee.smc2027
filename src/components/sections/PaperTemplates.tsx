@@ -88,7 +88,7 @@ export function PaperTemplates({
         <div className="corner-dot-tr opacity-75 pointer-events-none" />
 
         <div className="space-y-3 w-full relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
             {title.includes("&") ? (
               <>
                 <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
@@ -137,7 +137,7 @@ export function PaperTemplates({
                         </div>
                       </div>
 
-                      <span className="px-2.5 py-1 bg-white border border-slate-200 rounded-sm text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <span className="px-2.5 py-1 bg-white border border-slate-200/75 rounded-sm text-xs font-bold text-slate-700">
                         Official IEEE
                       </span>
                     </div>

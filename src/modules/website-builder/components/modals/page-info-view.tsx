@@ -135,7 +135,7 @@ export function PageInfoView() {
             >
               {seoAudit.score}
             </span>
-            <span className="text-[10px] block font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs block font-semibold text-slate-400">
               SEO Score
             </span>
           </div>
@@ -158,8 +158,8 @@ export function PageInfoView() {
       {/* Two Column Layout: Editor Fields & Previews */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 select-text">
         {/* Left Column: Page Structure & Metadata */}
-        <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-200/75 shadow-2xs">
+          <h3 className="text-xs font-bold text-slate-500">
             Page Settings & SEO Metadata
           </h3>
 
@@ -230,8 +230,8 @@ export function PageInfoView() {
 
         {/* Right Column: Live Previews */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/75 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
               <Globe className="w-4 h-4 text-blue-600" />
               <span>Google Search Preview</span>
             </div>
@@ -248,17 +248,17 @@ export function PageInfoView() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/75 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
               <Share2 className="w-4 h-4 text-blue-600" />
               <span>Social Open Graph Card</span>
             </div>
-            <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-2xs">
+            <div className="rounded-xl border border-slate-200/75 overflow-hidden bg-white shadow-2xs">
               <div className="h-32 bg-gradient-to-r from-[#004776] to-[#2563EB] flex items-center justify-center text-white font-bold text-sm tracking-tight px-4 text-center">
                 IEEE SMC 2027 · Ho Chi Minh City, Vietnam
               </div>
               <div className="p-3.5 space-y-1 bg-slate-50">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                <span className="text-xs font-semibold text-slate-400">
                   ieee-smc2027.org
                 </span>
                 <h5 className="text-xs font-bold text-slate-900 truncate">

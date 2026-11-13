@@ -104,7 +104,7 @@ export function LinkModal({
               type="checkbox"
               checked={openInNewTab}
               onChange={(e) => setOpenInNewTab(e.target.checked)}
-              className="rounded border-slate-300 text-[#115eff] focus:ring-[#115eff]"
+              className="rounded border-slate-200/85 text-[#115eff] focus:ring-[#115eff]"
             />
             <ExternalLink className="size-3 text-slate-400" />
             <span>Open link in new tab</span>

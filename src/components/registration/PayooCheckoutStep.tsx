@@ -65,7 +65,7 @@ export function PayooCheckoutStep({
               </h2>
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-400 font-bold uppercase">
+              <p className="text-xs text-slate-400 font-bold">
                 Amount Due
               </p>
               <p className="text-xl font-black text-[#115eff]">
@@ -114,8 +114,8 @@ export function PayooCheckoutStep({
                 </div>
 
                 <div className="space-y-3 text-xs">
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 block font-bold uppercase text-[10px]">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/75">
+                    <span className="text-slate-400 block font-bold text-[10px]">
                       Beneficiary Bank
                     </span>
                     <span className="font-bold text-slate-900 text-sm">
@@ -123,9 +123,9 @@ export function PayooCheckoutStep({
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/75 flex items-center justify-between">
                     <div>
-                      <span className="text-slate-400 block font-bold uppercase text-[10px]">
+                      <span className="text-slate-400 block font-bold text-[10px]">
                         Account Number
                       </span>
                       <span className="font-bold text-slate-900 text-sm">
@@ -149,7 +149,7 @@ export function PayooCheckoutStep({
 
                   <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between">
                     <div>
-                      <span className="text-[#115eff] block font-bold uppercase text-[10px]">
+                      <span className="text-[#115eff] block font-bold text-[10px]">
                         Required Transfer Memo
                       </span>
                       <span className="font-extrabold text-[#115eff] text-sm">
@@ -173,7 +173,7 @@ export function PayooCheckoutStep({
 
               <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wider text-amber-900">
+                  <p className="text-xs font-extrabold text-amber-900">
                     Temporary Payoo Sandbox Reconciliation
                   </p>
                   <p className="text-xs text-amber-800 mt-0.5">

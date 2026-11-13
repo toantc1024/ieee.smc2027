@@ -107,10 +107,10 @@ export function RegistrationTable({
           No registrations found matching current filter.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <div className="overflow-x-auto rounded-xl border border-slate-200/75">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase text-xs font-semibold tracking-wider">
+              <tr className="border-b border-slate-200/75 bg-slate-50/80 text-slate-500 text-xs font-semibold">
                 <th className="py-3 px-4">Delegate</th>
                 <th className="py-3 px-4">Category & PaperCept</th>
                 <th className="py-3 px-4">Payoo & Fee</th>

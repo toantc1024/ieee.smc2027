@@ -243,7 +243,7 @@ export function SheetBlockView({
                   onChange={(e) =>
                     updateAttributes({ hasHeader: e.target.checked })
                   }
-                  className="rounded border-slate-300"
+                  className="rounded border-slate-200/85"
                 />
                 <span>Header Row</span>
               </label>
@@ -255,7 +255,7 @@ export function SheetBlockView({
                   onChange={(e) =>
                     updateAttributes({ striped: e.target.checked })
                   }
-                  className="rounded border-slate-300"
+                  className="rounded border-slate-200/85"
                 />
                 <span>Striped Rows</span>
               </label>
@@ -267,10 +267,10 @@ export function SheetBlockView({
       {/* Spreadsheet Toolbar & Filter */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="px-3 py-2 bg-emerald-50/50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2"
+        className="px-3 py-2 bg-emerald-50/50 border-b border-slate-200/75 flex flex-wrap items-center justify-between gap-2"
       >
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold">
             Sheet
           </span>
           <input

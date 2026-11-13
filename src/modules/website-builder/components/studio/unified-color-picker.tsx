@@ -301,10 +301,10 @@ export function UnifiedColorPicker({
             <button
               type="button"
               aria-label={`Choose ${label || "color"}`}
-              className="h-10 flex-1 flex items-center gap-2.5 px-3 rounded-lg border border-slate-300 bg-white hover:border-slate-400 transition-colors text-left cursor-pointer min-w-0"
+              className="h-10 flex-1 flex items-center gap-2.5 px-3 rounded-lg border border-slate-200/85 bg-white hover:border-slate-300 transition-colors text-left cursor-pointer min-w-0"
             >
               <span
-                className="w-6 h-6 rounded-md border border-slate-300 shrink-0 shadow-2xs"
+                className="w-6 h-6 rounded-md border border-slate-200/80 shrink-0 shadow-2xs"
                 style={{
                   background:
                     value ||
@@ -419,7 +419,7 @@ export function UnifiedColorPicker({
                           onClick={() => selectGradientStop(stop)}
                         >
                           <span
-                            className="w-3 h-3 rounded-xs border border-slate-300"
+                            className="w-3 h-3 rounded-xs border border-slate-200/80"
                             style={{ background: stop.color }}
                           />
                           <input
@@ -468,7 +468,7 @@ export function UnifiedColorPicker({
                           setActiveStopId(newStop.id);
                           updateGradient({ ...gradient, stops: [...gradient.stops, newStop] });
                         }}
-                        className="px-1.5 py-0.5 rounded-md border border-dashed border-slate-300 text-[10px] font-semibold text-blue-600 hover:border-blue-500 flex items-center gap-0.5 cursor-pointer"
+                        className="px-1.5 py-0.5 rounded-md border border-dashed border-slate-200/85 text-[10px] font-semibold text-blue-600 hover:border-blue-500 flex items-center gap-0.5 cursor-pointer"
                       >
                         <Plus className="w-2.5 h-2.5" />
                         <span>Stop</span>
@@ -565,9 +565,9 @@ export function UnifiedColorPicker({
                     applyHsvAndAlpha(rgbToHsv(rgb.r, rgb.g, rgb.b), alpha);
                   }
                 }}
-                className="h-8 text-xs font-semibold uppercase"
+                className="h-8 text-xs font-semibold"
               />
-              <div className="h-8 px-2 rounded-md border border-slate-200 bg-slate-50 flex items-center text-[11px] font-semibold text-slate-600 shrink-0">
+              <div className="h-8 px-2 rounded-md border border-slate-200/75 bg-slate-50 flex items-center text-[11px] font-semibold text-slate-600 shrink-0">
                 {Math.round(alpha * 100)}%
               </div>
             </div>
@@ -575,7 +575,7 @@ export function UnifiedColorPicker({
             {/* Swatches */}
             <div className="space-y-1.5 pt-1 border-t border-slate-100">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[11px] font-semibold text-slate-500">
                   Theme Swatches
                 </span>
                 <button

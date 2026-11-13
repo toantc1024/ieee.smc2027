@@ -48,7 +48,7 @@ export function RegistrationPricingBlock({
             <CreditCard className="size-3.5" />
             <span>Conference registration</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (
@@ -81,7 +81,7 @@ export function RegistrationPricingBlock({
               >
                 {/* Popular Floating Badge */}
                 {isPop && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-600 text-white text-[11px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-600 text-white text-[11px] font-black shadow-md flex items-center gap-1">
                     <Star className="size-3 fill-current" />
                     <span>{tier.badge || "Popular"}</span>
                   </div>
@@ -131,7 +131,7 @@ export function RegistrationPricingBlock({
                   <div className="space-y-2.5 pt-2">
                     <p
                       className={cn(
-                        "text-[11px] font-extrabold uppercase tracking-wider",
+                        "text-[11px] font-extrabold",
                         isPop ? "text-slate-300" : "text-slate-400"
                       )}
                     >

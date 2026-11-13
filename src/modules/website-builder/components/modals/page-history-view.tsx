@@ -12,6 +12,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -108,8 +109,8 @@ export function PageHistoryView() {
   return (
     <div className="flex-1 overflow-hidden flex flex-col md:flex-row bg-slate-50 select-none">
       {/* Left Column: Revision Timeline List (320px) */}
-      <div className="w-full md:w-80 border-r border-slate-200 bg-white flex flex-col shrink-0">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="w-full md:w-80 border-r border-slate-200/75 bg-white flex flex-col shrink-0">
+        <div className="p-4 border-b border-slate-100/80 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <History className="w-4 h-4 text-blue-600" />
             <h3 className="text-sm font-bold text-slate-900">Revisions Timeline</h3>
@@ -121,9 +122,16 @@ export function PageHistoryView() {
 
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {loading ? (
-            <div className="p-8 text-center text-slate-400">
-              <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
-              <p className="text-xs">Loading history...</p>
+            <div role="status" aria-label="Loading history" className="space-y-2.5 p-1">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <div key={idx} className="p-3 rounded-xl border border-slate-200/75 space-y-2 bg-white">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-3.5 w-24" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
+                  <Skeleton className="h-3 w-4/5" />
+                </div>
+              ))}
             </div>
           ) : histories.length === 0 ? (
             <p className="p-6 text-center text-xs text-slate-400 italic">
@@ -144,7 +152,7 @@ export function PageHistoryView() {
                     "w-full text-left p-3 rounded-xl border transition-all relative flex flex-col gap-1",
                     isSelected
                       ? "bg-blue-50/70 border-blue-300 ring-1 ring-blue-300 shadow-xs"
-                      : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      : "bg-white border-slate-200/75 hover:border-slate-300/80 hover:bg-slate-50"
                   )}
                 >
                   <div className="flex items-center justify-between">
@@ -173,11 +181,26 @@ export function PageHistoryView() {
 
       {/* Right Column: Historical Content & Diff Inspector */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {activeHistory ? (
+        {loading ? (
+          <div className="space-y-6">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/75 flex items-center justify-between gap-4">
+              <div className="space-y-2 flex-1">
+                <Skeleton className="h-3.5 w-36" />
+                <Skeleton className="h-6 w-64" />
+                <Skeleton className="h-3 w-48" />
+              </div>
+              <Skeleton className="h-9 w-36 rounded-lg shrink-0" />
+            </div>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/75 space-y-3">
+              <Skeleton className="h-4 w-52" />
+              <Skeleton className="h-64 w-full rounded-xl" />
+            </div>
+          </div>
+        ) : activeHistory ? (
           <>
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/75 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-xs font-bold text-blue-600">
                   Revision Snapshot v{activeHistory.version}
                 </span>
                 <h3 className="text-lg font-bold text-slate-900 mt-0.5">
@@ -212,8 +235,8 @@ export function PageHistoryView() {
             </div>
 
             {/* AST Comparison View */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/75 shadow-sm space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
                 <FileCode className="w-4 h-4 text-blue-600" />
                 <span>Historical AST Snapshot Payload</span>
               </div>

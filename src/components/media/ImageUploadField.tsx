@@ -74,15 +74,15 @@ export function ImageUploadField({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+        <label className="block text-xs font-semibold text-slate-600">
           {label}
         </label>
       )}
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-200/75 bg-slate-50/60 p-3.5">
         {/* Preview Box */}
         <div
-          className={`relative shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white flex items-center justify-center ${
+          className={`relative shrink-0 overflow-hidden rounded-xl border border-slate-200/75 bg-white flex items-center justify-center ${
             aspect === "square"
               ? "size-20"
               : aspect === "video"
@@ -94,7 +94,7 @@ export function ImageUploadField({
             isPdf ? (
               <div className="flex flex-col items-center gap-1 text-[#115eff] p-2 text-center">
                 <FileText className="size-7" />
-                <span className="text-[9px] font-bold uppercase">PDF Uploaded</span>
+                <span className="text-[10px] font-semibold">PDF uploaded</span>
               </div>
             ) : (
               <img

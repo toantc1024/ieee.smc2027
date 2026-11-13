@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Plus, Search, X } from "lucide-react";
+import { ChevronDown, GripVertical, Plus, Search, X } from "lucide-react";
 import { useDraggable } from "@dnd-kit/core";
 import type { ComponentDefinition } from "../../types";
 import { ScalableWireframe } from "./wireframes";
@@ -84,7 +84,7 @@ export function BlockLibraryDrawer() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search blocks..."
-            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 text-slate-900 font-medium"
+            className="w-full h-10 pl-9 pr-7 text-sm rounded-lg border border-slate-200/85 bg-white focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15 text-slate-900 font-medium"
           />
           {search && (
             <button
@@ -147,11 +147,11 @@ export function BlockLibraryDrawer() {
                   onClick={() => toggleCategory(cat)}
                   className="w-full flex items-center justify-between px-1 py-1 rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
                 >
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  <span className="text-xs font-bold text-slate-700">
                     {CATEGORY_LABELS[cat] || cat}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <span className="rounded-md bg-slate-100 border border-slate-300 px-2 py-0.5 text-xs font-bold text-slate-800">
+                    <span className="rounded-md bg-slate-100 border border-slate-200/80 px-2 py-0.5 text-xs font-bold text-slate-800">
                       {items.length}
                     </span>
                     <ChevronDown
@@ -230,8 +230,7 @@ function PaletteItem({
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
+      onClick={() => onAdd(item.type)}
       onMouseEnter={(event) => {
         if (!isDragging) {
           const rect = event.currentTarget.getBoundingClientRect();
@@ -243,16 +242,30 @@ function PaletteItem({
         }
       }}
       onMouseLeave={() => onPreview(null)}
-      onPointerDown={(event) => {
-        onPreview(null);
-        listeners?.onPointerDown?.(event);
-      }}
       className={cn(
-        "group flex min-h-[82px] touch-none select-none items-center gap-3 rounded-xl border bg-white p-3 transition-colors hover:border-slate-400 hover:shadow-2xs cursor-grab active:cursor-grabbing",
-        isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-slate-300"
+        "group flex min-h-[82px] select-none items-center gap-2.5 rounded-xl border bg-white p-3 transition-colors hover:border-slate-300 hover:shadow-2xs cursor-pointer",
+        isDragging ? "border-dashed border-[#115eff] opacity-40" : "border-slate-200/85"
       )}
     >
-      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1 group-hover:border-slate-400">
+      {/* Left-side hover drag handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        onClick={(event) => event.stopPropagation()}
+        onPointerDown={(event) => {
+          onPreview(null);
+          listeners?.onPointerDown?.(event);
+        }}
+        title="Drag block to canvas"
+        aria-label={`Drag ${item.label}`}
+        className={cn(
+          "flex w-5 shrink-0 self-stretch -ml-1 items-center justify-center rounded-md text-slate-400 hover:text-[#115eff] hover:bg-blue-50/60 transition-opacity cursor-grab active:cursor-grabbing touch-none",
+          isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-within:opacity-100"
+        )}
+      >
+        <GripVertical className="size-4" />
+      </div>
+      <div className="flex h-15 w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50 p-1 group-hover:border-slate-300">
         <ScalableWireframe
           type={item.type}
           label={item.label}
@@ -276,7 +289,7 @@ function PaletteItem({
           event.stopPropagation();
           onAdd(item.type);
         }}
-        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-[#115eff] hover:text-white hover:border-[#115eff] transition-colors cursor-pointer"
+        className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-slate-200/85 bg-white text-slate-700 hover:bg-[#115eff] hover:text-white hover:border-[#115eff] transition-colors cursor-pointer"
       >
         <Plus className="size-4" />
       </button>

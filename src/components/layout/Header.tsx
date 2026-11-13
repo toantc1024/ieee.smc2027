@@ -243,7 +243,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                           className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
                         />
                         {activeItem.promoCard.badge && (
-                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-3 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
+                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-3 py-1 rounded-sm text-xs font-bold bg-white/95 text-[#115eff] backdrop-blur-sm shadow-sm transition-colors">
                             {activeItem.promoCard.badge}
                           </div>
                         )}
@@ -666,7 +666,7 @@ export function Header() {
                           }
                         }}
                         className={cn(
-                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold uppercase text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                          "group/btn inline-flex items-center gap-1 xl:gap-1.5 font-bold text-[12.5px] xl:text-[14px] 2xl:text-[15px] px-2.5 xl:px-3.5 2xl:px-4 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                           isMenuOpen
                             ? "bg-[#115eff] text-white shadow-xs"
                             : "text-[#004776] hover:bg-[#115eff] hover:text-white"
@@ -988,7 +988,7 @@ export function Header() {
                   router.push(`/#tracks`);
                 }
               }}
-              className="w-full px-4 py-3 border border-slate-300 rounded-sm text-base focus:outline-none focus:border-[#115eff]"
+              className="w-full px-4 py-3 border border-slate-200/85 rounded-sm text-base focus:outline-none focus:border-[#115eff]"
               autoFocus
             />
 

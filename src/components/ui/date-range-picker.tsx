@@ -273,7 +273,7 @@ export function DateRangePicker({
             {/* Presets Sidebar */}
             {showPresets && (
               <div className="p-2 sm:p-2.5 bg-muted/20 sm:w-44 flex flex-col shrink-0">
-                <span className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground px-1.5 sm:px-2 py-0.5 sm:py-1 uppercase tracking-wider">
+                <span className="text-[11px] font-semibold text-muted-foreground px-1.5 sm:px-2 py-0.5 sm:py-1">
                   Presets
                 </span>
                 <div className="grid grid-cols-2 sm:flex sm:flex-col gap-1 mt-1">

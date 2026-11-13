@@ -23,7 +23,7 @@ export function PageSettingsTab() {
           value={root.title || ""}
           onChange={(e) => updatePageMeta({ title: e.target.value })}
           placeholder="e.g. Call for Papers"
-          className="text-sm font-medium h-10 border-slate-300 rounded-lg px-3 bg-white"
+          className="text-sm font-medium h-10 border-slate-200/85 rounded-lg px-3 bg-white"
         />
       </div>
 
@@ -31,7 +31,7 @@ export function PageSettingsTab() {
         <Label htmlFor="page-slug-setting" className="text-sm font-bold text-slate-900">
           URL Slug
         </Label>
-        <div className="flex items-center h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm">
+        <div className="flex items-center h-10 rounded-lg border border-slate-200/85 bg-white px-3 text-sm">
           <span className="text-slate-400 select-none mr-1">/</span>
           <input
             id="page-slug-setting"
@@ -52,7 +52,7 @@ export function PageSettingsTab() {
           value={root.metaTitle || ""}
           onChange={(e) => updatePageMeta({ metaTitle: e.target.value })}
           placeholder="IEEE SMC 2027"
-          className="text-sm font-medium h-10 border-slate-300 rounded-lg px-3 bg-white"
+          className="text-sm font-medium h-10 border-slate-200/85 rounded-lg px-3 bg-white"
         />
       </div>
 
@@ -65,7 +65,7 @@ export function PageSettingsTab() {
           value={root.metaDescription || ""}
           onChange={(e) => updatePageMeta({ metaDescription: e.target.value })}
           placeholder="Meta description for search engines and social previews"
-          className="text-sm font-medium min-h-[90px] border-slate-300 rounded-lg p-3 bg-white resize-y"
+          className="text-sm font-medium min-h-[90px] border-slate-200/85 rounded-lg p-3 bg-white resize-y"
         />
       </div>
     </div>

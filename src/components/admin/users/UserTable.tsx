@@ -37,7 +37,7 @@ export function UserTable({
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse text-xs">
         <thead>
-          <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold">
+          <tr className="border-b border-slate-200/75 text-slate-500 text-xs font-semibold">
             <th className="py-3 px-3">User / Avatar</th>
             <th className="py-3 px-3">Role</th>
             <th className="py-3 px-3">Auth Provider</th>

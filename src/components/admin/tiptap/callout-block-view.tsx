@@ -116,14 +116,14 @@ export function CalloutBlockView({
             value={title}
             onChange={(e) => updateAttributes({ title: e.target.value })}
             placeholder="Callout title..."
-            className="w-full font-bold text-sm sm:text-base text-slate-900 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-600 focus:outline-none pb-0.5"
+            className="w-full font-bold text-sm sm:text-base text-slate-900 bg-transparent border-b border-transparent hover:border-slate-200/85 focus:border-blue-600 focus:outline-none pb-0.5"
           />
           <textarea
             value={text}
             onChange={(e) => updateAttributes({ text: e.target.value })}
             placeholder="Callout message..."
             rows={2}
-            className="w-full text-xs sm:text-sm text-slate-700 bg-transparent border border-transparent hover:border-slate-300 focus:border-blue-600 rounded p-1 -ml-1 focus:outline-none resize-y"
+            className="w-full text-xs sm:text-sm text-slate-700 bg-transparent border border-transparent hover:border-slate-200/85 focus:border-blue-600 rounded p-1 -ml-1 focus:outline-none resize-y"
           />
         </div>
       </div>

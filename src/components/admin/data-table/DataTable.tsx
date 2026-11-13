@@ -331,7 +331,7 @@ export function DataTable<TData, TValue = unknown>({
                         <TableCell key={`skeleton-cell-${rIdx}-${cIdx}`}>
                           <div
                             className={cn(
-                              "h-3.5 bg-slate-200/70 rounded animate-pulse",
+                              "h-3.5 bg-slate-200/55 rounded-lg animate-pulse",
                               cIdx === 0
                                 ? "w-4 h-4 rounded"
                                 : cIdx === 1

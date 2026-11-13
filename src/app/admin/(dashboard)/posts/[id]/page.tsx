@@ -192,33 +192,33 @@ export default function PostDetailPage({
           </div>
           <div className="flex items-center gap-2">
             <Skeleton className="h-9 w-24 rounded-sm" />
-            <Skeleton className="h-9 w-24 rounded-sm" />
-            <Skeleton className="h-9 w-24 rounded-sm" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
           </div>
         </div>
 
         {/* Article Reader Skeleton */}
-        <div className="rounded-sm border border-slate-200 bg-white overflow-hidden shadow-none">
+        <div className="rounded-xl border border-slate-200/75 bg-white overflow-hidden shadow-none">
           <div className="border-b border-slate-100 bg-slate-50/70 px-6 py-3.5 flex items-center gap-2">
-            <Skeleton className="h-4 w-12 rounded-sm" />
-            <Skeleton className="h-4 w-32 rounded-sm" />
-            <Skeleton className="h-4 w-48 rounded-sm" />
+            <Skeleton className="h-4 w-12 rounded-lg" />
+            <Skeleton className="h-4 w-32 rounded-lg" />
+            <Skeleton className="h-4 w-48 rounded-lg" />
           </div>
           <div className="max-w-4xl mx-auto px-6 sm:px-10 py-10 space-y-6">
             <div className="flex gap-3">
-              <Skeleton className="h-4 w-20 rounded-sm" />
-              <Skeleton className="h-4 w-28 rounded-sm" />
-              <Skeleton className="h-4 w-32 rounded-sm" />
+              <Skeleton className="h-4 w-20 rounded-lg" />
+              <Skeleton className="h-4 w-28 rounded-lg" />
+              <Skeleton className="h-4 w-32 rounded-lg" />
             </div>
-            <Skeleton className="h-10 w-full rounded-sm" />
-            <Skeleton className="h-10 w-3/4 rounded-sm" />
-            <Skeleton className="h-20 w-full rounded-sm" />
-            <Skeleton className="aspect-[16/9] w-full rounded-sm" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-3/4 rounded-lg" />
+            <Skeleton className="h-20 w-full rounded-lg" />
+            <Skeleton className="aspect-[16/9] w-full rounded-xl" />
             <div className="space-y-3 pt-4">
-              <Skeleton className="h-4 w-full rounded-sm" />
-              <Skeleton className="h-4 w-full rounded-sm" />
-              <Skeleton className="h-4 w-5/6 rounded-sm" />
-              <Skeleton className="h-4 w-4/6 rounded-sm" />
+              <Skeleton className="h-4 w-full rounded-lg" />
+              <Skeleton className="h-4 w-full rounded-lg" />
+              <Skeleton className="h-4 w-5/6 rounded-lg" />
+              <Skeleton className="h-4 w-4/6 rounded-lg" />
             </div>
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function PostDetailPage({
 
           {/* Category & Metadata Row */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-500">
-            <span className="font-semibold uppercase tracking-wider text-[#115eff] text-xs px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200">
+            <span className="font-semibold text-[#115eff] text-xs px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200">
               {post.category}
             </span>
             <span className="text-slate-300">•</span>

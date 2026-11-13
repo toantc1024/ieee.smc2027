@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { isValidPageParent } from "../../utils/page-tree";
 import { useBuilderStore } from "../../store/builder-store";
 
@@ -13,28 +14,35 @@ export function PageParentPicker() {
   const parentId = useBuilderStore((state) => state.data.root.parentId);
   const updatePageMeta = useBuilderStore((state) => state.updatePageMeta);
   const [pages, setPages] = useState<ParentOption[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     fetch("/api/admin/pages?view=flat", { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Unable to load pages");
         return response.json();
       })
       .then((data) => setPages(Array.isArray(data.pages) ? data.pages : []))
-      .catch(() => { if (!controller.signal.aborted) setError(true); });
+      .catch(() => { if (!controller.signal.aborted) setError(true); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, []);
 
   const options = pages.filter((page) => pageId && isValidPageParent(pages, pageId, page.id));
   return <div className="space-y-1.5">
     <Label htmlFor="page-parent-setting" className="text-sm font-bold text-slate-900">Parent page</Label>
-    <select id="page-parent-setting" value={parentId || ""} disabled={error} onChange={(event) => updatePageMeta({ parentId: event.target.value || null })} className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15">
-      <option value="">Top-level page</option>
-      {parentId && !options.some((page) => page.id === parentId) && <option value={parentId}>Current parent</option>}
-      {options.map((page) => <option key={page.id} value={page.id}>{page.title} · /{page.slug}</option>)}
-    </select>
+    {loading ? (
+      <Skeleton className="h-10 w-full rounded-lg" />
+    ) : (
+      <select id="page-parent-setting" value={parentId || ""} disabled={error} onChange={(event) => updatePageMeta({ parentId: event.target.value || null })} className="h-10 w-full rounded-lg border border-slate-200/85 bg-white px-3 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#115eff] focus:ring-2 focus:ring-[#115eff]/15">
+        <option value="">Top-level page</option>
+        {parentId && !options.some((page) => page.id === parentId) && <option value={parentId}>Current parent</option>}
+        {options.map((page) => <option key={page.id} value={page.id}>{page.title} · /{page.slug}</option>)}
+      </select>
+    )}
     {error && <p className="text-xs text-rose-600">Could not load parent pages. Reload to try again.</p>}
   </div>;
 }

@@ -68,7 +68,7 @@ export function CallForPapersBlock({
             <span>Call for papers</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight">
             {sectionTitle}
           </h2>
 
@@ -83,7 +83,7 @@ export function CallForPapersBlock({
           {/* Indexing Badges */}
           {badgeList.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 pt-2">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Indexing:</span>
+              <span className="text-xs font-bold text-slate-500">Indexing:</span>
               {badgeList.map((badge) => (
                 <span
                   key={badge}
@@ -104,7 +104,7 @@ export function CallForPapersBlock({
             <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 shadow-sm space-y-5">
               <div className="flex items-center gap-2 border-b border-slate-100 dark:border-zinc-800 pb-3">
                 <Calendar className="size-5 text-blue-600" />
-                <h3 className="text-base font-bold text-foreground dark:text-white uppercase tracking-tight">
+                <h3 className="text-base font-bold text-foreground dark:text-white tracking-tight">
                   Important dates
                 </h3>
               </div>
@@ -183,7 +183,7 @@ export function CallForPapersBlock({
           <div className="lg:col-span-7 space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-200 dark:border-zinc-800 pb-3">
               <Layers className="size-5 text-blue-600" />
-              <h3 className="text-base font-bold text-foreground dark:text-white uppercase tracking-tight">
+              <h3 className="text-base font-bold text-foreground dark:text-white tracking-tight">
                 Tracks & topics
               </h3>
             </div>

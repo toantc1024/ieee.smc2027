@@ -448,7 +448,7 @@ function AdminLoginForm() {
             {/* Divider */}
             <div className="relative flex items-center py-0.5">
               <div className="flex-grow border-t border-slate-200" />
-              <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              <span className="flex-shrink mx-3 text-[10px] text-slate-400 font-bold">
                 or continue with email
               </span>
               <div className="flex-grow border-t border-slate-200" />
@@ -758,7 +758,7 @@ function AdminLoginForm() {
                       className={`py-2 px-2 rounded-lg text-[11px] font-semibold text-center border transition-all cursor-pointer ${
                         conferenceRole === "SUBMITTER"
                           ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+                          : "border-slate-200/80 text-slate-600 hover:border-slate-300 bg-white"
                       }`}
                     >
                       Submitter
@@ -769,7 +769,7 @@ function AdminLoginForm() {
                       className={`py-2 px-2 rounded-lg text-[11px] font-semibold text-center border transition-all cursor-pointer ${
                         conferenceRole === "SPEAKER"
                           ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+                          : "border-slate-200/80 text-slate-600 hover:border-slate-300 bg-white"
                       }`}
                     >
                       Speaker
@@ -780,7 +780,7 @@ function AdminLoginForm() {
                       className={`py-2 px-2 rounded-lg text-[11px] font-semibold text-center border transition-all cursor-pointer ${
                         conferenceRole === "ATTENDEE"
                           ? "border-[#115eff] bg-blue-50/80 text-[#115eff] ring-1 ring-[#115eff]"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300 bg-white"
+                          : "border-slate-200/80 text-slate-600 hover:border-slate-300 bg-white"
                       }`}
                     >
                       Attendee

@@ -358,7 +358,7 @@ function PromoCardEditor({
         <div className="p-4 space-y-3">
           {/* Card Preview */}
           <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-3 space-y-1.5 shadow-xs">
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#115eff] uppercase">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#115eff]">
               {promoCard.badge || "Featured"}
             </span>
             <p className="text-xs font-bold text-slate-900 leading-snug">{promoCard.title || "Card Title"}</p>
@@ -597,7 +597,7 @@ function HeaderSidePanel({ item: initialItem, open, onClose, onSave }: HeaderSid
           <div className="flex items-center gap-2 min-w-0">
             <span
               className={cn(
-                "text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0 uppercase tracking-wider",
+                "text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0",
                 isMega
                   ? "bg-purple-50 text-purple-600 border-purple-200"
                   : isDropdown

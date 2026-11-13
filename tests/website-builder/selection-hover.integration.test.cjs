@@ -57,6 +57,11 @@ test("page builder selection and hover follow the active block and disappear in 
     assert.equal(useBuilderStore.getState().selectedBlockId, "first");
     assert.equal(first.dataset.builderState, "selected");
     assert.ok(first.querySelector("[data-builder-toolbar]"));
+    assert.doesNotMatch(first.className, /\btouch-none\b|\bcursor-grab\b/);
+    const dragHandle = first.querySelector('[data-builder-toolbar] [title="Drag to reorder block"]');
+    assert.ok(dragHandle, "left toolbar exposes dedicated drag handle");
+    assert.match(dragHandle.className, /\btouch-none\b/);
+    assert.match(dragHandle.className, /\bcursor-grab\b/);
     assert.match(first.querySelector("[data-builder-outline]").className, /border-blue-600/);
     assert.equal(first.querySelector("[data-builder-outline]").children.length, 4, "selected blocks show four corner handles");
 

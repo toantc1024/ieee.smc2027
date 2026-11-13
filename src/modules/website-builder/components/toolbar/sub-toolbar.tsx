@@ -74,10 +74,10 @@ export function SubToolbar() {
 
   return (
     <>
-      <div className="h-11 border-b border-slate-200 bg-white/95 backdrop-blur-xs px-3 sm:px-4 flex items-center justify-between gap-2 select-none shrink-0 z-20 text-xs">
+      <div className="h-11 border-b border-slate-200/75 bg-white/95 backdrop-blur-xs px-3 sm:px-4 flex items-center justify-between gap-2 overflow-x-auto [scrollbar-width:thin] select-none shrink-0 z-20 text-xs">
         {/* Left: Responsive Viewport Switcher */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200/75">
             <button
               type="button"
               onClick={() => setViewport("desktop")}
@@ -125,11 +125,11 @@ export function SubToolbar() {
 
         {/* Center: HCM-UTE Inline Zoom Bar */}
         {!isPreview ? (
-          <div className="hidden md:flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-[11px] font-semibold text-slate-400 mr-0.5">
               Zoom
             </span>
-            <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200">
+            <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200/75">
               <button
                 type="button"
                 onClick={() => setAutoFit(true)}
@@ -197,9 +197,9 @@ export function SubToolbar() {
         )}
 
         {/* Right: Undo / Redo / Paste Pill + HCM-UTE Preview Dropdown */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {!isPreview && (
-            <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200">
+            <div className="flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200/75">
               <button
                 type="button"
                 disabled={undoStack.length === 0}

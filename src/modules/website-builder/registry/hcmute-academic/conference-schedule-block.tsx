@@ -68,7 +68,7 @@ export function ConferenceScheduleBlock({
             <Calendar className="size-3.5" />
             <span>Event schedule</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground dark:text-white tracking-tight">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (
@@ -197,7 +197,7 @@ export function ConferenceScheduleBlock({
                     )}
 
                     {session.track && (
-                      <span className="inline-block text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                      <span className="inline-block text-[11px] font-bold text-blue-600 dark:text-blue-400">
                         {session.track}
                       </span>
                     )}
@@ -207,13 +207,13 @@ export function ConferenceScheduleBlock({
                   <div className="flex-1 space-y-2.5">
                     <div className="flex items-center gap-2">
                       {isKeynote && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-600 text-white shadow-xs">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-600 text-white shadow-xs">
                           <Mic className="size-3" />
                           <span>Keynote Speech</span>
                         </span>
                       )}
                       {isPanel && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-purple-600 text-white shadow-xs">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-600 text-white shadow-xs">
                           <Users className="size-3" />
                           <span>Panel Discussion</span>
                         </span>

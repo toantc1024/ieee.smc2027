@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { StorageFolder } from "@/types";
 
 export interface MediaFileItem {
@@ -256,9 +257,23 @@ export function MediaLibraryModal({
         {/* File Grid */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50/40">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-400 gap-2">
-              <Loader2 className="size-7 animate-spin text-[#115eff]" />
-              <span className="text-xs font-medium">Loading files...</span>
+            <div
+              role="status"
+              aria-label="Loading files"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 py-2"
+            >
+              {Array.from({ length: 8 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-xl border border-slate-200/75 bg-white overflow-hidden"
+                >
+                  <Skeleton className="aspect-square w-full rounded-none" />
+                  <div className="p-2 space-y-1.5">
+                    <Skeleton className="h-3 w-4/5" />
+                    <Skeleton className="h-2.5 w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : files.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -310,7 +325,7 @@ export function MediaLibraryModal({
                       ) : (
                         <div className="flex flex-col items-center gap-1.5 text-slate-500">
                           <FileText className="size-9 text-[#115eff]" />
-                          <span className="text-[10px] font-bold uppercase">PDF Document</span>
+                          <span className="text-[10px] font-bold">PDF Document</span>
                         </div>
                       )}
 

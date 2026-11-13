@@ -44,8 +44,8 @@ export function PortalPayooStatusCard({
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-slate-400 font-bold uppercase block">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/75">
+            <span className="text-slate-400 font-bold block">
               Registration Fee
             </span>
             <span className="text-base font-black text-slate-900 mt-1 block">
@@ -55,8 +55,8 @@ export function PortalPayooStatusCard({
             </span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-slate-400 font-bold uppercase block">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/75">
+            <span className="text-slate-400 font-bold block">
               Payment Status
             </span>
             <span className="text-base font-black text-slate-900 mt-1 block">
@@ -64,8 +64,8 @@ export function PortalPayooStatusCard({
             </span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-slate-400 font-bold uppercase block">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/75">
+            <span className="text-slate-400 font-bold block">
               Visa Letter Status
             </span>
             <span className="text-base font-black text-[#115eff] mt-1 block">
@@ -133,7 +133,7 @@ export function PortalPayooStatusCard({
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="p-3 rounded-xl bg-slate-50">
-            <span className="text-slate-400 font-bold uppercase block">
+            <span className="text-slate-400 font-bold block">
               PaperCept ID
             </span>
             <span className="font-semibold text-slate-800">
@@ -141,7 +141,7 @@ export function PortalPayooStatusCard({
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50">
-            <span className="text-slate-400 font-bold uppercase block">
+            <span className="text-slate-400 font-bold block">
               Dietary Preference
             </span>
             <span className="font-semibold text-slate-800">
@@ -149,7 +149,7 @@ export function PortalPayooStatusCard({
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50">
-            <span className="text-slate-400 font-bold uppercase block">
+            <span className="text-slate-400 font-bold block">
               Passport Number
             </span>
             <span className="font-semibold text-slate-800">
@@ -157,7 +157,7 @@ export function PortalPayooStatusCard({
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50">
-            <span className="text-slate-400 font-bold uppercase block">
+            <span className="text-slate-400 font-bold block">
               Flight / Hotel
             </span>
             <span className="font-semibold text-slate-800">

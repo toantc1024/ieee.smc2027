@@ -38,7 +38,7 @@ export function CallForPapers({
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 w-full">
           <div className="space-y-3 flex-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold uppercase tracking-tight leading-[1.2] w-full">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight leading-[1.2] w-full">
               {title.includes("&") ? (
                 <>
                   <span className="block text-[#004776]">{title.split("&")[0].trim()}</span>
@@ -81,7 +81,7 @@ export function CallForPapers({
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] uppercase tracking-wider mb-2.5">
+              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] mb-2.5">
                 <Image
                   src="/assets/3d/announcement-3d.png"
                   alt="Submission Policy"
@@ -107,7 +107,7 @@ export function CallForPapers({
 
           <div className="p-6 sm:p-7 border border-slate-200 bg-white rounded-md shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] uppercase tracking-wider mb-2.5">
+              <div className="flex items-center gap-3 text-sm sm:text-base font-bold text-[#115eff] mb-2.5">
                 <Image
                   src="/assets/3d/verified-badge-3d.png"
                   alt="Proceedings & Copyright"
