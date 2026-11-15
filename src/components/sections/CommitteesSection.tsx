@@ -34,6 +34,28 @@ export const CHAIR_PHOTO_MAP: Record<string, string> = {
   "Vladik Kreinovich": "/chairs/prof-vladik-kreinovich.png",
 };
 
+// 3D clay character portraits for fallback cards (tactile polymer clay bust portraits)
+export const CLAY_AVATARS = [
+  "/assets/3d/clay-avatar-male-1.webp",
+  "/assets/3d/clay-avatar-female-1.webp",
+  "/assets/3d/clay-avatar-male-2.webp",
+  "/assets/3d/clay-avatar-female-2.webp",
+] as const;
+
+/**
+ * Deterministically map a committee member name to one of the 3D clay avatars
+ */
+export function getClayAvatarForMember(name: string): string {
+  if (!name) return CLAY_AVATARS[0];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash << 5) - hash + name.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % CLAY_AVATARS.length;
+  return CLAY_AVATARS[index];
+}
+
 interface CommitteesSectionProps {
   title?: string;
   subtitle?: string;
@@ -73,14 +95,8 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
   useEffect(() => {
     setImgError(false);
   }, [photo]);
-  const initials =
-    (name || "CM")
-      .split(" ")
-      .filter(Boolean)
-      .map((n) => n[0])
-      .slice(-2)
-      .join("")
-      .toUpperCase() || "CM";
+
+  const fallbackClayAvatar = useMemo(() => getClayAvatarForMember(name), [name]);
 
   return (
     <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
@@ -113,7 +129,7 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
             />
           </div>
 
-          {/* Image strictly scaled, full width & anchored to bottom, with error fallback */}
+          {/* Image strictly scaled, full width & anchored to bottom, with 3D clay fallback */}
           <div className="relative w-full h-full flex items-end justify-center z-10 p-0 pointer-events-none select-none">
             {photo && !imgError ? (
               <Image
@@ -127,11 +143,14 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-5 pointer-events-none select-none">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-sm bg-white/90 border border-blue-200/80 group-hover/card:border-white/40 flex items-center justify-center text-[#115eff] group-hover/card:text-white group-hover/card:bg-white/20 font-bold text-sm sm:text-lg md:text-2xl shadow-xs transition-all duration-300">
-                  {initials}
-                </div>
-              </div>
+              <Image
+                src={fallbackClayAvatar}
+                alt={name}
+                fill
+                draggable={false}
+                className="object-cover object-bottom scale-105 origin-bottom pointer-events-none select-none transition-transform duration-300 group-hover/card:scale-110"
+                sizes="(max-width: 640px) 150px, (max-width: 768px) 175px, (max-width: 1024px) 195px, (max-width: 1280px) 210px, 220px"
+              />
             )}
           </div>
         </div>

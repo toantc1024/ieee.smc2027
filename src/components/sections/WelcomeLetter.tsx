@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { getClayAvatarForMember } from "@/components/sections/CommitteesSection";
 
 export interface ChairMember {
   name: string;
@@ -164,14 +165,14 @@ export function WelcomeLetter({
 
                         {/* Image strictly scaled and fitted inside the container without any horizontal or vertical overflow */}
                         <div className="relative w-full h-full flex items-end justify-center z-10">
-                          {chair.image && <Image
-                            src={chair.image}
+                          <Image
+                            src={chair.image || getClayAvatarForMember(chair.name)}
                             alt={chair.name}
                             width={360}
                             height={440}
                             className="h-full w-auto max-h-full max-w-full object-contain object-bottom transition-transform duration-300 ease-out group-hover:scale-105"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          />}
+                          />
                         </div>
                       </div>
 
