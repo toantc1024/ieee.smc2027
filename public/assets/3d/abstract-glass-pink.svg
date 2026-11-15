@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" fill="none">
+  <defs>
+    <linearGradient id="ambientFadePink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fce7f3" stop-opacity="0" />
+      <stop offset="35%" stop-color="#fce7f3" stop-opacity="0" />
+      <stop offset="100%" stop-color="#fce7f3" stop-opacity="0.62" />
+    </linearGradient>
+
+    <radialGradient id="radialGlowPink" cx="0.65" cy="0.78" r="0.55">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.22" />
+      <stop offset="55%" stop-color="#fb7185" stop-opacity="0.10" />
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0" />
+    </radialGradient>
+
+    <pattern id="dotMatrixPink" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="2.1" fill="#ec4899" fill-opacity="0.44" />
+    </pattern>
+
+    <linearGradient id="dotMaskGradPink" x1="0" y1="0" x2="0.26" y2="1">
+      <stop offset="18%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="52%" stop-color="#ffffff" stop-opacity="0.45" />
+      <stop offset="92%" stop-color="#ffffff" stop-opacity="1" />
+    </linearGradient>
+    <mask id="dotMaskPink">
+      <rect width="900" height="1200" fill="url(#dotMaskGradPink)" />
+    </mask>
+
+    <linearGradient id="ghostMaskGradPink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="8%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="78%" stop-color="#ffffff" stop-opacity="1" />
+    </linearGradient>
+    <mask id="ghostMaskPink">
+      <rect x="405" y="216" width="378" height="378" fill="url(#ghostMaskGradPink)" />
+    </mask>
+
+    <linearGradient id="ghostFillPink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10" />
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0.24" />
+    </linearGradient>
+
+    <linearGradient id="midTintPink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.20" />
+      <stop offset="50%" stop-color="#fda4af" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.34" />
+    </linearGradient>
+
+    <linearGradient id="shelfFillPink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.38" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.72" />
+    </linearGradient>
+
+    <linearGradient id="frontGlassFillPink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.36" />
+      <stop offset="52%" stop-color="#ffffff" stop-opacity="0.68" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.88" />
+    </linearGradient>
+
+    <linearGradient id="innerAccentPink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0.06" />
+    </linearGradient>
+
+    <filter id="glassShadowPink" x="-15%" y="-10%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#ec4899" flood-opacity="0.20" />
+    </filter>
+  </defs>
+
+  <!-- Layer 1: Top-transparent ambient bottom fade + glow -->
+  <rect width="900" height="1200" fill="url(#ambientFadePink)" />
+  <rect width="900" height="1200" fill="url(#radialGlowPink)" />
+
+  <!-- Layer 2: Masked dot matrix fading downward -->
+  <rect width="900" height="1200" fill="url(#dotMatrixPink)" mask="url(#dotMaskPink)" />
+
+  <!-- Layer 3a: Upper-back ghost glass square (top-faded) -->
+  <rect x="405" y="216" width="378" height="378" rx="4" fill="url(#ghostFillPink)" stroke="#f472b6" stroke-opacity="0.30" stroke-width="2" mask="url(#ghostMaskPink)" />
+
+  <!-- Layer 3b: Mid-depth tinted glass square -->
+  <rect x="108" y="396" width="414" height="414" rx="4" fill="url(#midTintPink)" stroke="#ec4899" stroke-opacity="0.30" stroke-width="2" />
+
+  <!-- Layer 3c: Bottom-flush glass base shelf square -->
+  <rect x="99" y="762" width="702" height="450" rx="4" fill="url(#shelfFillPink)" stroke="#ffffff" stroke-opacity="0.88" stroke-width="2" />
+
+  <!-- Layer 3d: Foreground crystal frosted glass square + nested accent -->
+  <g filter="url(#glassShadowPink)">
+    <rect x="198" y="516" width="504" height="504" rx="4" fill="url(#frontGlassFillPink)" stroke="#ffffff" stroke-opacity="0.96" stroke-width="2.5" />
+  </g>
+  <rect x="299" y="617" width="302" height="302" rx="3" fill="url(#innerAccentPink)" stroke="#ec4899" stroke-opacity="0.24" stroke-width="1.5" />
+
+  <!-- Subtle 4-corner geometric bracket ticks inside nested square -->
+  <path d="M299 633 V617 H315 M585 617 H601 V633 M299 903 V919 H315 M585 919 H601 V903" stroke="#ec4899" stroke-opacity="0.55" stroke-width="2.5" stroke-linecap="square" />
+</svg>

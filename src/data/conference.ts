@@ -29,6 +29,7 @@ export interface CommitteeMember {
   role: string;
   country: string;
   affiliation?: string;
+  gender?: "male" | "female";
 }
 
 export interface CommitteeGroup {
@@ -338,6 +339,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
         role: "Steering Committee",
         photo: "/chairs/steering/ljiljana-trajkovic.webp",
         country: "Canada",
+        gender: "female",
       },
       {
         name: "Eddie Tunstel",
@@ -441,6 +443,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
         role: "Special Session Chair",
         photo: "/api/images/public/uploads/1794559182644-My-Ha_Le.png",
         country: "Vietnam",
+        gender: "female",
       },
       {
         name: "Xiaojie Su",
@@ -453,6 +456,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
         role: "Special Session Chair",
         photo: "/api/images/public/uploads/1794559002399-Yan_Wan__USA.png",
         country: "USA",
+        gender: "female",
       },
     ],
   },
@@ -465,6 +469,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
         affiliation: "",
         country: "Italy",
         photo: "/api/images/public/uploads/1794559360124-Mariagrazia_Dotoli__Italy__1_.png",
+        gender: "female",
       },
       {
         name: "Ming Ho",
@@ -518,7 +523,7 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
       { name: "Jay Wang", role: "Best Paper Award Chair", photo: "", country: "USA" },
       { name: "Ngoc-Thin Chau", role: "Web Chair", photo: "", country: "Vietnam" },
       { name: "Jiacun Wang", role: "Financial Chair", photo: "", country: "USA" },
-      { name: "Thi-Hien Truong", role: "Financial Chair", photo: "", country: "Vietnam" },
+      { name: "Thi-Hien Truong", role: "Financial Chair", photo: "", country: "Vietnam", gender: "female" },
       { name: "Meng-Yun Chung", role: "Publicity Chair", photo: "", country: "Taiwan" },
       { name: "Do Thanh Trung", role: "Publicity Chair", photo: "", country: "Vietnam" },
       { name: "Dinh-Nhon Truong", role: "Publicity Chair", photo: "", country: "Vietnam" },
@@ -539,11 +544,11 @@ export const COMMITTEE_GROUPS: CommitteeGroup[] = [
     members: [
       { name: "Ngoc-Thin Chau", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
       { name: "Bao-Huy Dinh", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
-      { name: "Pham-Viet-Anh-Thu Le", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
+      { name: "Pham-Viet-Anh-Thu Le", role: "Local Organizing Committee", photo: "", country: "Vietnam", gender: "female" },
       { name: "Dang-Nam Nguyen", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
       { name: "Van-Nguyen Nguyen", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
-      { name: "Phuong-Thu-Thuy Phung", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
-      { name: "Thi-Thanh-Truc Tran", role: "Local Organizing Committee", photo: "", country: "Vietnam" },
+      { name: "Phuong-Thu-Thuy Phung", role: "Local Organizing Committee", photo: "", country: "Vietnam", gender: "female" },
+      { name: "Thi-Thanh-Truc Tran", role: "Local Organizing Committee", photo: "", country: "Vietnam", gender: "female" },
     ],
   },
 ];
