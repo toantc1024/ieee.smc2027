@@ -8,10 +8,10 @@ export function StatsCountersBlueprint() {
 
       {/* 4 Stat Boxes */}
       {[
-        { x: 2, num: "60+", val: "Năm" },
-        { x: 26.5, num: "98%", val: "Việc làm" },
-        { x: 51, num: "30K+", val: "Sinh viên" },
-        { x: 75.5, num: "500+", val: "Đối tác" },
+        { x: 2, num: "1.2K+", val: "Papers" },
+        { x: 26.5, num: "45+", val: "Countries" },
+        { x: 51, num: "3", val: "Pillars" },
+        { x: 75.5, num: "100%", val: "Xplore" },
       ].map((stat, i) => (
         <g key={i}>
           <rect x={stat.x} y="10" width="22.5" height="28" rx="2.5" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="0.8" />

@@ -672,3 +672,25 @@ export function getBlockDefinition(type: string): ComponentDefinition<any> | und
   const canonicalType = BLOCK_ALIASES[type] || type;
   return CONFERENCE_BLOCK_DEFINITIONS[canonicalType];
 }
+
+/**
+ * Build fully hydrated default props for newly inserted blocks by merging
+ * `definition.defaultProps` with any `field.defaultValue` defined in `fields`.
+ */
+export function getHydratedBlockDefaultProps(type: string): Record<string, any> {
+  if (type === "Hero") {
+    return structuredClone(CONFERENCE_BLOCK_DEFINITIONS.Hero?.defaultProps || {});
+  }
+  if (type === "FAQ") {
+    return structuredClone(CONFERENCE_BLOCK_DEFINITIONS.FAQ?.defaultProps || {});
+  }
+  const def = getBlockDefinition(type);
+  if (!def) return {};
+  const base: Record<string, any> = structuredClone(def.defaultProps || {});
+  for (const [key, field] of Object.entries(def.fields || {})) {
+    if (base[key] === undefined && field.defaultValue !== undefined) {
+      base[key] = structuredClone(field.defaultValue);
+    }
+  }
+  return base;
+}

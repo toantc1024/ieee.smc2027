@@ -48,6 +48,7 @@ export function ScalableWireframe({ type, label, category }: WireframeProps) {
       case "hero-banner":
         return <HeroBannerBlueprint />;
       case "cta-banner":
+      case "notification-banner":
         return <CtaBannerBlueprint />;
 
       // ── Content & Articles
@@ -74,6 +75,7 @@ export function ScalableWireframe({ type, label, category }: WireframeProps) {
       case "faculty-header":
         return <FacultyHeaderBlueprint />;
       case "faculty-documents":
+      case "research-papers":
         return <FacultyDocumentsBlueprint />;
       case "faculty-programs":
       case "admissions":

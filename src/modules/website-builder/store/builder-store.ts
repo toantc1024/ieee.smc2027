@@ -8,11 +8,17 @@ import type {
   InspectorTab,
   StudioActiveView,
 } from "../types";
-import { getBlockDefinition } from "../registry";
+import { getBlockDefinition, getHydratedBlockDefaultProps } from "../registry";
 import { COLUMN_SLOT_KEYS, cloneBlockWithNewIds, findBlock, getColumnBlocks, getColumnSlotKey, insertAfterBlock, mapBlocks, moveBlockWithinTree, newBlockId, removeBlockFromTree, type ColumnSlotKey } from "../utils/block-tree";
+import type { SubItemPath } from "../utils/sub-item-path";
 
 const MAX_HISTORY_DEPTH = 40;
 const CLIPBOARD_STORAGE_KEY = "ieee_smc_builder_clipboard";
+
+export interface SelectedSubItem {
+  blockId: string;
+  path: SubItemPath;
+}
 
 interface BuilderState {
   pageId: string | null;
@@ -23,6 +29,8 @@ interface BuilderState {
   data: PageBuilderData;
   selectedBlockId: string | null;
   hoveredBlockId: string | null;
+  selectedSubItem: SelectedSubItem | null;
+  hoveredSubItem: SelectedSubItem | null;
   viewport: ViewportMode;
   zoom: number;
   isAutoFit: boolean;
@@ -48,6 +56,8 @@ interface BuilderState {
   }) => void;
   selectBlock: (id: string | null) => void;
   hoverBlock: (id: string | null) => void;
+  selectSubItem: (blockId: string | null, path?: SubItemPath | null) => void;
+  hoverSubItem: (blockId: string | null, path?: SubItemPath | null) => void;
   setViewport: (viewport: ViewportMode) => void;
   setZoom: (zoom: number) => void;
   setAutoFit: (isAutoFit: boolean) => void;
@@ -128,6 +138,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   },
   selectedBlockId: null,
   hoveredBlockId: null,
+  selectedSubItem: null,
+  hoveredSubItem: null,
   viewport: "desktop",
   zoom: 100,
   isAutoFit: true,
@@ -174,6 +186,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       },
       selectedBlockId: null,
       hoveredBlockId: null,
+      selectedSubItem: null,
+      hoveredSubItem: null,
       isDirty: false,
       undoStack: [],
       redoStack: [],
@@ -181,8 +195,31 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     });
   },
 
-  selectBlock: (id) => set({ selectedBlockId: id }),
-  hoverBlock: (id) => set({ hoveredBlockId: id }),
+  selectBlock: (id) =>
+    set((state) => ({
+      selectedBlockId: id,
+      selectedSubItem:
+        id && state.selectedSubItem?.blockId === id ? state.selectedSubItem : null,
+    })),
+  hoverBlock: (id) =>
+    set((state) => ({
+      hoveredBlockId: id,
+      hoveredSubItem:
+        id && state.hoveredSubItem?.blockId === id ? state.hoveredSubItem : null,
+    })),
+  selectSubItem: (blockId, path) =>
+    set((state) => ({
+      selectedBlockId: blockId,
+      selectedSubItem:
+        blockId && path && path.length > 0 ? { blockId, path } : null,
+      inspectorTab:
+        blockId && state.inspectorTab === "styles" ? "content" : state.inspectorTab,
+    })),
+  hoverSubItem: (blockId, path) =>
+    set({
+      hoveredSubItem:
+        blockId && path && path.length > 0 ? { blockId, path } : null,
+    }),
   setViewport: (viewport) => set({ viewport, isAutoFit: true }),
   setZoom: (zoom) => set({ zoom, isAutoFit: false }),
   setAutoFit: (isAutoFit) => set({ isAutoFit }),
@@ -215,11 +252,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   addBlock: (type, customProps) => {
     const { data, undoStack } = get();
     const prev = cloneData(data);
-    const def = getBlockDefinition(type);
+    const hydratedDefaults = getHydratedBlockDefaultProps(type);
     const newBlock: PageBlock = {
       id: newBlockId(type),
       type,
-      props: { ...(def?.defaultProps || {}), ...(customProps || {}) },
+      props: { ...hydratedDefaults, ...(customProps || {}) },
       hidden: false,
     };
 
@@ -227,6 +264,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set({
       data: { ...data, content: newContent },
       selectedBlockId: newBlock.id,
+      selectedSubItem: null,
       isDirty: true,
       undoStack: [prev, ...undoStack].slice(0, MAX_HISTORY_DEPTH),
       redoStack: [],
@@ -236,11 +274,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   insertBlockAt: (index, type, customProps) => {
     const { data, undoStack } = get();
     const prev = cloneData(data);
-    const def = getBlockDefinition(type);
+    const hydratedDefaults = getHydratedBlockDefaultProps(type);
     const newBlock: PageBlock = {
       id: newBlockId(type),
       type,
-      props: { ...(def?.defaultProps || {}), ...(customProps || {}) },
+      props: { ...hydratedDefaults, ...(customProps || {}) },
       hidden: false,
     };
 
@@ -251,6 +289,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set({
       data: { ...data, content: newContent },
       selectedBlockId: newBlock.id,
+      selectedSubItem: null,
       isDirty: true,
       undoStack: [prev, ...undoStack].slice(0, MAX_HISTORY_DEPTH),
       redoStack: [],
@@ -261,15 +300,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const { data, undoStack } = get();
     const def = getBlockDefinition(type);
     if (!def || !findBlock(data.content, id)) return;
-    const block: PageBlock = { id: newBlockId(type), type, props: structuredClone(def.defaultProps || {}), hidden: false };
-    set({ data: { ...data, content: insertAfterBlock(data.content, id, block) }, selectedBlockId: block.id, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    const block: PageBlock = { id: newBlockId(type), type, props: getHydratedBlockDefaultProps(type), hidden: false };
+    set({ data: { ...data, content: insertAfterBlock(data.content, id, block) }, selectedBlockId: block.id, selectedSubItem: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
   },
 
   insertSavedBlock: (block) => {
     const { data, selectedBlockId, undoStack } = get();
     const copy = structuredClone(block);
     const content = selectedBlockId && findBlock(data.content, selectedBlockId) ? insertAfterBlock(data.content, selectedBlockId, copy) : [...data.content, copy];
-    set({ data: { ...data, content }, selectedBlockId: copy.id, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    set({ data: { ...data, content }, selectedBlockId: copy.id, selectedSubItem: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
   },
 
   applySavedLayout: (content, zones) => {
@@ -277,7 +316,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const { zones: _previousZones, ...rest } = data;
     void _previousZones;
     const next = { ...rest, content: structuredClone(content), ...(zones ? { zones: structuredClone(zones) } : {}) };
-    set({ data: next, selectedBlockId: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    set({ data: next, selectedBlockId: null, selectedSubItem: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
   },
 
   insertIntoColumn: (parentId, slot, type) => {
@@ -285,10 +324,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const parent = findBlock(data.content, parentId);
     const def = getBlockDefinition(type);
     if (!parent || parent.type !== "ColumnsSlot" || !def || !COLUMN_SLOT_KEYS.includes(slot)) return;
-    const block: PageBlock = { id: newBlockId(type), type, props: structuredClone(def.defaultProps || {}), hidden: false };
+    const block: PageBlock = { id: newBlockId(type), type, props: getHydratedBlockDefaultProps(type), hidden: false };
     const actual = getColumnSlotKey(parent, slot);
     const content = mapBlocks(data.content, parentId, (current) => ({ ...current, props: { ...current.props, [actual]: [...getColumnBlocks(current, slot), block] } }));
-    set({ data: { ...data, content }, selectedBlockId: block.id, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    set({ data: { ...data, content }, selectedBlockId: block.id, selectedSubItem: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
   },
 
   insertIntoContainer: (parentId, type) => {
@@ -296,9 +335,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const parent = findBlock(data.content, parentId);
     const def = getBlockDefinition(type);
     if (!parent || parent.type !== "Container" || !def) return;
-    const block: PageBlock = { id: newBlockId(type), type, props: structuredClone(def.defaultProps || {}), hidden: false };
+    const block: PageBlock = { id: newBlockId(type), type, props: getHydratedBlockDefaultProps(type), hidden: false };
     const content = mapBlocks(data.content, parentId, (current) => ({ ...current, children: [...(current.children || []), block] }));
-    set({ data: { ...data, content }, selectedBlockId: block.id, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    set({ data: { ...data, content }, selectedBlockId: block.id, selectedSubItem: null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
   },
 
   moveIntoContainer: (id, parentId) => {
@@ -360,10 +399,19 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   },
 
   removeBlock: (id) => {
-    const { data, undoStack, selectedBlockId } = get();
+    const { data, undoStack, selectedBlockId, selectedSubItem, hoveredSubItem } = get();
     if (!findBlock(data.content, id)) return;
     const content = removeBlockFromTree(data.content, id);
-    set({ data: { ...data, content }, selectedBlockId: findBlock(content, selectedBlockId) ? selectedBlockId : null, isDirty: true, undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH), redoStack: [] });
+    const nextSelectedId = findBlock(content, selectedBlockId) ? selectedBlockId : null;
+    set({
+      data: { ...data, content },
+      selectedBlockId: nextSelectedId,
+      selectedSubItem: nextSelectedId && selectedSubItem?.blockId === nextSelectedId ? selectedSubItem : null,
+      hoveredSubItem: hoveredSubItem?.blockId === id ? null : hoveredSubItem,
+      isDirty: true,
+      undoStack: [cloneData(data), ...undoStack].slice(0, MAX_HISTORY_DEPTH),
+      redoStack: [],
+    });
   },
 
   duplicateBlock: (id) => {

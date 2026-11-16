@@ -1973,4 +1973,19 @@ div[data-type="layout-column"] > blockquote:last-child {
   margin-top: 0.5rem !important;
 }
 
+/* Studio Canvas Sub-Item Reflection Highlights (Builder Edit Mode Only) */
+[data-builder-block] [data-builder-substate="hovered"],
+[data-builder-nested] [data-builder-substate="hovered"] {
+  outline: 1.5px dashed rgba(17, 94, 255, 0.78);
+  outline-offset: 2px;
+}
+
+[data-builder-block] [data-builder-substate="selected"],
+[data-builder-nested] [data-builder-substate="selected"] {
+  outline: 2px solid #115eff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(17, 94, 255, 0.14);
+}
+
+
 

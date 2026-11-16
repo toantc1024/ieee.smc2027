@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
+  CopyPlus,
   FileText,
   FolderOpen,
   GripVertical,
@@ -26,6 +27,8 @@ import type { FieldDefinition } from "../../types";
 import { RichTextField } from "./rich-text-field";
 import { UnifiedColorPicker } from "./unified-color-picker";
 import { uploadEditorMedia } from "../../utils/upload-media";
+import { useBuilderStore } from "../../store/builder-store";
+import { isSubPathPrefix } from "../../utils/sub-item-path";
 import { cn } from "@/lib/utils";
 
 export type FieldPath = (string | number)[];
@@ -397,6 +400,34 @@ function ArrayField(props: InspectorFieldProps) {
   const cancelPointerDragRef = useRef<(() => void) | null>(null);
 
   const arrayPathKey = path.join(".");
+  const selectedBlockId = useBuilderStore((state) => state.selectedBlockId);
+  const selectedSubItem = useBuilderStore((state) => state.selectedSubItem);
+  const selectSubItem = useBuilderStore((state) => state.selectSubItem);
+  const hoverSubItem = useBuilderStore((state) => state.hoverSubItem);
+
+  useEffect(() => {
+    if (!selectedSubItem || !selectedBlockId || selectedSubItem.blockId !== selectedBlockId) {
+      return;
+    }
+    if (!isSubPathPrefix(path, selectedSubItem.path)) return;
+    const idx = selectedSubItem.path[path.length];
+    if (typeof idx !== "number") return;
+
+    setExpandedSet((prev) => {
+      if (prev.has(idx)) return prev;
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+
+    if (selectedSubItem.path.length <= path.length + 2) {
+      const targetEl = listRef.current?.querySelector<HTMLElement>(
+        `:scope > [data-array-item-index="${idx}"]`
+      );
+      targetEl?.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSubItem, selectedBlockId, arrayPathKey]);
 
   useEffect(() => {
     if (draggedIndex === null) return;
@@ -469,12 +500,31 @@ function ArrayField(props: InspectorFieldProps) {
   };
 
   function toggleIndex(idx: number) {
+    const willExpand = !expandedSet.has(idx);
     setExpandedSet((prev) => {
       const next = new Set(prev);
       if (next.has(idx)) next.delete(idx);
       else next.add(idx);
       return next;
     });
+    if (willExpand && selectedBlockId) {
+      selectSubItem(selectedBlockId, [...path, idx]);
+    }
+  }
+
+  function duplicateItem(index: number) {
+    if (disabled) return;
+    const clone = structuredClone(items[index] ?? {});
+    if (clone && typeof clone === "object" && !Array.isArray(clone) && "id" in fields) {
+      (clone as Record<string, unknown>).id = crypto.randomUUID();
+    }
+    const next = [...items];
+    next.splice(index + 1, 0, clone);
+    onChange(path, next);
+    setExpandedSet((prev) => new Set([...prev, index + 1]));
+    if (selectedBlockId) {
+      selectSubItem(selectedBlockId, [...path, index + 1]);
+    }
   }
 
   function move(index: number, offset: number) {
@@ -483,6 +533,9 @@ function ArrayField(props: InspectorFieldProps) {
     [next[index], next[target]] = [next[target], next[index]];
     onChange(path, next);
     setExpandedSet(new Set([target]));
+    if (selectedBlockId) {
+      selectSubItem(selectedBlockId, [...path, target]);
+    }
   }
 
   useEffect(() => {
@@ -741,6 +794,9 @@ function ArrayField(props: InspectorFieldProps) {
               if ("id" in fields) item.id = crypto.randomUUID();
               onChange(path, [...items, item]);
               setExpandedSet(new Set([items.length]));
+              if (selectedBlockId) {
+                selectSubItem(selectedBlockId, [...path, items.length]);
+              }
             }}
             className="flex items-center gap-1.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-colors disabled:opacity-40 cursor-pointer"
           >
@@ -763,6 +819,11 @@ function ArrayField(props: InspectorFieldProps) {
       {items.map((item, index) => {
         const title = name(item, index);
         const open = expandedSet.has(index);
+        const isSubSelected = Boolean(
+          selectedBlockId &&
+            selectedSubItem?.blockId === selectedBlockId &&
+            isSubPathPrefix([...path, index], selectedSubItem.path)
+        );
         const isDraggingThis = draggedIndex === index;
         const isTargetingThis = dragOverIndex === index;
         const thumbnail =
@@ -778,6 +839,19 @@ function ArrayField(props: InspectorFieldProps) {
           <div
             key={index}
             data-array-item-index={index}
+            onMouseEnter={() => {
+              if (selectedBlockId) hoverSubItem(selectedBlockId, [...path, index]);
+            }}
+            onMouseLeave={() => {
+              const current = useBuilderStore.getState().hoveredSubItem;
+              if (
+                selectedBlockId &&
+                current?.blockId === selectedBlockId &&
+                isSubPathPrefix([...path, index], current.path)
+              ) {
+                hoverSubItem(null);
+              }
+            }}
             onDragOver={(e) => handleDragOver(e, index)}
             onDragLeave={(e) => handleDragLeave(e, index)}
             onDrop={(e) => handleDrop(e, index)}
@@ -793,9 +867,11 @@ function ArrayField(props: InspectorFieldProps) {
                 "group/item overflow-hidden rounded-xl border transition-all",
                 isDraggingThis
                   ? "opacity-40 border-dashed border-[#115eff] bg-blue-50/30 scale-[0.99]"
-                  : open
-                    ? "border-[#115eff] bg-white shadow-xs ring-1 ring-[#115eff]/20"
-                    : "border-blue-100/90 bg-white hover:border-blue-300"
+                  : isSubSelected
+                    ? "border-[#115eff] bg-white shadow-xs ring-2 ring-[#115eff]/35"
+                    : open
+                      ? "border-[#115eff] bg-white shadow-xs ring-1 ring-[#115eff]/20"
+                      : "border-blue-100/90 bg-white hover:border-blue-300"
               )}
             >
               <div className="flex items-center gap-1 pr-1.5 bg-white">
@@ -850,6 +926,16 @@ function ArrayField(props: InspectorFieldProps) {
                 </div>
 
                 <div data-array-action="true" className="flex items-center gap-0.5 shrink-0">
+                  <button
+                    type="button"
+                    aria-label={`Duplicate ${title}`}
+                    disabled={disabled}
+                    onClick={() => duplicateItem(index)}
+                    className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-25 cursor-pointer"
+                    title="Duplicate"
+                  >
+                    <CopyPlus className="size-3.5" />
+                  </button>
                   <button
                     type="button"
                     aria-label={`Move ${title} up`}

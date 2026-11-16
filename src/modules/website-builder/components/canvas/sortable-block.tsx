@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { useDroppable, useDndContext } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
@@ -25,6 +25,11 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { getBlockPresentation, isBlockHidden } from "../../utils/block-presentation";
 import { EditableChildren, EditableNestedBlock, PublicNestedBlock } from "./columns-slot";
+import {
+  BuilderBlockContext,
+  isSubPathEqual,
+  parseSubItemPath,
+} from "../../utils/sub-item-path";
 
 interface SortableBlockProps {
   block: PageBlock;
@@ -42,8 +47,12 @@ export function SortableBlock({
   const {
     selectedBlockId,
     hoveredBlockId,
+    selectedSubItem,
+    hoveredSubItem,
     selectBlock,
     hoverBlock,
+    selectSubItem,
+    hoverSubItem,
     moveBlockUp,
     moveBlockDown,
     duplicateBlock,
@@ -56,6 +65,7 @@ export function SortableBlock({
     viewMode,
   } = useBuilderStore();
 
+  const bodyRef = useRef<HTMLDivElement>(null);
   const { active } = useDndContext();
   const isAnyDragActive = Boolean(active);
 
@@ -63,6 +73,37 @@ export function SortableBlock({
   const isHovered = hoveredBlockId === block.id;
   const isHidden = isBlockHidden(block);
   const isPreview = viewMode === "preview";
+  const activeSubPath = selectedSubItem?.blockId === block.id ? selectedSubItem.path : null;
+  const hoveredSubPath = hoveredSubItem?.blockId === block.id ? hoveredSubItem.path : null;
+
+  useEffect(() => {
+    const container = bodyRef.current;
+    if (!container || isPreview) return;
+
+    const nodes = container.querySelectorAll<HTMLElement>("[data-builder-subpath]");
+    let selectedEl: HTMLElement | null = null;
+
+    nodes.forEach((node) => {
+      // Do not touch sub-items owned by nested child blocks
+      const ownerBlock = node.closest("[data-builder-block], [data-builder-nested]");
+      if (ownerBlock && ownerBlock !== container.closest("[data-builder-block]")) {
+        return;
+      }
+      const parsed = parseSubItemPath(node.dataset.builderSubpath);
+      if (parsed && isSubPathEqual(parsed, activeSubPath)) {
+        node.dataset.builderSubstate = "selected";
+        selectedEl = node;
+      } else if (parsed && isSubPathEqual(parsed, hoveredSubPath)) {
+        node.dataset.builderSubstate = "hovered";
+      } else {
+        delete node.dataset.builderSubstate;
+      }
+    });
+
+    if (selectedEl && typeof (selectedEl as HTMLElement).scrollIntoView === "function") {
+      (selectedEl as HTMLElement).scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [activeSubPath, hoveredSubPath, isPreview, block.props]);
 
   const def = getBlockDefinition(block.type);
   const ComponentToRender = def?.render;
@@ -350,13 +391,40 @@ export function SortableBlock({
 
       {/* Render Component Body */}
       <div
+        ref={bodyRef}
         onClickCapture={(e) => {
           const target = e.target as HTMLElement;
-          if (!target.closest("[data-builder-nested], [data-builder-controls]") && selectedBlockId !== block.id) {
-            selectBlock(block.id);
+          if (!target.closest("[data-builder-nested], [data-builder-controls]")) {
+            const subEl = target.closest<HTMLElement>("[data-builder-subpath]");
+            const parsed = subEl ? parseSubItemPath(subEl.dataset.builderSubpath) : null;
+            if (parsed) {
+              selectSubItem(block.id, parsed);
+            } else if (selectedBlockId !== block.id) {
+              selectBlock(block.id);
+            }
           }
           if (target.closest("a[href]")) {
             e.preventDefault();
+          }
+        }}
+        onMouseOverCapture={(e) => {
+          if (e.buttons !== 0) return;
+          const target = e.target as HTMLElement;
+          if (target.closest("[data-builder-nested], [data-builder-controls]")) return;
+          const subEl = target.closest<HTMLElement>("[data-builder-subpath]");
+          const parsed = subEl ? parseSubItemPath(subEl.dataset.builderSubpath) : null;
+          const prev = useBuilderStore.getState().hoveredSubItem;
+          if (parsed) {
+            if (prev?.blockId !== block.id || !isSubPathEqual(prev.path, parsed)) {
+              hoverSubItem(block.id, parsed);
+            }
+          } else if (prev?.blockId === block.id) {
+            hoverSubItem(null);
+          }
+        }}
+        onMouseLeave={() => {
+          if (useBuilderStore.getState().hoveredSubItem?.blockId === block.id) {
+            hoverSubItem(null);
           }
         }}
         onSubmitCapture={(e) => e.preventDefault()}
@@ -366,15 +434,24 @@ export function SortableBlock({
         )}
         style={presentation.style}
       >
-        <BlockErrorBoundary blockType={block.type} blockId={block.id}>
-          {ComponentToRender ? (
-            <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</ComponentToRender>
-          ) : (
-            <div className="p-8 text-center bg-slate-100 text-slate-500 font-medium">
-              Section renderer unavailable for: {block.type}
-            </div>
-          )}
-        </BlockErrorBoundary>
+        <BuilderBlockContext.Provider
+          value={{
+            blockId: block.id,
+            isPreview: false,
+            activeSubPath,
+            hoveredSubPath,
+          }}
+        >
+          <BlockErrorBoundary blockType={block.type} blockId={block.id}>
+            {ComponentToRender ? (
+              <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</ComponentToRender>
+            ) : (
+              <div className="p-8 text-center bg-slate-100 text-slate-500 font-medium">
+                Section renderer unavailable for: {block.type}
+              </div>
+            )}
+          </BlockErrorBoundary>
+        </BuilderBlockContext.Provider>
       </div>
 
       {/* Blue Selection Border & 4 Corner Handles */}

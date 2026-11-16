@@ -1,66 +1,425 @@
 "use client";
 
-import React from "react";
-import { Layers, ChevronUp, ChevronDown, Copy, ClipboardPaste, Scissors, Trash2, Eye, EyeOff } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Layers,
+  ChevronUp,
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  ClipboardPaste,
+  Scissors,
+  Trash2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useBuilderStore } from "../../store/builder-store";
 import { getBlockDefinition } from "../../registry";
 import { cn } from "@/lib/utils";
 import { COLUMN_SLOT_KEYS, getColumnBlocks } from "../../utils/block-tree";
-import type { PageBlock } from "../../types";
+import { isSubPathEqual, isSubPathPrefix, type SubItemPath } from "../../utils/sub-item-path";
+import type { FieldDefinition, PageBlock } from "../../types";
+
+function scrollBlockIntoCanvasView(blockId: string) {
+  if (typeof document === "undefined") return;
+  const el = document.querySelector<HTMLElement>(
+    `[data-builder-block="${blockId}"], [data-builder-nested="${blockId}"]`
+  );
+  el?.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
+}
+
+function getArrayItemTitle(
+  item: Record<string, unknown>,
+  field: FieldDefinition,
+  index: number
+): string {
+  const raw =
+    item?.[field.itemLabelKey || "title"] ||
+    item?.name ||
+    item?.label ||
+    item?.question ||
+    item?.groupName ||
+    item?.dateStr ||
+    item?.category ||
+    item?.year ||
+    item?.shortName;
+  if (typeof raw === "string" && raw.trim()) return raw;
+  if (raw && typeof raw === "object" && "en" in raw && typeof (raw as { en?: string }).en === "string") {
+    return (raw as { en: string }).en;
+  }
+  return `${field.itemLabel || "Item"} ${index + 1}`;
+}
+
+function BlockSubItemsTree({ block }: { block: PageBlock }) {
+  const { selectedSubItem, hoveredSubItem, selectSubItem, hoverSubItem } = useBuilderStore();
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set());
+  const definition = getBlockDefinition(block.type);
+  const fields = definition?.fields || {};
+
+  const arrayEntries = Object.entries(fields).filter(
+    ([, field]) => field.type === "array"
+  ) as [string, FieldDefinition][];
+
+  if (arrayEntries.length === 0) return null;
+
+  const isSelectedBlock = selectedSubItem?.blockId === block.id;
+  const isHoveredBlock = hoveredSubItem?.blockId === block.id;
+
+  const toggleGroup = (key: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  return (
+    <div className="ml-4 space-y-1 border-l-2 border-blue-100/80 pl-3 pt-1">
+      {arrayEntries.map(([fieldKey, field]) => {
+        const rawItems =
+          block.props?.[fieldKey] ??
+          definition?.defaultProps?.[fieldKey] ??
+          field.defaultValue;
+        const items = Array.isArray(rawItems) ? rawItems : [];
+        if (items.length === 0) return null;
+
+        const hasActiveChild =
+          isSelectedBlock && selectedSubItem?.path[0] === fieldKey;
+        const isExpanded = expandedGroups.has(fieldKey) || hasActiveChild;
+        const childFields = field.itemFields || field.arrayFields || {};
+        const nestedArrayEntries = Object.entries(childFields).filter(
+          ([, cf]) => cf.type === "array"
+        ) as [string, FieldDefinition][];
+
+        return (
+          <div key={fieldKey} className="space-y-1">
+            <button
+              type="button"
+              onClick={() => toggleGroup(fieldKey)}
+              className="flex w-full items-center justify-between gap-2 rounded-md px-1.5 py-1 text-left text-xs font-bold text-[#004776] hover:bg-blue-50/50 cursor-pointer"
+            >
+              <span className="flex items-center gap-1 min-w-0">
+                <ChevronRight
+                  className={cn(
+                    "size-3 shrink-0 text-slate-400 transition-transform",
+                    isExpanded && "rotate-90 text-[#115eff]"
+                  )}
+                />
+                <span className="truncate">{field.label}</span>
+              </span>
+              <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-[#115eff]">
+                {items.length}
+              </span>
+            </button>
+
+            {isExpanded && (
+              <div className="space-y-1 pl-2">
+                {items.map((item, idx) => {
+                  const itemPath: SubItemPath = [fieldKey, idx];
+                  const itemTitle = getArrayItemTitle(item as Record<string, unknown>, field, idx);
+                  const isSubSelected =
+                    isSelectedBlock &&
+                    selectedSubItem &&
+                    isSubPathEqual(itemPath, selectedSubItem.path);
+                  const isSubHovered =
+                    isHoveredBlock &&
+                    hoveredSubItem &&
+                    isSubPathPrefix(itemPath, hoveredSubItem.path);
+
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <button
+                        type="button"
+                        onClick={() => selectSubItem(block.id, itemPath)}
+                        onMouseEnter={() => hoverSubItem(block.id, itemPath)}
+                        onMouseLeave={() => {
+                          const cur = useBuilderStore.getState().hoveredSubItem;
+                          if (cur?.blockId === block.id && isSubPathEqual(cur.path, itemPath)) {
+                            hoverSubItem(null);
+                          }
+                        }}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-lg border px-2 py-1.5 text-left text-xs transition-colors cursor-pointer",
+                          isSubSelected
+                            ? "border-[#115eff] bg-blue-50/60 font-bold text-[#004776]"
+                            : isSubHovered
+                              ? "border-blue-300 bg-blue-50/30 font-semibold text-slate-900"
+                              : "border-blue-100/80 bg-white font-medium text-slate-700 hover:border-blue-300"
+                        )}
+                      >
+                        <span className="text-[11px] font-bold text-slate-400 shrink-0">
+                          #{idx + 1}
+                        </span>
+                        <span className="truncate">{itemTitle}</span>
+                      </button>
+
+                      {nestedArrayEntries.map(([nestedKey, nestedField]) => {
+                        const nestedItems = Array.isArray((item as Record<string, unknown>)?.[nestedKey])
+                          ? ((item as Record<string, unknown>)[nestedKey] as Record<string, unknown>[])
+                          : [];
+                        const showNested =
+                          nestedItems.length > 0 &&
+                          (isSubSelected ||
+                            (isSelectedBlock &&
+                              selectedSubItem &&
+                              isSubPathPrefix(itemPath, selectedSubItem.path)));
+                        if (!showNested) return null;
+
+                        return (
+                          <div key={nestedKey} className="ml-3 space-y-1 border-l border-blue-100 pl-2">
+                            {nestedItems.map((subItem, subIdx) => {
+                              const subPath: SubItemPath = [fieldKey, idx, nestedKey, subIdx];
+                              const subTitle = getArrayItemTitle(subItem, nestedField, subIdx);
+                              const activeNested =
+                                isSelectedBlock &&
+                                selectedSubItem &&
+                                isSubPathEqual(subPath, selectedSubItem.path);
+                              return (
+                                <button
+                                  key={subIdx}
+                                  type="button"
+                                  onClick={() => selectSubItem(block.id, subPath)}
+                                  onMouseEnter={() => hoverSubItem(block.id, subPath)}
+                                  onMouseLeave={() => {
+                                    const cur = useBuilderStore.getState().hoveredSubItem;
+                                    if (cur?.blockId === block.id && isSubPathEqual(cur.path, subPath)) {
+                                      hoverSubItem(null);
+                                    }
+                                  }}
+                                  className={cn(
+                                    "flex w-full items-center gap-1.5 rounded-md border px-2 py-1 text-left text-[11px] transition-colors cursor-pointer",
+                                    activeNested
+                                      ? "border-[#115eff] bg-blue-50 font-bold text-[#115eff]"
+                                      : "border-blue-100/70 bg-white text-slate-600 hover:border-blue-300"
+                                  )}
+                                >
+                                  <span className="text-slate-400">#{subIdx + 1}</span>
+                                  <span className="truncate">{subTitle}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 /** The HCMUTE layers panel, connected to the conference builder's store. */
 export function LayersTree() {
-  const { data, selectedBlockId, selectBlock, moveBlockUp, moveBlockDown, removeBlock, toggleBlockHidden, copyBlock, cutBlock, pasteBlock, pasteAfterBlock, clipboardBlock } = useBuilderStore();
+  const {
+    data,
+    selectedBlockId,
+    hoveredBlockId,
+    selectBlock,
+    hoverBlock,
+    moveBlockUp,
+    moveBlockDown,
+    removeBlock,
+    toggleBlockHidden,
+    copyBlock,
+    cutBlock,
+    pasteBlock,
+    pasteAfterBlock,
+    clipboardBlock,
+  } = useBuilderStore();
   const content = data.content;
-  if (content.length === 0) return <div className="flex h-full flex-col items-center justify-center gap-2 bg-white p-8 text-center text-sm text-slate-400"><Layers className="mb-1 size-8 text-slate-400" /><p className="font-bold text-slate-800">No sections yet</p><p>Add a section from the block library.</p></div>;
+  if (content.length === 0) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-2 bg-white p-8 text-center text-sm text-slate-400">
+        <Layers className="mb-1 size-8 text-slate-400" />
+        <p className="font-bold text-slate-800">No sections yet</p>
+        <p>Add a section from the block library.</p>
+      </div>
+    );
+  }
 
   const pasteAfter = (id: string | null) => {
     const index = content.findIndex((block) => block.id === id);
     if (index < 0 && id) pasteAfterBlock(id);
     else pasteBlock(index < 0 ? content.length : index + 1);
   };
-  return <div className="flex h-full select-none flex-col overflow-hidden bg-white text-slate-900">
-    <div className="flex items-center justify-between border-b border-blue-100/80 bg-white p-3 text-xs text-slate-500">
-      <span className="font-bold text-sm text-[#004776]">Section structure</span>
-      <div className="flex items-center gap-1.5">{clipboardBlock && <button type="button" onClick={() => pasteAfter(selectedBlockId)} className="inline-flex items-center gap-1 rounded-md border border-blue-100/90 bg-white px-2.5 py-1 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"><ClipboardPaste className="size-3.5" />Paste</button>}<span className="rounded-md border border-blue-100/90 bg-blue-50/40 px-2 py-0.5 text-xs font-bold text-[#004776]">{content.length} sections</span></div>
-    </div>
-    <div className="flex-1 space-y-2 overflow-y-auto p-3">{content.map((block, index) => {
-      const selected = selectedBlockId === block.id;
-      const hidden = Boolean(block.hidden);
-      const label = getBlockDefinition(block.type)?.label || block.type;
-      return <div key={block.id} className="space-y-1"><div className={cn("flex items-center justify-between gap-2 rounded-xl border p-2.5 transition-all bg-white", selected ? hidden ? "border-amber-600 bg-white ring-1 ring-amber-600 shadow-xs" : "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30 shadow-xs" : hidden ? "border-amber-300 bg-amber-50/20" : "border-blue-100/90 hover:border-blue-300 hover:shadow-2xs")}>
-        <button type="button" onClick={() => selectBlock(block.id)} className="flex min-w-0 flex-1 items-center gap-2.5 text-left cursor-pointer"><span className="w-5 shrink-0 text-center font-bold text-xs text-slate-400">{index + 1}</span><span className="min-w-0 flex-1"><span className={cn("block truncate text-sm font-bold", selected ? "text-slate-900" : "text-slate-800", hidden && "line-through opacity-70")}>{label}</span><span className="block truncate text-xs text-slate-400">#{block.id}</span></span>{hidden && <span className="rounded border border-amber-600 bg-amber-600 px-1.5 py-0.5 text-xs font-bold text-white">Hidden</span>}</button>
-        <div className="flex shrink-0 items-center gap-0.5">
-          <button type="button" aria-label={`Move ${label} up`} title="Move up" disabled={index === 0} onClick={() => moveBlockUp(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="size-3.5" /></button>
-          <button type="button" aria-label={`Move ${label} down`} title="Move down" disabled={index === content.length - 1} onClick={() => moveBlockDown(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="size-3.5" /></button>
-          <button type="button" aria-label={`Copy ${label}`} title="Copy section" onClick={() => copyBlock(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"><Copy className="size-3.5" /></button>
-          <button type="button" aria-label={`Cut ${label}`} title="Cut section" onClick={() => cutBlock(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"><Scissors className="size-3.5" /></button>
-          <button type="button" aria-label={`Paste after ${label}`} title="Paste after section" disabled={!clipboardBlock} onClick={() => pasteAfter(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ClipboardPaste className="size-3.5" /></button>
-          <button type="button" aria-label={`${hidden ? "Show" : "Hide"} ${label}`} title={hidden ? "Show section" : "Hide section"} onClick={() => toggleBlockHidden(block.id)} className={cn("rounded p-1 cursor-pointer", hidden ? "bg-amber-600 text-white" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100")}>{hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
-          <button type="button" aria-label={`Delete ${label}`} title="Delete section" onClick={() => removeBlock(block.id)} className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 cursor-pointer"><Trash2 className="size-3.5" /></button>
+  return (
+    <div className="flex h-full select-none flex-col overflow-hidden bg-white text-slate-900">
+      <div className="flex items-center justify-between border-b border-blue-100/80 bg-white p-3 text-xs text-slate-500">
+        <span className="font-bold text-sm text-[#004776]">Section structure</span>
+        <div className="flex items-center gap-1.5">
+          {clipboardBlock && (
+            <button
+              type="button"
+              onClick={() => pasteAfter(selectedBlockId)}
+              className="inline-flex items-center gap-1 rounded-md border border-blue-100/90 bg-white px-2.5 py-1 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"
+            >
+              <ClipboardPaste className="size-3.5" />
+              Paste
+            </button>
+          )}
+          <span className="rounded-md border border-blue-100/90 bg-blue-50/40 px-2 py-0.5 text-xs font-bold text-[#004776]">
+            {content.length} sections
+          </span>
         </div>
-      </div><NestedLayers block={block} /></div>;
-    })}</div>
-  </div>;
+      </div>
+      <div className="flex-1 space-y-2 overflow-y-auto p-3">
+        {content.map((block, index) => {
+          const selected = selectedBlockId === block.id;
+          const hovered = hoveredBlockId === block.id;
+          const hidden = Boolean(block.hidden);
+          const label = getBlockDefinition(block.type)?.label || block.type;
+          return (
+            <div key={block.id} className="space-y-1">
+              <div
+                onMouseEnter={() => hoverBlock(block.id)}
+                onMouseLeave={() => {
+                  if (useBuilderStore.getState().hoveredBlockId === block.id) hoverBlock(null);
+                }}
+                className={cn(
+                  "flex items-center justify-between gap-2 rounded-xl border p-2.5 transition-all bg-white",
+                  selected
+                    ? hidden
+                      ? "border-amber-600 bg-white ring-1 ring-amber-600 shadow-xs"
+                      : "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30 shadow-xs"
+                    : hovered
+                      ? "border-blue-400 bg-blue-50/20 shadow-2xs"
+                      : hidden
+                        ? "border-amber-300 bg-amber-50/20"
+                        : "border-blue-100/90 hover:border-blue-300 hover:shadow-2xs"
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    selectBlock(block.id);
+                    scrollBlockIntoCanvasView(block.id);
+                  }}
+                  className="flex min-w-0 flex-1 items-center gap-2.5 text-left cursor-pointer"
+                >
+                  <span className="w-5 shrink-0 text-center font-bold text-xs text-slate-400">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={cn(
+                        "block truncate text-sm font-bold",
+                        selected ? "text-slate-900" : "text-slate-800",
+                        hidden && "line-through opacity-70"
+                      )}
+                    >
+                      {label}
+                    </span>
+                    <span className="block truncate text-xs text-slate-400">#{block.id}</span>
+                  </span>
+                  {hidden && (
+                    <span className="rounded border border-amber-600 bg-amber-600 px-1.5 py-0.5 text-xs font-bold text-white">
+                      Hidden
+                    </span>
+                  )}
+                </button>
+                <div className="flex shrink-0 items-center gap-0.5">
+                  <button type="button" aria-label={`Move ${label} up`} title="Move up" disabled={index === 0} onClick={() => moveBlockUp(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="size-3.5" /></button>
+                  <button type="button" aria-label={`Move ${label} down`} title="Move down" disabled={index === content.length - 1} onClick={() => moveBlockDown(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="size-3.5" /></button>
+                  <button type="button" aria-label={`Copy ${label}`} title="Copy section" onClick={() => copyBlock(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"><Copy className="size-3.5" /></button>
+                  <button type="button" aria-label={`Cut ${label}`} title="Cut section" onClick={() => cutBlock(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"><Scissors className="size-3.5" /></button>
+                  <button type="button" aria-label={`Paste after ${label}`} title="Paste after section" disabled={!clipboardBlock} onClick={() => pasteAfter(block.id)} className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ClipboardPaste className="size-3.5" /></button>
+                  <button type="button" aria-label={`${hidden ? "Show" : "Hide"} ${label}`} title={hidden ? "Show section" : "Hide section"} onClick={() => toggleBlockHidden(block.id)} className={cn("rounded p-1 cursor-pointer", hidden ? "bg-amber-600 text-white" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100")}>{hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
+                  <button type="button" aria-label={`Delete ${label}`} title="Delete section" onClick={() => removeBlock(block.id)} className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 cursor-pointer"><Trash2 className="size-3.5" /></button>
+                </div>
+              </div>
+              <BlockSubItemsTree block={block} />
+              <NestedLayers block={block} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function NestedLayers({ block }: { block: PageBlock }) {
-  const { selectedBlockId, selectBlock, copyBlock, cutBlock, pasteAfterBlock, clipboardBlock, toggleBlockHidden, removeBlock, moveBlockUp, moveBlockDown } = useBuilderStore();
-  const groups = [...COLUMN_SLOT_KEYS.map((slot, index) => ({ index, label: `Column ${index + 1}`, blocks: getColumnBlocks(block, slot) })), { index: 4, label: "Contents", blocks: block.children || [] }].filter((group) => group.blocks.length > 0);
+  const {
+    selectedBlockId,
+    hoveredBlockId,
+    selectBlock,
+    hoverBlock,
+    copyBlock,
+    cutBlock,
+    pasteAfterBlock,
+    clipboardBlock,
+    toggleBlockHidden,
+    removeBlock,
+    moveBlockUp,
+    moveBlockDown,
+  } = useBuilderStore();
+  const groups = [
+    ...COLUMN_SLOT_KEYS.map((slot, index) => ({
+      index,
+      label: `Column ${index + 1}`,
+      blocks: getColumnBlocks(block, slot),
+    })),
+    { index: 4, label: "Contents", blocks: block.children || [] },
+  ].filter((group) => group.blocks.length > 0);
   if (!groups.length) return null;
-  return <div className="ml-4 space-y-1.5 border-l-2 border-blue-100/80 py-1 pl-3">{groups.map((group) => <div key={group.index} className="space-y-1"><p className="px-1 pt-1 text-xs font-bold text-slate-500">{group.label}</p>{group.blocks.map((child, index) => {
-    const label = getBlockDefinition(child.type)?.label || child.type;
-    const selected = selectedBlockId === child.id;
-    const hidden = typeof child.hidden === "boolean" ? child.hidden : Boolean(child.props?.hidden);
-    return <div key={child.id} className="space-y-1"><div className={cn("flex items-center gap-1 rounded-lg border p-2 bg-white", selected ? "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30 shadow-xs" : "border-blue-100/90 hover:border-blue-300", hidden && "border-amber-300 bg-amber-50/20")}>
-      <button type="button" onClick={() => selectBlock(child.id)} className="min-w-0 flex-1 truncate text-left text-xs font-bold text-slate-800 cursor-pointer">{label}{hidden ? " · hidden" : ""}</button>
-      <button type="button" aria-label={`Move ${label} up`} disabled={index === 0} onClick={() => moveBlockUp(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="size-3" /></button>
-      <button type="button" aria-label={`Move ${label} down`} disabled={index === group.blocks.length - 1} onClick={() => moveBlockDown(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="size-3" /></button>
-      <button type="button" aria-label={`Copy ${label}`} onClick={() => copyBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer"><Copy className="size-3" /></button>
-      <button type="button" aria-label={`Cut ${label}`} onClick={() => cutBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer"><Scissors className="size-3" /></button>
-      <button type="button" aria-label={`Paste after ${label}`} disabled={!clipboardBlock} onClick={() => pasteAfterBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ClipboardPaste className="size-3" /></button>
-      <button type="button" aria-label={`${hidden ? "Show" : "Hide"} ${label}`} onClick={() => toggleBlockHidden(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer">{hidden ? <EyeOff className="size-3" /> : <Eye className="size-3" />}</button>
-      <button type="button" aria-label={`Delete ${label}`} onClick={() => removeBlock(child.id)} className="rounded p-1 text-slate-400 hover:text-rose-600 cursor-pointer"><Trash2 className="size-3" /></button>
-    </div><NestedLayers block={child} /></div>;
-  })}</div>)}</div>;
+  return (
+    <div className="ml-4 space-y-1.5 border-l-2 border-blue-100/80 py-1 pl-3">
+      {groups.map((group) => (
+        <div key={group.index} className="space-y-1">
+          <p className="px-1 pt-1 text-xs font-bold text-slate-500">{group.label}</p>
+          {group.blocks.map((child, index) => {
+            const label = getBlockDefinition(child.type)?.label || child.type;
+            const selected = selectedBlockId === child.id;
+            const hovered = hoveredBlockId === child.id;
+            const hidden = typeof child.hidden === "boolean" ? child.hidden : Boolean(child.props?.hidden);
+            return (
+              <div key={child.id} className="space-y-1">
+                <div
+                  onMouseEnter={() => hoverBlock(child.id)}
+                  onMouseLeave={() => {
+                    if (useBuilderStore.getState().hoveredBlockId === child.id) hoverBlock(null);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1 rounded-lg border p-2 bg-white",
+                    selected
+                      ? "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30 shadow-xs"
+                      : hovered
+                        ? "border-blue-400 bg-blue-50/20"
+                        : "border-blue-100/90 hover:border-blue-300",
+                    hidden && "border-amber-300 bg-amber-50/20"
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      selectBlock(child.id);
+                      scrollBlockIntoCanvasView(child.id);
+                    }}
+                    className="min-w-0 flex-1 truncate text-left text-xs font-bold text-slate-800 cursor-pointer"
+                  >
+                    {label}
+                    {hidden ? " · hidden" : ""}
+                  </button>
+                  <button type="button" aria-label={`Move ${label} up`} disabled={index === 0} onClick={() => moveBlockUp(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronUp className="size-3" /></button>
+                  <button type="button" aria-label={`Move ${label} down`} disabled={index === group.blocks.length - 1} onClick={() => moveBlockDown(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ChevronDown className="size-3" /></button>
+                  <button type="button" aria-label={`Copy ${label}`} onClick={() => copyBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer"><Copy className="size-3" /></button>
+                  <button type="button" aria-label={`Cut ${label}`} onClick={() => cutBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer"><Scissors className="size-3" /></button>
+                  <button type="button" aria-label={`Paste after ${label}`} disabled={!clipboardBlock} onClick={() => pasteAfterBlock(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 disabled:opacity-20 cursor-pointer"><ClipboardPaste className="size-3" /></button>
+                  <button type="button" aria-label={`${hidden ? "Show" : "Hide"} ${label}`} onClick={() => toggleBlockHidden(child.id)} className="rounded p-1 text-slate-500 hover:text-slate-900 cursor-pointer">{hidden ? <EyeOff className="size-3" /> : <Eye className="size-3" />}</button>
+                  <button type="button" aria-label={`Delete ${label}`} onClick={() => removeBlock(child.id)} className="rounded p-1 text-slate-400 hover:text-rose-600 cursor-pointer"><Trash2 className="size-3" /></button>
+                </div>
+                <BlockSubItemsTree block={child} />
+                <NestedLayers block={child} />
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
 }

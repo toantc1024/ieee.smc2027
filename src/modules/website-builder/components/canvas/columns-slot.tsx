@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { ClipboardPaste, Columns, Copy, CopyPlus, Eye, EyeOff, GripVertical, Plus, Scissors, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, ClipboardPaste, Columns, Copy, CopyPlus, Eye, EyeOff, GripVertical, Plus, Scissors, Trash2 } from "lucide-react";
 import { getBlockDefinition } from "../../registry";
 import { useBuilderStore } from "../../store/builder-store";
 import type { PageBlock } from "../../types";
 import { COLUMN_SLOT_KEYS, type ColumnSlotKey } from "../../utils/block-tree";
 import { getBlockPresentation, isBlockHidden } from "../../utils/block-presentation";
+import { BuilderBlockContext, isSubPathEqual, parseSubItemPath } from "../../utils/sub-item-path";
 import { cn } from "@/lib/utils";
 
 interface ColumnsSlotProps {
@@ -69,16 +70,40 @@ export function EditableChildren({ block }: { block: PageBlock }) {
 
 export function EditableNestedBlock({ block }: { block: PageBlock }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: block.id, data: { type: "nested-block" } });
-  const { selectedBlockId, selectBlock, copyBlock, cutBlock, duplicateBlock, toggleBlockHidden, removeBlock, pasteAfterBlock, clipboardBlock } = useBuilderStore();
+  const { selectedBlockId, selectedSubItem, hoveredSubItem, selectBlock, selectSubItem, hoverSubItem, copyBlock, cutBlock, duplicateBlock, toggleBlockHidden, removeBlock, pasteAfterBlock, clipboardBlock, moveBlockUp, moveBlockDown } = useBuilderStore();
+  const bodyRef = useRef<HTMLDivElement>(null);
   const selected = selectedBlockId === block.id;
   const hidden = isBlockHidden(block);
   const definition = getBlockDefinition(block.type);
   const Renderer = definition?.render;
   const presentation = getBlockPresentation(block);
+  const activeSubPath = selectedSubItem?.blockId === block.id ? selectedSubItem.path : null;
+  const hoveredSubPath = hoveredSubItem?.blockId === block.id ? hoveredSubItem.path : null;
+
+  useEffect(() => {
+    const container = bodyRef.current;
+    if (!container) return;
+    const nodes = container.querySelectorAll<HTMLElement>("[data-builder-subpath]");
+    nodes.forEach((node) => {
+      const ownerBlock = node.closest("[data-builder-nested], [data-builder-block]");
+      if (ownerBlock && ownerBlock !== container.closest("[data-builder-nested]")) return;
+      const parsed = parseSubItemPath(node.dataset.builderSubpath);
+      if (parsed && isSubPathEqual(parsed, activeSubPath)) {
+        node.dataset.builderSubstate = "selected";
+      } else if (parsed && isSubPathEqual(parsed, hoveredSubPath)) {
+        node.dataset.builderSubstate = "hovered";
+      } else {
+        delete node.dataset.builderSubstate;
+      }
+    });
+  }, [activeSubPath, hoveredSubPath, block.props]);
+
   return <div ref={setNodeRef} data-builder-nested={block.id} onClick={(event) => { event.stopPropagation(); selectBlock(block.id); }} className={cn("group relative min-w-0 cursor-pointer rounded-xl transition-colors", hidden && "border border-dashed border-amber-400/80 opacity-50", selected ? hidden ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background shadow-lg" : "ring-2 ring-blue-600 ring-offset-2 ring-offset-background shadow-lg" : "hover:ring-1 hover:ring-blue-500/70", isDragging && "opacity-50")}>
     {selected && <div className="absolute -top-3.5 right-2 z-40 flex items-center gap-1 rounded-lg border border-blue-400/80 bg-blue-600 px-2 py-0.5 text-xs text-white shadow-lg shadow-blue-600/30" onClick={(event) => event.stopPropagation()}>
       <button type="button" aria-label={`Drag ${definition?.label || block.type}`} title="Drag section" {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none rounded p-1 text-blue-100 transition-colors hover:bg-blue-700 hover:text-white"><GripVertical className="size-3" /></button>
       <span className="px-1 text-[10px] font-bold text-white">{definition?.label || block.type}</span>
+      <button type="button" title="Move up" aria-label="Move nested section up" onClick={() => moveBlockUp(block.id)} className="rounded p-1 text-white transition-colors hover:bg-blue-700"><ChevronUp className="size-3" /></button>
+      <button type="button" title="Move down" aria-label="Move nested section down" onClick={() => moveBlockDown(block.id)} className="rounded p-1 text-white transition-colors hover:bg-blue-700"><ChevronDown className="size-3" /></button>
       <button type="button" title="Copy" aria-label="Copy nested section" onClick={() => copyBlock(block.id)} className="rounded p-1 text-white transition-colors hover:bg-blue-700"><Copy className="size-3" /></button>
       <button type="button" title="Cut" aria-label="Cut nested section" onClick={() => cutBlock(block.id)} className="rounded p-1 text-white transition-colors hover:bg-blue-700"><Scissors className="size-3" /></button>
       {clipboardBlock && <button type="button" title="Paste after section" aria-label="Paste after nested section" onClick={() => pasteAfterBlock(block.id)} className="rounded p-1 text-white transition-colors hover:bg-blue-700"><ClipboardPaste className="size-3" /></button>}
@@ -86,6 +111,37 @@ export function EditableNestedBlock({ block }: { block: PageBlock }) {
       <button type="button" title={hidden ? "Show" : "Hide"} aria-label={hidden ? "Show nested section" : "Hide nested section"} onClick={() => toggleBlockHidden(block.id)} className={cn("rounded p-1 transition-colors", hidden ? "bg-amber-500 text-white hover:bg-amber-600" : "text-white hover:bg-blue-700")}>{hidden ? <EyeOff className="size-3" /> : <Eye className="size-3" />}</button>
       <button type="button" title="Delete" aria-label="Delete nested section" onClick={() => removeBlock(block.id)} className="rounded p-1 text-white transition-colors hover:bg-red-600"><Trash2 className="size-3" /></button>
     </div>}
-    <div className={presentation.className} style={presentation.style} onClickCapture={(event) => { const anchor = (event.target as HTMLElement | null)?.closest?.("a[href]"); if (anchor) event.preventDefault(); }} onSubmitCapture={(event) => event.preventDefault()}>{Renderer ? <Renderer {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}</div>
+    <div
+      ref={bodyRef}
+      className={presentation.className}
+      style={presentation.style}
+      onClickCapture={(event) => {
+        const target = event.target as HTMLElement | null;
+        if (target) {
+          const subEl = target.closest<HTMLElement>("[data-builder-subpath]");
+          const parsed = subEl ? parseSubItemPath(subEl.dataset.builderSubpath) : null;
+          if (parsed) {
+            event.stopPropagation();
+            selectSubItem(block.id, parsed);
+          }
+          if (target.closest("a[href]")) event.preventDefault();
+        }
+      }}
+      onMouseOverCapture={(event) => {
+        if (event.buttons !== 0) return;
+        const target = event.target as HTMLElement | null;
+        const subEl = target?.closest<HTMLElement>("[data-builder-subpath]");
+        const parsed = subEl ? parseSubItemPath(subEl.dataset.builderSubpath) : null;
+        if (parsed) hoverSubItem(block.id, parsed);
+      }}
+      onMouseLeave={() => {
+        if (useBuilderStore.getState().hoveredSubItem?.blockId === block.id) hoverSubItem(null);
+      }}
+      onSubmitCapture={(event) => event.preventDefault()}
+    >
+      <BuilderBlockContext.Provider value={{ blockId: block.id, isPreview: false, activeSubPath, hoveredSubPath }}>
+        {Renderer ? <Renderer {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}
+      </BuilderBlockContext.Provider>
+    </div>
   </div>;
 }
