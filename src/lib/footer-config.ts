@@ -130,3 +130,4 @@ export function normalizeFooterHref(href?: string): string {
   if (raw.startsWith("#")) return `/${raw}`;
   return raw;
 }
+
