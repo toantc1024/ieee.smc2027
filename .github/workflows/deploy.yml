@@ -84,6 +84,6 @@ jobs:
             # 6. Verify application health
             echo "🔍 Verifying application health..."
             sleep 4
-            curl -s -f http://127.0.0.1:3002/api/admin/pages > /dev/null && echo "✅ Application is live and healthy in Docker!" || echo "⚠️ Warning: healthcheck endpoint returned non-200"
+            curl -s -f http://127.0.0.1:3002/api/posts > /dev/null && echo "✅ Application is live and healthy in Docker!" || echo "⚠️ Warning: healthcheck endpoint returned non-200"
 
             echo "🎉 Automated deployment completed successfully!"

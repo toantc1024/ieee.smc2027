@@ -8,4 +8,9 @@ if [ "${AUTO_MIGRATE}" = "true" ]; then
   prisma db push --skip-generate --accept-data-loss || npx prisma db push --skip-generate --accept-data-loss || true
 fi
 
+if [ -f /app/scripts/migrate-cms-blocks.mjs ]; then
+  echo "[IEEE SMC 2027] Running idempotent CMS block migration..."
+  node /app/scripts/migrate-cms-blocks.mjs || echo "[entrypoint] Warning: block migration skipped"
+fi
+
 exec "$@"

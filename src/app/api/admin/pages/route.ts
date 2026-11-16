@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { cmsService } from "@/services";
 import {
   prisma,
@@ -8,100 +9,38 @@ import {
   apiError,
   revalidatePagePaths,
 } from "@/lib";
-import { hydrateBlocksServer } from "@/lib/cms-block-defaults";
+import { hydrateBlockPropsServer, hydrateBlocksServer } from "@/lib/cms-block-defaults";
+
+function makeBlock(
+  id: string,
+  type: string,
+  props: Record<string, unknown> = {}
+): { id: string; type: string; props: Prisma.InputJsonObject; hidden: boolean } {
+  return {
+    id,
+    type,
+    props: hydrateBlockPropsServer(type, props) as Prisma.InputJsonObject,
+    hidden: false,
+  };
+}
 
 const DEFAULT_HOME_BLOCKS = [
-  {
-    id: "hero-carousel-1",
-    type: "HeroCarousel",
-    props: { autoplayDuration: 7 },
-    hidden: false,
-  },
-  {
-    id: "welcome-1",
-    type: "WelcomeLetter",
-    props: {
-      title: "Welcome Message from the General Chairs & Honorary Chairs",
-      salutation: "Dear Colleagues & Honored Participants,",
-      theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
-      datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
-    },
-    hidden: false,
-  },
-  { id: "highlights-1", type: "ConferenceHighlights", props: {}, hidden: false },
-  { id: "dates-1", type: "ImportantDates", props: {}, hidden: false },
-  { id: "cfp-1", type: "CallForPapers", props: {}, hidden: false },
-  {
-    id: "templates-1",
-    type: "PaperTemplates",
-    props: {
-      title: "Author Submission Templates & Guidelines",
-      subtitle: "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
-    },
-    hidden: false,
-  },
-  { id: "tracks-1", type: "TracksExplorer", props: {}, hidden: false },
-  { id: "keynotes-1", type: "Keynotes", props: {}, hidden: false },
-  {
-    id: "news-1",
-    type: "NewsList",
-    props: {
-      title: "Conference News & Announcements",
-      subtitle: "Stay updated with the latest milestones, partnership alerts, and program schedules",
-    },
-    hidden: false,
-  },
-  {
-    id: "video-1",
-    type: "ConferenceVideo",
-    props: {
-      title: "IEEE SMC 2027 Comes to Ho Chi Minh City",
-      subtitle:
-        "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors",
-      videoUrl: "https://www.youtube.com/embed/vTwRHpRNtls",
-      venueName: "Sheraton Saigon Grand Opera Hotel",
-    },
-    hidden: false,
-  },
-  { id: "about-1", type: "About", props: {}, hidden: false },
-  {
-    id: "committees-section-1",
-    type: "CommitteesSection",
-    props: {
-      title: "Organizing & Technical Committees",
-      subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
-      badge: "Leadership & Organization",
-      autoplayDelay: 3500,
-    },
-    hidden: false,
-  },
-  {
-    id: "payment-methods-1",
-    type: "PaymentMethods",
-    props: {
-      title: "Registration & Payment Methods",
-      subtitle:
-        "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
-      badge: "Registration Guide",
-    },
-    hidden: false,
-  },
-  { id: "venue-1", type: "Venue", props: {}, hidden: false },
-  { id: "sponsors-1", type: "Sponsors", props: {}, hidden: false },
-  {
-    id: "contact-1",
-    type: "ContactCards",
-    props: {
-      title: "Contact the Organizing Secretariat",
-      email: "smc2027@hcmute.edu.vn",
-      location: "Ho Chi Minh City, Vietnam",
-      venue: "Sheraton Saigon Grand Opera Hotel",
-      website: "https://ieee-smc2027.org",
-    },
-    hidden: false,
-  },
-  { id: "faq-1", type: "FAQ", props: {}, hidden: false },
-  { id: "subscribe-1", type: "CfpSubscribe", props: {}, hidden: false },
+  makeBlock("hero-carousel-1", "HeroCarousel", { autoplayDuration: 7 }),
+  makeBlock("countdown-1", "SubmissionCountdown"),
+  makeBlock("highlights-1", "ConferenceHighlights"),
+  makeBlock("welcome-1", "WelcomeLetter"),
+  makeBlock("about-1", "About"),
+  makeBlock("cfp-1", "CallForPapers"),
+  makeBlock("tracks-1", "ConferenceTracksSection"),
+  makeBlock("dates-1", "ImportantDatesSection"),
+  makeBlock("committees-section-1", "CommitteesSection"),
+  makeBlock("venue-1", "VenueLocationSection"),
+  makeBlock("video-1", "MediaGallerySection"),
+  makeBlock("news-1", "NewsList"),
+  makeBlock("sponsors-1", "SponsorshipSection"),
+  makeBlock("faq-1", "FaqAccordionSection"),
+  makeBlock("contact-1", "ContactSupportSection"),
+  makeBlock("subscribe-1", "CfpSubscribe"),
 ];
 
 // Standard page configurations for the entire IEEE SMC 2027 website
@@ -121,29 +60,8 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "Committees | IEEE SMC 2027",
     metaDescription: "General Chairs, Program Chairs, and Organizing Committee for IEEE SMC 2027",
     blocks: [
-      {
-        id: "committees-section-1",
-        type: "CommitteesSection",
-        props: {
-          title: "Organizing & Technical Committees",
-          subtitle: "Distinguished leadership and academic committee chairs driving IEEE SMC 2027",
-          badge: "Leadership & Organization",
-          autoplayDelay: 3500,
-        },
-        hidden: false,
-      },
-      {
-        id: "contact-1",
-        type: "ContactCards",
-        props: {
-          title: "Contact the Organizing Secretariat",
-          email: "smc2027@hcmute.edu.vn",
-          location: "Ho Chi Minh City, Vietnam",
-          venue: "Sheraton Saigon Grand Opera Hotel",
-          website: "https://ieee-smc2027.org",
-        },
-        hidden: false,
-      },
+      makeBlock("committees-section-1", "CommitteesSection"),
+      makeBlock("contact-1", "ContactSupportSection"),
     ],
   },
   {
@@ -153,20 +71,16 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "Call for Papers & Submissions | IEEE SMC 2027",
     metaDescription: "Author submission guidelines, templates, and key paper submission deadlines",
     blocks: [
-      { id: "cfp-1", type: "CallForPapers", props: {}, hidden: false },
-      { id: "dates-1", type: "ImportantDates", props: {}, hidden: false },
-      { id: "countdown-1", type: "SubmissionCountdown", props: {}, hidden: false },
-      { id: "tracks-1", type: "TracksExplorer", props: {}, hidden: false },
-      {
-        id: "templates-1",
-        type: "PaperTemplates",
-        props: {
-          title: "Author Submission Templates & Guidelines",
-          subtitle: "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
-        },
-        hidden: false,
-      },
-      { id: "faq-1", type: "FAQ", props: {}, hidden: false },
+      makeBlock("countdown-1", "SubmissionCountdown"),
+      makeBlock("portals-1", "SubmissionPortalsBlock"),
+      makeBlock("policies-1", "CfpPoliciesBlock"),
+      makeBlock("categories-1", "SubmissionCategoriesBlock"),
+      makeBlock("brochure-1", "CfpBrochureBannerBlock"),
+      makeBlock("tracks-1", "ConferenceTracksSection"),
+      makeBlock("templates-1", "PaperSubmissionGuidelinesSection"),
+      makeBlock("dates-1", "ImportantDatesSection"),
+      makeBlock("faq-1", "FaqAccordionSection"),
+      makeBlock("contact-1", "ContactSupportSection"),
     ],
   },
   {
@@ -176,30 +90,15 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "Registration & Payments | IEEE SMC 2027",
     metaDescription: "Registration fee schedule, bank transfer details, and payment options",
     blocks: [
-      {
-        id: "payment-methods-1",
-        type: "PaymentMethods",
-        props: {
-          title: "Registration & Payment Methods",
-          subtitle: "Official registration fee schedule, bank transfer details, and secure payment channels for IEEE SMC 2027",
-          badge: "Registration Guide",
-        },
-        hidden: false,
-      },
-      { id: "dates-1", type: "ImportantDates", props: {}, hidden: false },
-      { id: "faq-1", type: "FAQ", props: {}, hidden: false },
-      {
-        id: "contact-1",
-        type: "ContactCards",
-        props: {
-          title: "Contact Registration Desk",
-          email: "smc2027@hcmute.edu.vn",
-          location: "Ho Chi Minh City, Vietnam",
-          venue: "Sheraton Saigon Grand Opera Hotel",
-          website: "https://ieee-smc2027.org",
-        },
-        hidden: false,
-      },
+      makeBlock("wizard-1", "RegistrationWizardBlock"),
+      makeBlock("fee-table-1", "RegistrationFeeTableBlock"),
+      makeBlock("payment-channels-1", "PaymentChannelsBlock"),
+      makeBlock("vat-invoice-1", "VatInvoiceNoticeBlock"),
+      makeBlock("dates-1", "ImportantDatesSection"),
+      makeBlock("faq-1", "FaqAccordionSection"),
+      makeBlock("contact-1", "ContactSupportSection", {
+        title: "Contact Registration Desk",
+      }),
     ],
   },
   {
@@ -209,20 +108,24 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "Technical Program & Keynotes | IEEE SMC 2027",
     metaDescription: "Keynotes, technical tracks, workshops, and conference agenda",
     blocks: [
-      { id: "keynotes-1", type: "Keynotes", props: {}, hidden: false },
-      { id: "tracks-1", type: "TracksExplorer", props: {}, hidden: false },
-      {
-        id: "video-1",
-        type: "ConferenceVideo",
-        props: {
-          title: "IEEE SMC 2027 Comes to Ho Chi Minh City",
-          subtitle: "Where systems science, human-machine interaction, and cybernetics meet vibrant Southeast Asian energy and global flavors",
-          videoUrl: "https://www.youtube.com/embed/vTwRHpRNtls",
-          venueName: "Sheraton Saigon Grand Opera Hotel",
-        },
-        hidden: false,
-      },
-      { id: "dates-1", type: "ImportantDates", props: {}, hidden: false },
+      makeBlock("keynotes-1", "KeynoteSpeakersSection"),
+      makeBlock("schedule-1", "ScheduleTimelineSection"),
+      makeBlock("tracks-1", "ConferenceTracksSection"),
+      makeBlock("workshops-1", "WorkshopTutorialSection"),
+      makeBlock("awards-1", "AwardsSection"),
+      makeBlock("past-1", "PastConferencesSection"),
+    ],
+  },
+  {
+    id: "program_sessions",
+    slug: "program/sessions",
+    title: "Technical Sessions & Tracks",
+    metaTitle: "Technical Sessions & Tracks | IEEE SMC 2027",
+    metaDescription: "Technical sessions schedule, rooms, chairs, and PaperCept papers",
+    blocks: [
+      makeBlock("sessions-1", "TechnicalSessionsBlock"),
+      makeBlock("schedule-1", "ScheduleTimelineSection"),
+      makeBlock("contact-1", "ContactSupportSection"),
     ],
   },
   {
@@ -232,30 +135,15 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "Venue & Hospitality Guide | IEEE SMC 2027",
     metaDescription: "Sheraton Saigon Grand Opera Hotel, travel guidance, and e-Visa instructions",
     blocks: [
-      { id: "venue-1", type: "Venue", props: {}, hidden: false },
-      {
-        id: "video-1",
-        type: "ConferenceVideo",
-        props: {
-          title: "Ho Chi Minh City Welcomes You",
-          subtitle: "Discover the vibrant culture and landmarks of District 1 Saigon",
-          videoUrl: "https://www.youtube.com/embed/vTwRHpRNtls",
-          venueName: "Sheraton Saigon Grand Opera Hotel",
-        },
-        hidden: false,
-      },
-      {
-        id: "contact-1",
-        type: "ContactCards",
-        props: {
-          title: "Hospitality & Travel Inquiries",
-          email: "smc2027@hcmute.edu.vn",
-          location: "Ho Chi Minh City, Vietnam",
-          venue: "Sheraton Saigon Grand Opera Hotel",
-          website: "https://ieee-smc2027.org",
-        },
-        hidden: false,
-      },
+      makeBlock("venue-overview-1", "VenueOverviewBlock"),
+      makeBlock("transit-1", "TransitLogisticsBlock"),
+      makeBlock("accommodation-1", "TravelAccommodationSection"),
+      makeBlock("visa-1", "VisaInformationSection"),
+      makeBlock("visitor-info-1", "VisitorInfoBlock"),
+      makeBlock("attractions-1", "CityAttractionsBlock"),
+      makeBlock("contact-1", "ContactSupportSection", {
+        title: "Hospitality & Travel Inquiries",
+      }),
     ],
   },
   {
@@ -265,16 +153,9 @@ export const STANDARD_CONFERENCE_PAGES = [
     metaTitle: "News & Announcements | IEEE SMC 2027",
     metaDescription: "Latest announcements, call for papers, and news updates",
     blocks: [
-      {
-        id: "news-1",
-        type: "NewsList",
-        props: {
-          title: "Conference News & Announcements",
-          subtitle: "Stay updated with the latest milestones, partnership alerts, and program schedules",
-        },
-        hidden: false,
-      },
-      { id: "subscribe-1", type: "CfpSubscribe", props: {}, hidden: false },
+      makeBlock("news-1", "NewsList"),
+      makeBlock("subscribe-1", "CfpSubscribe"),
+      makeBlock("contact-1", "ContactSupportSection"),
     ],
   },
 ];
