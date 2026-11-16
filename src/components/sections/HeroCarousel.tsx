@@ -6,6 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  subItemAttr,
+  useActiveBuilderSubIndex,
+} from "@/modules/website-builder/utils/sub-item-path";
 
 const FLOWER_WHITE = "/assets/flower-ute-white.png";
 
@@ -68,7 +72,17 @@ export function HeroCarousel({
   const duration = autoplayDuration;
 
   const [requestedSlide, setCurrentSlide] = useState(0);
-  const currentSlide = Math.max(0, Math.min(requestedSlide, slides.length - 1));
+  const currentSlide = slides.length > 0 ? Math.max(0, Math.min(requestedSlide, slides.length - 1)) : 0;
+  const builderSlideIdx = useActiveBuilderSubIndex("slides", slides.length);
+  const [lastBuilderSlideIdx, setLastBuilderSlideIdx] = useState<number | null>(null);
+
+  if (builderSlideIdx !== lastBuilderSlideIdx) {
+    setLastBuilderSlideIdx(builderSlideIdx);
+    if (builderSlideIdx !== null && slides.length > 0) {
+      setCurrentSlide(Math.max(0, Math.min(builderSlideIdx, slides.length - 1)));
+    }
+  }
+
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLElement>(null);
@@ -220,6 +234,7 @@ export function HeroCarousel({
       {/* Carousel images with subtle dark vignette overlay */}
       <section
         ref={containerRef}
+        {...subItemAttr(["slides", currentSlide])}
         className="relative flex-1 w-full overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -274,6 +289,11 @@ export function HeroCarousel({
           <div className="absolute inset-0 z-10 pointer-events-none flex items-center">
             <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
               <div className="max-w-3xl space-y-3.5 sm:space-y-4 pointer-events-auto">
+                {activeSlideData.badge && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-[0.26rem] bg-[#115eff]/85 border border-white/25 text-xs font-bold text-white backdrop-blur-xs shadow-xs">
+                    {activeSlideData.badge}
+                  </span>
+                )}
                 <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] drop-shadow-md">
                   {activeSlideData.title}{" "}
                   {activeSlideData.highlight && (
@@ -327,6 +347,7 @@ export function HeroCarousel({
                     <button
                       key={index}
                       type="button"
+                      {...subItemAttr(["slides", index])}
                       onClick={() => {
                         setIsAutoPlay(false);
                         goToSlide(index);

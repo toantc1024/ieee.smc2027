@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, useContext } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence, type Variants } from "motion/react";
@@ -27,6 +27,7 @@ import {
 } from "@/lib/header-config";
 import { getNavIcon } from "@/lib/nav-icons";
 import { cn } from "@/lib/utils";
+import { BuilderBlockContext } from "@/modules/website-builder/utils/sub-item-path";
 
 /* ─── Stripe Direction-Aware Animation Variants (Exact Smooth Ease from HCMUTE) ─── */
 const SMOOTH_EASE = [0.25, 0.1, 0.25, 1] as const;
@@ -321,7 +322,8 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
   );
 });
 
-export function Header() {
+export function Header({ previewInBuilder = false }: { previewInBuilder?: boolean } = {}) {
+  const builderCtx = useContext(BuilderBlockContext);
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -612,7 +614,7 @@ export function Header() {
     return [];
   }, [activeItem]);
 
-  if (pathname?.startsWith("/admin")) {
+  if (pathname?.startsWith("/admin") && !previewInBuilder && !builderCtx) {
     return null;
   }
 

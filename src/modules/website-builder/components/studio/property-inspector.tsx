@@ -499,14 +499,6 @@ function ContentFields({
               <span>Edit navigation in Header settings</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
-          ) : block.type === "FooterSection" ? (
-            <Link
-              href="/admin/footer"
-              className="inline-flex items-center gap-1 font-bold text-[#004776] hover:underline"
-            >
-              <span>Edit links in Footer settings</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
           ) : (
             <p>
               This section uses global data. Switch to the Styles tab to configure appearance and visibility.

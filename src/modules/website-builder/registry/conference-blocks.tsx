@@ -29,6 +29,13 @@ import {
   Info,
   Timer,
   CheckCircle,
+  ShieldCheck,
+  Receipt,
+  Navigation,
+  Landmark,
+  CalendarCheck,
+  Wallet,
+  BookMarked,
 } from "lucide-react";
 
 // Import Section Components
@@ -51,6 +58,19 @@ import { FAQ } from "@/components/sections/FAQ";
 import { PastConferencesSection } from "@/components/sections/PastConferencesSection";
 import { ConferenceVideo } from "@/components/sections/ConferenceVideo";
 import { VisaInformationSection } from "@/components/sections/VisaInformationSection";
+import { SubmissionPortalsBlock } from "@/components/sections/SubmissionPortalsBlock";
+import { CfpPoliciesBlock } from "@/components/sections/CfpPoliciesBlock";
+import { SubmissionCategoriesBlock } from "@/components/sections/SubmissionCategoriesBlock";
+import { CfpBrochureBannerBlock } from "@/components/sections/CfpBrochureBannerBlock";
+import { VenueOverviewBlock } from "@/components/sections/VenueOverviewBlock";
+import { TransitLogisticsBlock } from "@/components/sections/TransitLogisticsBlock";
+import { CityAttractionsBlock } from "@/components/sections/CityAttractionsBlock";
+import { VisitorInfoBlock } from "@/components/sections/VisitorInfoBlock";
+import { RegistrationFeeTableBlock } from "@/components/sections/RegistrationFeeTableBlock";
+import { PaymentChannelsBlock } from "@/components/sections/PaymentChannelsBlock";
+import { VatInvoiceNoticeBlock } from "@/components/sections/VatInvoiceNoticeBlock";
+import { RegistrationWizardBlock } from "@/components/sections/RegistrationWizardBlock";
+import { TechnicalSessionsBlock } from "@/components/sections/TechnicalSessionsBlock";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
@@ -514,7 +534,7 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     description: "Official conference portal navigation header with sticky scrolling.",
     fields: {},
     defaultProps: {},
-    render: () => <Header />,
+    render: (props) => <Header {...props} />,
   },
 
   // 21. FooterSection
@@ -526,7 +546,7 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     description: "Official IEEE SMC 2027 & HCMUTE copyright footer and quick links.",
     fields: {},
     defaultProps: {},
-    render: () => <Footer />,
+    render: (props) => <Footer {...props} />,
   },
 
   // Additional registered sections
@@ -625,6 +645,235 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     },
     render: (props) => <SubmissionCountdown {...props} />,
   },
+
+  // ── Decomposed Modular Conference Sections ─────────────────────────────────
+  SubmissionPortalsBlock: {
+    type: "SubmissionPortalsBlock",
+    label: "Submission Portals",
+    category: "academic",
+    icon: BookMarked,
+    description: "PaperCept, PDF eXpress, and IEEE Copyright electronic submission cards.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Submission Portals & Electronic Tools",
+      subtitle: "Submit manuscripts, validate PDF Xplore compliance, and sign copyright agreements",
+    },
+    render: (props) => <SubmissionPortalsBlock {...props} />,
+  },
+
+  CfpPoliciesBlock: {
+    type: "CfpPoliciesBlock",
+    label: "CFP Submission Policies",
+    category: "academic",
+    icon: ShieldCheck,
+    description: "Peer review, IEEE Xplore indexing, and CFP brochure download policies.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Call For Papers & Submission Policies",
+      subtitle: "IEEE Systems, Man, and Cybernetics Society Review & Publication Standards",
+    },
+    render: (props) => <CfpPoliciesBlock {...props} />,
+  },
+
+  SubmissionCategoriesBlock: {
+    type: "SubmissionCategoriesBlock",
+    label: "Submission Categories",
+    category: "academic",
+    icon: FileText,
+    description: "Regular papers, special sessions, workshops, and tutorials cards.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Submission Categories & Paper Types",
+      subtitle: "Regular papers, special sessions, workshops, and tutorials across core conference tracks",
+    },
+    render: (props) => <SubmissionCategoriesBlock {...props} />,
+  },
+
+  CfpBrochureBannerBlock: {
+    type: "CfpBrochureBannerBlock",
+    label: "CFP Brochure Banner",
+    category: "academic",
+    icon: FileText,
+    description: "Interactive Call for Papers PDF banner with toggleable reader.",
+    fields: {
+      title: { type: "text", label: "Banner Title" },
+      description: { type: "textarea", label: "Description" },
+    },
+    defaultProps: {
+      title: "Complete IEEE SMC 2027 Call for Papers Brochure",
+      description: "Download the authoritative specification for paper templates, special session guidelines, committees, and topics.",
+      cfpPdfUrl: CONFERENCE_INFO.cfpPdfUrl,
+      defaultExpanded: false,
+    },
+    render: (props) => <CfpBrochureBannerBlock {...props} />,
+  },
+
+  VenueOverviewBlock: {
+    type: "VenueOverviewBlock",
+    label: "Venue Overview",
+    category: "venue",
+    icon: Building2,
+    description: "Sheraton Saigon Grand Opera venue overview, photo card, and contact details.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      venueName: { type: "text", label: "Venue Name" },
+    },
+    defaultProps: {
+      title: "Conference Venue & Host City",
+      venueName: CONFERENCE_INFO.venue,
+      address: CONFERENCE_INFO.address,
+      googleMapsUrl: CONFERENCE_INFO.googleMapsUrl,
+    },
+    render: (props) => <VenueOverviewBlock {...props} />,
+  },
+
+  TransitLogisticsBlock: {
+    type: "TransitLogisticsBlock",
+    label: "Transit & Arrival Cards",
+    category: "venue",
+    icon: Navigation,
+    description: "Visa applications, airport transfer, and metro/District 1 connectivity cards.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Transit & Arrival Logistics",
+      subtitle: "Visa entry guidance, airport transfers, and downtown District 1 connectivity",
+    },
+    render: (props) => <TransitLogisticsBlock {...props} />,
+  },
+
+  CityAttractionsBlock: {
+    type: "CityAttractionsBlock",
+    label: "Saigon Attractions Directory",
+    category: "venue",
+    icon: Landmark,
+    description: "Filterable heritage landmarks and attractions around District 1.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Must-Visit Heritage & Cultural Places in Ho Chi Minh City",
+      subtitle: "Explore iconic Saigon architecture, museums, and dining around District 1",
+    },
+    render: (props) => <CityAttractionsBlock {...props} />,
+  },
+
+  VisitorInfoBlock: {
+    type: "VisitorInfoBlock",
+    label: "Visitor Practicalities",
+    category: "hospitality",
+    icon: Plane,
+    description: "Ho Chi Minh City weather, currency, ride-hailing, and secretariat help cards.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Local Weather, Transport & Practicalities",
+      subtitle: "Practical information for international visitors arriving in Ho Chi Minh City",
+    },
+    render: (props) => <VisitorInfoBlock {...props} />,
+  },
+
+  RegistrationFeeTableBlock: {
+    type: "RegistrationFeeTableBlock",
+    label: "Registration Fee Table",
+    category: "registration",
+    icon: CreditCard,
+    description: "Early bird, standard, and late registration pricing comparison table.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Registration & Fee Schedule",
+      subtitle: "Official registration fee schedule and entitlements for IEEE SMC 2027 participants and authors",
+    },
+    render: (props) => <RegistrationFeeTableBlock {...props} />,
+  },
+
+  PaymentChannelsBlock: {
+    type: "PaymentChannelsBlock",
+    label: "Payment Channels",
+    category: "registration",
+    icon: Wallet,
+    description: "Domestic VietQR bank transfer, SWIFT international wire, and Payoo cards.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Accepted Payment Channels & Wire Instructions",
+      subtitle: "Secure bank transfer, SWIFT international wire, and online card settlement",
+    },
+    render: (props) => <PaymentChannelsBlock {...props} />,
+  },
+
+  VatInvoiceNoticeBlock: {
+    type: "VatInvoiceNoticeBlock",
+    label: "Invoice & Receipt Notice",
+    category: "registration",
+    icon: Receipt,
+    description: "Tax receipt and electronic financial invoice request banner.",
+    fields: {
+      title: { type: "text", label: "Notice Title" },
+      description: { type: "textarea", label: "Description" },
+    },
+    defaultProps: {
+      title: "Electronic Financial Invoice & Tax Receipt Issuance",
+      email: CONFERENCE_INFO.contactEmail,
+      buttonLabel: "Request Invoice Receipt",
+    },
+    render: (props) => <VatInvoiceNoticeBlock {...props} />,
+  },
+
+  RegistrationWizardBlock: {
+    type: "RegistrationWizardBlock",
+    label: "Interactive Registration Portal",
+    category: "registration",
+    icon: CalendarCheck,
+    description: "3-step online conference registration checkout with editable fee tiers.",
+    fields: {
+      title: { type: "text", label: "Step 1 Heading" },
+      subtitle: { type: "textarea", label: "Step 1 Subheading" },
+    },
+    defaultProps: {
+      title: "Conference Registration Portal",
+      subtitle: "Select delegate fee tier and complete participant registration",
+      defaultCurrency: "VND",
+    },
+    render: (props) => <RegistrationWizardBlock {...props} />,
+  },
+
+  TechnicalSessionsBlock: {
+    type: "TechnicalSessionsBlock",
+    label: "Technical Sessions Schedule",
+    category: "program",
+    icon: Clock,
+    description: "Searchable technical sessions, tracks, room assignments, and papers schedule.",
+    fields: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "textarea", label: "Subtitle" },
+    },
+    defaultProps: {
+      title: "Technical Sessions & Symposium Schedule",
+      subtitle: "Browse the daily agenda for plenary keynotes, paper tracks, and industry panels",
+      syncFromDatabase: true,
+    },
+    render: (props) => <TechnicalSessionsBlock {...props} />,
+  },
 };
 
 export const CONFERENCE_BLOCK_DEFINITIONS: typeof BASE_BLOCK_DEFINITIONS = Object.fromEntries(
@@ -652,7 +901,20 @@ const HERO_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
     ...CONFERENCE_BLOCK_DEFINITIONS.Hero,
     fields: { ...CONFERENCE_BLOCK_DEFINITIONS.HeroCarousel.fields, ...CONFERENCE_BLOCK_DEFINITIONS.Hero.fields },
     render: (props) => {
-      const isCarousel = "slides" in props || "autoplayDuration" in props || "showOverlayText" in props || "showIndicators" in props || Object.keys(props).every((key) => key === "children");
+      const isHcmuteHero =
+        "backgroundImage" in props ||
+        "primaryCtaLabel" in props ||
+        "secondaryCtaLabel" in props ||
+        "badge" in props ||
+        "align" in props ||
+        ("title" in props && !("slides" in props));
+      const isCarousel =
+        !isHcmuteHero &&
+        ("slides" in props ||
+          "autoplayDuration" in props ||
+          "showOverlayText" in props ||
+          "showIndicators" in props ||
+          Object.keys(props).every((key) => key === "children"));
       return isCarousel ? <HeroCarousel {...props} /> : <HcmuteHero {...props} />;
     },
   };
@@ -660,8 +922,9 @@ const FAQ_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
     ...CONFERENCE_BLOCK_DEFINITIONS.FAQ,
     fields: { ...CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields, ...CONFERENCE_BLOCK_DEFINITIONS.FAQ.fields, items: CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields.items },
     render: (props) => {
-      const hasCategorizedItems = Array.isArray(props.items) && props.items.some((item: { category?: string }) => Boolean(item.category));
-      const isConference = hasCategorizedItems || (!Array.isArray(props.items) && !("badge" in props));
+      const hasCategorizedItems = Array.isArray(props.items) && props.items.some((item: { category?: string }) => Boolean(item?.category));
+      const hasConferenceProps = "footerPrompt" in props || "contactButtonLabel" in props || "contactEmail" in props;
+      const isConference = hasCategorizedItems || (!("badge" in props) && (hasConferenceProps || !Array.isArray(props.items)));
       return isConference ? <FAQ {...props} /> : <HcmuteFaq {...props} />;
     },
   };

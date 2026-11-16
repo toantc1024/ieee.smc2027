@@ -13,6 +13,7 @@ import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
 import { COMMITTEE_GROUPS, type CommitteeMember } from "@/data/conference";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { cn } from "@/lib/utils";
+import { subItemAttr, type SubItemPath } from "@/modules/website-builder/utils/sub-item-path";
 
 // High-resolution chair portraits mapping (normalized to 900x1200 3:4 canvas)
 export const CHAIR_PHOTO_MAP: Record<string, string> = {
@@ -153,13 +154,23 @@ export function getClayAvatarForMember(
     : "/assets/3d/abstract-glass-blue.svg";
 }
 
-interface CommitteesSectionProps {
+export interface CommitteeMemberInput extends Omit<CommitteeMember, "gender"> {
+  gender?: "male" | "female" | "auto";
+}
+
+export interface CommitteeGroupInput {
+  groupName: string;
+  members: CommitteeMemberInput[];
+}
+
+export interface CommitteesSectionProps {
   title?: string;
+  titleAccent?: string;
   subtitle?: string;
   autoplayDuration?: number;
   initialGroupIndex?: number;
   showAllGroups?: boolean;
-  groups?: (typeof COMMITTEE_GROUPS);
+  groups?: CommitteeGroupInput[];
 }
 
 // Responsive card widths (content box width)
@@ -324,7 +335,13 @@ function AbstractGlassSquareFallback({
 /**
  * Single Committee Member Card
  */
-function CommitteeCard({ member }: { member: CommitteeMember }) {
+function CommitteeCard({
+  member,
+  subPath,
+}: {
+  member: CommitteeMemberInput;
+  subPath?: SubItemPath;
+}) {
   if (!member) return null;
   const name = member.name?.trim() || "Committee Member";
   const photo =
@@ -339,14 +356,21 @@ function CommitteeCard({ member }: { member: CommitteeMember }) {
 
   const hasPhoto = Boolean(photo && !imgError);
   const isFallback = !hasPhoto;
+  const explicitGender =
+    member.gender === "male" || member.gender === "female"
+      ? member.gender
+      : undefined;
   const gender = useMemo(
-    () => inferMemberGender(name, member.gender),
-    [name, member.gender]
+    () => inferMemberGender(name, explicitGender),
+    [name, explicitGender]
   );
   const isPinkFallback = isFallback && gender === "female";
 
   return (
-    <div className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing">
+    <div
+      {...(subPath ? subItemAttr(subPath) : {})}
+      className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing"
+    >
       {/* The Card Box */}
       <div
         className={cn(
@@ -569,8 +593,10 @@ function CommitteeCarouselControls({
  */
 function CommitteeGroupCarousel({
   group,
+  groupIndex,
 }: {
-  group: (typeof COMMITTEE_GROUPS)[number];
+  group: CommitteeGroupInput;
+  groupIndex?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -648,7 +674,10 @@ function CommitteeGroupCarousel({
   const groupName = group?.groupName || "Committee Group";
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div
+      {...(groupIndex !== undefined ? subItemAttr(["groups", groupIndex]) : {})}
+      className="space-y-4 sm:space-y-6"
+    >
       {/* Group Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-[#115eff]/20 gap-2">
         <div className="flex items-center gap-3">
@@ -681,7 +710,14 @@ function CommitteeGroupCarousel({
                 key={`${member.name || "member"}-${member.photo || ""}-${idx}`}
                 className={CARD_STATIC_CLASSES}
               >
-                <CommitteeCard member={member} />
+                <CommitteeCard
+                  member={member}
+                  subPath={
+                    groupIndex !== undefined
+                      ? ["groups", groupIndex, "members", idx]
+                      : undefined
+                  }
+                />
               </div>
             ))}
           </div>
@@ -708,7 +744,14 @@ function CommitteeGroupCarousel({
                     className={cn(SLIDE_BASIS_CLASSES, "shrink-0 flex")}
                   >
                     <div className="w-full h-full flex">
-                      <CommitteeCard member={member} />
+                      <CommitteeCard
+                        member={member}
+                        subPath={
+                          groupIndex !== undefined && memberCount > 0
+                            ? ["groups", groupIndex, "members", idx % memberCount]
+                            : undefined
+                        }
+                      />
                     </div>
                   </CarouselItem>
                 ))}
@@ -728,10 +771,16 @@ function CommitteeGroupCarousel({
 
 export function CommitteesSection({
   title = "Organizing Committee",
+  titleAccent,
   subtitle = "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
-  groups = COMMITTEE_GROUPS,
+  groups,
 }: CommitteesSectionProps) {
-  const safeGroups = Array.isArray(groups) && groups.length > 0 ? groups.filter(Boolean) : COMMITTEE_GROUPS;
+  const safeGroups =
+    groups === undefined
+      ? COMMITTEE_GROUPS
+      : Array.isArray(groups)
+        ? groups.filter(Boolean)
+        : [];
 
   return (
     <SectionContainer id="committees" fullWidthBg="bg-white">
@@ -741,8 +790,26 @@ export function CommitteesSection({
 
         <div className="space-y-3 w-full relative z-10">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-[1.2]">
-            <span className="block text-[#004776]">{title}</span>
-            <span className="block text-[#115eff]">& Leadership</span>
+            {titleAccent ? (
+              <>
+                <span className="block text-[#004776]">{title}</span>
+                <span className="block text-[#115eff]">{titleAccent}</span>
+              </>
+            ) : title.includes("&") ? (
+              <>
+                <span className="block text-[#004776]">
+                  {title.split("&")[0].trim()}
+                </span>
+                <span className="block text-[#115eff]">
+                  &amp; {title.split("&").slice(1).join("&").trim()}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="block text-[#004776]">{title}</span>
+                <span className="block text-[#115eff]">&amp; Leadership</span>
+              </>
+            )}
           </h1>
 
           <p className="text-sm sm:text-base lg:text-[17px] text-[#004776]/80 font-medium max-w-3xl leading-relaxed">
@@ -753,9 +820,21 @@ export function CommitteesSection({
 
       {/* 2. All Groups Displayed - Centered if no overflow, Circular Carousel on overflow with hover-only fade blur */}
       <div className="px-4 sm:px-6 py-10 sm:py-14 space-y-12 sm:space-y-16">
-        {safeGroups.map((group, idx) => (
-          <CommitteeGroupCarousel key={`${group?.groupName || "group"}-${idx}`} group={group} />
-        ))}
+        {safeGroups.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-blue-200/80 bg-blue-50/35 p-8 text-center">
+            <p className="text-sm font-semibold text-slate-600">
+              No committee groups added yet.
+            </p>
+          </div>
+        ) : (
+          safeGroups.map((group, idx) => (
+            <CommitteeGroupCarousel
+              key={`${group?.groupName || "group"}-${idx}`}
+              group={group}
+              groupIndex={idx}
+            />
+          ))
+        )}
       </div>
     </SectionContainer>
   );

@@ -10,10 +10,15 @@ import {
   formatVND,
   formatUSD,
 } from "@/lib/conference-registration";
+import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
 
 interface CategorySelectionStepProps {
   selectedTier: FeeTier["id"];
   currency: "VND" | "USD";
+  tiers?: FeeTier[];
+  heading?: string;
+  subheading?: string;
+  continueLabel?: string;
   onSelectTier: (tier: FeeTier["id"]) => void;
   onChangeCurrency: (currency: "VND" | "USD") => void;
   onNext: () => void;
@@ -22,20 +27,27 @@ interface CategorySelectionStepProps {
 export function CategorySelectionStep({
   selectedTier,
   currency,
+  tiers,
+  heading = "1. Select Delegate Category",
+  subheading = "Registration fees cover technical sessions, proceedings, delegate kit, and gala banquet.",
+  continueLabel = "Continue to Delegate Details",
   onSelectTier,
   onChangeCurrency,
   onNext,
 }: CategorySelectionStepProps) {
+  const tierList =
+    Array.isArray(tiers) && tiers.length > 0
+      ? tiers
+      : (Object.values(REGISTRATION_FEES) as FeeTier[]);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            1. Select Delegate Category
+            {heading}
           </h2>
-          <p className="text-sm text-slate-500">
-            Registration fees cover technical sessions, proceedings, delegate kit, and gala banquet.
-          </p>
+          {subheading && <p className="text-sm text-slate-500">{subheading}</p>}
         </div>
 
         <div className="inline-flex items-center bg-white border border-slate-200 rounded-xl p-1 text-xs font-bold">
@@ -65,14 +77,14 @@ export function CategorySelectionStep({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {(Object.keys(REGISTRATION_FEES) as Array<FeeTier["id"]>).map((key) => {
-          const tier = REGISTRATION_FEES[key];
-          const isSelected = selectedTier === key;
+        {tierList.map((tier, idx) => {
+          const isSelected = selectedTier === tier.id;
 
           return (
             <div
-              key={key}
-              onClick={() => onSelectTier(key)}
+              key={tier.id || idx}
+              {...subItemAttr(["tiers", idx])}
+              onClick={() => onSelectTier(tier.id)}
               className={`relative rounded-2xl border-2 p-6 cursor-pointer transition-all flex flex-col justify-between ${
                 isSelected
                   ? "border-[#115eff] bg-white shadow-lg ring-4 ring-[#115eff]/10"
@@ -96,16 +108,20 @@ export function CategorySelectionStep({
               <div>
                 <div className="pt-4 border-t border-slate-100 mb-4">
                   <div className="text-2xl font-black text-slate-900">
-                    {currency === "VND" ? formatVND(tier.vnd) : formatUSD(tier.usd)}
+                    {currency === "VND"
+                      ? formatVND(Number(tier.vnd) || 0)
+                      : formatUSD(Number(tier.usd) || 0)}
                   </div>
                   <div className="text-xs text-slate-400 font-medium">
                     Equivalent to{" "}
-                    {currency === "VND" ? formatUSD(tier.usd) : formatVND(tier.vnd)}
+                    {currency === "VND"
+                      ? formatUSD(Number(tier.usd) || 0)
+                      : formatVND(Number(tier.vnd) || 0)}
                   </div>
                 </div>
 
                 <ul className="space-y-2 text-xs text-slate-600">
-                  {tier.features.map((perk: string, i: number) => (
+                  {(tier.features || []).map((perk: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <Check className="size-3.5 text-emerald-600 shrink-0 mt-0.5" />
                       <span>{perk}</span>
@@ -120,7 +136,7 @@ export function CategorySelectionStep({
 
       <div className="flex justify-end pt-2">
         <Button type="button" variant="ute" size="lg" onClick={onNext}>
-          Continue to Delegate Details
+          {continueLabel}
           <ArrowRight className="size-4" />
         </Button>
       </div>

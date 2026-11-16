@@ -4,30 +4,70 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronUp, HelpCircle, Mail } from "lucide-react";
 import { FAQS, CONFERENCE_INFO } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import {
+  subItemAttr,
+  useActiveBuilderSubIndex,
+} from "@/modules/website-builder/utils/sub-item-path";
+
+export interface FaqItem {
+  category: string;
+  question: string;
+  answer: string;
+}
 
 export interface FAQProps {
-  items?: (typeof FAQS);
+  items?: FaqItem[];
   title?: string;
   subtitle?: string;
+  footerPrompt?: string;
+  contactButtonLabel?: string;
+  contactEmail?: string;
+  showFooterPrompt?: boolean;
 }
 
 export function FAQ({
   items = FAQS,
   title = "Frequently Asked Questions & Help",
   subtitle = "Author & Attendee Assistance • Conference Policies & Guidance",
+  footerPrompt = "Have an inquiry not answered above regarding registration, visas, or special sessions?",
+  contactButtonLabel = "Contact Conference Secretariat",
+  contactEmail = CONFERENCE_INFO.contactEmail,
+  showFooterPrompt = true,
 }: FAQProps) {
+  const safeItems = Array.isArray(items) ? items : FAQS;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const builderActiveIndex = useActiveBuilderSubIndex("items", safeItems.length);
+  const [lastBuilderIdx, setLastBuilderIdx] = useState<number | null>(null);
 
-  const categories = ["All", ...new Set(items.map((item) => item.category))];
+  if (builderActiveIndex !== lastBuilderIdx) {
+    setLastBuilderIdx(builderActiveIndex);
+    if (builderActiveIndex !== null) {
+      setOpenIndex(builderActiveIndex);
+      setActiveCategory("All");
+    }
+  }
 
-  const filteredFaqs = items.filter((item) => {
+  const categories = [
+    "All",
+    ...Array.from(
+      new Set(safeItems.map((item) => item.category || "General").filter(Boolean))
+    ),
+  ];
+
+  const indexedFaqs = safeItems.map((item, origIdx) => ({
+    ...item,
+    category: item.category || "General",
+    origIdx,
+  }));
+
+  const filteredFaqs = indexedFaqs.filter((item) => {
     if (activeCategory === "All") return true;
     return item.category === activeCategory;
   });
 
-  const toggleFaq = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const toggleFaq = (origIndex: number) => {
+    setOpenIndex(openIndex === origIndex ? null : origIndex);
   };
 
   return (
@@ -74,62 +114,74 @@ export function FAQ({
 
       {/* FAQ Accordion List: Aligned in Columns for Exact Text Alignment */}
       <div className="divide-y divide-blue-100/70 bg-white">
-        {filteredFaqs.map((faq, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div key={idx} className="px-4 sm:px-6 py-5 sm:py-6 transition-colors hover:bg-blue-50/30">
-              <button
-                onClick={() => toggleFaq(idx)}
-                className="w-full text-left flex items-start justify-between gap-4 focus:outline-none cursor-pointer"
+        {filteredFaqs.length === 0 ? (
+          <div className="px-4 sm:px-6 py-8 text-center text-sm text-slate-500">
+            No FAQ entries available.
+          </div>
+        ) : (
+          filteredFaqs.map((faq) => {
+            const isOpen = openIndex === faq.origIdx;
+            return (
+              <div
+                key={faq.origIdx}
+                {...subItemAttr(["items", faq.origIdx])}
+                className="px-4 sm:px-6 py-5 sm:py-6 transition-colors hover:bg-blue-50/30"
               >
-                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5 flex-1 min-w-0">
-                  {/* Category Tag in a fixed-width column to make all questions and answers align */}
-                  <div className="w-24 sm:w-28 shrink-0 pt-0.5">
-                    <span className="inline-flex items-center justify-center w-full text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 border border-blue-200 px-2 py-1 rounded-md text-center">
-                      {faq.category}
-                    </span>
+                <button
+                  onClick={() => toggleFaq(faq.origIdx)}
+                  className="w-full text-left flex items-start justify-between gap-4 focus:outline-none cursor-pointer"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5 flex-1 min-w-0">
+                    {/* Category Tag in a fixed-width column to make all questions and answers align */}
+                    <div className="w-24 sm:w-28 shrink-0 pt-0.5">
+                      <span className="inline-flex items-center justify-center w-full text-xs sm:text-sm font-bold text-[#115eff] bg-blue-50 border border-blue-200 px-2 py-1 rounded-md text-center">
+                        {faq.category}
+                      </span>
+                    </div>
+
+                    {/* Question & Answer aligned together in column */}
+                    <div className="flex-1 min-w-0">
+                      <span className="text-base sm:text-[17px] font-bold text-[#004776] leading-snug block">
+                        {faq.question}
+                      </span>
+                      {isOpen && (
+                        <div className="mt-3.5 text-sm sm:text-base text-slate-700 leading-relaxed font-normal border-t border-blue-50 pt-3 animate-in fade-in duration-200">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Question & Answer aligned together in column */}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-base sm:text-[17px] font-bold text-[#004776] leading-snug block">
-                      {faq.question}
-                    </span>
-                    {isOpen && (
-                      <div className="mt-3.5 text-sm sm:text-base text-slate-700 leading-relaxed font-normal border-t border-blue-50 pt-3 animate-in fade-in duration-200">
-                        {faq.answer}
-                      </div>
+                  <div className="text-slate-400 p-1 shrink-0 mt-0.5">
+                    {isOpen ? (
+                      <ChevronUp className="w-5 h-5 text-[#115eff]" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
                     )}
                   </div>
-                </div>
-
-                <div className="text-slate-400 p-1 shrink-0 mt-0.5">
-                  {isOpen ? (
-                    <ChevronUp className="w-5 h-5 text-[#115eff]" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5" />
-                  )}
-                </div>
-              </button>
-            </div>
-          );
-        })}
+                </button>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Contact Prompt Footer */}
-      <div className="px-4 sm:px-6 py-6 sm:py-7 bg-blue-50/35 border-t border-blue-100/85 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5 text-sm sm:text-base text-[#004776] font-medium">
-          <HelpCircle className="w-5 h-5 text-[#115eff] shrink-0" />
-          <span>Have an inquiry not answered above regarding registration, visas, or special sessions?</span>
+      {showFooterPrompt && (
+        <div className="px-4 sm:px-6 py-6 sm:py-7 bg-blue-50/35 border-t border-blue-100/85 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 text-sm sm:text-base text-[#004776] font-medium">
+            <HelpCircle className="w-5 h-5 text-[#115eff] shrink-0" />
+            <span>{footerPrompt}</span>
+          </div>
+          <a
+            href={`mailto:${contactEmail || CONFERENCE_INFO.contactEmail}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-6 py-2.5 bg-[#115eff] hover:bg-blue-700 text-white text-sm sm:text-base font-bold rounded-[0.26rem] transition-all shadow-sm"
+          >
+            <Mail className="w-4 h-4" />
+            <span>{contactButtonLabel}</span>
+          </a>
         </div>
-        <a
-          href={`mailto:${CONFERENCE_INFO.contactEmail}`}
-          className="inline-flex items-center gap-2 min-h-[48px] px-6 py-2.5 bg-[#115eff] hover:bg-blue-700 text-white text-sm sm:text-base font-bold rounded-[0.26rem] transition-all shadow-sm"
-        >
-          <Mail className="w-4 h-4" />
-          <span>Contact Conference Secretariat</span>
-        </a>
-      </div>
+      )}
     </SectionContainer>
   );
 }

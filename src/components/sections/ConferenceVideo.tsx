@@ -15,6 +15,11 @@ export interface ConferenceVideoProps {
   qqVideoVid?: string;
   venueName?: string;
   location?: string;
+  cardTitle?: string;
+  cardDescription?: string;
+  buttonLabel?: string;
+  youtubeTabLabel?: string;
+  qqTabLabel?: string;
 }
 
 function formatYouTubeEmbedUrl(url?: string): string {
@@ -39,6 +44,11 @@ export function ConferenceVideo({
   viewDetailsUrl = "#venue",
   videoUrl = "https://www.youtube.com/embed/vTwRHpRNtls",
   qqVideoVid = "x3508h1k2m9",
+  cardTitle = "Experience IEEE SMC in Ho Chi Minh City",
+  cardDescription = "Hosted by Ho Chi Minh City University of Technology and Education in Vietnam's vibrant technological hub — where systems science, human-machine interaction, and cybernetics converge for global research collaboration.",
+  buttonLabel = "Explore Venue & City Details",
+  youtubeTabLabel = "International Stream",
+  qqTabLabel = "QQ Video · China Access",
 }: ConferenceVideoProps) {
   const [playerSource, setPlayerSource] = useState<"YOUTUBE" | "QQ_VIDEO">("YOUTUBE");
 
@@ -93,7 +103,7 @@ export function ConferenceVideo({
               }`}
             >
               <PlayCircle className="size-3.5" />
-              International Stream
+              {youtubeTabLabel}
             </button>
             <button
               type="button"
@@ -105,7 +115,7 @@ export function ConferenceVideo({
               }`}
             >
               <Globe className="size-3.5" />
-              QQ Video · China Access
+              {qqTabLabel}
             </button>
           </div>
         </div>
@@ -133,18 +143,18 @@ export function ConferenceVideo({
 
               <div className="relative z-10 space-y-4">
                 <h3 className="text-xl sm:text-2xl font-bold text-[#004776] tracking-tight leading-snug">
-                  Experience IEEE SMC in Ho Chi Minh City
+                  {cardTitle}
                 </h3>
 
                 <p className="text-sm sm:text-base font-normal text-slate-700 leading-relaxed">
-                  Hosted by Ho Chi Minh City University of Technology and Education in Vietnam&apos;s vibrant technological hub — where systems science, human-machine interaction, and cybernetics converge for global research collaboration.
+                  {cardDescription}
                 </p>
               </div>
 
               <div className="relative z-10 w-full pt-6 mt-6 border-t border-blue-50">
                 <a href={safeViewDetailsUrl} className="block w-full">
                   <Button variant="ute" size="lg" className="w-full">
-                    <span>Explore Venue &amp; City Details</span>
+                    <span>{buttonLabel}</span>
                     <ArrowRight className="size-4" />
                   </Button>
                 </a>

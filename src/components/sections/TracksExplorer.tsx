@@ -1,38 +1,61 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Layers, Cpu, Users } from "lucide-react";
-import { TECHNICAL_TRACKS } from "@/data/conference";
+import { TECHNICAL_TRACKS, type TrackPillar } from "@/data/conference";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { subItemAttr, useActiveBuilderSubIndex } from "@/modules/website-builder/utils/sub-item-path";
+
+export interface EditableTrackPillar extends Omit<TrackPillar, "id"> {
+  id: string;
+  iconType?: "systems" | "cybernetics" | "humans";
+}
 
 export interface TracksExplorerProps {
-  pillars?: typeof TECHNICAL_TRACKS;
+  pillars?: EditableTrackPillar[];
   title?: string;
   subtitle?: string;
+  searchPlaceholder?: string;
 }
 
 export function TracksExplorer({
   pillars = TECHNICAL_TRACKS,
   title = "Technical Tracks & 3 Core Pillars",
   subtitle = "Systems Science • Cybernetics • Human–Machine Systems",
+  searchPlaceholder = "Search topics, keywords, or track codes...",
 }: TracksExplorerProps) {
-  const [activePillarId, setActivePillarId] = useState<string>("systems");
+  const safePillars = Array.isArray(pillars) ? pillars : [];
+  const [requestedPillarIdx, setRequestedPillarIdx] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const activeSubIndex = useActiveBuilderSubIndex("pillars", safePillars.length);
 
-  const activePillar = pillars.find((p) => p.id === activePillarId) || pillars[0];
+  useEffect(() => {
+    if (activeSubIndex !== null) {
+      setRequestedPillarIdx(activeSubIndex);
+    }
+  }, [activeSubIndex]);
 
-  const filteredTopics = (activePillar?.topics || []).filter((topic) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      topic.name.toLowerCase().includes(query) ||
-      topic.code.toLowerCase().includes(query) ||
-      topic.category.toLowerCase().includes(query)
-    );
-  });
+  const activePillarIdx =
+    activeSubIndex !== null
+      ? activeSubIndex
+      : Math.max(0, Math.min(requestedPillarIdx, Math.max(0, safePillars.length - 1)));
+  const activePillar = safePillars[activePillarIdx];
 
-  const getPillarIcon = (id: string) => {
-    switch (id) {
+  const filteredTopics = (activePillar?.topics || [])
+    .map((topic, origIndex) => ({ topic, origIndex }))
+    .filter(({ topic }) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        topic.name.toLowerCase().includes(query) ||
+        topic.code.toLowerCase().includes(query) ||
+        topic.category.toLowerCase().includes(query)
+      );
+    });
+
+  const getPillarIcon = (pillar: EditableTrackPillar) => {
+    const key = pillar.iconType || pillar.id;
+    switch (key) {
       case "systems":
         return <Layers className="w-4 h-4 text-blue-200" />;
       case "cybernetics":
@@ -40,44 +63,15 @@ export function TracksExplorer({
       case "humans":
         return <Users className="w-4 h-4 text-blue-200" />;
       default:
-        return null;
+        return <Layers className="w-4 h-4 text-blue-200" />;
     }
   };
 
-  const renderTopicCard = (topic: typeof filteredTopics[0], uniqueKey: string) => (
-    <div
-      key={uniqueKey}
-      className="p-5 sm:p-6 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-sm transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
-    >
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs sm:text-sm font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-sm">
-            {topic.code}
-          </span>
-          <span className="text-xs sm:text-sm px-2.5 py-0.5 bg-white/15 text-blue-100 rounded-sm font-semibold">
-            {topic.category}
-          </span>
-        </div>
-
-        <h4 className="text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
-          {topic.name}
-        </h4>
-      </div>
-
-      <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs sm:text-sm text-blue-200">
-        <span>IEEE SMC 2027 Scope</span>
-        <span className="font-semibold text-white/90">Technical Track</span>
-      </div>
-    </div>
-  );
-
   return (
     <SectionContainer id="tracks" fullWidthBg="bg-[#115eff] text-white" borderColor="border-white/20">
-      {/* Static Dot Pattern Background (No Running Animation) */}
       <div className="absolute inset-0 bg-dot-dark opacity-35 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 via-transparent to-blue-950/30 pointer-events-none" />
 
-      {/* Section Header matching standard 2-line headline style */}
       <div className="relative overflow-hidden px-4 sm:px-6 pt-10 sm:pt-14 pb-4 sm:pb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="corner-grid-dark-tr opacity-40 pointer-events-none" />
 
@@ -86,7 +80,7 @@ export function TracksExplorer({
             {title.includes("&") ? (
               <>
                 <span className="block text-blue-100">{title.split("&")[0].trim()}</span>
-                <span className="block text-white">& {title.split("&").slice(1).join("&").trim()}</span>
+                <span className="block text-white">&amp; {title.split("&").slice(1).join("&").trim()}</span>
               </>
             ) : (
               <span className="block text-white">{title}</span>
@@ -97,12 +91,11 @@ export function TracksExplorer({
           </p>
         </div>
 
-        {/* Search Bar */}
         <div className="relative w-full sm:w-96 z-10">
           <Search className="w-4.5 h-4.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200" />
           <input
             type="text"
-            placeholder="Search topics (e.g., Robotics, BCI, AI)..."
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-11 pr-4 py-3 text-sm sm:text-base bg-white/15 border border-white/30 rounded-sm focus:outline-none focus:bg-white/25 focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-white placeholder:text-blue-200"
@@ -110,80 +103,115 @@ export function TracksExplorer({
         </div>
       </div>
 
-      {/* 3 Pillars Tabs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-blue-800/40 relative z-10">
-        {pillars.map((pillar) => {
-          const isActive = pillar.id === activePillar?.id;
-          return (
-            <button
-              key={pillar.id}
-              onClick={() => setActivePillarId(pillar.id)}
-              className={`px-4 sm:px-6 py-6 sm:py-7 text-left transition-all relative cursor-pointer ${
-                isActive
-                  ? "bg-white/20 text-white shadow-inner"
-                  : "hover:bg-white/10 text-blue-100"
-              }`}
-            >
-              {/* Active Pure White Indicator */}
-              {isActive && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
-              )}
+      {safePillars.length === 0 ? (
+        <div className="relative z-10 px-6 py-12 text-center text-sm text-blue-100">
+          No technical tracks configured yet.
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-blue-800/40 relative z-10">
+            {safePillars.map((pillar, idx) => {
+              const isActive = idx === activePillarIdx;
+              return (
+                <button
+                  key={`${pillar.id}-${idx}`}
+                  type="button"
+                  {...subItemAttr(["pillars", idx])}
+                  onClick={() => setRequestedPillarIdx(idx)}
+                  className={`px-4 sm:px-6 py-6 sm:py-7 text-left transition-all relative cursor-pointer ${
+                    isActive
+                      ? "bg-white/20 text-white shadow-inner"
+                      : "hover:bg-white/10 text-blue-100"
+                  }`}
+                >
+                  {isActive && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
+                  )}
 
-              <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2">
-                  {getPillarIcon(pillar.id)}
-                  <span
-                    className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-sm ${
-                      isActive
-                        ? "bg-white text-[#115eff] font-extrabold"
-                        : "bg-white/20 text-white"
-                    }`}
-                  >
-                    {pillar.code}
-                  </span>
-                </div>
-                <span className="text-xs sm:text-sm text-blue-200 font-medium">
-                  {pillar.topics.length} Official Topics
-                </span>
-              </div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      {getPillarIcon(pillar)}
+                      <span
+                        className={`text-xs sm:text-sm font-bold px-3 py-1 rounded-sm ${
+                          isActive
+                            ? "bg-white text-[#115eff] font-extrabold"
+                            : "bg-white/20 text-white"
+                        }`}
+                      >
+                        {pillar.code}
+                      </span>
+                    </div>
+                    <span className="text-xs sm:text-sm text-blue-200 font-medium">
+                      {(pillar.topics || []).length} Topics
+                    </span>
+                  </div>
 
-              <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                {pillar.title}
-              </h3>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                    {pillar.title}
+                  </h3>
 
-              <p className="mt-1.5 text-sm sm:text-base text-blue-100 line-clamp-2 leading-relaxed">
-                {pillar.subtitle}
+                  <p className="mt-1.5 text-sm sm:text-base text-blue-100 line-clamp-2 leading-relaxed">
+                    {pillar.subtitle}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-8 z-10">
+            <div className="corner-dot-dark-bl opacity-30" />
+
+            {activePillar?.description && (
+              <p className="relative z-10 mb-5 text-sm sm:text-base text-blue-100/95 max-w-4xl leading-relaxed">
+                {activePillar.description}
               </p>
-            </button>
-          );
-        })}
-      </div>
+            )}
 
-      {/* Active Pillar Topic Directory */}
-      <div className="relative overflow-hidden px-4 sm:px-6 py-6 sm:py-8 z-10">
-        <div className="corner-dot-dark-bl opacity-30" />
-
-        {filteredTopics.length === 0 ? (
-          <div className="relative z-10 py-12 text-center text-base text-blue-200">
-            No topics matched &ldquo;{searchQuery}&rdquo; in this pillar. Try another keyword or switch pillars.
-          </div>
-        ) : (
-          /* Scrollable Overflow Container with Natural Pure Gradient Fade */
-          <div className="relative z-10 overflow-hidden rounded-sm">
-            {/* Natural Pure Gradient Color Fade Overlays (matching hcmute-website-frontend) */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] to-transparent z-30" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-[#115eff] to-transparent z-30" />
-
-            {/* Pure Scrollable Topic Directory for User to Scroll (No Auto-Play) */}
-            <div className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-10">
-                {filteredTopics.map((topic) => renderTopicCard(topic, `topic-${topic.code}`))}
+            {filteredTopics.length === 0 ? (
+              <div className="relative z-10 py-12 text-center text-base text-blue-200">
+                No topics matched &ldquo;{searchQuery}&rdquo; in this pillar.
               </div>
-            </div>
-          </div>
-        )}
-      </div>
+            ) : (
+              <div className="relative z-10 overflow-hidden rounded-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#115eff] to-transparent z-30" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-[#115eff] to-transparent z-30" />
 
+                <div className="max-h-[520px] sm:max-h-[580px] overflow-y-auto pr-2 sm:pr-3 tracks-scroll-container py-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-10">
+                    {filteredTopics.map(({ topic, origIndex }) => (
+                      <div
+                        key={`${topic.code}-${origIndex}`}
+                        {...subItemAttr(["pillars", activePillarIdx, "topics", origIndex])}
+                        className="p-5 sm:p-6 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 backdrop-blur-xs rounded-sm transition-all flex flex-col justify-between group shadow-xs hover:shadow-md cursor-pointer"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs sm:text-sm font-black text-[#115eff] bg-white px-2.5 py-0.5 rounded-sm">
+                              {topic.code}
+                            </span>
+                            <span className="text-xs sm:text-sm px-2.5 py-0.5 bg-white/15 text-blue-100 rounded-sm font-semibold">
+                              {topic.category}
+                            </span>
+                          </div>
+
+                          <h4 className="text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-blue-200 transition-colors leading-snug">
+                            {topic.name}
+                          </h4>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs sm:text-sm text-blue-200">
+                          <span>IEEE SMC 2027 Scope</span>
+                          <span className="font-semibold text-white/90">Technical Track</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </SectionContainer>
   );
 }

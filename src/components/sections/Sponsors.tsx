@@ -6,6 +6,7 @@ import { IeeeIcon } from "@/components/common/ProviderIcons";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { CONFERENCE_INFO } from "@/data/conference";
 import { IeeeSmc2027LogoGroup } from "@/components/common/IeeeSmc2027LogoGroup";
+import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
 
 export interface SponsorItem {
   logo?: string;
@@ -13,6 +14,7 @@ export interface SponsorItem {
   shortName: string;
   type: string;
   logoType: "hcmute" | "ieee" | "ieee-smc" | "ieee-cis" | "ieee-ras" | "most";
+  url?: string;
 }
 
 export const SPONSORS: SponsorItem[] = [
@@ -94,13 +96,23 @@ export interface SponsorsProps {
   sponsors?: SponsorItem[];
   title?: string;
   subtitle?: string;
+  prospectusLabel?: string;
+  prospectusUrl?: string;
+  showSocietyBanner?: boolean;
+  societyBannerLabel?: string;
 }
 
 export function Sponsors({
   sponsors = SPONSORS,
   title = "Sponsors & Partners & Supporting Societies",
   subtitle = "Partners & Organizing Institutions Supporting IEEE SMC 2027",
+  prospectusLabel = "Download Sponsorship Prospectus",
+  prospectusUrl = `mailto:${CONFERENCE_INFO.contactEmail}`,
+  showSocietyBanner = true,
+  societyBannerLabel = "Official Technical Co-Sponsorship & Society Affiliation",
 }: SponsorsProps) {
+  const safeSponsors = Array.isArray(sponsors) ? sponsors : SPONSORS;
+
   return (
     <SectionContainer id="sponsors" fullWidthBg="bg-white">
       
@@ -131,48 +143,82 @@ export function Sponsors({
             </p>
           </div>
         
-        <a
-          href={`mailto:${CONFERENCE_INFO.contactEmail}`}
-          className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-all shadow-sm hover:shadow-md self-start md:self-auto"
-        >
-          <span>Download Sponsorship Prospectus</span>
-          <ArrowUpRight className="w-4 h-4" />
-        </a>
+        {prospectusLabel && (
+          <a
+            href={prospectusUrl || `mailto:${CONFERENCE_INFO.contactEmail}`}
+            className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-3 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-all shadow-sm hover:shadow-md self-start md:self-auto"
+          >
+            <span>{prospectusLabel}</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </a>
+        )}
       </div>
     </div>
 
       {/* Sponsors Grid: Content aligned with header */}
       <div className="px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {/* Official Society Co-Sponsorship Banner Lockup */}
-        <div className="w-full p-5 sm:p-8 bg-blue-50/40 border border-blue-100/90 rounded-sm flex flex-col items-center justify-center text-center">
-          <span className="text-xs sm:text-sm font-bold text-[#004776]/75 mb-4">
-            Official Technical Co-Sponsorship & Society Affiliation
-          </span>
-          <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />
-        </div>
+        {showSocietyBanner && (
+          <div className="w-full p-5 sm:p-8 bg-blue-50/40 border border-blue-100/90 rounded-sm flex flex-col items-center justify-center text-center">
+            <span className="text-xs sm:text-sm font-bold text-[#004776]/75 mb-4">
+              {societyBannerLabel}
+            </span>
+            <IeeeSmc2027LogoGroup variant="transparent" height={72} priority />
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {sponsors.map((s, index) => (
-            <div
-              key={index}
-              className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
-            >
-              {s.logo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={s.logo} alt={s.name} className="mb-3 h-12 w-full object-contain" />
-              ) : <SponsorLogoBadge type={s.logoType} />}
-              
-              <div className="w-full pt-2 border-t border-blue-50">
-                <div className="text-sm sm:text-base font-bold text-[#004776] group-hover:text-[#115eff] transition-colors leading-snug">
-                  {s.shortName}
+        {safeSponsors.length === 0 ? (
+          <p className="py-6 text-center text-sm text-slate-500">No sponsors listed yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {safeSponsors.map((s, index) => {
+              const cardContent = (
+                <>
+                  {s.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={s.logo} alt={s.name || s.shortName} className="mb-3 h-12 w-full object-contain" />
+                  ) : (
+                    <SponsorLogoBadge type={s.logoType || "ieee"} />
+                  )}
+
+                  <div className="w-full pt-2 border-t border-blue-50">
+                    <div className="text-sm sm:text-base font-bold text-[#004776] group-hover:text-[#115eff] transition-colors leading-snug">
+                      {s.shortName || s.name}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-600 font-medium line-clamp-2">
+                      {s.type}
+                    </div>
+                  </div>
+                </>
+              );
+
+              if (s.url) {
+                return (
+                  <a
+                    key={index}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...subItemAttr(["sponsors", index])}
+                    className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
+                  >
+                    {cardContent}
+                  </a>
+                );
+              }
+
+              return (
+                <div
+                  key={index}
+                  {...subItemAttr(["sponsors", index])}
+                  className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
+                >
+                  {cardContent}
                 </div>
-                <div className="mt-1 text-xs text-slate-600 font-medium line-clamp-2">
-                  {s.type}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
     </SectionContainer>

@@ -24,6 +24,10 @@ import {
   Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  subItemAttr,
+  useActiveBuilderSubIndex,
+} from "../utils/sub-item-path";
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * 1. RichTextBlock (Compact Heading + Rich Paragraph / HTML)
@@ -170,6 +174,8 @@ function DataSheetBlockRender({
   subtitle = "",
   headers = "Column 1, Column 2, Column 3",
   rowsData = "",
+  columnsList,
+  rowsList,
   striped = true,
   searchable = true,
 }: {
@@ -177,27 +183,41 @@ function DataSheetBlockRender({
   subtitle?: string;
   headers?: string;
   rowsData?: string;
+  columnsList?: Array<{ header: string }>;
+  rowsList?: Array<{ cells: string }>;
   striped?: boolean;
   searchable?: boolean;
 }) {
   const [query, setQuery] = useState("");
 
-  const headerList = (headers || "")
-    .split(",")
-    .map((h) => h.trim())
-    .filter(Boolean);
+  const usingStructuredCols = Array.isArray(columnsList) && columnsList.length > 0;
+  const headerList = usingStructuredCols
+    ? columnsList.map((c) => (c?.header || "").trim()).filter(Boolean)
+    : (headers || "")
+        .split(",")
+        .map((h) => h.trim())
+        .filter(Boolean);
 
-  const parsedRows = (rowsData || "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) =>
-      line.includes("|")
-        ? line.split("|").map((c) => c.trim())
-        : line.split(",").map((c) => c.trim())
-    );
+  const usingStructuredRows = Array.isArray(rowsList) && rowsList.length > 0;
+  const parsedRows = usingStructuredRows
+    ? rowsList.map((r) => {
+        const line = r?.cells || "";
+        return line.includes("|")
+          ? line.split("|").map((c) => c.trim())
+          : line.split(",").map((c) => c.trim());
+      })
+    : (rowsData || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) =>
+          line.includes("|")
+            ? line.split("|").map((c) => c.trim())
+            : line.split(",").map((c) => c.trim())
+        );
 
-  const filteredRows = parsedRows.filter((row) => {
+  const indexedRows = parsedRows.map((row, origIdx) => ({ row, origIdx }));
+  const filteredRows = indexedRows.filter(({ row }) => {
     if (!query.trim()) return true;
     const q = query.toLowerCase();
     return row.some((cell) => cell.toLowerCase().includes(q));
@@ -239,6 +259,7 @@ function DataSheetBlockRender({
                   {headerList.map((col, idx) => (
                     <th
                       key={idx}
+                      {...(usingStructuredCols ? subItemAttr(["columnsList", idx]) : {})}
                       className="py-3 px-4 font-semibold text-xs sm:text-sm border-r border-white/15 last:border-r-0"
                     >
                       {col}
@@ -258,9 +279,10 @@ function DataSheetBlockRender({
                   </td>
                 </tr>
               ) : (
-                filteredRows.map((row, rIdx) => (
+                filteredRows.map(({ row, origIdx }, rIdx) => (
                   <tr
-                    key={rIdx}
+                    key={origIdx}
+                    {...(usingStructuredRows ? subItemAttr(["rowsList", origIdx]) : {})}
                     className={cn(
                       "transition-colors hover:bg-blue-50/40",
                       striped && rIdx % 2 === 1 ? "bg-slate-50/70" : "bg-white"
@@ -410,26 +432,31 @@ function StatsRowBlockRender({
             {title}
           </h3>
         )}
-        <div className={cn("grid gap-4", gridCols)}>
-          {(items || []).map((item, idx) => (
-            <div
-              key={idx}
-              className="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-[#115eff] transition-colors"
-            >
-              <div className="text-2xl sm:text-3xl font-black text-[#115eff]">
-                {item.value}
-              </div>
-              <div className="text-sm sm:text-base font-bold text-slate-900 mt-1">
-                {item.label}
-              </div>
-              {item.description && (
-                <div className="text-xs text-slate-500 mt-1">
-                  {item.description}
+        {Array.isArray(items) && items.length === 0 ? (
+          <p className="text-sm text-slate-500">No metrics added yet.</p>
+        ) : (
+          <div className={cn("grid gap-4", gridCols)}>
+            {(items || []).map((item, idx) => (
+              <div
+                key={idx}
+                {...subItemAttr(["items", idx])}
+                className="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-[#115eff] transition-colors"
+              >
+                <div className="text-2xl sm:text-3xl font-black text-[#115eff]">
+                  {item.value}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+                <div className="text-sm sm:text-base font-bold text-slate-900 mt-1">
+                  {item.label}
+                </div>
+                {item.description && (
+                  <div className="text-xs text-slate-500 mt-1">
+                    {item.description}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -499,6 +526,7 @@ function CardGridBlockRender({
           {(cards || []).map((card, idx) => (
             <div
               key={idx}
+              {...subItemAttr(["cards", idx])}
               className="p-5 sm:p-6 rounded-xl bg-white border border-slate-200 hover:border-[#115eff] shadow-2xs transition-all flex flex-col justify-between"
             >
               <div className="space-y-2">
@@ -560,11 +588,17 @@ function TwoColumnBlockRender({
               {title}
             </h3>
           )}
-          {content && (
-            <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
-              {content}
-            </p>
-          )}
+          {content &&
+            (content.includes("<") ? (
+              <div
+                className="text-sm sm:text-base text-slate-700 leading-relaxed prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
+                {content}
+              </p>
+            ))}
           {buttonText && (
             <div className="pt-1">
               <a
@@ -584,13 +618,19 @@ function TwoColumnBlockRender({
             imagePosition === "left" ? "lg:order-1" : "lg:order-2"
           )}
         >
-          <div className="aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageUrl || "/hero/slide-1-hcmc.jpg"}
-              alt={title || "Feature"}
-              className="w-full h-full object-cover"
-            />
+          <div className="aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center">
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                alt={title || "Feature"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-sm text-slate-500">
+                Choose an image in the section settings
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -606,12 +646,14 @@ function ButtonsBlockRender({
   primaryUrl = "/registration",
   secondaryLabel = "Download Call for Papers",
   secondaryUrl = "/CFP - IEEE SMC 2027.pdf",
+  buttons,
   align = "left",
 }: {
   primaryLabel?: string;
   primaryUrl?: string;
   secondaryLabel?: string;
   secondaryUrl?: string;
+  buttons?: Array<{ label: string; url?: string; variant?: "primary" | "secondary" }>;
   align?: "left" | "center" | "right";
 }) {
   const justifyClass =
@@ -621,25 +663,55 @@ function ButtonsBlockRender({
         ? "justify-end"
         : "justify-start";
 
+  const hasButtonsArray = Array.isArray(buttons);
+
   return (
     <div className="w-full py-5 px-4 sm:px-8 bg-white">
       <div className={cn("max-w-5xl mx-auto flex flex-wrap items-center gap-3", justifyClass)}>
-        {primaryLabel && (
-          <a
-            href={primaryUrl || "#"}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold transition-colors"
-          >
-            <span>{primaryLabel}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
-        )}
-        {secondaryLabel && (
-          <a
-            href={secondaryUrl || "#"}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-[#115eff] text-sm font-bold transition-colors"
-          >
-            <span>{secondaryLabel}</span>
-          </a>
+        {hasButtonsArray ? (
+          buttons.length === 0 ? (
+            <span className="text-xs text-slate-400">No buttons configured.</span>
+          ) : (
+            buttons.map((btn, idx) => {
+              const isPrimary = btn.variant !== "secondary";
+              return (
+                <a
+                  key={idx}
+                  href={btn.url || "#"}
+                  {...subItemAttr(["buttons", idx])}
+                  className={cn(
+                    "inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors",
+                    isPrimary
+                      ? "bg-[#115eff] hover:bg-[#0a4de6] text-white"
+                      : "bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-[#115eff]"
+                  )}
+                >
+                  <span>{btn.label}</span>
+                  {isPrimary && <ArrowUpRight className="w-4 h-4" />}
+                </a>
+              );
+            })
+          )
+        ) : (
+          <>
+            {primaryLabel && (
+              <a
+                href={primaryUrl || "#"}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] text-white text-sm font-bold transition-colors"
+              >
+                <span>{primaryLabel}</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+            )}
+            {secondaryLabel && (
+              <a
+                href={secondaryUrl || "#"}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-[#115eff] text-sm font-bold transition-colors"
+              >
+                <span>{secondaryLabel}</span>
+              </a>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -667,7 +739,17 @@ function CompactFaqBlockRender({
   subtitle?: string;
   items?: Array<{ question: string; answer: string }>;
 }) {
+  const safeItems = Array.isArray(items) ? items : [];
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const builderIdx = useActiveBuilderSubIndex("items", safeItems.length);
+  const [lastBuilderIdx, setLastBuilderIdx] = useState<number | null>(null);
+
+  if (builderIdx !== lastBuilderIdx) {
+    setLastBuilderIdx(builderIdx);
+    if (builderIdx !== null) {
+      setOpenIdx(builderIdx);
+    }
+  }
 
   return (
     <div className="w-full py-8 px-4 sm:px-8 bg-white">
@@ -685,30 +767,34 @@ function CompactFaqBlockRender({
           </div>
         )}
         <div className="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden bg-white">
-          {(items || []).map((item, idx) => {
-            const isOpen = openIdx === idx;
-            return (
-              <div key={idx} className="p-4 sm:p-5">
-                <button
-                  type="button"
-                  onClick={() => setOpenIdx(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between gap-4 text-left font-bold text-slate-900 text-sm sm:text-base cursor-pointer"
-                >
-                  <span>{item.question}</span>
-                  {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-[#115eff] shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+          {safeItems.length === 0 ? (
+            <p className="p-6 text-center text-sm text-slate-500">No questions added yet.</p>
+          ) : (
+            safeItems.map((item, idx) => {
+              const isOpen = openIdx === idx;
+              return (
+                <div key={idx} {...subItemAttr(["items", idx])} className="p-4 sm:p-5">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIdx(isOpen ? null : idx)}
+                    className="w-full flex items-center justify-between gap-4 text-left font-bold text-slate-900 text-sm sm:text-base cursor-pointer"
+                  >
+                    <span>{item.question}</span>
+                    {isOpen ? (
+                      <ChevronUp className="w-4 h-4 text-[#115eff] shrink-0" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+                    )}
+                  </button>
+                  {isOpen && (
+                    <p className="mt-2.5 text-sm text-slate-600 leading-relaxed">
+                      {item.answer}
+                    </p>
                   )}
-                </button>
-                {isOpen && (
-                  <p className="mt-2.5 text-sm text-slate-600 leading-relaxed">
-                    {item.answer}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
@@ -748,19 +834,24 @@ function CompactTimelineBlockRender({
           </div>
         )}
         <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200 bg-white">
-          {(items || []).map((item, idx) => (
-            <div
-              key={idx}
-              className="px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
-            >
-              <span className="text-sm sm:text-base font-semibold text-slate-900">
-                {item.title}
-              </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-blue-50 text-[#115eff] font-bold text-xs sm:text-sm shrink-0">
-                {item.date}
-              </span>
-            </div>
-          ))}
+          {(items || []).length === 0 ? (
+            <p className="p-6 text-center text-sm text-slate-500">No milestones added yet.</p>
+          ) : (
+            (items || []).map((item, idx) => (
+              <div
+                key={idx}
+                {...subItemAttr(["items", idx])}
+                className="px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
+              >
+                <span className="text-sm sm:text-base font-semibold text-slate-900">
+                  {item.title}
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-md bg-blue-50 text-[#115eff] font-bold text-xs sm:text-sm shrink-0">
+                  {item.date}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -919,14 +1010,38 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
     fields: {
       title: { type: "text", label: "Table Title" },
       subtitle: { type: "text", label: "Subtitle" },
+      columnsList: {
+        type: "array",
+        label: "Table Columns",
+        itemLabel: "column",
+        itemLabelKey: "header",
+        itemFields: {
+          header: { type: "text", label: "Column Header" },
+        },
+        defaultItem: { header: "New Column" },
+      },
+      rowsList: {
+        type: "array",
+        label: "Table Rows",
+        itemLabel: "row",
+        itemLabelKey: "cells",
+        itemFields: {
+          cells: {
+            type: "text",
+            label: "Row Cells",
+            placeholder: "Cell 1 | Cell 2 | Cell 3",
+          },
+        },
+        defaultItem: { cells: "Cell 1 | Cell 2 | Cell 3" },
+      },
       headers: {
         type: "text",
-        label: "Columns (comma-separated)",
+        label: "Legacy Columns",
         placeholder: "Category, Early Bird, Regular, On-Site",
       },
       rowsData: {
         type: "textarea",
-        label: "Rows (one row per line, comma or | separated)",
+        label: "Legacy Rows",
       },
       striped: { type: "switch", label: "Alternating Striped Rows" },
       searchable: { type: "switch", label: "Show Search Filter" },
@@ -934,6 +1049,15 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
     defaultProps: {
       title: "Data table",
       subtitle: "",
+      columnsList: [
+        { header: "Column 1" },
+        { header: "Column 2" },
+        { header: "Column 3" },
+      ],
+      rowsList: [
+        { cells: "Sample Row 1 | Value A | Active" },
+        { cells: "Sample Row 2 | Value B | Active" },
+      ],
       headers: "Column 1, Column 2, Column 3",
       rowsData: "",
       striped: true,
@@ -982,7 +1106,7 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
     description: "Side-by-side text and image split block.",
     fields: {
       title: { type: "text", label: "Heading" },
-      content: { type: "textarea", label: "Body Text" },
+      content: { type: "richtext", label: "Body Content" },
       imageUrl: { type: "image", label: "Image URL" },
       imagePosition: {
         type: "select",
@@ -1108,7 +1232,12 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
     defaultProps: {
       title: "",
       columns: "4",
-      items: [],
+      items: [
+        { value: "5", label: "Conference Days", description: "Oct 6–10, 2027" },
+        { value: "60+", label: "Technical Sessions", description: "Tracks & workshops" },
+        { value: "1,200+", label: "Global Delegates", description: "Researchers & industry" },
+        { value: "3", label: "Core Pillars", description: "SSE • HMS • Cybernetics" },
+      ],
     },
     render: (props) => <StatsRowBlockRender {...props} />,
   },
@@ -1120,10 +1249,33 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
     icon: MousePointerClick,
     description: "Standalone primary and secondary call-to-action buttons.",
     fields: {
-      primaryLabel: { type: "text", label: "Primary Button Label" },
-      primaryUrl: { type: "text", label: "Primary Button URL" },
-      secondaryLabel: { type: "text", label: "Secondary Button Label" },
-      secondaryUrl: { type: "text", label: "Secondary Button URL" },
+      buttons: {
+        type: "array",
+        label: "Buttons",
+        itemLabel: "button",
+        itemLabelKey: "label",
+        itemFields: {
+          label: { type: "text", label: "Button Label" },
+          url: { type: "text", label: "Destination URL" },
+          variant: {
+            type: "select",
+            label: "Style",
+            options: [
+              { label: "Primary", value: "primary" },
+              { label: "Secondary", value: "secondary" },
+            ],
+          },
+        },
+        defaultItem: {
+          label: "New Button",
+          url: "#",
+          variant: "primary",
+        },
+      },
+      primaryLabel: { type: "text", label: "Legacy Primary Label" },
+      primaryUrl: { type: "text", label: "Legacy Primary URL" },
+      secondaryLabel: { type: "text", label: "Legacy Secondary Label" },
+      secondaryUrl: { type: "text", label: "Legacy Secondary URL" },
       align: {
         type: "select",
         label: "Alignment",
@@ -1135,6 +1287,14 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
       },
     },
     defaultProps: {
+      buttons: [
+        { label: "Register Now", url: "/registration", variant: "primary" },
+        {
+          label: "Download Call for Papers",
+          url: "/CFP - IEEE SMC 2027.pdf",
+          variant: "secondary",
+        },
+      ],
       primaryLabel: "Register Now",
       primaryUrl: "/registration",
       secondaryLabel: "Download Call for Papers",

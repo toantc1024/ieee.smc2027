@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
 
 export interface PaperItem {
   id: string;
@@ -37,12 +38,14 @@ export interface SessionItem {
 
 interface TechnicalSessionCardProps {
   session: SessionItem;
+  sessionIndex?: number;
   isExpanded: boolean;
   onToggleExpand: () => void;
 }
 
 export function TechnicalSessionCard({
   session,
+  sessionIndex,
   isExpanded,
   onToggleExpand,
 }: TechnicalSessionCardProps) {
@@ -99,9 +102,12 @@ export function TechnicalSessionCard({
 
       {isExpanded && (
         <div className="border-t border-slate-100 bg-slate-50/50 divide-y divide-slate-100">
-          {(session.papers || []).map((paper) => (
+          {(session.papers || []).map((paper, pIdx) => (
             <div
-              key={paper.id}
+              key={paper.id || pIdx}
+              {...(typeof sessionIndex === "number"
+                ? subItemAttr(["sessions", sessionIndex, "papers", pIdx])
+                : {})}
               className="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
             >
               <div className="space-y-1">
