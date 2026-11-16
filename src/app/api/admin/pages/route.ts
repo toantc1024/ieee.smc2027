@@ -8,6 +8,7 @@ import {
   apiError,
   revalidatePagePaths,
 } from "@/lib";
+import { hydrateBlocksServer } from "@/lib/cms-block-defaults";
 
 const DEFAULT_HOME_BLOCKS = [
   {
@@ -499,8 +500,12 @@ export async function POST(request: Request) {
       return apiError(`A page with slug '${slug}' already exists`, 409);
     }
 
-    const blocks = Array.isArray(body.blocks) ? body.blocks : [];
-    const content = body.content ?? { root: { title, slug }, content: blocks };
+    const rawBlocks = Array.isArray(body.blocks) ? body.blocks : [];
+    const blocks = hydrateBlocksServer(rawBlocks);
+    const content =
+      body.content && typeof body.content === "object"
+        ? { ...body.content, content: blocks }
+        : { root: { title, slug }, content: blocks };
     const pageId = body.id || crypto.randomUUID();
     const isPublished = body.isPublished ?? body.is_published ?? true;
     const metaTitle = body.metaTitle ?? body.meta_title ?? title;
@@ -515,8 +520,8 @@ export async function POST(request: Request) {
           id: pageId,
           slug,
           title,
-          blocks,
-          content,
+          blocks: blocks as any,
+          content: content as any,
           parentId,
           orderIndex,
           version: 1,

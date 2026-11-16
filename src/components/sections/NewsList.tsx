@@ -19,6 +19,7 @@ import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { POSTS_SYNC_CHANNEL } from "@/lib/post-sync";
+import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
 
 import { DEFAULT_NEWS_ITEMS, getNewsDetailUrl, type NewsItem } from "@/data/news-data";
 export { DEFAULT_NEWS_ITEMS, getNewsDetailUrl, type NewsItem };
@@ -32,26 +33,33 @@ export interface NewsListProps {
 export function NewsList({
   title = "Conference News & Announcements",
   subtitle = "Stay updated with the latest milestones, partnership alerts, and program schedules",
-  items: initialItems = DEFAULT_NEWS_ITEMS,
+  items: itemsProp,
 }: NewsListProps) {
   const router = useRouter();
-  const [items, setItems] = useState<NewsItem[]>(initialItems);
+  const hasExplicitItems = itemsProp !== undefined;
+  const [items, setItems] = useState<NewsItem[]>(() =>
+    hasExplicitItems ? (Array.isArray(itemsProp) ? itemsProp : []) : []
+  );
+  const [loading, setLoading] = useState<boolean>(() => !hasExplicitItems);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    if (itemsProp !== undefined) {
+      setItems(Array.isArray(itemsProp) ? itemsProp : []);
+      setLoading(false);
+    }
+  }, [itemsProp]);
+
+  useEffect(() => {
+    if (hasExplicitItems) return;
     let isMounted = true;
 
     const loadPosts = async () => {
       try {
         const res = await fetch("/api/posts", { cache: "no-store" });
         const data = await res.json();
-        if (
-          isMounted &&
-          data.success &&
-          Array.isArray(data.posts) &&
-          data.posts.length > 0
-        ) {
+        if (isMounted && data?.success && Array.isArray(data.posts)) {
           const mapped: NewsItem[] = data.posts.map(
             (p: {
               id: string;
@@ -90,6 +98,13 @@ export function NewsList({
         }
       } catch (err) {
         console.error("Failed to load live news posts:", err);
+        if (isMounted) {
+          setItems((prev) => (prev.length > 0 ? prev : DEFAULT_NEWS_ITEMS));
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -127,7 +142,7 @@ export function NewsList({
       document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
       if (channel) channel.close();
     };
-  }, []);
+  }, [hasExplicitItems]);
 
   // Scrollable categories (excluding "All" which is pinned to the left)
   const categories = useMemo(() => {
@@ -219,7 +234,8 @@ export function NewsList({
 
   // Filter and sort items (newest first)
   const filteredAndSortedItems = useMemo(() => {
-    const result = items.filter((item) => {
+    const indexed = items.map((item, origIdx) => ({ item, origIdx }));
+    const result = indexed.filter(({ item }) => {
       const matchesCategory =
         activeCategory === "All" || item.category === activeCategory;
       const q = searchQuery.toLowerCase().trim();
@@ -233,10 +249,10 @@ export function NewsList({
 
     return [...result].sort((a, b) => {
       const timeA = new Date(
-        `${a.year}-${a.month.padStart(2, "0")}-${a.day.padStart(2, "0")}`
+        `${a.item.year}-${a.item.month.padStart(2, "0")}-${a.item.day.padStart(2, "0")}`
       ).getTime();
       const timeB = new Date(
-        `${b.year}-${b.month.padStart(2, "0")}-${b.day.padStart(2, "0")}`
+        `${b.item.year}-${b.item.month.padStart(2, "0")}-${b.item.day.padStart(2, "0")}`
       ).getTime();
       return timeB - timeA; // newest first
     });
@@ -471,7 +487,11 @@ export function NewsList({
       {/* NEWS CAROUSEL with Progressive Blur & Left/Right Chevrons     */}
       {/* ------------------------------------------------------------- */}
       <div className="relative w-full pt-1.5 sm:pt-2 pb-10 sm:pb-14 group/carousel">
-        {filteredAndSortedItems.length === 0 ? (
+        {loading ? (
+          <div className="mx-4 sm:mx-6 p-12 text-center bg-blue-50/35 border border-blue-100/90 rounded-sm text-slate-500 text-sm sm:text-base">
+            Loading published announcements...
+          </div>
+        ) : filteredAndSortedItems.length === 0 ? (
           <div className="mx-4 sm:mx-6 p-12 text-center bg-blue-50/35 border border-blue-100/90 rounded-sm text-slate-600 text-sm sm:text-base">
             No announcements found matching your filter criteria.
           </div>
@@ -539,12 +559,13 @@ export function NewsList({
               className="flex items-stretch gap-5 sm:gap-6 overflow-x-auto scrollbar-none py-3 px-4 sm:px-6 cursor-grab active:cursor-grabbing select-none touch-pan-x"
               style={{ scrollBehavior: isDraggingCards.current ? "auto" : "smooth" }}
             >
-              {filteredAndSortedItems.map((news) => {
+              {filteredAndSortedItems.map(({ item: news, origIdx }) => {
                 const detailUrl = getNewsDetailUrl(news);
 
                 return (
                   <article
                     key={news.id}
+                    {...(hasExplicitItems ? subItemAttr(["items", origIdx]) : {})}
                     onClick={() => {
                       if (hasDraggedCards.current) return;
                       router.push(detailUrl);

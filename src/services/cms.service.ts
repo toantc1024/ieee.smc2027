@@ -29,10 +29,16 @@ export class CmsService {
   }
 
   public async getPageByIdOrSlug(identifier: string) {
+    const clean = identifier.replace(/^\/+|\/+$/g, "");
+    const conditions: Prisma.PageWhereInput[] = [
+      { id: identifier },
+      { slug: identifier },
+    ];
+    if (clean && clean !== identifier) {
+      conditions.push({ id: clean }, { slug: clean });
+    }
     const page = await prisma.page.findFirst({
-      where: {
-        OR: [{ id: identifier }, { slug: identifier }],
-      },
+      where: { OR: conditions },
     });
     if (!page) return null;
 

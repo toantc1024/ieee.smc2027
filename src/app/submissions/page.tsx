@@ -61,15 +61,15 @@ export default async function SubmissionsPage({
     if (!canViewPage(page.is_published, preview, user?.role)) notFound();
 
     let blocks: PageBlock[] = [];
-    if (Array.isArray(page.blocks) && page.blocks.length > 0) {
-      blocks = page.blocks as unknown as PageBlock[];
-    } else if (
+    if (
       page.content &&
       typeof page.content === "object" &&
       Array.isArray((page.content as any).content) &&
-      (page.content as any).content.length > 0
+      ((page.content as any).content.length > 0 || !Array.isArray(page.blocks) || page.blocks.length === 0)
     ) {
       blocks = (page.content as any).content as PageBlock[];
+    } else if (Array.isArray(page.blocks) && page.blocks.length > 0) {
+      blocks = page.blocks as unknown as PageBlock[];
     }
 
     if (blocks.length > 0) {

@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib";
 import { PostStatus } from "@prisma/client";
+import { CONFERENCE_INFO, IMPORTANT_DATES } from "@/data/conference";
+import { extractPageBlocks } from "@/lib/page-blocks";
 import { DEFAULT_NEWS_ITEMS } from "@/data/news-data";
 import { NewsDetailToolbar, NewsDetailShareBar } from "./news-detail-client";
 import { GridPattern } from "@/components/ui/grid-pattern";
@@ -27,6 +29,102 @@ interface PageProps {
 }
 
 export const dynamic = "force-dynamic";
+
+async function getLiveConferenceMeta() {
+  const defaultMilestones = [
+    {
+      title:
+        IMPORTANT_DATES.find((d) => d.id === "paper-submission")?.title ||
+        "Paper Submission Deadline",
+      label: "Deadline",
+      date:
+        IMPORTANT_DATES.find((d) => d.id === "paper-submission")?.date ||
+        "April 08, 2027",
+      highlight: false,
+    },
+    {
+      title:
+        IMPORTANT_DATES.find((d) => d.id === "acceptance")?.title ||
+        "Acceptance Notification",
+      label: "Notification",
+      date:
+        IMPORTANT_DATES.find((d) => d.id === "acceptance")?.date ||
+        "May 30, 2027",
+      highlight: false,
+    },
+    {
+      title:
+        IMPORTANT_DATES.find((d) => d.id === "camera-ready")?.title ||
+        "Final Camera-Ready",
+      label: "Final Submission",
+      date:
+        IMPORTANT_DATES.find((d) => d.id === "camera-ready")?.date ||
+        "July 15, 2027",
+      highlight: false,
+    },
+    {
+      title: "Conference Main Dates",
+      label: CONFERENCE_INFO.venue.split(" ")[0] + " Saigon",
+      date: CONFERENCE_INFO.dates,
+      highlight: true,
+    },
+  ];
+
+  let milestones = defaultMilestones;
+  let cfpPdfUrl = CONFERENCE_INFO.cfpPdfUrl;
+
+  try {
+    const pages = await prisma.page.findMany({
+      where: { slug: { in: ["home", "submissions"] } },
+      select: { slug: true, blocks: true, content: true },
+    });
+
+    for (const p of pages) {
+      const blocks = extractPageBlocks(p);
+      const datesBlock = blocks.find(
+        (b) =>
+          (b.type === "ImportantDatesSection" || b.type === "ImportantDates") &&
+          Array.isArray(b.props?.dates) &&
+          b.props.dates.length > 0
+      );
+      if (datesBlock?.props?.dates) {
+        const dbDates = datesBlock.props.dates as Array<{
+          id?: string;
+          title?: string;
+          date?: string;
+          category?: string;
+          status?: string;
+          highlight?: boolean;
+        }>;
+        const picked = dbDates.slice(0, 4).map((d, idx) => ({
+          title: d.title || `Milestone ${idx + 1}`,
+          label: d.category || d.status || "Milestone",
+          date: d.date || "TBA",
+          highlight: Boolean(d.highlight) || idx === dbDates.slice(0, 4).length - 1,
+        }));
+        if (picked.length > 0) {
+          milestones = picked;
+        }
+      }
+
+      const cfpBlock = blocks.find(
+        (b) =>
+          (b.type === "CallForPapers" ||
+            b.type === "CfpPoliciesBlock" ||
+            b.type === "CfpBrochureBannerBlock") &&
+          typeof b.props?.cfpPdfUrl === "string" &&
+          b.props.cfpPdfUrl.trim().length > 0
+      );
+      if (cfpBlock?.props?.cfpPdfUrl) {
+        cfpPdfUrl = String(cfpBlock.props.cfpPdfUrl);
+      }
+    }
+  } catch {
+    // Fall back silently to static CONFERENCE_INFO & IMPORTANT_DATES
+  }
+
+  return { milestones, cfpPdfUrl };
+}
 
 async function getPostData(slug: string) {
   try {
@@ -181,13 +279,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PublicPostDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const data = await getPostData(slug);
+  const [data, liveMeta] = await Promise.all([
+    getPostData(slug),
+    getLiveConferenceMeta(),
+  ]);
 
   if (!data?.post) {
     notFound();
   }
 
   const { post, relatedPosts } = data;
+  const { milestones, cfpPdfUrl } = liveMeta;
 
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
     year: "numeric",
@@ -437,45 +539,38 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
-                  <span className="font-semibold text-slate-800">
-                    Regular Paper Submission
-                  </span>
-                  <span className="text-slate-500 flex items-center justify-between">
-                    <span className="font-medium">Deadline</span>
-                    <span className="font-semibold text-[#004776]">May 15, 2027</span>
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
-                  <span className="font-semibold text-slate-800">
-                    Acceptance Notification
-                  </span>
-                  <span className="text-slate-500 flex items-center justify-between">
-                    <span className="font-medium">Notification</span>
-                    <span className="font-semibold text-[#004776]">July 15, 2027</span>
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-sm bg-slate-50 border border-slate-100 flex flex-col gap-1">
-                  <span className="font-semibold text-slate-800">
-                    Final Camera-Ready
-                  </span>
-                  <span className="text-slate-500 flex items-center justify-between">
-                    <span className="font-medium">Final Submission</span>
-                    <span className="font-semibold text-[#004776]">August 15, 2027</span>
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-sm bg-blue-50/70 border border-blue-100 flex flex-col gap-1">
-                  <span className="font-semibold text-[#004776]">
-                    Conference Main Dates
-                  </span>
-                  <span className="text-slate-600 flex items-center justify-between">
-                    <span className="font-medium">Sheraton Saigon</span>
-                    <span className="font-semibold text-primary">October 17–20, 2027</span>
-                  </span>
-                </div>
+                {milestones.map((m, mIdx) => (
+                  <div
+                    key={mIdx}
+                    className={`p-3 rounded-sm flex flex-col gap-1 border ${
+                      m.highlight
+                        ? "bg-blue-50/70 border-blue-100"
+                        : "bg-slate-50 border-slate-100"
+                    }`}
+                  >
+                    <span
+                      className={`font-semibold line-clamp-1 ${
+                        m.highlight ? "text-[#004776]" : "text-slate-800"
+                      }`}
+                    >
+                      {m.title}
+                    </span>
+                    <span
+                      className={`flex items-center justify-between gap-2 ${
+                        m.highlight ? "text-slate-600" : "text-slate-500"
+                      }`}
+                    >
+                      <span className="font-medium capitalize">{m.label}</span>
+                      <span
+                        className={`font-semibold ${
+                          m.highlight ? "text-primary" : "text-[#004776]"
+                        }`}
+                      >
+                        {m.date}
+                      </span>
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -500,7 +595,7 @@ export default async function PublicPostDetailPage({ params }: PageProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                 <a
-                  href="/CFP - IEEE SMC 2027 - 13.10.2026.pdf"
+                  href={cfpPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-3 rounded-sm border border-slate-200 hover:border-primary hover:bg-slate-50 transition-colors group"

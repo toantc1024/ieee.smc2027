@@ -8,14 +8,7 @@ import {
 } from "@/lib";
 import { STANDARD_CONFERENCE_PAGES, normalizeSlug, formatPageRecord } from "../route";
 import { isValidPageParent } from "@/modules/website-builder/utils/page-tree";
-
-const COMMITTEE_SYNC_PROP_KEYS = [
-  "groups",
-  "badge",
-  "title",
-  "subtitle",
-  "autoplayDelay",
-] as const;
+import { syncSharedBlocksAcrossPages } from "@/lib/block-sync";
 
 type PageBlockLike = {
   id?: string;
@@ -24,132 +17,8 @@ type PageBlockLike = {
   [key: string]: unknown;
 };
 
-function mergeCommitteesProps(
-  targetProps: Record<string, unknown> | undefined,
-  sourceProps: Record<string, unknown>
-): Record<string, unknown> {
-  const nextProps: Record<string, unknown> = { ...(targetProps || {}) };
-  for (const key of COMMITTEE_SYNC_PROP_KEYS) {
-    if (sourceProps[key] !== undefined) {
-      nextProps[key] = sourceProps[key];
-    }
-  }
-  return nextProps;
-}
-
 function hasNonEmptyProps(props: unknown): boolean {
   return Boolean(props && typeof props === "object" && Object.keys(props).length > 0);
-}
-
-function updateBlocksCommitteesSection(
-  blocks: unknown,
-  sourceProps: Record<string, unknown>
-): { updated: PageBlockLike[]; changed: boolean } {
-  if (!Array.isArray(blocks)) return { updated: [], changed: false };
-  const blockList = blocks as PageBlockLike[];
-  const hasCommitteesSection = blockList.some((b) => b?.type === "CommitteesSection");
-
-  let changed = false;
-  const updated: PageBlockLike[] = [];
-
-  for (const block of blockList) {
-    if (!block) {
-      updated.push(block);
-      continue;
-    }
-    if (block.type === "CommitteesSection") {
-      changed = true;
-      updated.push({
-        ...block,
-        props: mergeCommitteesProps(block.props, sourceProps),
-      });
-      continue;
-    }
-    if (block.type === "Committee") {
-      changed = true;
-      if (hasCommitteesSection) {
-        // Strip redundant legacy Committee block when CommitteesSection is already present
-        continue;
-      }
-      // Upgrade standalone Committee block to CommitteesSection with synced props
-      updated.push({
-        ...block,
-        type: "CommitteesSection",
-        props: mergeCommitteesProps(block.props, sourceProps),
-      });
-      continue;
-    }
-    updated.push(block);
-  }
-
-  return { updated, changed };
-}
-
-/**
- * Keep the CommitteesSection block synchronized between `/committees` and `/` (`home`)
- * so edits saved in either page stay consistent across public views.
- */
-async function syncCommitteesSectionToCounterpart(
-  slug: string,
-  blocks: unknown
-): Promise<void> {
-  if (slug !== "committees" && slug !== "home") return;
-  if (!Array.isArray(blocks)) return;
-
-  const sourceBlock = (blocks as PageBlockLike[]).find(
-    (block) =>
-      block?.type === "CommitteesSection" &&
-      Array.isArray(block.props?.groups) &&
-      block.props.groups.length > 0
-  );
-  if (!sourceBlock?.props) return;
-
-  const counterpartSlug = slug === "committees" ? "home" : "committees";
-  const counterpart = await prisma.page.findFirst({
-    where: { slug: counterpartSlug },
-  });
-  if (!counterpart) return;
-
-  const counterpartContent =
-    counterpart.content && typeof counterpart.content === "object"
-      ? (counterpart.content as { root?: unknown; content?: unknown })
-      : null;
-
-  const rawBlocks = Array.isArray(counterpart.blocks)
-    ? counterpart.blocks
-    : Array.isArray(counterpartContent?.content)
-      ? counterpartContent.content
-      : [];
-
-  const { updated: syncedBlocks, changed } = updateBlocksCommitteesSection(
-    rawBlocks,
-    sourceBlock.props
-  );
-  if (!changed) return;
-
-  const syncedContent = counterpartContent
-    ? {
-        ...counterpartContent,
-        content: Array.isArray(counterpartContent.content)
-          ? updateBlocksCommitteesSection(counterpartContent.content, sourceBlock.props).updated
-          : syncedBlocks,
-      }
-    : {
-        root: { title: counterpart.title, slug: counterpart.slug },
-        content: syncedBlocks,
-      };
-
-  await prisma.page.update({
-    where: { id: counterpart.id },
-    data: {
-      blocks: syncedBlocks as any,
-      content: syncedContent as any,
-      version: counterpart.version + 1,
-    },
-  });
-
-  revalidatePagePaths("home");
-  revalidatePagePaths("committees");
 }
 
 export async function GET(
@@ -421,7 +290,7 @@ async function handleUpdate(
       revalidatePagePaths(existing.slug);
     }
 
-    await syncCommitteesSectionToCounterpart(updatedPage.slug, updatedPage.blocks);
+    await syncSharedBlocksAcrossPages(updatedPage.slug, updatedPage.blocks);
 
     return apiSuccess({ page: formatPageRecord(updatedPage) }, 200);
   } catch (error: unknown) {

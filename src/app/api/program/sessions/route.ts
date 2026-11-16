@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { prisma, requireAdminRequest, apiSuccess, apiError } from "@/lib";
+import { prisma, requireAdminRequest, apiSuccess, apiError, revalidatePagePaths } from "@/lib";
+import { extractPageBlocks } from "@/lib/page-blocks";
 
 const PROGRAM_SESSIONS_KEY = "program_sessions";
 
@@ -162,6 +163,51 @@ export async function PUT(request: Request) {
         data: sessions as Prisma.InputJsonValue,
       },
     });
+
+    const sessionsPage = await prisma.page.findFirst({
+      where: { slug: "program/sessions" },
+      select: { id: true, slug: true, title: true, blocks: true, content: true },
+    });
+    if (sessionsPage) {
+      const currentBlocks = extractPageBlocks(sessionsPage);
+      let pageChanged = false;
+      const updatedBlocks = currentBlocks.map((b) => {
+        if (b?.type === "TechnicalSessionsBlock") {
+          pageChanged = true;
+          return {
+            ...b,
+            props: { ...(b.props || {}), sessions },
+          };
+        }
+        return b;
+      });
+      if (pageChanged) {
+        const existingContent =
+          sessionsPage.content && typeof sessionsPage.content === "object"
+            ? (sessionsPage.content as Record<string, unknown>)
+            : {};
+        const existingRoot =
+          existingContent.root && typeof existingContent.root === "object"
+            ? (existingContent.root as Record<string, unknown>)
+            : {};
+        await prisma.page.update({
+          where: { id: sessionsPage.id },
+          data: {
+            blocks: updatedBlocks as unknown as Prisma.InputJsonValue,
+            content: {
+              ...existingContent,
+              root: {
+                ...existingRoot,
+                title: existingRoot.title || sessionsPage.title,
+                slug: sessionsPage.slug,
+              },
+              content: updatedBlocks,
+            } as unknown as Prisma.InputJsonValue,
+          },
+        });
+      }
+    }
+    revalidatePagePaths("program/sessions");
 
     return apiSuccess({
       sessions: updated.data,

@@ -4,22 +4,28 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib";
 import { getCurrentUser } from "@/lib/auth";
 import { canViewPage } from "@/lib/page-access";
-import { PublicPageRenderer } from "./public-page-renderer";
+import { extractPageBlocks } from "@/lib/page-blocks";
+import { PublicPageRenderer } from "../[slug]/public-page-renderer";
 import { STANDARD_CONFERENCE_PAGES } from "@/app/api/admin/pages/route";
-import type { PageBlock } from "@/modules/website-builder/types";
 import { DraftPreviewBanner } from "@/components/shared/draft-preview-banner";
 
 export const dynamic = "force-dynamic";
+
+function resolveSlugPath(slugSegments: string[] | undefined): string {
+  return (slugSegments || []).map((s) => decodeURIComponent(s)).join("/");
+}
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string[] }>;
   searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: slugSegments } = await params;
+  const slug = resolveSlugPath(slugSegments);
   const { preview } = await searchParams;
+
   const page = await prisma.page.findFirst({
     where: {
       OR: [{ slug }, { id: slug }],
@@ -41,9 +47,15 @@ export async function generateMetadata({
     return { title: "Page Not Found | IEEE SMC 2027" };
   }
 
-  const user = !page.isPublished && (preview === "true" || preview === "1") ? await getCurrentUser() : null;
+  const user =
+    !page.isPublished && (preview === "true" || preview === "1")
+      ? await getCurrentUser()
+      : null;
   if (!canViewPage(page.isPublished, preview, user?.role)) {
-    return { title: "Page Not Found | IEEE SMC 2027", robots: { index: false, follow: false } };
+    return {
+      title: "Page Not Found | IEEE SMC 2027",
+      robots: { index: false, follow: false },
+    };
   }
 
   return {
@@ -66,10 +78,11 @@ export default async function PublicPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string[] }>;
   searchParams: Promise<{ preview?: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: slugSegments } = await params;
+  const slug = resolveSlugPath(slugSegments);
   const { preview } = await searchParams;
   const isPreview = preview === "true" || preview === "1";
 
@@ -105,24 +118,15 @@ export default async function PublicPage({
     }
   }
 
-  // Draft access protection
   const user = !page.isPublished && isPreview ? await getCurrentUser() : null;
   if (!canViewPage(page.isPublished, preview, user?.role)) {
     notFound();
   }
 
-  // Normalize blocks
-  let blocks: PageBlock[] = [];
-  const rawContent: any = page.content;
-  if (rawContent && typeof rawContent === "object" && Array.isArray(rawContent.content)) {
-    blocks = rawContent.content;
-  } else if (Array.isArray(page.blocks)) {
-    blocks = page.blocks as any[];
-  }
+  const blocks = extractPageBlocks(page);
 
   return (
     <div className="w-full flex flex-col">
-      {/* Draft Preview Banner */}
       {!page.isPublished && isPreview && (
         <DraftPreviewBanner version={page.version} />
       )}

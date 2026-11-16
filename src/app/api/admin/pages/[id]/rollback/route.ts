@@ -6,6 +6,7 @@ import {
   revalidatePagePaths,
 } from "@/lib";
 import { formatPageRecord } from "../../route";
+import { syncSharedBlocksAcrossPages } from "@/lib/block-sync";
 
 export async function POST(
   request: Request,
@@ -99,6 +100,7 @@ export async function POST(
     ]);
 
     revalidatePagePaths(updatedPage.slug);
+    await syncSharedBlocksAcrossPages(updatedPage.slug, restoredBlocks);
 
     return apiSuccess({
       page: formatPageRecord(updatedPage),
