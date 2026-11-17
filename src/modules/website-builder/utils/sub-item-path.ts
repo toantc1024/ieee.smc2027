@@ -11,12 +11,7 @@ export interface BuilderBlockContextValue {
   hoveredSubPath: SubItemPath | null;
 }
 
-export const BuilderBlockContext = createContext<BuilderBlockContextValue>({
-  blockId: null,
-  isPreview: true,
-  activeSubPath: null,
-  hoveredSubPath: null,
-});
+export const BuilderBlockContext = createContext<BuilderBlockContextValue | null>(null);
 
 /**
  * Attach a stable data-builder-subpath attribute to a rendered sub-item so
@@ -64,10 +59,10 @@ export function useActiveBuilderSubIndex(
   fieldKey: string,
   itemCount: number
 ): number | null {
-  const { isPreview, activeSubPath } = useContext(BuilderBlockContext);
-  if (isPreview || !activeSubPath || itemCount <= 0) return null;
-  if (activeSubPath[0] === fieldKey && typeof activeSubPath[1] === "number") {
-    return Math.max(0, Math.min(itemCount - 1, activeSubPath[1]));
+  const ctx = useContext(BuilderBlockContext);
+  if (!ctx || ctx.isPreview || !ctx.activeSubPath || itemCount <= 0) return null;
+  if (ctx.activeSubPath[0] === fieldKey && typeof ctx.activeSubPath[1] === "number") {
+    return Math.max(0, Math.min(itemCount - 1, ctx.activeSubPath[1]));
   }
   return null;
 }

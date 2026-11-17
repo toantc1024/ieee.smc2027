@@ -631,3 +631,33 @@ test("CommitteesSection and Conference/Speakers safely render external https ima
     assert.match(html, /https:\/\/example\.com\/keynote\.jpg/);
   });
 });
+
+test("BuilderBlockContext defaults to null outside any provider so admin shell guards never see a truthy builder context", () => {
+  function ContextProbe() {
+    const ctx = React.useContext(BuilderBlockContext);
+    return React.createElement(
+      "span",
+      null,
+      ctx === null ? "NO_CTX" : `HAS_CTX:${ctx.blockId}`
+    );
+  }
+
+  const outsideHtml = renderToStaticMarkup(React.createElement(ContextProbe));
+  assert.equal(outsideHtml, "<span>NO_CTX</span>");
+
+  const insideHtml = renderToStaticMarkup(
+    React.createElement(
+      BuilderBlockContext.Provider,
+      {
+        value: {
+          blockId: "blk-1",
+          isPreview: true,
+          activeSubPath: null,
+          hoveredSubPath: null,
+        },
+      },
+      React.createElement(ContextProbe)
+    )
+  );
+  assert.equal(insideHtml, "<span>HAS_CTX:blk-1</span>");
+});

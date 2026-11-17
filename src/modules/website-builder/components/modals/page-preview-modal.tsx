@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useBuilderStore } from "../../store/builder-store";
 import { getBlockDefinition, resolveBlockProps } from "../../registry";
 import { getBlockPresentation, isBlockHidden } from "../../utils/block-presentation";
+import { BuilderBlockContext } from "../../utils/sub-item-path";
 import { PublicNestedBlock } from "../canvas/columns-slot";
 import { BlockErrorBoundary } from "../canvas/block-error-boundary";
 import type { ViewportMode } from "../../types";
@@ -120,24 +121,33 @@ export function PagePreviewModal({ open, onClose }: PagePreviewModalProps) {
                     className={cn("relative w-full", presentation.className)}
                     style={presentation.style}
                   >
-                    <BlockErrorBoundary blockType={block.type} blockId={block.id}>
-                      {Renderer ? (
-                        <Renderer
-                          {...resolveBlockProps(block.type, block.props)}
-                          {...(block.type === "ColumnsSlot"
-                            ? { builderBlockId: block.id, builderEditing: false }
-                            : {})}
-                        >
-                          {block.children?.map((child) => (
-                            <PublicNestedBlock key={child.id} block={child} />
-                          ))}
-                        </Renderer>
-                      ) : (
-                        <div className="p-8 text-center bg-slate-100 text-slate-500 text-xs">
-                          Unknown section: {block.type}
-                        </div>
-                      )}
-                    </BlockErrorBoundary>
+                    <BuilderBlockContext.Provider
+                      value={{
+                        blockId: block.id,
+                        isPreview: true,
+                        activeSubPath: null,
+                        hoveredSubPath: null,
+                      }}
+                    >
+                      <BlockErrorBoundary blockType={block.type} blockId={block.id}>
+                        {Renderer ? (
+                          <Renderer
+                            {...resolveBlockProps(block.type, block.props)}
+                            {...(block.type === "ColumnsSlot"
+                              ? { builderBlockId: block.id, builderEditing: false }
+                              : {})}
+                          >
+                            {block.children?.map((child) => (
+                              <PublicNestedBlock key={child.id} block={child} />
+                            ))}
+                          </Renderer>
+                        ) : (
+                          <div className="p-8 text-center bg-slate-100 text-slate-500 text-xs">
+                            Unknown section: {block.type}
+                          </div>
+                        )}
+                      </BlockErrorBoundary>
+                    </BuilderBlockContext.Provider>
                   </div>
                 );
               })

@@ -94,7 +94,7 @@ export function SimpleAdminLayout({ user, children }: SimpleAdminLayoutProps) {
 
   return (
     <div className="admin-page-root">
-      <SidebarProvider className="fixed inset-0 h-svh max-h-svh overflow-hidden overscroll-none bg-background text-foreground antialiased font-sans">
+      <SidebarProvider className="fixed inset-0 z-30 h-svh max-h-svh overflow-hidden overscroll-none bg-background text-foreground antialiased font-sans">
         <AdminSidebar user={user} />
         <SidebarInset className="flex flex-col h-full min-h-0 overflow-hidden bg-slate-50/60 dark:bg-[#070b14]">
           <AdminHeader />

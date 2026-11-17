@@ -325,6 +325,10 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
 export function Header({ previewInBuilder = false }: { previewInBuilder?: boolean } = {}) {
   const builderCtx = useContext(BuilderBlockContext);
   const pathname = usePathname();
+  const isHiddenOnAdmin =
+    Boolean(pathname?.startsWith("/admin")) &&
+    !previewInBuilder &&
+    !builderCtx;
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -350,6 +354,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
   const [currentUser, setCurrentUser] = useState<{ role?: string; name?: string } | null>(null);
 
   useEffect(() => {
+    if (isHiddenOnAdmin) return;
     fetch("/api/auth/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -362,9 +367,10 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
         }
       })
       .catch(() => null);
-  }, []);
+  }, [isHiddenOnAdmin]);
 
   useEffect(() => {
+    if (isHiddenOnAdmin) return;
     fetch("/api/admin/header")
       .then((res) => res.json())
       .then((res) => {
@@ -392,7 +398,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
       window.removeEventListener("smc:header-updated", onUpdated);
       channel?.close();
     };
-  }, []);
+  }, [isHiddenOnAdmin]);
 
   const rawNavLinks = headerConfig.navLinks || DEFAULT_HEADER_DATA.navLinks;
   const navLinks = useMemo(() => {
@@ -614,7 +620,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
     return [];
   }, [activeItem]);
 
-  if (pathname?.startsWith("/admin") && !previewInBuilder && !builderCtx) {
+  if (isHiddenOnAdmin) {
     return null;
   }
 

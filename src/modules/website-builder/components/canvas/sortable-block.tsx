@@ -156,15 +156,24 @@ export function SortableBlock({
         )}
         style={presentation.style}
       >
-        <BlockErrorBoundary blockType={block.type} blockId={block.id}>
-          {ComponentToRender ? (
-            <ComponentToRender {...resolveBlockProps(block.type, block.props)} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
-          ) : (
-            <div className="p-8 text-center bg-slate-100 text-slate-500">
-              Unknown block: {block.type}
-            </div>
-          )}
-        </BlockErrorBoundary>
+        <BuilderBlockContext.Provider
+          value={{
+            blockId: block.id,
+            isPreview: true,
+            activeSubPath: null,
+            hoveredSubPath: null,
+          }}
+        >
+          <BlockErrorBoundary blockType={block.type} blockId={block.id}>
+            {ComponentToRender ? (
+              <ComponentToRender {...resolveBlockProps(block.type, block.props)} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
+            ) : (
+              <div className="p-8 text-center bg-slate-100 text-slate-500">
+                Unknown block: {block.type}
+              </div>
+            )}
+          </BlockErrorBoundary>
+        </BuilderBlockContext.Provider>
       </div>
     );
   }

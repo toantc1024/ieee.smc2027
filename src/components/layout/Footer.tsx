@@ -93,6 +93,10 @@ function renderSocialIcon(social: FooterSocialLink) {
 export function Footer(props: FooterProps = {}) {
   const pathname = usePathname();
   const builderCtx = useContext(BuilderBlockContext);
+  const isHiddenOnAdmin =
+    Boolean(pathname?.startsWith("/admin")) &&
+    !props.previewInBuilder &&
+    !builderCtx;
   const [remoteConfig, setRemoteConfig] = useState<Partial<FooterProps> | null>(
     null
   );
@@ -103,7 +107,12 @@ export function Footer(props: FooterProps = {}) {
     props.contactEmail !== undefined;
 
   useEffect(() => {
-    if (hasExplicitOverrides || builderCtx || typeof window === "undefined") {
+    if (
+      isHiddenOnAdmin ||
+      hasExplicitOverrides ||
+      builderCtx ||
+      typeof window === "undefined"
+    ) {
       return;
     }
     let cancelled = false;
@@ -120,10 +129,10 @@ export function Footer(props: FooterProps = {}) {
     return () => {
       cancelled = true;
     };
-  }, [hasExplicitOverrides, builderCtx]);
+  }, [isHiddenOnAdmin, hasExplicitOverrides, builderCtx]);
 
   // Hide footer on CMS admin dashboard pages unless inside builder preview
-  if (pathname?.startsWith("/admin") && !props.previewInBuilder && !builderCtx) {
+  if (isHiddenOnAdmin) {
     return null;
   }
 
@@ -351,6 +360,7 @@ export function Footer(props: FooterProps = {}) {
                             ) : (
                               <Link
                                 href={resolvedHref}
+                                prefetch={false}
                                 className="text-blue-100 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
                               >
                                 <span>{link.label}</span>
