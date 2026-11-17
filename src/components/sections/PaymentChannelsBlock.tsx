@@ -203,22 +203,27 @@ export function PaymentChannelsBlock({
                     )}
                   </div>
 
-                  {channel.ctaLabel ? (
-                    <div className="mt-6 pt-4 border-t border-blue-50">
-                      <a
-                        href={channel.ctaUrl || "/registration"}
-                        className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-                      >
-                        <span>{channel.ctaLabel}</span>
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
+                  {(channel.ctaLabel || channel.footerLeft || channel.footerRight) && (
+                    <div className="space-y-3">
+                      {channel.ctaLabel && (
+                        <div className="mt-6 pt-4 border-t border-blue-50">
+                          <a
+                            href={channel.ctaUrl || "/registration"}
+                            className="w-full min-h-[46px] py-2.5 px-4 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                          >
+                            <span>{channel.ctaLabel}</span>
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
+                      )}
+                      {(channel.footerLeft || channel.footerRight) && (
+                        <div className="mt-4 pt-3 border-t border-blue-50 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+                          <span>{channel.footerLeft}</span>
+                          <span className="text-[#115eff] font-semibold">{channel.footerRight}</span>
+                        </div>
+                      )}
                     </div>
-                  ) : (channel.footerLeft || channel.footerRight) ? (
-                    <div className="mt-4 pt-3 border-t border-blue-50 flex items-center justify-between text-xs sm:text-sm text-slate-500">
-                      <span>{channel.footerLeft}</span>
-                      <span className="text-[#115eff] font-semibold">{channel.footerRight}</span>
-                    </div>
-                  ) : null}
+                  )}
                 </div>
               );
             })}

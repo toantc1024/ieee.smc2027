@@ -49,15 +49,15 @@ import { PaymentMethods } from "@/components/sections/PaymentMethods";
 import { Venue } from "@/components/sections/Venue";
 import { ScheduleTimelineSection } from "@/components/sections/ScheduleTimelineSection";
 import { Sponsors } from "@/components/sections/Sponsors";
-import { WorkshopTutorialSection } from "@/components/sections/WorkshopTutorialSection";
+import { WorkshopTutorialSection, buildDefaultWorkshopCards } from "@/components/sections/WorkshopTutorialSection";
 import { PaperTemplates } from "@/components/sections/PaperTemplates";
 import { AwardsSection } from "@/components/sections/AwardsSection";
-import { TravelAccommodationSection } from "@/components/sections/TravelAccommodationSection";
-import { ContactCards } from "@/components/sections/ContactCards";
+import { TravelAccommodationSection, buildDefaultTravelCards } from "@/components/sections/TravelAccommodationSection";
+import { ContactCards, buildDefaultContactCards } from "@/components/sections/ContactCards";
 import { FAQ } from "@/components/sections/FAQ";
 import { PastConferencesSection } from "@/components/sections/PastConferencesSection";
 import { ConferenceVideo } from "@/components/sections/ConferenceVideo";
-import { VisaInformationSection } from "@/components/sections/VisaInformationSection";
+import { VisaInformationSection, buildDefaultVisaCards } from "@/components/sections/VisaInformationSection";
 import { SubmissionPortalsBlock } from "@/components/sections/SubmissionPortalsBlock";
 import { CfpPoliciesBlock } from "@/components/sections/CfpPoliciesBlock";
 import { SubmissionCategoriesBlock } from "@/components/sections/SubmissionCategoriesBlock";
@@ -175,15 +175,11 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
       cfpPdfUrl: { type: "text", label: "CFP PDF Document URL" },
-      submissionUrl: { type: "text", label: "Submission Portal URL" },
-      submissionDeadline: { type: "text", label: "Submission Deadline" },
     },
     defaultProps: {
       title: "Call For Papers & Submission Guidelines",
       subtitle: "Submission Categories & Technical Topics • IEEE SMC 2027",
       cfpPdfUrl: CONFERENCE_INFO.cfpPdfUrl,
-      submissionUrl: CONFERENCE_INFO.submissionPortal,
-      submissionDeadline: "April 08, 2027",
     },
     render: (props) => <CallForPapers {...props} />,
   },
@@ -354,14 +350,10 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      proposalDeadline: { type: "text", label: "Proposal Deadline" },
-      contactEmail: { type: "text", label: "Workshops Contact Email" },
     },
     defaultProps: {
       title: "Workshops & Tutorial Proposals",
       subtitle: "Propose hands-on tutorials and specialized workshops preceding the main technical conference program",
-      proposalDeadline: "February 15, 2027",
-      contactEmail: "smc2027@hcmute.edu.vn",
     },
     render: (props) => <WorkshopTutorialSection {...props} />,
   },
@@ -412,14 +404,10 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      hotelBookingUrl: { type: "text", label: "Hotel Reservation Link" },
-      airportDistance: { type: "text", label: "Airport Distance" },
     },
     defaultProps: {
       title: "Travel & Accommodation Guide",
       subtitle: "Information for attendees traveling to Ho Chi Minh City, airport transit, and hotel accommodations",
-      hotelBookingUrl: "https://www.marriott.com/en-us/hotels/sgnsi-sheraton-saigon-grand-opera-hotel/overview/",
-      airportDistance: "7 km (~20–30 mins from Tan Son Nhat Airport)",
     },
     render: (props) => <TravelAccommodationSection {...props} />,
   },
@@ -433,17 +421,9 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     description: "Organizing secretariat cards with email, phone, venue address, and official links.",
     fields: {
       title: { type: "text", label: "Section Title" },
-      email: { type: "text", label: "Secretariat Email" },
-      location: { type: "text", label: "Location" },
-      venue: { type: "text", label: "Venue Name" },
-      website: { type: "text", label: "Website URL" },
     },
     defaultProps: {
       title: "Contact the Organizing Secretariat",
-      email: "smc2027@hcmute.edu.vn",
-      location: "Ho Chi Minh City, Vietnam",
-      venue: "Sheraton Saigon Grand Opera Hotel",
-      website: "https://ieee-smc2027.org",
     },
     render: (props) => <ContactCards {...props} />,
   },
@@ -513,14 +493,10 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      evisaUrl: { type: "text", label: "E-Visa Portal URL" },
-      visaLetterEmail: { type: "text", label: "Visa Letter Contact" },
     },
     defaultProps: {
       title: "Vietnam Visa & Entry Requirements",
       subtitle: "Complete travel and entry guidance for international delegates attending IEEE SMC 2027 in Ho Chi Minh City",
-      evisaUrl: "https://evisa.xuatnhapcanh.gov.vn",
-      visaLetterEmail: "smc2027@hcmute.edu.vn",
     },
     render: (props) => <VisaInformationSection {...props} />,
   },
@@ -559,13 +535,11 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     fields: {
       title: { type: "text", label: "Title" },
       salutation: { type: "text", label: "Salutation" },
-      theme: { type: "text", label: "Conference Theme" },
       datesLocation: { type: "text", label: "Dates & Location" },
     },
     defaultProps: {
       title: "Welcome Message from the General Chairs & Honorary Chairs",
       salutation: "Dear Colleagues & Honored Participants,",
-      theme: "Human-AI Symbiosis: Engineering Intelligent, Autonomous, and Sustainable Futures",
       datesLocation: "October 6–10, 2027 • Ho Chi Minh City, Vietnam",
     },
     render: (props) => <WelcomeLetter {...props} />,
@@ -897,43 +871,184 @@ export const BLOCK_ALIASES: Record<string, string> = {
   Committee: "CommitteesSection",
 };
 
+function isHcmuteHeroProps(props: Record<string, any>): boolean {
+  return (
+    "backgroundImage" in props ||
+    "primaryCtaLabel" in props ||
+    "secondaryCtaLabel" in props ||
+    "badge" in props ||
+    "align" in props ||
+    ("title" in props && !("slides" in props))
+  );
+}
+
+function isCarouselHeroProps(props: Record<string, any>): boolean {
+  return (
+    !isHcmuteHeroProps(props) &&
+    ("slides" in props ||
+      "autoplayDuration" in props ||
+      "showOverlayText" in props ||
+      "showIndicators" in props ||
+      Object.keys(props).every((key) => key === "children"))
+  );
+}
+
+function isConferenceFaqProps(props: Record<string, any>): boolean {
+  const hasCategorizedItems =
+    Array.isArray(props.items) &&
+    props.items.some((item: { category?: string }) => Boolean(item?.category));
+  const hasConferenceProps =
+    "footerPrompt" in props ||
+    "contactButtonLabel" in props ||
+    "contactEmail" in props;
+  return (
+    hasCategorizedItems ||
+    (!("badge" in props) && (hasConferenceProps || !Array.isArray(props.items)))
+  );
+}
+
 const HERO_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
-    ...CONFERENCE_BLOCK_DEFINITIONS.Hero,
-    fields: { ...CONFERENCE_BLOCK_DEFINITIONS.HeroCarousel.fields, ...CONFERENCE_BLOCK_DEFINITIONS.Hero.fields },
-    render: (props) => {
-      const isHcmuteHero =
-        "backgroundImage" in props ||
-        "primaryCtaLabel" in props ||
-        "secondaryCtaLabel" in props ||
-        "badge" in props ||
-        "align" in props ||
-        ("title" in props && !("slides" in props));
-      const isCarousel =
-        !isHcmuteHero &&
-        ("slides" in props ||
-          "autoplayDuration" in props ||
-          "showOverlayText" in props ||
-          "showIndicators" in props ||
-          Object.keys(props).every((key) => key === "children"));
-      return isCarousel ? <HeroCarousel {...props} /> : <HcmuteHero {...props} />;
-    },
-  };
+  ...CONFERENCE_BLOCK_DEFINITIONS.Hero,
+  fields: {
+    ...CONFERENCE_BLOCK_DEFINITIONS.HeroCarousel.fields,
+    ...CONFERENCE_BLOCK_DEFINITIONS.Hero.fields,
+  },
+  render: (props) =>
+    isCarouselHeroProps(props) ? <HeroCarousel {...props} /> : <HcmuteHero {...props} />,
+};
+
 const FAQ_COMPATIBILITY_DEFINITION: ComponentDefinition<any> = {
-    ...CONFERENCE_BLOCK_DEFINITIONS.FAQ,
-    fields: { ...CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields, ...CONFERENCE_BLOCK_DEFINITIONS.FAQ.fields, items: CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields.items },
-    render: (props) => {
-      const hasCategorizedItems = Array.isArray(props.items) && props.items.some((item: { category?: string }) => Boolean(item?.category));
-      const hasConferenceProps = "footerPrompt" in props || "contactButtonLabel" in props || "contactEmail" in props;
-      const isConference = hasCategorizedItems || (!("badge" in props) && (hasConferenceProps || !Array.isArray(props.items)));
-      return isConference ? <FAQ {...props} /> : <HcmuteFaq {...props} />;
-    },
-  };
+  ...CONFERENCE_BLOCK_DEFINITIONS.FAQ,
+  fields: {
+    ...CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields,
+    ...CONFERENCE_BLOCK_DEFINITIONS.FAQ.fields,
+    items: CONFERENCE_BLOCK_DEFINITIONS.FaqAccordionSection.fields.items,
+  },
+  render: (props) =>
+    isConferenceFaqProps(props) ? <FAQ {...props} /> : <HcmuteFaq {...props} />,
+};
 
 export function getBlockDefinition(type: string): ComponentDefinition<any> | undefined {
   if (type === "Hero") return HERO_COMPATIBILITY_DEFINITION;
   if (type === "FAQ") return FAQ_COMPATIBILITY_DEFINITION;
   const canonicalType = BLOCK_ALIASES[type] || type;
   return CONFERENCE_BLOCK_DEFINITIONS[canonicalType];
+}
+
+function getActiveBranchDefinition(
+  type: string,
+  raw: Record<string, any>
+): { canonicalType: string; def: ComponentDefinition<any> | undefined } {
+  if (type === "Hero") {
+    const branchType = isCarouselHeroProps(raw) ? "HeroCarousel" : "Hero";
+    return { canonicalType: branchType, def: CONFERENCE_BLOCK_DEFINITIONS[branchType] };
+  }
+  if (type === "FAQ") {
+    const branchType = isConferenceFaqProps(raw) ? "FaqAccordionSection" : "FAQ";
+    return { canonicalType: branchType, def: CONFERENCE_BLOCK_DEFINITIONS[branchType] };
+  }
+  const canonicalType = BLOCK_ALIASES[type] || type;
+  return { canonicalType, def: CONFERENCE_BLOCK_DEFINITIONS[canonicalType] };
+}
+
+/**
+ * Resolve effective block props by filling missing (`undefined`) keys from the
+ * active component definition's `defaultProps` and `field.defaultValue` so
+ * Canvas, Inspector, Preview, and PublicPageRenderer receive identical props.
+ */
+export function resolveBlockProps(
+  type: string,
+  rawProps?: Record<string, any>
+): Record<string, any> {
+  const raw = rawProps && typeof rawProps === "object" ? rawProps : {};
+  const { canonicalType, def } = getActiveBranchDefinition(type, raw);
+  if (!def) return { ...raw };
+
+  const resolved: Record<string, any> = { ...raw };
+  const skippedKeys = new Set<string>();
+
+  if (canonicalType === "DataSheetBlock") {
+    if (raw.headers !== undefined && raw.columnsList === undefined) {
+      skippedKeys.add("columnsList");
+    }
+    if (raw.rowsData !== undefined && raw.rowsList === undefined) {
+      skippedKeys.add("rowsList");
+    }
+  } else if (canonicalType === "ButtonsBlock") {
+    if (
+      raw.buttons === undefined &&
+      (raw.primaryLabel !== undefined ||
+        raw.primaryUrl !== undefined ||
+        raw.secondaryLabel !== undefined ||
+        raw.secondaryUrl !== undefined)
+    ) {
+      skippedKeys.add("buttons");
+    }
+  } else if (canonicalType === "ContactSupportSection") {
+    if (
+      raw.cards === undefined &&
+      ["email", "location", "venue", "website", "address", "hotline", "googleMapsUrl"].some(
+        (key) => raw[key] !== undefined
+      )
+    ) {
+      resolved.cards = buildDefaultContactCards(raw);
+    }
+  } else if (canonicalType === "WorkshopTutorialSection") {
+    if (
+      raw.cards === undefined &&
+      (raw.proposalDeadline !== undefined || raw.contactEmail !== undefined)
+    ) {
+      resolved.cards = buildDefaultWorkshopCards(raw.proposalDeadline, raw.contactEmail);
+    }
+  } else if (canonicalType === "TravelAccommodationSection") {
+    if (
+      raw.cards === undefined &&
+      (raw.hotelBookingUrl !== undefined || raw.airportDistance !== undefined)
+    ) {
+      resolved.cards = buildDefaultTravelCards(raw.hotelBookingUrl, raw.airportDistance);
+    }
+  } else if (canonicalType === "VisaInformationSection") {
+    if (
+      raw.cards === undefined &&
+      (raw.evisaUrl !== undefined || raw.visaLetterEmail !== undefined)
+    ) {
+      resolved.cards = buildDefaultVisaCards(raw.evisaUrl, raw.visaLetterEmail);
+    }
+  } else if (canonicalType === "CallForPapers") {
+    if (raw.submissionDeadline !== undefined || raw.submissionUrl !== undefined) {
+      if (raw.policyCards === undefined) skippedKeys.add("policyCards");
+      if (raw.trackCards === undefined) skippedKeys.add("trackCards");
+    }
+  } else if (canonicalType === "WelcomeLetter") {
+    if (raw.conferenceName !== undefined && raw.heading === undefined) {
+      skippedKeys.add("heading");
+    }
+    if (raw.theme !== undefined && raw.body === undefined) {
+      skippedKeys.add("body");
+    }
+  } else if (canonicalType === "TechnicalSessionsBlock") {
+    if (raw.sessions === undefined && raw.syncFromDatabase !== false) {
+      skippedKeys.add("sessions");
+    }
+  }
+
+  for (const [key, val] of Object.entries(def.defaultProps || {})) {
+    if (!skippedKeys.has(key) && resolved[key] === undefined && val !== undefined) {
+      resolved[key] = val;
+    }
+  }
+
+  for (const [key, field] of Object.entries(def.fields || {})) {
+    if (
+      !skippedKeys.has(key) &&
+      resolved[key] === undefined &&
+      field.defaultValue !== undefined
+    ) {
+      resolved[key] = field.defaultValue;
+    }
+  }
+
+  return resolved;
 }
 
 /**
@@ -947,13 +1062,5 @@ export function getHydratedBlockDefaultProps(type: string): Record<string, any> 
   if (type === "FAQ") {
     return structuredClone(CONFERENCE_BLOCK_DEFINITIONS.FAQ?.defaultProps || {});
   }
-  const def = getBlockDefinition(type);
-  if (!def) return {};
-  const base: Record<string, any> = structuredClone(def.defaultProps || {});
-  for (const [key, field] of Object.entries(def.fields || {})) {
-    if (base[key] === undefined && field.defaultValue !== undefined) {
-      base[key] = structuredClone(field.defaultValue);
-    }
-  }
-  return base;
+  return structuredClone(resolveBlockProps(type, {}));
 }

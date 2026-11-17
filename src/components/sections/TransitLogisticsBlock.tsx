@@ -106,7 +106,10 @@ export function TransitLogisticsBlock({
                 </div>
 
                 {(card.linkLabel || card.footerText) && (
-                  <div className="mt-6 pt-3.5 border-t border-blue-50 text-sm font-semibold text-[#115eff]">
+                  <div className="mt-6 pt-3.5 border-t border-blue-50 text-sm font-semibold text-[#115eff] space-y-1">
+                    {card.footerText && card.linkUrl && card.linkLabel && card.footerText !== card.linkLabel && (
+                      <div className="text-xs text-slate-500">{card.footerText}</div>
+                    )}
                     {card.linkUrl ? (
                       <a
                         href={card.linkUrl}

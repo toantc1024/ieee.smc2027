@@ -364,6 +364,7 @@ export function KeynoteSpeakersBlock({
                         src={currentSpeaker.image}
                         alt={currentSpeaker?.name || "Speaker"}
                         fill
+                        unoptimized={/^(?:\/api\/|https?:\/\/|blob:|data:)/i.test(currentSpeaker.image)}
                         priority
                         sizes="(max-width: 640px) 260px, (max-width: 1024px) 390px, 450px"
                         style={{ objectPosition: "bottom" }}
@@ -414,6 +415,12 @@ export function KeynoteSpeakersBlock({
                       {currentSpeaker.role && (
                         <p className="text-xs sm:text-sm lg:text-base font-semibold text-blue-100">
                           {currentSpeaker.role}
+                        </p>
+                      )}
+
+                      {(currentSpeaker.affiliation || currentSpeaker.country) && (
+                        <p className="text-xs sm:text-sm text-blue-200/90">
+                          {[currentSpeaker.affiliation, currentSpeaker.country].filter(Boolean).join(", ")}
                         </p>
                       )}
 
@@ -478,6 +485,7 @@ export function KeynoteSpeakersBlock({
                           src={speaker.image}
                           alt={speaker?.name || "Speaker"}
                           fill
+                          unoptimized={/^(?:\/api\/|https?:\/\/|blob:|data:)/i.test(speaker.image)}
                           sizes="(max-width: 640px) 140px, 200px"
                           style={{ objectPosition: "bottom" }}
                           className="object-contain object-bottom group-hover:scale-105 transition-transform duration-200"
@@ -553,6 +561,7 @@ export function KeynoteSpeakersBlock({
                       src={speaker.image}
                       alt={speaker?.name || "Speaker"}
                       fill
+                      unoptimized={/^(?:\/api\/|https?:\/\/|blob:|data:)/i.test(speaker.image)}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 240px, 320px"
                       style={{ objectPosition: "bottom" }}
                       className="object-contain object-bottom group-hover:scale-105 transition-transform duration-300 block"
@@ -610,13 +619,18 @@ export function KeynoteSpeakersBlock({
                         </p>
                       )}
 
-                      {/* Affiliation if present and not redundant */}
-                      {speaker.affiliation && speaker.affiliation !== sectionSubtitle && (
+                      {/* Affiliation & Country if present and not redundant */}
+                      {((speaker.affiliation && speaker.affiliation !== sectionSubtitle) || speaker.country) && (
                         <p className={cn(
                           "text-xs font-medium break-words",
                           isPrimaryBg ? "text-blue-200/90" : "text-slate-500 dark:text-slate-400"
                         )}>
-                          {speaker.affiliation}
+                          {[
+                            speaker.affiliation && speaker.affiliation !== sectionSubtitle ? speaker.affiliation : "",
+                            speaker.country,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
                         </p>
                       )}
 

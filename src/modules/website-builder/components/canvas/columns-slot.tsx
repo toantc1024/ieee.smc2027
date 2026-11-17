@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { ChevronDown, ChevronUp, ClipboardPaste, Columns, Copy, CopyPlus, Eye, EyeOff, GripVertical, Plus, Scissors, Trash2 } from "lucide-react";
-import { getBlockDefinition } from "../../registry";
+import { getBlockDefinition, resolveBlockProps } from "../../registry";
 import { useBuilderStore } from "../../store/builder-store";
 import type { PageBlock } from "../../types";
 import { COLUMN_SLOT_KEYS, type ColumnSlotKey } from "../../utils/block-tree";
@@ -58,8 +58,9 @@ export function PublicNestedBlock({ block }: { block: PageBlock }) {
   if (isBlockHidden(block)) return null;
   const definition = getBlockDefinition(block.type);
   const Renderer = definition?.render;
+  const resolvedProps = resolveBlockProps(block.type, block.props);
   const presentation = getBlockPresentation(block);
-  return <div className={presentation.className} style={presentation.style}>{Renderer ? <Renderer {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}</div>;
+  return <div className={presentation.className} style={presentation.style}>{Renderer ? <Renderer {...resolvedProps} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}</div>;
 }
 
 export function EditableChildren({ block }: { block: PageBlock }) {
@@ -76,6 +77,7 @@ export function EditableNestedBlock({ block }: { block: PageBlock }) {
   const hidden = isBlockHidden(block);
   const definition = getBlockDefinition(block.type);
   const Renderer = definition?.render;
+  const resolvedProps = resolveBlockProps(block.type, block.props);
   const presentation = getBlockPresentation(block);
   const activeSubPath = selectedSubItem?.blockId === block.id ? selectedSubItem.path : null;
   const hoveredSubPath = hoveredSubItem?.blockId === block.id ? hoveredSubItem.path : null;
@@ -140,7 +142,7 @@ export function EditableNestedBlock({ block }: { block: PageBlock }) {
       onSubmitCapture={(event) => event.preventDefault()}
     >
       <BuilderBlockContext.Provider value={{ blockId: block.id, isPreview: false, activeSubPath, hoveredSubPath }}>
-        {Renderer ? <Renderer {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}
+        {Renderer ? <Renderer {...resolvedProps} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</Renderer> : <p className="p-4 text-xs text-slate-500">Section unavailable: {block.type}</p>}
       </BuilderBlockContext.Provider>
     </div>
   </div>;

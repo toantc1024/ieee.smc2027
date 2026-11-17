@@ -196,21 +196,23 @@ export function ImportantDates({
                           {item.status === "Conference" ? "Dates:" : "Deadline:"}
                         </span>
 
-                        {item.extendedDeadline ? (
+                        {item.extendedDeadline || (item.originalDeadline && item.date && item.originalDeadline !== item.date) ? (
                           <div className="flex flex-wrap items-center gap-2">
-                            <span
-                              className={`line-through font-medium text-xs sm:text-sm ${
-                                isPrimaryRow ? "text-blue-200" : "text-slate-400"
-                              }`}
-                            >
-                              {item.originalDeadline}
-                            </span>
+                            {item.originalDeadline && (
+                              <span
+                                className={`line-through font-medium text-xs sm:text-sm ${
+                                  isPrimaryRow ? "text-blue-200" : "text-slate-400"
+                                }`}
+                              >
+                                {item.originalDeadline}
+                              </span>
+                            )}
                             <span
                               className={`text-sm sm:text-base font-bold ${
                                 isPrimaryRow ? "text-white" : "text-[#004776]"
                               }`}
                             >
-                              {item.extendedDeadline}
+                              {item.extendedDeadline || item.date}
                             </span>
                           </div>
                         ) : (

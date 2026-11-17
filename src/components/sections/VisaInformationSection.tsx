@@ -151,29 +151,34 @@ export function VisaInformationSection({
                     )}
                   </div>
 
-                  {card.buttonLabel ? (
-                    <a
-                      href={card.buttonUrl || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
-                    >
-                      <span>{card.buttonLabel}</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  ) : card.contactEmail ? (
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-500">
-                        {card.contactLabel || "Contact Secretariat"}
-                      </span>
-                      <a
-                        href={`mailto:${card.contactEmail}`}
-                        className="font-bold text-blue-600 hover:underline"
-                      >
-                        {card.contactEmail}
-                      </a>
+                  {(card.buttonLabel || card.contactEmail) && (
+                    <div className="space-y-3">
+                      {card.buttonLabel && (
+                        <a
+                          href={card.buttonUrl || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+                        >
+                          <span>{card.buttonLabel}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      {card.contactEmail && (
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-slate-500">
+                            {card.contactLabel || "Contact Secretariat"}
+                          </span>
+                          <a
+                            href={`mailto:${card.contactEmail}`}
+                            className="font-bold text-blue-600 hover:underline"
+                          >
+                            {card.contactEmail}
+                          </a>
+                        </div>
+                      )}
                     </div>
-                  ) : null}
+                  )}
                 </div>
               );
             })}

@@ -147,6 +147,12 @@ export function CallForPapers({
         {showPolicyCards && resolvedPolicies.length > 0 && (
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
             {resolvedPolicies.map((policy, idx) => {
+              const legacy = policy as CfpPolicyCardItem & {
+                badge?: string;
+                linkLabel?: string;
+              };
+              const eyebrow = policy.eyebrow || legacy.badge || "";
+              const footerText = policy.footerText || legacy.linkLabel || "";
               const FooterIcon =
                 policy.footerIcon === "database"
                   ? Database
@@ -160,19 +166,21 @@ export function CallForPapers({
                   className="p-6 sm:p-7 border border-blue-100/90 bg-white rounded-md shadow-2xs flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#115eff] mb-2.5">
-                      {policy.iconImage && (
-                        <Image
-                          src={policy.iconImage}
-                          alt={policy.eyebrow || policy.title}
-                          width={40}
-                          height={40}
-                          unoptimized
-                          className="w-9 h-9 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-xs"
-                        />
-                      )}
-                      <span>{policy.eyebrow}</span>
-                    </div>
+                    {(policy.iconImage || eyebrow) && (
+                      <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#115eff] mb-2.5">
+                        {policy.iconImage && (
+                          <Image
+                            src={policy.iconImage}
+                            alt={eyebrow || policy.title}
+                            width={40}
+                            height={40}
+                            unoptimized
+                            className="w-9 h-9 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-xs"
+                          />
+                        )}
+                        {eyebrow && <span>{eyebrow}</span>}
+                      </div>
+                    )}
                     <h3 className="text-lg sm:text-xl font-bold text-[#004776] tracking-tight mb-3">
                       {policy.title}
                     </h3>
@@ -181,10 +189,10 @@ export function CallForPapers({
                     </p>
                   </div>
 
-                  {policy.footerText && (
+                  {footerText && (
                     <div className="mt-6 pt-4 border-t border-blue-50 flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#115eff]">
                       <FooterIcon className="w-4.5 h-4.5 shrink-0" />
-                      <span>{policy.footerText}</span>
+                      <span>{footerText}</span>
                     </div>
                   )}
                 </div>

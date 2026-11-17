@@ -199,6 +199,7 @@ export function Sponsors({
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    title={s.name || s.shortName}
                     {...subItemAttr(["sponsors", index])}
                     className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
                   >
@@ -210,6 +211,7 @@ export function Sponsors({
               return (
                 <div
                   key={index}
+                  title={s.name || s.shortName}
                   {...subItemAttr(["sponsors", index])}
                   className="p-5 bg-blue-50/35 border border-blue-100/90 rounded-sm text-center flex flex-col items-center justify-between min-h-[190px] sm:min-h-[215px] hover:border-[#115eff] hover:bg-white hover:shadow-md transition-all group"
                 >

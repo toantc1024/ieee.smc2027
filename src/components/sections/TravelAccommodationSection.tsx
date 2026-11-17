@@ -112,21 +112,26 @@ export function TravelAccommodationSection({
                     </p>
                   </div>
 
-                  {card.buttonLabel ? (
-                    <a
-                      href={card.buttonUrl || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors"
-                    >
-                      <span>{card.buttonLabel}</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  ) : card.footerNote ? (
-                    <div className="p-3 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-500">
-                      {card.footerNote}
+                  {(card.buttonLabel || card.footerNote) && (
+                    <div className="space-y-2.5">
+                      {card.footerNote && (
+                        <div className="p-3 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-500">
+                          {card.footerNote}
+                        </div>
+                      )}
+                      {card.buttonLabel && (
+                        <a
+                          href={card.buttonUrl || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors"
+                        >
+                          <span>{card.buttonLabel}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
                     </div>
-                  ) : null}
+                  )}
                 </div>
               );
             })}

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ExternalLink, Monitor, Smartphone, Tablet, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useBuilderStore } from "../../store/builder-store";
-import { getBlockDefinition } from "../../registry";
+import { getBlockDefinition, resolveBlockProps } from "../../registry";
 import { getBlockPresentation, isBlockHidden } from "../../utils/block-presentation";
 import { PublicNestedBlock } from "../canvas/columns-slot";
 import { BlockErrorBoundary } from "../canvas/block-error-boundary";
@@ -123,7 +123,7 @@ export function PagePreviewModal({ open, onClose }: PagePreviewModalProps) {
                     <BlockErrorBoundary blockType={block.type} blockId={block.id}>
                       {Renderer ? (
                         <Renderer
-                          {...block.props}
+                          {...resolveBlockProps(block.type, block.props)}
                           {...(block.type === "ColumnsSlot"
                             ? { builderBlockId: block.id, builderEditing: false }
                             : {})}

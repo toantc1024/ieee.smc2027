@@ -17,7 +17,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import type { PageBlock } from "../../types";
-import { getBlockDefinition } from "../../registry";
+import { getBlockDefinition, resolveBlockProps } from "../../registry";
 import { useBuilderStore } from "../../store/builder-store";
 import { BlockErrorBoundary } from "./block-error-boundary";
 import { SeamDropzoneIndicator } from "./seam-dropzone";
@@ -158,7 +158,7 @@ export function SortableBlock({
       >
         <BlockErrorBoundary blockType={block.type} blockId={block.id}>
           {ComponentToRender ? (
-            <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
+            <ComponentToRender {...resolveBlockProps(block.type, block.props)} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: false } : {})}>{block.children?.map((child) => <PublicNestedBlock key={child.id} block={child} />)}</ComponentToRender>
           ) : (
             <div className="p-8 text-center bg-slate-100 text-slate-500">
               Unknown block: {block.type}
@@ -444,7 +444,7 @@ export function SortableBlock({
         >
           <BlockErrorBoundary blockType={block.type} blockId={block.id}>
             {ComponentToRender ? (
-              <ComponentToRender {...block.props} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</ComponentToRender>
+              <ComponentToRender {...resolveBlockProps(block.type, block.props)} {...(block.type === "ColumnsSlot" ? { builderBlockId: block.id, builderEditing: true } : {})}>{block.type === "Container" ? <EditableChildren block={block} /> : block.children?.map((child) => <EditableNestedBlock key={child.id} block={child} />)}</ComponentToRender>
             ) : (
               <div className="p-8 text-center bg-slate-100 text-slate-500 font-medium">
                 Section renderer unavailable for: {block.type}

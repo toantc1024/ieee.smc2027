@@ -36,14 +36,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     if (!canViewPage(homePage.is_published, preview, user?.role)) notFound();
 
     let blocks: PageBlock[] = [];
-    if (Array.isArray(homePage.blocks)) {
-      blocks = homePage.blocks as unknown as PageBlock[];
-    } else if (
-      homePage.content &&
-      typeof homePage.content === "object" &&
-      Array.isArray((homePage.content as any).content)
+    const contentObj = homePage.content as { content?: unknown[] } | null;
+    if (
+      contentObj &&
+      typeof contentObj === "object" &&
+      Array.isArray(contentObj.content) &&
+      (contentObj.content.length > 0 || !Array.isArray(homePage.blocks) || homePage.blocks.length === 0)
     ) {
-      blocks = (homePage.content as any).content as PageBlock[];
+      blocks = contentObj.content as PageBlock[];
+    } else if (Array.isArray(homePage.blocks)) {
+      blocks = homePage.blocks as unknown as PageBlock[];
     }
     return <PublicPageRenderer blocks={blocks} />;
   }

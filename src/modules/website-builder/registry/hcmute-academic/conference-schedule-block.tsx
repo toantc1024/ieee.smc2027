@@ -49,7 +49,7 @@ export function ConferenceScheduleBlock({
   const defaultSessions: ScheduleSessionItem[] = [];
 
   const listToRender = Array.isArray(sessions) ? sessions : defaultSessions;
-  const daySessions = listToRender.filter((s) => s.dayIndex === activeDay);
+  const daySessions = listToRender.filter((s) => (s.dayIndex ?? 0) === activeDay);
   const availableTracks = Array.from(
     new Set(daySessions.map((s) => s.track).filter(Boolean) as string[])
   );

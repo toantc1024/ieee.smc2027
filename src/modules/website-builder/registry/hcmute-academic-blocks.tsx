@@ -20,11 +20,11 @@ export const HCMUTE_ACADEMIC_BLOCKS: Record<string, ComponentDefinition> = {
   "Conference/Schedule": {
     type: "Conference/Schedule", label: "Conference schedule", category: "program", icon: Calendar,
     description: "Organize sessions by day and track.",
-    fields: { ...heading, days: { ...text("Days"), description: "Separate days with commas." }, sessions: array("Sessions", "session", {
-      dayIndex: { type: "number", label: "Day index (first day is 0)", min: 0 }, time: text("Time"),
+    fields: { ...heading, days: { ...text("Days"), description: "Separate days with commas." }, sessions: { ...array("Sessions", "session", {
+      dayIndex: { type: "number", label: "Day index", min: 0, defaultValue: 0 }, time: text("Time"),
       type: select("Session type", [["keynote", "Keynote"], ["session", "Session"], ["panel", "Panel"], ["break", "Break"], ["ceremony", "Ceremony"]]),
       title: text("Session title"), speaker: text("Speaker"), speakerAffiliation: text("Speaker affiliation"), speakerAvatar: image("Speaker image"), chair: text("Session chair"), room: text("Room or meeting link"), track: text("Track"), description: textarea("Description"),
-    }) },
+    }), defaultItem: { dayIndex: 0, time: "09:00", type: "session", title: "New session", speaker: "", speakerAffiliation: "", speakerAvatar: "", chair: "", room: "", track: "", description: "" } } },
     defaultProps: { sectionTitle: "Conference schedule", sectionSubtitle: "", days: "", sessions: [] }, render: ConferenceScheduleBlock,
   },
   "Conference/CallForPapers": {

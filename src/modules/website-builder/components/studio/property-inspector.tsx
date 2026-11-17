@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   AlignCenter,
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useBuilderStore } from "../../store/builder-store";
-import { getBlockDefinition } from "../../registry";
+import { getBlockDefinition, resolveBlockProps } from "../../registry";
 import type { FieldDefinition, PageBlock } from "../../types";
 import { InspectorField, type FieldPath } from "./inspector-fields";
 import { PixelUnitInput } from "./pixel-unit-input";
@@ -472,14 +472,19 @@ function ContentFields({
   const definition = getBlockDefinition(block.type);
   const fields = definition?.fields || {};
   const entries = Object.entries(fields) as [string, FieldDefinition][];
+  const resolvedProps = useMemo(
+    () => resolveBlockProps(block.type, block.props),
+    [block.type, block.props]
+  );
 
   function onChange(path: FieldPath, value: unknown) {
     const current = findBlock(useBuilderStore.getState().data.content, block.id);
     if (!current) return;
     const rootKey = String(path[0]);
+    const resolvedCurrent = resolveBlockProps(current.type, current.props);
     const rawRoot =
       current.props[rootKey] ??
-      definition?.defaultProps[rootKey] ??
+      resolvedCurrent[rootKey] ??
       fields[rootKey]?.defaultValue;
     const rootValue = rawRoot !== undefined ? structuredClone(rawRoot) : undefined;
     const updated =
@@ -513,7 +518,7 @@ function ContentFields({
               field={field}
               value={
                 block.props[key] ??
-                definition?.defaultProps[key] ??
+                resolvedProps[key] ??
                 field.defaultValue ??
                 ""
               }

@@ -190,7 +190,7 @@ function DataSheetBlockRender({
 }) {
   const [query, setQuery] = useState("");
 
-  const usingStructuredCols = Array.isArray(columnsList) && columnsList.length > 0;
+  const usingStructuredCols = Array.isArray(columnsList);
   const headerList = usingStructuredCols
     ? columnsList.map((c) => (c?.header || "").trim()).filter(Boolean)
     : (headers || "")
@@ -198,7 +198,7 @@ function DataSheetBlockRender({
         .map((h) => h.trim())
         .filter(Boolean);
 
-  const usingStructuredRows = Array.isArray(rowsList) && rowsList.length > 0;
+  const usingStructuredRows = Array.isArray(rowsList);
   const parsedRows = usingStructuredRows
     ? rowsList.map((r) => {
         const line = r?.cells || "";
@@ -1034,15 +1034,6 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
         },
         defaultItem: { cells: "Cell 1 | Cell 2 | Cell 3" },
       },
-      headers: {
-        type: "text",
-        label: "Legacy Columns",
-        placeholder: "Category, Early Bird, Regular, On-Site",
-      },
-      rowsData: {
-        type: "textarea",
-        label: "Legacy Rows",
-      },
       striped: { type: "switch", label: "Alternating Striped Rows" },
       searchable: { type: "switch", label: "Show Search Filter" },
     },
@@ -1272,10 +1263,6 @@ export const MODULAR_BLOCK_DEFINITIONS: Record<string, ComponentDefinition> = {
           variant: "primary",
         },
       },
-      primaryLabel: { type: "text", label: "Legacy Primary Label" },
-      primaryUrl: { type: "text", label: "Legacy Primary URL" },
-      secondaryLabel: { type: "text", label: "Legacy Secondary Label" },
-      secondaryUrl: { type: "text", label: "Legacy Secondary URL" },
       align: {
         type: "select",
         label: "Alignment",
