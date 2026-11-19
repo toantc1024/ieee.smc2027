@@ -822,3 +822,85 @@ test("PaperSubmissionGuidelinesSection has no static external template URLs and 
   );
   assert.match(html, /download="SMC2027-LaTeX\.zip"/);
 });
+
+test("CommitteesSection defaults card postfix to IEEE SMC 2027, supports editing it, and fades dot pattern from top only", () => {
+  const def = getBlockDefinition("CommitteesSection")!;
+  assert.equal(def.fields.cardBadgeLabel?.defaultValue, "IEEE SMC 2027");
+
+  const defaultHtml = renderToStaticMarkup(
+    React.createElement(PublicPageRenderer, {
+      blocks: [
+        {
+          id: "comm-default",
+          type: "CommitteesSection",
+          props: {
+            groups: [
+              {
+                groupName: "Chairs",
+                members: [
+                  {
+                    name: "Prof. Photo Member",
+                    role: "General Chair",
+                    affiliation: "HCM-UTE",
+                    country: "Vietnam",
+                    photo: "/chairs/prof-hieu-giang-le.webp",
+                  },
+                  {
+                    name: "Prof. Fallback Member",
+                    role: "Co-Chair",
+                    affiliation: "HCM-UTE",
+                    country: "Vietnam",
+                    photo: "",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+  );
+
+  assert.match(defaultHtml, />IEEE SMC 2027</);
+  assert.doesNotMatch(defaultHtml, />IEEE SMC</);
+  assert.match(defaultHtml, /linear-gradient\(to bottom,/);
+  assert.doesNotMatch(defaultHtml, /to bottom right/);
+  assert.doesNotMatch(defaultHtml, /165deg/);
+
+  const editedHtml = renderToStaticMarkup(
+    React.createElement(PublicPageRenderer, {
+      blocks: [
+        {
+          id: "comm-edited",
+          type: "CommitteesSection",
+          props: {
+            cardBadgeLabel: "SENT_SECTION_POSTFIX",
+            groups: [
+              {
+                groupName: "Chairs",
+                members: [
+                  {
+                    name: "Member A",
+                    role: "Chair",
+                    country: "Japan",
+                    photo: "",
+                  },
+                  {
+                    name: "Member B",
+                    role: "Co-Chair",
+                    country: "USA",
+                    photo: "",
+                    badgeLabel: "SENT_MEMBER_OVERRIDE",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+  );
+
+  assert.match(editedHtml, />SENT_SECTION_POSTFIX</);
+  assert.match(editedHtml, />SENT_MEMBER_OVERRIDE</);
+});

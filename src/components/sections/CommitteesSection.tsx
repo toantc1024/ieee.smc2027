@@ -156,6 +156,7 @@ export function getClayAvatarForMember(
 
 export interface CommitteeMemberInput extends Omit<CommitteeMember, "gender"> {
   gender?: "male" | "female" | "auto";
+  badgeLabel?: string;
 }
 
 export interface CommitteeGroupInput {
@@ -167,6 +168,7 @@ export interface CommitteesSectionProps {
   title?: string;
   titleAccent?: string;
   subtitle?: string;
+  cardBadgeLabel?: string;
   autoplayDuration?: number;
   initialGroupIndex?: number;
   showAllGroups?: boolean;
@@ -223,20 +225,20 @@ function AbstractGlassSquareFallback({
             : "radial-gradient(rgba(17, 94, 255, 0.42) 1.5px, transparent 1.5px)",
           backgroundSize: "18px 18px",
           maskImage:
-            "linear-gradient(165deg, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+            "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
           WebkitMaskImage:
-            "linear-gradient(165deg, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+            "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
         }}
       />
 
-      {/* Layer 2b: Crisp white dot matrix on hover with matching diagonal mask */}
+      {/* Layer 2b: Crisp white dot matrix on hover with matching top-only fade mask */}
       <div
         className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover/card:opacity-45 transition-opacity duration-300"
         style={{
           maskImage:
-            "linear-gradient(165deg, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+            "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
           WebkitMaskImage:
-            "linear-gradient(165deg, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+            "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
         }}
       />
 
@@ -338,12 +340,15 @@ function AbstractGlassSquareFallback({
 function CommitteeCard({
   member,
   subPath,
+  cardBadgeLabel = "IEEE SMC 2027",
 }: {
   member: CommitteeMemberInput;
   subPath?: SubItemPath;
+  cardBadgeLabel?: string;
 }) {
   if (!member) return null;
   const name = member.name?.trim() || "Committee Member";
+  const resolvedBadge = member.badgeLabel?.trim() || cardBadgeLabel.trim();
   const photo =
     typeof member.photo === "string" && member.photo.trim().length > 0
       ? member.photo.trim()
@@ -391,25 +396,25 @@ function CommitteeCard({
                 : "bg-transparent group-hover/card:bg-[#115eff]"
           )}
         >
-          {/* Dot pattern overlay behind photo cutouts */}
+          {/* Dot pattern overlay behind photo cutouts (top-only vertical fade) */}
           {hasPhoto && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div
                 className="absolute inset-0 bg-dot-pattern opacity-50 group-hover/card:opacity-0 transition-opacity duration-300 pointer-events-none"
                 style={{
                   maskImage:
-                    "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                    "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                   WebkitMaskImage:
-                    "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                    "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                 }}
               />
               <div
                 className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover/card:opacity-45 transition-opacity duration-300 pointer-events-none"
                 style={{
                   maskImage:
-                    "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                    "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                   WebkitMaskImage:
-                    "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                    "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                 }}
               />
             </div>
@@ -469,9 +474,11 @@ function CommitteeCard({
             <span className="font-semibold text-[#004776] group-hover/card:text-white truncate">
               {member.country || "Vietnam"}
             </span>
-            <span className="text-[#004776]/75 group-hover/card:text-white/85 text-xs font-semibold shrink-0">
-              IEEE SMC
-            </span>
+            {resolvedBadge && (
+              <span className="text-[#004776]/75 group-hover/card:text-white/85 text-xs font-semibold shrink-0">
+                {resolvedBadge}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -594,9 +601,11 @@ function CommitteeCarouselControls({
 function CommitteeGroupCarousel({
   group,
   groupIndex,
+  cardBadgeLabel,
 }: {
   group: CommitteeGroupInput;
   groupIndex?: number;
+  cardBadgeLabel?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -712,6 +721,7 @@ function CommitteeGroupCarousel({
               >
                 <CommitteeCard
                   member={member}
+                  cardBadgeLabel={cardBadgeLabel}
                   subPath={
                     groupIndex !== undefined
                       ? ["groups", groupIndex, "members", idx]
@@ -746,6 +756,7 @@ function CommitteeGroupCarousel({
                     <div className="w-full h-full flex">
                       <CommitteeCard
                         member={member}
+                        cardBadgeLabel={cardBadgeLabel}
                         subPath={
                           groupIndex !== undefined && memberCount > 0
                             ? ["groups", groupIndex, "members", idx % memberCount]
@@ -773,6 +784,7 @@ export function CommitteesSection({
   title = "Organizing Committee",
   titleAccent,
   subtitle = "International Steering & Organizing Committees for IEEE SMC 2027 in Ho Chi Minh City, Vietnam",
+  cardBadgeLabel = "IEEE SMC 2027",
   groups,
 }: CommitteesSectionProps) {
   const safeGroups =
@@ -832,6 +844,7 @@ export function CommitteesSection({
               key={`${group?.groupName || "group"}-${idx}`}
               group={group}
               groupIndex={idx}
+              cardBadgeLabel={cardBadgeLabel}
             />
           ))
         )}

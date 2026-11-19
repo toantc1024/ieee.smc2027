@@ -158,15 +158,15 @@ export function WelcomeLetter({
                           <div
                             className="absolute inset-0 bg-dot-pattern opacity-50 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"
                             style={{
-                              maskImage: "linear-gradient(to bottom right, transparent 25%, black 75%)",
-                              WebkitMaskImage: "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                              maskImage: "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+                              WebkitMaskImage: "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                             }}
                           />
                           <div
                             className="absolute inset-0 bg-dot-pattern-white opacity-0 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none"
                             style={{
-                              maskImage: "linear-gradient(to bottom right, transparent 25%, black 75%)",
-                              WebkitMaskImage: "linear-gradient(to bottom right, transparent 25%, black 75%)",
+                              maskImage: "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
+                              WebkitMaskImage: "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
                             }}
                           />
                         </div>

@@ -547,6 +547,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
 
   CommitteesSection: {
     titleAccent: text("Second-line accent heading", { defaultValue: "& Leadership" }),
+    cardBadgeLabel: text("Card postfix label", { defaultValue: "IEEE SMC 2027" }),
     groups: {
       type: "array",
       label: "Committee groups",
@@ -569,6 +570,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
             country: "Vietnam",
             photo: "",
             gender: "auto",
+            badgeLabel: "",
           },
         ],
       },
@@ -586,6 +588,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
             country: "Vietnam",
             photo: "",
             gender: "auto",
+            badgeLabel: "",
           },
           itemFields: {
             photo: image("Portrait"),
@@ -593,6 +596,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
             role: text("Role"),
             affiliation: text("Affiliation"),
             country: text("Country"),
+            badgeLabel: text("Card postfix override"),
             gender: {
               type: "select",
               label: "Fallback avatar style",
