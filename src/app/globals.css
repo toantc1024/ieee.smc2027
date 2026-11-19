@@ -4,12 +4,12 @@
 
 :root {
   /* ── Site layout standard ── */
-  --site-width: min(94vw, 100rem);
-  /* 1600px max / 94vw on medium-large screens for wider content and slim side margins */
-  --site-px: 0.75rem;
-  /* 12px — mobile horizontal padding */
-  --site-px-lg: 1rem;
-  /* 16px — desktop horizontal padding */
+  --site-width: min(88vw, 90rem);
+  /* 1440px max / 88vw on medium-large screens (~12% side margin) */
+  --site-px: 1rem;
+  /* 16px — mobile horizontal padding */
+  --site-px-lg: 1.25rem;
+  /* 20px — desktop horizontal padding */
 
   /* ── Navbar height tokens ── */
   --topbar-h: 48px;
