@@ -98,7 +98,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
   variant: "left-aligned",
   sticky: true,
   showLogo: true,
-  logoUrl: "/logo/ieee-smc-2027-conference-lockup-transparent.png",
+  logoUrl: "/logo/tagline.png",
   logoHref: "/",
   mobileLogoUrl: "/logo/square-logo.png",
   topbar: {

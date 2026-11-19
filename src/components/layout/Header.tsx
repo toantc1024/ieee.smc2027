@@ -429,7 +429,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
       : DEFAULT_HEADER_DATA.topbar?.quickLinks || [];
   const isSticky = headerConfig.sticky !== false;
   const showLogo = headerConfig.showLogo !== false;
-  const desktopLogoUrl = headerConfig.logoUrl || DEFAULT_HEADER_DATA.logoUrl || "/logo/ieee-smc-2027-conference-lockup-transparent.png";
+  const desktopLogoUrl = headerConfig.logoUrl || DEFAULT_HEADER_DATA.logoUrl || "/logo/tagline.png";
   const mobileLogoUrl = headerConfig.mobileLogoUrl || DEFAULT_HEADER_DATA.mobileLogoUrl || "/logo/square-logo.png";
   const logoHref = headerConfig.logoHref || "/";
   const brandTitle = headerConfig.brand?.conferenceTitle || "IEEE SMC 2027";
