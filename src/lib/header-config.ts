@@ -98,7 +98,7 @@ export const DEFAULT_HEADER_DATA: HeaderConfig = {
   variant: "left-aligned",
   sticky: true,
   showLogo: true,
-  logoUrl: "/logo/rectangle-logo.png",
+  logoUrl: "/logo/ieee-smc-2027-conference-lockup-transparent.png",
   logoHref: "/",
   mobileLogoUrl: "/logo/square-logo.png",
   topbar: {
@@ -434,7 +434,10 @@ export function normalizeHeaderConfig(raw?: Partial<HeaderConfig> | null): Heade
     variant: source.variant || DEFAULT_HEADER_DATA.variant,
     sticky: source.sticky !== undefined ? source.sticky : DEFAULT_HEADER_DATA.sticky,
     showLogo: source.showLogo !== undefined ? source.showLogo : DEFAULT_HEADER_DATA.showLogo,
-    logoUrl: source.logoUrl || DEFAULT_HEADER_DATA.logoUrl,
+    logoUrl:
+      !source.logoUrl || source.logoUrl === "/logo/rectangle-logo.png"
+        ? DEFAULT_HEADER_DATA.logoUrl
+        : source.logoUrl,
     logoHref: source.logoHref || DEFAULT_HEADER_DATA.logoHref,
     mobileLogoUrl: source.mobileLogoUrl || DEFAULT_HEADER_DATA.mobileLogoUrl,
     topbar: {

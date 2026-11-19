@@ -100,7 +100,7 @@ export function VisualHeaderCanvas({
   const showSearch = config.topbar?.showSearch !== false;
   const ctaEnabled = config.ctaButton?.enabled !== false;
   const showLogo = config.showLogo !== false;
-  const desktopLogo = config.logoUrl || "/logo/rectangle-logo.png";
+  const desktopLogo = config.logoUrl || "/logo/ieee-smc-2027-conference-lockup-transparent.png";
   const mobileLogo = config.mobileLogoUrl || "/logo/square-logo.png";
 
   const handleCanvasDragOver = (e: React.DragEvent) => {

@@ -58,8 +58,8 @@ const DEFAULT_PROMO_CARD: NavPromoCard = {
 };
 
 const LOGO_PRESETS = [
-  { label: "Horizontal Lockup", url: "/logo/rectangle-logo.png" },
-  { label: "Conference Lockup", url: "/logo/ieee-smc-2027-conference-lockup.png" },
+  { label: "Conference Lockup", url: "/logo/ieee-smc-2027-conference-lockup-transparent.png" },
+  { label: "Full Logo Group", url: "/logo/ieee-smc-2027-logo-group-transparent.png" },
   { label: "Square Emblem", url: "/logo/square-logo.png" },
   { label: "White Emblem", url: "/logo/square-logo-white.png" },
 ];
@@ -947,7 +947,7 @@ function GeneralInspector({
           <Label className="text-[11px] text-slate-600 block">Desktop Brand Logo</Label>
           <div className="flex items-center gap-1.5">
             <Input
-              value={config.logoUrl || "/logo/rectangle-logo.png"}
+              value={config.logoUrl || "/logo/ieee-smc-2027-conference-lockup-transparent.png"}
               onChange={(e) =>
                 onUpdateConfig((prev) => ({ ...prev, logoUrl: e.target.value }))
               }
