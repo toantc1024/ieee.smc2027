@@ -377,55 +377,76 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
   },
 
   PaperSubmissionGuidelinesSection: {
-    templatesHeading: text("Templates heading", { defaultValue: "Official Paper Templates" }),
-    officialBadgeLabel: text("Template badge label", { defaultValue: "Official 2027" }),
+    templatesHeading: text("Templates heading", { defaultValue: "Download Official Conference Templates" }),
+    officialBadgeLabel: text("Default badge label", { defaultValue: "Official IEEE" }),
+    usageNoteLabel: text("Usage note label", { defaultValue: "Usage Note" }),
+    downloadButtonLabel: text("Download button label", { defaultValue: "Download Template" }),
+    unavailableButtonLabel: text("Pending file button label", { defaultValue: "File Pending Upload" }),
+    showCopyLink: {
+      type: "switch",
+      label: "Show copy link button",
+      defaultValue: true,
+    },
+    copyLinkLabel: text("Copy link label", { defaultValue: "Copy Link" }),
+    copiedLinkLabel: text("Copied state label", { defaultValue: "Copied" }),
     templates: {
       type: "array",
       label: "Downloadable templates",
       itemLabel: "template",
       itemLabelKey: "name",
       defaultValue: PAPER_TEMPLATE_ITEMS.map(
-        ({ name, format, description, fileSize, downloadUrl, instructions }) => ({
+        ({ name, format, description, fileSize, downloadUrl, fileName, instructions }) => ({
           name,
           format,
           description,
-          fileSize,
+          fileSize: fileSize || "",
           downloadUrl,
-          instructions,
+          fileName: fileName || "",
+          badgeLabel: "",
+          buttonLabel: "",
+          instructions: instructions || "",
         })
       ),
       defaultItem: {
         name: "New Manuscript Template",
-        format: "PDF / DOCX",
-        description: "Official IEEE formatting template.",
-        fileSize: "~1.0 MB",
-        downloadUrl: CONFERENCE_INFO.cfpPdfUrl,
-        instructions: "Follow IEEE two-column A4 margins.",
+        format: "LaTeX ZIP",
+        description: "Official IEEE formatting template package.",
+        fileSize: "",
+        downloadUrl: "",
+        fileName: "",
+        badgeLabel: "",
+        buttonLabel: "",
+        instructions: "Follow IEEE two-column margins.",
       },
       itemFields: {
         name: text("Template name"),
         format: text("File format"),
+        badgeLabel: text("Item badge override"),
         description: paragraph("Description"),
         fileSize: text("File size"),
-        downloadUrl: file("Template document URL"),
-        instructions: paragraph("Instructions"),
+        downloadUrl: file("Template file"),
+        fileName: text("Download filename"),
+        buttonLabel: text("Button label override"),
+        instructions: paragraph("Usage instructions"),
       },
     },
+    emptyTemplatesText: text("Empty templates text", { defaultValue: "No templates added yet." }),
     showComplianceNotice: {
       type: "switch",
       label: "Show compliance notice",
       defaultValue: true,
     },
     complianceTitle: text("Compliance heading", {
-      defaultValue: "Mandatory Compliance & Desk Rejection Notice",
+      defaultValue: "IEEE PDF eXpress Compliance",
     }),
     complianceMessage: paragraph("Compliance message", {
       defaultValue:
-        "Papers violating IEEE formatting standards, margin definitions, page limits, or using deprecated single-column drafts may be desk-rejected without peer review. Ensure all fonts are embedded prior to PDF generation.",
+        "All final camera-ready papers must be validated through IEEE PDF eXpress before final submission to ensure compatibility with the IEEE Xplore Digital Library. Detailed PDF eXpress conference credentials will be provided upon paper acceptance.",
     }),
     guidelinesHeading: text("Guidelines heading", {
-      defaultValue: "Page Limits & Verification Requirements",
+      defaultValue: "Page Length & Type Limits",
     }),
+    emptyGuidelinesText: text("Empty guidelines text", { defaultValue: "No page limits added yet." }),
     guidelines: {
       type: "array",
       label: "Submission guidelines",
@@ -444,7 +465,7 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
       },
     },
     checklistHeading: text("Checklist heading", {
-      defaultValue: "Pre-Submission Verification Checklist",
+      defaultValue: "Pre-Submission Checklist",
     }),
     checklistItems: {
       type: "array",
@@ -457,11 +478,16 @@ export const CONFERENCE_CONTENT_FIELDS: Record<string, Record<string, FieldDefin
         text: paragraph("Checklist point"),
       },
     },
-    authorCenterLabel: text("IEEE link button label", {
-      defaultValue: "IEEE Official Author Center",
+    showAuthorCenter: {
+      type: "switch",
+      label: "Show author center link",
+      defaultValue: true,
+    },
+    authorCenterLabel: text("Author center link label", {
+      defaultValue: "Visit IEEE Official Author Center",
     }),
-    authorCenterUrl: text("IEEE link URL", {
-      defaultValue: "https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/",
+    authorCenterUrl: text("Author center URL", {
+      defaultValue: "https://www.ieee.org/conferences/publishing/templates.html",
     }),
   },
 

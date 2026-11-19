@@ -12,6 +12,15 @@ import { resolveArchetype } from "../../src/modules/website-builder/components/s
 import { BuilderBlockContext } from "../../src/modules/website-builder/utils/sub-item-path";
 import { migratePageBlocks } from "../../src/lib/cms-migration";
 import { PublicPageRenderer } from "../../src/app/(public)/[slug]/public-page-renderer";
+import { InspectorField } from "../../src/modules/website-builder/components/studio/inspector-fields";
+import { PAPER_TEMPLATE_ITEMS } from "../../src/components/sections/PaperTemplates";
+import {
+  buildDownloadUrl,
+  DEFAULT_FILE_ACCEPT,
+  isAllowedMediaFile,
+  matchesAcceptSpec,
+  resolveMimeType,
+} from "../../src/lib/media-types";
 
 test("every registered block and alias resolves to a dedicated wireframe archetype", () => {
   const genericTypes: string[] = [];
@@ -660,4 +669,156 @@ test("BuilderBlockContext defaults to null outside any provider so admin shell g
     )
   );
   assert.equal(insideHtml, "<span>HAS_CTX:blk-1</span>");
+});
+
+test("media-types supports ZIP and document uploads regardless of browser MIME quirks and rejects executables", () => {
+  for (const rawType of ["", "application/octet-stream", "application/x-zip-compressed", "application/zip"]) {
+    assert.equal(resolveMimeType("ieee-latex-template.zip", rawType), "application/zip");
+    assert.equal(isAllowedMediaFile("ieee-latex-template.zip", rawType), true);
+    assert.equal(
+      matchesAcceptSpec({ name: "ieee-latex-template.zip", type: rawType }, DEFAULT_FILE_ACCEPT),
+      true
+    );
+  }
+
+  for (const name of ["template.docx", "cfp.pdf", "slides.pptx", "fees.xlsx", "main.tex", "bundle.tar.gz"]) {
+    assert.equal(isAllowedMediaFile(name, ""), true, name);
+    assert.equal(matchesAcceptSpec({ name, type: "" }, DEFAULT_FILE_ACCEPT), true, name);
+  }
+
+  for (const bad of ["payload.exe", "script.sh", "xss.html", "malware.js"]) {
+    assert.equal(isAllowedMediaFile(bad, ""), false, bad);
+  }
+
+  assert.equal(
+    buildDownloadUrl("/api/images/public/uploads/template.zip", "IEEE-SMC-2027.zip"),
+    "/api/images/public/uploads/template.zip?download=1&filename=IEEE-SMC-2027.zip"
+  );
+  assert.equal(buildDownloadUrl(""), "");
+});
+
+test("file UploadField accepts ZIP archives, renders download action, and omits static URL text input", () => {
+  const emptyMarkup = renderToStaticMarkup(
+    React.createElement(InspectorField, {
+      field: { type: "file", label: "Template file" },
+      value: "",
+      path: ["templates", 0, "downloadUrl"],
+      onChange() {},
+      onBusyChange() {},
+    })
+  );
+  assert.match(emptyMarkup, /\.zip/);
+  assert.match(emptyMarkup, /application\/zip/);
+  assert.doesNotMatch(emptyMarkup, /Or paste document URL/);
+
+  const attachedMarkup = renderToStaticMarkup(
+    React.createElement(InspectorField, {
+      field: { type: "file", label: "Template file" },
+      value: "/api/images/public/uploads/ieee-template.zip",
+      path: ["templates", 0, "downloadUrl"],
+      onChange() {},
+      onBusyChange() {},
+    })
+  );
+  assert.match(attachedMarkup, /ieee-template\.zip/);
+  assert.match(attachedMarkup, />ZIP</);
+  assert.match(attachedMarkup, /\/api\/images\/public\/uploads\/ieee-template\.zip\?download=1/);
+  assert.doesNotMatch(attachedMarkup, /Or paste document URL/);
+});
+
+test("PaperSubmissionGuidelinesSection has no static external template URLs and reflects all editable fields including ZIP downloads", () => {
+  for (const item of PAPER_TEMPLATE_ITEMS) {
+    assert.equal(item.downloadUrl, "", `Default template "${item.name}" must not hardcode a static download URL`);
+  }
+
+  const def = getBlockDefinition("PaperSubmissionGuidelinesSection")!;
+  assert.equal(def.fields.templates.itemFields?.downloadUrl.type, "file");
+  assert.equal((def.fields.templates.defaultItem as Record<string, unknown>)?.downloadUrl, "");
+
+  const html = renderToStaticMarkup(
+    React.createElement(PublicPageRenderer, {
+      blocks: [
+        {
+          id: "tpl-block",
+          type: "PaperSubmissionGuidelinesSection",
+          props: {
+            title: "SENT_TPL_TITLE & SENT_TPL_PART2",
+            subtitle: "SENT_TPL_SUBTITLE",
+            templatesHeading: "SENT_TEMPLATES_HEADING",
+            officialBadgeLabel: "SENT_DEFAULT_BADGE",
+            usageNoteLabel: "SENT_USAGE_LABEL",
+            downloadButtonLabel: "SENT_DL_BTN",
+            unavailableButtonLabel: "SENT_PENDING_BTN",
+            showCopyLink: true,
+            copyLinkLabel: "SENT_COPY_BTN",
+            templates: [
+              {
+                name: "SENT_ZIP_NAME",
+                format: "LaTeX ZIP",
+                badgeLabel: "SENT_ITEM_BADGE",
+                description: "SENT_ZIP_DESC",
+                fileSize: "2.4 MB",
+                downloadUrl: "/api/images/public/uploads/smc2027-latex.zip",
+                fileName: "SMC2027-LaTeX.zip",
+                buttonLabel: "SENT_ITEM_DL_BTN",
+                instructions: "SENT_ZIP_INSTR",
+              },
+              {
+                name: "SENT_PENDING_NAME",
+                format: "DOCX",
+                description: "SENT_PENDING_DESC",
+                fileSize: "",
+                downloadUrl: "",
+                instructions: "",
+              },
+            ],
+            showComplianceNotice: true,
+            complianceTitle: "SENT_COMP_TITLE",
+            complianceMessage: "SENT_COMP_MSG",
+            guidelinesHeading: "SENT_GUIDE_HEADING",
+            guidelines: [{ label: "SENT_G_LBL", limit: "SENT_G_LIM", detail: "SENT_G_DET" }],
+            checklistHeading: "SENT_CHECK_HEADING",
+            checklistItems: [{ text: "SENT_CHECK_ITEM" }],
+            showAuthorCenter: true,
+            authorCenterLabel: "SENT_AUTHOR_LBL",
+            authorCenterUrl: "https://example.org/author-center",
+          },
+        },
+      ],
+    })
+  );
+
+  for (const token of [
+    "SENT_TPL_TITLE",
+    "SENT_TPL_PART2",
+    "SENT_TPL_SUBTITLE",
+    "SENT_TEMPLATES_HEADING",
+    "SENT_ITEM_BADGE",
+    "SENT_USAGE_LABEL",
+    "SENT_ITEM_DL_BTN",
+    "SENT_PENDING_BTN",
+    "SENT_COPY_BTN",
+    "SENT_ZIP_NAME",
+    "SENT_ZIP_DESC",
+    "SENT_ZIP_INSTR",
+    "SENT_PENDING_NAME",
+    "SENT_COMP_TITLE",
+    "SENT_COMP_MSG",
+    "SENT_GUIDE_HEADING",
+    "SENT_G_LBL",
+    "SENT_G_LIM",
+    "SENT_G_DET",
+    "SENT_CHECK_HEADING",
+    "SENT_CHECK_ITEM",
+    "SENT_AUTHOR_LBL",
+    "https://example.org/author-center",
+  ]) {
+    assert.ok(html.includes(token), `Missing edited sentinel ${token} in PaperSubmissionGuidelinesSection`);
+  }
+
+  assert.match(
+    html,
+    /href="\/api\/images\/public\/uploads\/smc2027-latex\.zip\?download=1&amp;filename=SMC2027-LaTeX\.zip"/
+  );
+  assert.match(html, /download="SMC2027-LaTeX\.zip"/);
 });

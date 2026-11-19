@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import {
   FileText,
+  FileArchive,
   Download,
   CheckCircle,
   FileCode,
@@ -13,29 +14,40 @@ import {
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
+import { buildDownloadUrl, isArchiveFile } from "@/lib/media-types";
 
-export const PAPER_TEMPLATE_ITEMS = [
+export interface PaperTemplateItem {
+  name: string;
+  format: string;
+  description: string;
+  fileSize?: string;
+  downloadUrl: string;
+  fileName?: string;
+  badgeLabel?: string;
+  buttonLabel?: string;
+  instructions?: string;
+}
+
+export const PAPER_TEMPLATE_ITEMS: PaperTemplateItem[] = [
   {
     name: "IEEE LaTeX Template Package",
     format: "LaTeX ZIP",
-    icon: FileCode,
     description:
       "Complete IEEEtran class package including sample .tex, IEEEtran.cls, bibliography style, and build script for conference proceedings.",
     fileSize: "1.2 MB",
-    downloadUrl:
-      "https://www.ieee.org/content/dam/ieee-org/ieee/web/org/conferences/conference-template-a4.zip",
+    downloadUrl: "",
+    fileName: "ieee-smc-2027-latex-template.zip",
     instructions:
       "Compile using pdflatex or xelatex. Ensure all fonts are embedded and margins match standard US Letter format.",
   },
   {
     name: "IEEE Microsoft Word Template",
     format: "MS Word DOCX",
-    icon: FileText,
     description:
       "Pre-styled Microsoft Word template with built-in styles for title, author affiliations, abstract, headings, and equations.",
     fileSize: "480 KB",
-    downloadUrl:
-      "https://www.ieee.org/content/dam/ieee-org/ieee/web/org/conferences/conference-template-letter.docx",
+    downloadUrl: "",
+    fileName: "ieee-smc-2027-word-template.docx",
     instructions:
       "Replace the sample text directly. Do not modify page margins, font sizes, or column widths.",
   },
@@ -74,18 +86,27 @@ export const DEFAULT_PRE_SUBMISSION_CHECKLIST = [
 ];
 
 export interface PaperTemplatesProps {
-  templates?: Array<Omit<(typeof PAPER_TEMPLATE_ITEMS)[number], "icon">>;
+  templates?: PaperTemplateItem[];
   guidelines?: typeof PAPER_GUIDELINES;
   title?: string;
   subtitle?: string;
   templatesHeading?: string;
   officialBadgeLabel?: string;
+  usageNoteLabel?: string;
+  downloadButtonLabel?: string;
+  unavailableButtonLabel?: string;
+  showCopyLink?: boolean;
+  copyLinkLabel?: string;
+  copiedLinkLabel?: string;
+  emptyTemplatesText?: string;
+  emptyGuidelinesText?: string;
   showComplianceNotice?: boolean;
   complianceTitle?: string;
   complianceMessage?: string;
   guidelinesHeading?: string;
   checklistHeading?: string;
   checklistItems?: Array<{ text: string }>;
+  showAuthorCenter?: boolean;
   authorCenterLabel?: string;
   authorCenterUrl?: string;
 }
@@ -97,12 +118,21 @@ export function PaperTemplates({
   subtitle = "Download official IEEE manuscript templates in LaTeX and Microsoft Word formats",
   templatesHeading = "Download Official Conference Templates",
   officialBadgeLabel = "Official IEEE",
+  usageNoteLabel = "Usage Note",
+  downloadButtonLabel = "Download Template",
+  unavailableButtonLabel = "File Pending Upload",
+  showCopyLink = true,
+  copyLinkLabel = "Copy Link",
+  copiedLinkLabel = "Copied",
+  emptyTemplatesText = "No templates added yet.",
+  emptyGuidelinesText = "No page limits added yet.",
   showComplianceNotice = true,
   complianceTitle = "IEEE PDF eXpress Compliance",
   complianceMessage = "All final camera-ready papers must be validated through IEEE PDF eXpress before final submission to ensure compatibility with the IEEE Xplore Digital Library. Detailed PDF eXpress conference credentials will be provided upon paper acceptance.",
   guidelinesHeading = "Page Length & Type Limits",
   checklistHeading = "Pre-Submission Checklist",
   checklistItems = DEFAULT_PRE_SUBMISSION_CHECKLIST,
+  showAuthorCenter = true,
   authorCenterLabel = "Visit IEEE Official Author Center",
   authorCenterUrl = "https://www.ieee.org/conferences/publishing/templates.html",
 }: PaperTemplatesProps) {
@@ -112,8 +142,13 @@ export function PaperTemplates({
   const safeChecklist = Array.isArray(checklistItems) ? checklistItems : [];
 
   const handleCopyLink = (name: string, url: string) => {
+    if (!url) return;
+    const absoluteUrl =
+      typeof window !== "undefined" && url.startsWith("/")
+        ? `${window.location.origin}${url}`
+        : url;
     if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(absoluteUrl);
     }
     setCopiedLink(name);
     setTimeout(() => setCopiedLink(null), 2000);
@@ -135,9 +170,11 @@ export function PaperTemplates({
               <span className="block text-[#004776]">{title}</span>
             )}
           </h2>
-          <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-2xl">
-            {subtitle}
-          </p>
+          {subtitle && (
+            <p className="text-base sm:text-lg text-[#004776]/80 font-medium max-w-2xl">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
 
@@ -152,14 +189,22 @@ export function PaperTemplates({
 
             {safeTemplates.length === 0 ? (
               <div className="rounded-md border border-dashed border-blue-200 bg-blue-50/30 p-6 text-center text-sm text-slate-500">
-                No templates added yet.
+                {emptyTemplatesText}
               </div>
             ) : (
               <div className="space-y-4">
                 {safeTemplates.map((tpl, idx) => {
-                  const Icon = (tpl.format || "").toLowerCase().includes("latex")
-                    ? FileCode
-                    : FileText;
+                  const isZip =
+                    isArchiveFile(tpl.downloadUrl || tpl.fileName || "") ||
+                    (tpl.format || "").toLowerCase().includes("zip");
+                  const isLatex = (tpl.format || "").toLowerCase().includes("latex");
+                  const Icon = isZip ? FileArchive : isLatex ? FileCode : FileText;
+                  const downloadHref = buildDownloadUrl(tpl.downloadUrl, tpl.fileName);
+                  const hasFile = Boolean(downloadHref);
+                  const isInternalDownload = downloadHref.startsWith("/");
+                  const itemBadge = tpl.badgeLabel?.trim() || officialBadgeLabel;
+                  const itemButtonLabel = tpl.buttonLabel?.trim() || downloadButtonLabel;
+
                   return (
                     <div
                       key={`${tpl.name}-${idx}`}
@@ -182,52 +227,69 @@ export function PaperTemplates({
                           </div>
                         </div>
 
-                        {officialBadgeLabel && (
+                        {itemBadge && (
                           <span className="px-2.5 py-1 bg-white border border-slate-200/75 rounded-sm text-xs font-bold text-slate-700">
-                            {officialBadgeLabel}
+                            {itemBadge}
                           </span>
                         )}
                       </div>
 
-                      <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">
-                        {tpl.description}
-                      </p>
+                      {tpl.description && (
+                        <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">
+                          {tpl.description}
+                        </p>
+                      )}
 
                       {tpl.instructions && (
                         <div className="p-3.5 bg-white border border-slate-200/80 rounded-sm text-sm text-slate-600 mb-5 leading-relaxed">
-                          <strong className="text-slate-800">Usage Note: </strong>
+                          {usageNoteLabel && (
+                            <strong className="text-slate-800">{usageNoteLabel}: </strong>
+                          )}
                           {tpl.instructions}
                         </div>
                       )}
 
                       <div className="flex flex-wrap items-center gap-3">
-                        <a
-                          href={tpl.downloadUrl || "#"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm transition-all shadow-xs"
-                        >
-                          <Download className="w-4.5 h-4.5" />
-                          <span>Download Template</span>
-                        </a>
+                        {hasFile ? (
+                          <a
+                            href={downloadHref}
+                            download={tpl.fileName || true}
+                            target={isInternalDownload ? undefined : "_blank"}
+                            rel={isInternalDownload ? undefined : "noopener noreferrer"}
+                            className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-base rounded-sm transition-all shadow-xs"
+                          >
+                            <Download className="w-4.5 h-4.5" />
+                            <span>{itemButtonLabel}</span>
+                          </a>
+                        ) : (
+                          <span
+                            aria-disabled="true"
+                            className="inline-flex items-center gap-2 min-h-[46px] px-6 py-2.5 bg-slate-200 text-slate-500 font-bold text-sm sm:text-base rounded-sm cursor-not-allowed"
+                          >
+                            <Download className="w-4.5 h-4.5" />
+                            <span>{unavailableButtonLabel}</span>
+                          </span>
+                        )}
 
-                        <button
-                          type="button"
-                          onClick={() => handleCopyLink(tpl.name, tpl.downloadUrl)}
-                          className="inline-flex items-center gap-1.5 min-h-[46px] px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm rounded-sm transition-colors cursor-pointer"
-                        >
-                          {copiedLink === tpl.name ? (
-                            <>
-                              <Check className="w-4 h-4 text-emerald-600" />
-                              <span className="text-emerald-600">Copied</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-4 h-4" />
-                              <span>Copy Link</span>
-                            </>
-                          )}
-                        </button>
+                        {showCopyLink && hasFile && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopyLink(tpl.name, downloadHref)}
+                            className="inline-flex items-center gap-1.5 min-h-[46px] px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm rounded-sm transition-colors cursor-pointer"
+                          >
+                            {copiedLink === tpl.name ? (
+                              <>
+                                <Check className="w-4 h-4 text-emerald-600" />
+                                <span className="text-emerald-600">{copiedLinkLabel}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4" />
+                                <span>{copyLinkLabel}</span>
+                              </>
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
@@ -255,7 +317,7 @@ export function PaperTemplates({
               </h3>
 
               {safeGuidelines.length === 0 ? (
-                <p className="text-sm text-slate-500">No page limits added yet.</p>
+                <p className="text-sm text-slate-500">{emptyGuidelinesText}</p>
               ) : (
                 <div className="space-y-3.5">
                   {safeGuidelines.map((g, idx) => (
@@ -299,10 +361,10 @@ export function PaperTemplates({
                 ))}
               </ul>
 
-              {authorCenterLabel && (
+              {showAuthorCenter && authorCenterLabel && authorCenterUrl && (
                 <div className="pt-3 border-t border-slate-100">
                   <a
-                    href={authorCenterUrl || "#"}
+                    href={authorCenterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-sm font-bold text-[#115eff] hover:underline"

@@ -3,6 +3,10 @@ import fs from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import { storageService } from "@/services";
+import {
+  resolveMimeType,
+  sanitizeDownloadFilename,
+} from "@/lib/media-types";
 
 export async function GET(
   request: NextRequest,
@@ -23,6 +27,10 @@ export async function GET(
     : 80;
   const blurParam = searchParams.get("blur");
   const format = searchParams.get("format") || "webp";
+  const forceDownload =
+    searchParams.get("download") === "1" ||
+    searchParams.get("download") === "true";
+  const requestedFilename = searchParams.get("filename")?.trim() || "";
 
   let inputBuffer: Buffer | null = null;
   let contentType = "application/octet-stream";
@@ -38,25 +46,7 @@ export async function GET(
       if (fileStat.isFile()) {
         inputBuffer = await fs.readFile(fullPath);
         sourceEtag = `${fileStat.mtimeMs}-${fileStat.size}`;
-        const ext = path.extname(fullPath).toLowerCase();
-        const mimeTypes: Record<string, string> = {
-          ".jpg": "image/jpeg",
-          ".jpeg": "image/jpeg",
-          ".png": "image/png",
-          ".webp": "image/webp",
-          ".svg": "image/svg+xml",
-          ".gif": "image/gif",
-          ".avif": "image/avif",
-          ".pdf": "application/pdf",
-          ".doc": "application/msword",
-          ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          ".xls": "application/vnd.ms-excel",
-          ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          ".ppt": "application/vnd.ms-powerpoint",
-          ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-          ".zip": "application/zip",
-        };
-        contentType = mimeTypes[ext] || contentType;
+        contentType = resolveMimeType(fullPath);
       }
     } catch {
       // Not found on local disk; fall through to MinIO
@@ -67,14 +57,17 @@ export async function GET(
     try {
       const minioObj = await storageService.getFileBuffer(rawPath);
       inputBuffer = minioObj.buffer;
-      contentType = minioObj.contentType;
+      contentType = resolveMimeType(rawPath, minioObj.contentType);
       sourceEtag = minioObj.etag || `${inputBuffer.byteLength}`;
     } catch {
       return new NextResponse("Not Found", { status: 404 });
     }
   }
 
-  const etag = `"${sourceEtag}-${width || 0}-${height || 0}-${quality}-${blurParam || 0}-${format}"`;
+  const downloadFilename = sanitizeDownloadFilename(
+    requestedFilename || path.basename(rawPath) || "download"
+  );
+  const etag = `"${sourceEtag}-${width || 0}-${height || 0}-${quality}-${blurParam || 0}-${format}-${forceDownload ? downloadFilename : 0}"`;
 
   if (request.headers.get("if-none-match") === etag) {
     return new NextResponse(null, {
@@ -86,14 +79,27 @@ export async function GET(
     });
   }
 
-  if (!width && !height && !blurParam && !searchParams.get("format")) {
-    return new NextResponse(new Uint8Array(inputBuffer), {
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
-        ETag: etag,
-      },
-    });
+  const isTransformableImage =
+    contentType.startsWith("image/") && contentType !== "image/svg+xml";
+
+  if (
+    forceDownload ||
+    !isTransformableImage ||
+    (!width && !height && !blurParam && !searchParams.get("format"))
+  ) {
+    const headers: Record<string, string> = {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Content-Type-Options": "nosniff",
+      ETag: etag,
+    };
+
+    if (forceDownload) {
+      headers["Content-Disposition"] =
+        `attachment; filename="${downloadFilename}"; filename*=UTF-8''${encodeURIComponent(downloadFilename)}`;
+    }
+
+    return new NextResponse(new Uint8Array(inputBuffer), { headers });
   }
 
   try {

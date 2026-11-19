@@ -6,6 +6,7 @@ import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { Button } from "@/components/ui/button";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 import { MediaFileGrid } from "@/components/admin/media/MediaFileGrid";
+import { DEFAULT_ALL_MEDIA_ACCEPT } from "@/lib/media-types";
 import type { StorageFolder } from "@/types";
 import type { MediaFileItem } from "@/components/media/MediaLibraryModal";
 
@@ -32,7 +33,7 @@ export default function AdminMediaLibraryPage() {
       const res = await fetch(`/api/media?${params.toString()}`);
       const json = await res.json();
       if (res.ok && json.success) {
-        setFiles(json.data.files || []);
+        setFiles(json.files || json.data?.files || []);
       } else {
         setError(json.error || "Unable to load media files");
       }
@@ -118,7 +119,7 @@ export default function AdminMediaLibraryPage() {
           ref={fileInputRef}
           type="file"
           multiple
-          accept="image/*,application/pdf"
+          accept={DEFAULT_ALL_MEDIA_ACCEPT}
           onChange={handleUpload}
           className="hidden"
         />

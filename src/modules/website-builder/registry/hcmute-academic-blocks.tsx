@@ -30,7 +30,7 @@ export const HCMUTE_ACADEMIC_BLOCKS: Record<string, ComponentDefinition> = {
   "Conference/CallForPapers": {
     type: "Conference/CallForPapers", label: "Call for papers", category: "academic", icon: FileText,
     description: "Show submission links, deadlines and research topics.",
-    fields: { sectionTitle: text("Section title"), conferenceName: text("Conference name"), scopeDescription: textarea("Scope and description"), submissionUrl: text("Submission URL"), templateWordUrl: text("Word template URL"), templateLatexUrl: text("LaTeX template URL"), indexingBadges: { ...text("Indexing badges"), description: "Separate badges with commas." },
+    fields: { sectionTitle: text("Section title"), conferenceName: text("Conference name"), scopeDescription: textarea("Scope and description"), submissionUrl: text("Submission URL"), templateWordUrl: { type: "file", label: "Word template file" }, templateLatexUrl: { type: "file", label: "LaTeX template file" }, indexingBadges: { ...text("Indexing badges"), description: "Separate badges with commas." },
       deadlines: array("Deadlines", "deadline", { title: text("Title"), date: text("Date"), highlight: { type: "switch", label: "Highlight deadline" } }),
       topics: array("Tracks and topics", "track", { trackName: text("Track name"), subTopics: textarea("Topics") }),
     },

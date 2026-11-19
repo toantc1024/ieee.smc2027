@@ -7,6 +7,8 @@ import {
   Search,
   Image as ImageIcon,
   FileText,
+  FileArchive,
+  Download,
   Check,
   Loader2,
   Trash2,
@@ -17,6 +19,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  buildDownloadUrl,
+  DEFAULT_ALL_MEDIA_ACCEPT,
+  getFileBadgeLabel,
+  isArchiveFile,
+} from "@/lib/media-types";
 import type { StorageFolder } from "@/types";
 
 export interface MediaFileItem {
@@ -63,7 +71,7 @@ export function MediaLibraryModal({
   onClose,
   onSelect,
   defaultFolder = "public/uploads",
-  accept = "image/*,application/pdf",
+  accept = DEFAULT_ALL_MEDIA_ACCEPT,
   title = "Media Library",
   allowDelete = false,
 }: MediaLibraryModalProps) {
@@ -73,6 +81,13 @@ export function MediaLibraryModal({
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [activeFolder, setActiveFolder] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "IMAGE" | "DOCUMENT">(() =>
+    accept.includes("image/") && !accept.includes(".zip") && !accept.includes("application/pdf")
+      ? "IMAGE"
+      : !accept.includes("image/")
+        ? "DOCUMENT"
+        : "all"
+  );
   const [uploadFolder, setUploadFolder] = useState<StorageFolder>(defaultFolder);
   const [selectedFile, setSelectedFile] = useState<MediaFileItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,12 +98,13 @@ export function MediaLibraryModal({
     try {
       const params = new URLSearchParams();
       if (activeFolder !== "all") params.set("folder", activeFolder);
+      if (activeCategory !== "all") params.set("category", activeCategory);
       if (search.trim()) params.set("search", search.trim());
 
       const res = await fetch(`/api/media?${params.toString()}`);
       const json = await res.json();
       if (res.ok && json.success) {
-        setFiles(json.data.files || []);
+        setFiles(json.files || json.data?.files || []);
       } else {
         setError(json.error || "Unable to load media files");
       }
@@ -97,7 +113,7 @@ export function MediaLibraryModal({
     } finally {
       setLoading(false);
     }
-  }, [activeFolder, search]);
+  }, [activeFolder, activeCategory, search]);
 
   useEffect(() => {
     if (open) {
@@ -129,7 +145,7 @@ export function MediaLibraryModal({
         if (!res.ok || !json.success) {
           throw new Error(json.error || `Failed to upload ${file.name}`);
         }
-        lastUploaded = json.data.file;
+        lastUploaded = json.file || json.data?.file || null;
       }
 
       await fetchMedia();
@@ -187,12 +203,31 @@ export function MediaLibraryModal({
         {/* Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 border-b border-slate-100 bg-white">
           <div className="flex flex-wrap items-center gap-1.5">
+            {([
+              { value: "all", label: "All Types" },
+              { value: "IMAGE", label: "Images" },
+              { value: "DOCUMENT", label: "Files & ZIP" },
+            ] as const).map((cat) => (
+              <button
+                key={cat.value}
+                type="button"
+                onClick={() => setActiveCategory(cat.value)}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  activeCategory === cat.value
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+            <span className="mx-1 h-4 w-px bg-slate-200" />
             {FOLDERS.map((f) => (
               <button
                 key={f.value}
                 type="button"
                 onClick={() => setActiveFolder(f.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   activeFolder === f.value
                     ? "bg-[#115eff] text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -282,7 +317,7 @@ export function MediaLibraryModal({
               </div>
               <p className="text-sm font-bold text-slate-700">No media files found</p>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Upload an image or PDF document to store it in the library
+                Upload an image, ZIP archive, or document to store it in the library
               </p>
               <Button
                 type="button"
@@ -299,7 +334,10 @@ export function MediaLibraryModal({
               {files.map((item) => {
                 const isSelected = selectedFile?.id === item.id;
                 const isImage = item.mimeType.startsWith("image/");
+                const isArchive = isArchiveFile(item.filename, item.mimeType);
+                const badgeLabel = getFileBadgeLabel(item.filename, item.mimeType);
                 const displayUrl = item.proxyUrl || item.url;
+                const downloadHref = buildDownloadUrl(displayUrl, item.filename);
 
                 return (
                   <div
@@ -324,8 +362,14 @@ export function MediaLibraryModal({
                         />
                       ) : (
                         <div className="flex flex-col items-center gap-1.5 text-slate-500">
-                          <FileText className="size-9 text-[#115eff]" />
-                          <span className="text-[10px] font-bold">PDF Document</span>
+                          {isArchive ? (
+                            <FileArchive className="size-9 text-[#115eff]" />
+                          ) : (
+                            <FileText className="size-9 text-[#115eff]" />
+                          )}
+                          <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#004776]">
+                            {badgeLabel}
+                          </span>
                         </div>
                       )}
 
@@ -334,6 +378,16 @@ export function MediaLibraryModal({
                           <Check className="size-3.5" />
                         </div>
                       )}
+
+                      <a
+                        href={downloadHref}
+                        download={item.filename}
+                        onClick={(e) => e.stopPropagation()}
+                        className="opacity-0 group-hover:opacity-100 absolute bottom-2 right-2 size-7 rounded-lg bg-white/95 text-[#115eff] border border-slate-200 flex items-center justify-center shadow-xs transition-opacity hover:bg-blue-50"
+                        title="Download file"
+                      >
+                        <Download className="size-3.5" />
+                      </a>
 
                       {allowDelete && item.id && (
                         <button

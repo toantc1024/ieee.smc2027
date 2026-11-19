@@ -8,6 +8,8 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   CopyPlus,
+  Download,
+  FileArchive,
   FileText,
   FolderOpen,
   GripVertical,
@@ -23,6 +25,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
+import {
+  buildDownloadUrl,
+  DEFAULT_FILE_ACCEPT,
+  DEFAULT_IMAGE_ACCEPT,
+  extractFilenameFromUrl,
+  getFileBadgeLabel,
+  isArchiveFile,
+  matchesAcceptSpec,
+  MAX_MEDIA_FILE_SIZE_BYTES,
+} from "@/lib/media-types";
 import type { FieldDefinition } from "../../types";
 import { RichTextField } from "./rich-text-field";
 import { UnifiedColorPicker } from "./unified-color-picker";
@@ -70,7 +82,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
   const isLogoLike = /logo|icon|badge/i.test(String(path[path.length - 1] || field.label));
   const accept =
     field.accept ||
-    (isImage ? "image/jpeg,image/png,image/webp,image/gif,image/svg+xml" : "application/pdf");
+    (isImage ? DEFAULT_IMAGE_ACCEPT : DEFAULT_FILE_ACCEPT);
   const busyKey = JSON.stringify(path);
 
   useEffect(() => () => {
@@ -79,19 +91,16 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
 
   async function upload(file: File) {
     if (uploading || disabled) return;
-    const allowed = accept.split(",").map((type) => type.trim());
-    if (
-      !allowed.some((type) =>
-        type.endsWith("/*") ? file.type.startsWith(type.slice(0, -1)) : type === file.type
-      )
-    ) {
+    if (!matchesAcceptSpec(file, accept)) {
       setError(
-        isImage ? "Choose a JPG, PNG, WebP, GIF, or SVG image." : "Choose a PDF document."
+        isImage
+          ? "Choose a JPG, PNG, WebP, GIF, or SVG image."
+          : "Choose a ZIP, PDF, DOCX, PPTX, XLSX, or LaTeX file."
       );
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError("Choose a file smaller than 10 MB.");
+    if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
+      setError("Choose a file smaller than 50 MB.");
       return;
     }
     const controller = new AbortController();
@@ -240,36 +249,70 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className="group relative flex items-center justify-between gap-2.5 rounded-xl border border-blue-100/90 bg-white p-3.5"
+          className={cn(
+            "group relative flex flex-col gap-2.5 rounded-xl border bg-white p-3.5 transition-colors",
+            dragging ? "border-[#115eff] bg-blue-50/40 ring-1 ring-[#115eff]/30" : "border-blue-100/90"
+          )}
         >
-          <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#115eff] text-white shadow-xs">
-              <FileText className="size-4" />
+          <div className="flex min-w-0 items-center justify-between gap-2.5">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#115eff] text-white shadow-xs">
+                {isArchiveFile(url) ? (
+                  <FileArchive className="size-4" />
+                ) : (
+                  <FileText className="size-4" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-slate-900">
+                  {extractFilenameFromUrl(url) || url}
+                </p>
+                <span className="inline-block rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-[#004776]">
+                  {getFileBadgeLabel(url)}
+                </span>
+              </div>
             </div>
-            <span className="truncate text-sm font-bold text-slate-900">
-              {url.split("/").pop() || url}
-            </span>
+            <a
+              href={buildDownloadUrl(url)}
+              download
+              aria-label={`Download ${field.label}`}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100/90 bg-white text-[#115eff] hover:border-blue-300 hover:bg-blue-50/50"
+              title="Download file"
+            >
+              <Download className="size-3.5" />
+            </a>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               disabled={disabled || uploading}
               aria-label={`Replace ${field.label}`}
               onClick={() => inputRef.current?.click()}
-              className="h-8 rounded-lg border border-blue-100/90 bg-white px-3 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#115eff] hover:bg-[#0a4de6] px-3 text-xs font-bold text-white transition-colors disabled:opacity-50 cursor-pointer"
             >
-              Change
+              <Upload className="size-3.5" />
+              <span>Change</span>
             </button>
             <button
               type="button"
               disabled={disabled || uploading}
               aria-label={`Choose ${field.label} from library`}
               onClick={() => setLibraryOpen(true)}
-              className="h-8 rounded-lg border border-blue-100/90 bg-white px-3 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer"
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-100/90 bg-white px-3 text-xs font-bold text-[#004776] hover:border-blue-300 hover:bg-blue-50/50 disabled:opacity-50 cursor-pointer"
             >
-              Library
+              <FolderOpen className="size-3.5" />
+              <span>Library</span>
             </button>
           </div>
+          {uploading && (
+            <div
+              role="status"
+              className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-white/95 text-xs font-bold text-[#004776]"
+            >
+              <Loader2 className="size-4 animate-spin" />
+              <span>Uploading…</span>
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -286,10 +329,10 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
         >
           <div className="space-y-0.5">
             <p className="text-sm font-bold text-slate-800">
-              {url ? "Select a replacement" : isImage ? "Select or drop image" : "Select or drop PDF"}
+              {url ? "Select a replacement" : isImage ? "Select or drop image" : "Select or drop file"}
             </p>
             <p className="text-xs text-slate-400">
-              Max 10 MB
+              {isImage ? "JPG, PNG, WebP, SVG • Max 50 MB" : "ZIP, PDF, DOCX, PPTX • Max 50 MB"}
             </p>
           </div>
 
@@ -342,18 +385,20 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
         }}
       />
 
-      <Input
-        id={id}
-        value={url}
-        disabled={disabled || uploading}
-        placeholder={isImage ? "Or paste image URL" : "Or paste document URL"}
-        onChange={(event) => {
-          setError("");
-          setBrokenUrl(null);
-          onChange(path, event.target.value);
-        }}
-        className="h-10 bg-white text-sm font-medium border-blue-100/90 rounded-lg px-3"
-      />
+      {isImage && (
+        <Input
+          id={id}
+          value={url}
+          disabled={disabled || uploading}
+          placeholder="Or paste image URL"
+          onChange={(event) => {
+            setError("");
+            setBrokenUrl(null);
+            onChange(path, event.target.value);
+          }}
+          className="h-10 bg-white text-sm font-medium border-blue-100/90 rounded-lg px-3"
+        />
+      )}
 
       {field.description && (
         <p className="text-xs leading-relaxed text-slate-500">{field.description}</p>

@@ -11,6 +11,7 @@ import env from "@/config/env";
 import prisma from "@/lib/prisma";
 import minioClient from "@/lib/minio";
 import { sanitizeFilename } from "@/lib/utils";
+import { resolveMimeType } from "@/lib/media-types";
 import type { StorageFolder, UploadFileInput, UploadFileResult } from "@/types";
 
 export class StorageService {
@@ -42,9 +43,12 @@ export class StorageService {
     const folder: StorageFolder = input.folder || "public/uploads";
     const { fullName: filename } = sanitizeFilename(input.filename);
     const objectKey = `${folder}/${filename}`;
+    const resolvedMimeType = resolveMimeType(input.filename, input.mimeType);
 
     const imageMeta =
-      input.generateBlur !== false && input.mimeType.startsWith("image/")
+      input.generateBlur !== false &&
+      resolvedMimeType.startsWith("image/") &&
+      resolvedMimeType !== "image/svg+xml"
         ? await this.extractImageMetadata(input.buffer)
         : {};
 
@@ -58,7 +62,7 @@ export class StorageService {
         this.bucketInitialized = true;
       }
 
-      await minioClient.putObject(objectKey, input.buffer, input.mimeType);
+      await minioClient.putObject(objectKey, input.buffer, resolvedMimeType);
 
       url = minioClient.getPublicUrl(objectKey);
       proxyUrl = `/api/images/${objectKey}`;
@@ -86,7 +90,7 @@ export class StorageService {
       }
     }
 
-    const category = input.mimeType.startsWith("image/") ? "IMAGE" : "DOCUMENT";
+    const category = resolvedMimeType.startsWith("image/") ? "IMAGE" : "DOCUMENT";
 
     const mediaRecord = await prisma.mediaFile
       .upsert({
@@ -96,7 +100,7 @@ export class StorageService {
           originalName: input.filename,
           url,
           proxyUrl,
-          mimeType: input.mimeType,
+          mimeType: resolvedMimeType,
           size: input.buffer.byteLength,
           folder,
           category,
@@ -111,7 +115,7 @@ export class StorageService {
           originalName: input.filename,
           url,
           proxyUrl,
-          mimeType: input.mimeType,
+          mimeType: resolvedMimeType,
           size: input.buffer.byteLength,
           folder,
           category,
@@ -134,7 +138,7 @@ export class StorageService {
       proxyUrl,
       filename: input.filename,
       size: input.buffer.byteLength,
-      mimeType: input.mimeType,
+      mimeType: resolvedMimeType,
       folder,
       ...imageMeta,
       storageDriver,
@@ -146,6 +150,7 @@ export class StorageService {
     folder?: string;
     search?: string;
     mimePrefix?: string;
+    category?: "IMAGE" | "DOCUMENT";
     uploadedById?: string;
     includePrivate?: boolean;
     limit?: number;
@@ -160,6 +165,10 @@ export class StorageService {
 
     if (params?.mimePrefix) {
       where.mimeType = { startsWith: params.mimePrefix };
+    }
+
+    if (params?.category) {
+      where.category = params.category;
     }
 
     if (params?.uploadedById) {
@@ -201,29 +210,33 @@ export class StorageService {
       const cleanPath = objectKey.replace(/^public\//, "").replace(/^\/+/, "");
       const localPath = path.join(process.cwd(), "public", cleanPath);
       const buffer = await fs.readFile(localPath);
-      const ext = path.extname(localPath).toLowerCase();
-      const mimeMap: Record<string, string> = {
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".png": "image/png",
-        ".webp": "image/webp",
-        ".svg": "image/svg+xml",
-        ".pdf": "application/pdf",
-      };
       return {
         buffer,
-        contentType: mimeMap[ext] || "application/octet-stream",
+        contentType: resolveMimeType(localPath),
         etag: null,
       };
     }
   }
 
   public async deleteFile(objectKey: string): Promise<boolean> {
+    let deleted = false;
     try {
-      return await minioClient.deleteObject(objectKey);
+      deleted = await minioClient.deleteObject(objectKey);
     } catch {
-      return false;
+      // Ignore MinIO failure and attempt local fallback cleanup
     }
+    try {
+      const publicDir = path.join(process.cwd(), "public");
+      const cleanPath = objectKey.replace(/^public\//, "").replace(/^\/+/, "");
+      const localPath = path.resolve(publicDir, cleanPath);
+      if (localPath.startsWith(publicDir + path.sep)) {
+        await fs.unlink(localPath);
+        deleted = true;
+      }
+    } catch {
+      // Local file may not exist
+    }
+    return deleted;
   }
 
   public getPresignedDownloadUrl(objectKey: string, expiresInSeconds = 3600): string {

@@ -12,6 +12,7 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buildDownloadUrl } from "@/lib/media-types";
 
 export interface DeadlineItem {
   id?: string;
@@ -157,7 +158,8 @@ export function CallForPapersBlock({
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   {templateWordUrl && (
                     <a
-                      href={templateWordUrl}
+                      href={buildDownloadUrl(templateWordUrl)}
+                      download
                       className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-200 dark:border-zinc-700 transition-colors"
                     >
                       <Download className="size-3.5 text-blue-600" />
@@ -167,7 +169,8 @@ export function CallForPapersBlock({
 
                   {templateLatexUrl && (
                     <a
-                      href={templateLatexUrl}
+                      href={buildDownloadUrl(templateLatexUrl)}
+                      download
                       className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-200 dark:border-zinc-700 transition-colors"
                     >
                       <Download className="size-3.5 text-blue-600" />

@@ -8,16 +8,22 @@ import {
   Copy,
   Check,
   FileText,
+  FileArchive,
+  Download,
   Image as ImageIcon,
   ExternalLink,
   RefreshCw,
-  Loader2,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  buildDownloadUrl,
+  getFileBadgeLabel,
+  isArchiveFile,
+} from "@/lib/media-types";
 import type { MediaFileItem } from "@/components/media/MediaLibraryModal";
 
 export const MEDIA_FOLDERS: Array<{ value: string; label: string }> = [
@@ -139,7 +145,10 @@ export function MediaFileGrid({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {files.map((item) => {
             const isImage = item.mimeType.startsWith("image/");
+            const isArchive = isArchiveFile(item.filename, item.mimeType);
+            const badgeLabel = getFileBadgeLabel(item.filename, item.mimeType);
             const displayUrl = item.proxyUrl || item.url;
+            const downloadHref = buildDownloadUrl(displayUrl, item.filename);
 
             return (
               <div
@@ -155,9 +164,13 @@ export function MediaFileGrid({
                     />
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 text-[#115eff]">
-                      <FileText className="size-10" />
-                      <span className="text-[10px] font-bold">
-                        {item.mimeType}
+                      {isArchive ? (
+                        <FileArchive className="size-10" />
+                      ) : (
+                        <FileText className="size-10" />
+                      )}
+                      <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#004776]">
+                        {badgeLabel}
                       </span>
                     </div>
                   )}
@@ -198,6 +211,14 @@ export function MediaFileGrid({
                     </button>
 
                     <div className="flex items-center gap-1.5">
+                      <a
+                        href={downloadHref}
+                        download={item.filename}
+                        className="p-1 text-slate-400 hover:text-[#115eff]"
+                        title="Download file"
+                      >
+                        <Download className="size-3.5" />
+                      </a>
                       <a
                         href={displayUrl}
                         target="_blank"

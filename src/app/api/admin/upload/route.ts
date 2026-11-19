@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { storageService } from "@/services";
-import { requireAdminRequest, apiSuccess, apiError } from "@/lib";
+import { requireAdminRequest, apiError } from "@/lib";
+import {
+  isAllowedMediaFile,
+  MAX_MEDIA_FILE_SIZE_BYTES,
+  resolveMimeType,
+} from "@/lib/media-types";
 import type { StorageFolder } from "@/types";
 
 export async function POST(request: Request) {
@@ -16,15 +21,29 @@ export async function POST(request: Request) {
       return apiError("No file provided", 400);
     }
 
+    if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
+      return apiError("File size exceeds 50MB limit", 400);
+    }
+
+    const mimeType = resolveMimeType(file.name, file.type);
+    if (!isAllowedMediaFile(file.name, file.type)) {
+      return apiError(
+        "Unsupported file format. Allowed: ZIP, PDF, DOC/DOCX, PPT/PPTX, XLS/XLSX, LaTeX, JPG, PNG, WEBP, GIF, SVG",
+        400
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const isRasterImage =
+      mimeType.startsWith("image/") && mimeType !== "image/svg+xml";
 
     const result = await storageService.uploadFile({
       buffer,
       filename: file.name,
-      mimeType: file.type || "application/octet-stream",
+      mimeType,
       folder,
-      generateBlur: true,
+      generateBlur: isRasterImage,
       uploadedById: user.id,
     });
 

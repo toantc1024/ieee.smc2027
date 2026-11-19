@@ -174,7 +174,7 @@ const BASE_BLOCK_DEFINITIONS: Record<string, ComponentDefinition<any>> = {
     fields: {
       title: { type: "text", label: "Section Title" },
       subtitle: { type: "textarea", label: "Subtitle Description" },
-      cfpPdfUrl: { type: "text", label: "CFP PDF Document URL" },
+      cfpPdfUrl: { type: "file", label: "CFP Document File" },
     },
     defaultProps: {
       title: "Call For Papers & Submission Guidelines",
