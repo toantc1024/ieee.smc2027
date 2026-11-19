@@ -82,7 +82,7 @@ export function TransitLogisticsBlock({
               <div
                 key={idx}
                 {...subItemAttr(["cards", idx])}
-                className="p-6 sm:p-7 bg-white border border-blue-100/90 rounded-sm flex flex-col justify-between hover:border-[#115eff] hover:shadow-md transition-all group"
+                className="p-6 sm:p-7 bg-white hover:bg-[#115eff] active:bg-[#115eff] border border-blue-100/90 hover:border-[#115eff] active:border-[#115eff] rounded-sm flex flex-col justify-between hover:shadow-md transition-all duration-300 group"
               >
                 <div>
                   {card.image && (
@@ -97,25 +97,27 @@ export function TransitLogisticsBlock({
                       />
                     </div>
                   )}
-                  <h4 className="text-lg font-bold text-[#004776] tracking-tight">
+                  <h4 className="text-lg font-bold text-[#004776] group-hover:text-white group-active:text-white tracking-tight transition-colors duration-300">
                     {card.title}
                   </h4>
-                  <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                  <p className="mt-2 text-sm sm:text-base text-slate-600 group-hover:text-white/90 group-active:text-white/90 leading-relaxed font-normal transition-colors duration-300">
                     {card.description}
                   </p>
                 </div>
 
                 {(card.linkLabel || card.footerText) && (
-                  <div className="mt-6 pt-3.5 border-t border-blue-50 text-sm font-semibold text-[#115eff] space-y-1">
+                  <div className="mt-6 pt-3.5 border-t border-blue-50 group-hover:border-white/20 group-active:border-white/20 text-sm font-semibold text-[#115eff] group-hover:text-white group-active:text-white space-y-1 transition-colors duration-300">
                     {card.footerText && card.linkUrl && card.linkLabel && card.footerText !== card.linkLabel && (
-                      <div className="text-xs text-slate-500">{card.footerText}</div>
+                      <div className="text-xs text-slate-500 group-hover:text-white/80 group-active:text-white/80 transition-colors duration-300">
+                        {card.footerText}
+                      </div>
                     )}
                     {card.linkUrl ? (
                       <a
                         href={card.linkUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-bold text-[#115eff] hover:underline inline-flex items-center gap-1"
+                        className="text-sm font-bold text-[#115eff] group-hover:text-white group-active:text-white hover:underline inline-flex items-center gap-1 transition-colors duration-300"
                       >
                         <span>{card.linkLabel || card.footerText}</span>
                         <ExternalLink className="w-3.5 h-3.5" />
