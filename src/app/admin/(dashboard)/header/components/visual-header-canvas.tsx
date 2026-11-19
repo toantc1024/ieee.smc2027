@@ -99,6 +99,7 @@ export function VisualHeaderCanvas({
   const quickLinks = config.topbar?.quickLinks || [];
   const showSearch = config.topbar?.showSearch !== false;
   const ctaEnabled = config.ctaButton?.enabled !== false;
+  const showLogo = config.showLogo !== false;
   const desktopLogo = config.logoUrl || "/logo/rectangle-logo.png";
   const mobileLogo = config.mobileLogoUrl || "/logo/square-logo.png";
 
@@ -386,25 +387,35 @@ export function VisualHeaderCanvas({
           )}
         >
           {/* Logo Slot */}
-          <div
-            onClick={() => onSelectTarget({ type: "general" })}
-            title="Click to edit Brand Logo & Variant"
-            className={cn(
-              "flex items-center shrink-0 cursor-pointer rounded p-1 transition-all",
-              variant === "stacked" && "justify-center w-full border-b border-slate-100 pb-2",
-              isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
-            )}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={desktopLogo}
-              alt="IEEE SMC 2027"
+          {showLogo ? (
+            <div
+              onClick={() => onSelectTarget({ type: "general" })}
+              title="Click to edit Brand Logo & Variant"
               className={cn(
-                "w-auto object-contain",
-                variant === "minimal" ? "h-9" : "h-11"
+                "flex items-center shrink-0 cursor-pointer rounded p-1 transition-all",
+                variant === "stacked" && "justify-center w-full border-b border-slate-100 pb-2",
+                isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
               )}
-            />
-          </div>
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={desktopLogo}
+                alt="IEEE SMC 2027"
+                className={cn(
+                  "w-auto object-contain",
+                  variant === "minimal" ? "h-9" : "h-11"
+                )}
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onSelectTarget({ type: "general" })}
+              className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
+            >
+              Logo Hidden
+            </button>
+          )}
 
           {/* Nav Triggers Row */}
           <nav

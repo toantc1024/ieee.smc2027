@@ -428,6 +428,11 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
       ? headerConfig.topbar.quickLinks
       : DEFAULT_HEADER_DATA.topbar?.quickLinks || [];
   const isSticky = headerConfig.sticky !== false;
+  const showLogo = headerConfig.showLogo !== false;
+  const desktopLogoUrl = headerConfig.logoUrl || DEFAULT_HEADER_DATA.logoUrl || "/logo/rectangle-logo.png";
+  const mobileLogoUrl = headerConfig.mobileLogoUrl || DEFAULT_HEADER_DATA.mobileLogoUrl || "/logo/square-logo.png";
+  const logoHref = headerConfig.logoHref || "/";
+  const brandTitle = headerConfig.brand?.conferenceTitle || "IEEE SMC 2027";
   const ctaLabel = headerConfig.ctaButton?.label || "Submit Paper";
   const ctaHref = headerConfig.ctaButton?.href || "/#cfp";
   const showCta = headerConfig.ctaButton?.enabled !== false;
@@ -763,9 +768,34 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
         >
           {/* Flush container matched exactly to site margins with comfortable height */}
           <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-[68px]">
-            {/* Desktop Navigation on Left, CTA on Right (No Header Logo) */}
-            <div className="hidden lg:flex items-center justify-between w-full gap-2 xl:gap-4 min-w-0">
-              <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
+            {/* Desktop: Left Brand Logo + Navigation, Actions on Far Right */}
+            <div className="hidden lg:flex items-center justify-between w-full gap-3 xl:gap-5 min-w-0">
+              <div className="flex items-center gap-3 xl:gap-4 min-w-0">
+                {showLogo && desktopLogoUrl && (
+                  <>
+                    <Link
+                      href={logoHref}
+                      onClick={() => {
+                        closeMenu();
+                        if (logoHref === "/" && typeof window !== "undefined") {
+                          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                        }
+                      }}
+                      className="flex items-center shrink-0 py-1 focus:outline-none group/logo"
+                      aria-label={brandTitle}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={desktopLogoUrl}
+                        alt={brandTitle}
+                        className="h-9 xl:h-10 w-auto max-w-[180px] xl:max-w-[220px] object-contain transition-opacity duration-150 group-hover/logo:opacity-90"
+                      />
+                    </Link>
+                    <span className="h-6 w-px bg-blue-100/90 shrink-0" aria-hidden="true" />
+                  </>
+                )}
+
+                <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
                 {navLinks.map((link, index) => {
                   const hasMegaMenu =
                     link.type !== "link" &&
@@ -818,7 +848,8 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                     </div>
                   );
                 })}
-              </nav>
+                </nav>
+              </div>
 
               {/* Actions on Far Right: Login + CTA Button */}
               <div className="flex items-center gap-2 xl:gap-2.5 shrink-0">
@@ -848,19 +879,27 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
               </div>
             </div>
 
-            {/* Mobile Header: Brand text on Left, Search + Hamburger on Right */}
+            {/* Mobile Header: Brand Logo + Title on Left, Search + Hamburger on Right */}
             <div className="flex items-center justify-between w-full lg:hidden">
               <Link
-                href="/"
+                href={logoHref}
                 onClick={() => {
                   closeMenu();
-                  if (typeof window !== "undefined") {
+                  if (logoHref === "/" && typeof window !== "undefined") {
                     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
                   }
                 }}
-                className="font-extrabold text-base sm:text-lg text-[#004776] tracking-tight hover:text-[#115eff] transition-colors py-1 select-none"
+                className="flex items-center gap-2 font-extrabold text-base sm:text-lg text-[#004776] tracking-tight hover:text-[#115eff] transition-colors py-1 select-none"
               >
-                IEEE SMC 2027
+                {showLogo && mobileLogoUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={mobileLogoUrl}
+                    alt={brandTitle}
+                    className="h-8 w-8 object-contain shrink-0"
+                  />
+                )}
+                <span>{brandTitle}</span>
               </Link>
 
               <div className="flex items-center gap-1.5">

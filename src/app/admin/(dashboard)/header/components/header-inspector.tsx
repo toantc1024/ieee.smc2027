@@ -926,7 +926,24 @@ function GeneralInspector({
         </div>
 
         {/* Desktop Logo */}
-        <div className="space-y-1.5">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-2 rounded-md border border-slate-200 bg-slate-50/70">
+            <div>
+              <Label className="text-[11px] font-semibold text-slate-700 block">
+                Show Left Brand Logo
+              </Label>
+              <span className="text-[10px] text-slate-400">
+                Display logo on the left side of the navigation bar
+              </span>
+            </div>
+            <Switch
+              checked={config.showLogo !== false}
+              onCheckedChange={(checked) =>
+                onUpdateConfig((prev) => ({ ...prev, showLogo: checked }))
+              }
+            />
+          </div>
+
           <Label className="text-[11px] text-slate-600 block">Desktop Brand Logo</Label>
           <div className="flex items-center gap-1.5">
             <Input
@@ -976,6 +993,17 @@ function GeneralInspector({
                 {preset.label}
               </button>
             ))}
+          </div>
+          <div>
+            <Label className="text-[11px] text-slate-600 mb-1 block">Logo Link URL</Label>
+            <Input
+              value={config.logoHref || "/"}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({ ...prev, logoHref: e.target.value }))
+              }
+              placeholder="/"
+              className="h-8 text-xs font-mono bg-white"
+            />
           </div>
         </div>
 

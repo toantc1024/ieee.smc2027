@@ -52,7 +52,9 @@ export type HeaderVariant = "left-aligned" | "centered" | "stacked" | "minimal";
 export interface HeaderConfig {
   variant?: HeaderVariant;
   sticky?: boolean;
+  showLogo?: boolean;
   logoUrl?: string;
+  logoHref?: string;
   mobileLogoUrl?: string;
   topbar: {
     enabled: boolean;
@@ -95,7 +97,9 @@ export const TOPBAR_NAV_ITEMS: TopbarQuickLink[] = [
 export const DEFAULT_HEADER_DATA: HeaderConfig = {
   variant: "left-aligned",
   sticky: true,
+  showLogo: true,
   logoUrl: "/logo/rectangle-logo.png",
+  logoHref: "/",
   mobileLogoUrl: "/logo/square-logo.png",
   topbar: {
     enabled: true,
@@ -429,7 +433,9 @@ export function normalizeHeaderConfig(raw?: Partial<HeaderConfig> | null): Heade
   return {
     variant: source.variant || DEFAULT_HEADER_DATA.variant,
     sticky: source.sticky !== undefined ? source.sticky : DEFAULT_HEADER_DATA.sticky,
+    showLogo: source.showLogo !== undefined ? source.showLogo : DEFAULT_HEADER_DATA.showLogo,
     logoUrl: source.logoUrl || DEFAULT_HEADER_DATA.logoUrl,
+    logoHref: source.logoHref || DEFAULT_HEADER_DATA.logoHref,
     mobileLogoUrl: source.mobileLogoUrl || DEFAULT_HEADER_DATA.mobileLogoUrl,
     topbar: {
       ...DEFAULT_HEADER_DATA.topbar,
