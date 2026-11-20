@@ -25,7 +25,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
 import { cn } from "@/lib/utils";
@@ -340,7 +340,7 @@ export default function PostsManagementPage() {
           const item = row.original;
           return (
             <div
-              className="flex items-center justify-center py-1"
+              className="flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <PostCoverThumbnail
@@ -361,11 +361,12 @@ export default function PostsManagementPage() {
         size: 380,
         meta: {
           align: "left",
+          searchable: true,
         },
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="w-full min-w-0 max-w-[420px] py-1 space-y-1 overflow-hidden">
+            <div className="w-full min-w-0 max-w-[420px] space-y-1 overflow-hidden">
               <button
                 type="button"
                 onClick={(e) => {
@@ -529,7 +530,9 @@ export default function PostsManagementPage() {
       {
         accessorKey: "views",
         header: "Views",
-        size: 80,
+        size: 90,
+        sortingFn: (rowA, rowB) =>
+          Number(rowA.original.views || 0) - Number(rowB.original.views || 0),
         cell: ({ row }) => {
           const val = Number(row.getValue("views") || 0);
           return (
@@ -545,7 +548,10 @@ export default function PostsManagementPage() {
       {
         accessorKey: "createdAt",
         header: "Created Date",
-        size: 115,
+        size: 130,
+        sortingFn: (rowA, rowB) =>
+          new Date(rowA.original.createdAt).getTime() -
+          new Date(rowB.original.createdAt).getTime(),
         cell: ({ row }) => {
           const date = new Date(row.getValue("createdAt"));
           return (
@@ -654,111 +660,106 @@ export default function PostsManagementPage() {
   );
 
   return (
-    <div className="space-y-4 font-sans">
-      {/* ── Tabs Row ── */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
-          <TabsList className="h-9 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-            <TabsTrigger value="all" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#004776] data-[state=active]:shadow-sm">
-              <FileText className="mr-1.5 size-4" />
-              <span>All ({posts.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="published" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#115eff] data-[state=active]:shadow-sm">
-              <Check className="mr-1.5 size-4 text-[#115eff]" />
-              <span>Published ({posts.filter((p) => p.status === "PUBLISHED").length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="draft" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-sm">
-              <Edit2 className="mr-1.5 size-4 text-slate-500" />
-              <span>Drafts ({posts.filter((p) => p.status === "DRAFT").length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="archived" className="text-xs sm:text-sm font-semibold px-3.5 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-sm">
-              <Archive className="mr-1.5 size-4 text-slate-400" />
-              <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="flex items-center gap-2">
+    <div className="font-sans">
+      <DataTable
+        columns={columns}
+        data={displayedPosts}
+        loading={loading}
+        onRowClick={(item) => router.push(`/admin/posts/${item.id}`)}
+        searchPlaceholder="Search by title, slug, summary..."
+        toolbarLeft={
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="h-9 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+              <TabsTrigger value="all" className="text-xs font-semibold px-3 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#004776] data-[state=active]:shadow-xs">
+                <FileText className="mr-1.5 size-3.5" />
+                <span>All ({posts.length})</span>
+              </TabsTrigger>
+              <TabsTrigger value="published" className="text-xs font-semibold px-3 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#115eff] data-[state=active]:shadow-xs">
+                <Check className="mr-1.5 size-3.5 text-[#115eff]" />
+                <span>Published ({posts.filter((p) => p.status === "PUBLISHED").length})</span>
+              </TabsTrigger>
+              <TabsTrigger value="draft" className="text-xs font-semibold px-3 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-xs">
+                <Edit2 className="mr-1.5 size-3.5 text-slate-500" />
+                <span>Drafts ({posts.filter((p) => p.status === "DRAFT").length})</span>
+              </TabsTrigger>
+              <TabsTrigger value="archived" className="text-xs font-semibold px-3 h-8 rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-700 data-[state=active]:shadow-xs">
+                <Archive className="mr-1.5 size-3.5 text-slate-400" />
+                <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        }
+        toolbarRight={
+          <>
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => fetchPosts(false)}
               disabled={loading}
-              className="gap-1.5 text-xs sm:text-sm text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg font-semibold h-9 px-3"
+              className="h-9 w-9 p-0 text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg cursor-pointer"
               title="Refresh"
+              aria-label="Refresh posts"
             >
-              <RefreshCw className={cn("size-3.5 sm:size-4", loading && "animate-spin text-[#115eff]")} />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw className={cn("size-4", loading && "animate-spin text-[#115eff]")} />
             </Button>
             <Button
               size="sm"
               onClick={() => router.push("/admin/posts/create")}
-              className="bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 text-xs sm:text-sm font-semibold rounded-lg h-9 px-3.5"
+              className="bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 text-xs sm:text-sm font-semibold rounded-lg h-9 px-3.5 cursor-pointer"
             >
               <Plus className="size-4" />
               <span>New Post</span>
             </Button>
+          </>
+        }
+        filterColumns={[
+          {
+            id: "status",
+            title: "Status",
+            options: [
+              { label: "Published", value: "PUBLISHED" },
+              { label: "Draft", value: "DRAFT" },
+              { label: "Archived", value: "ARCHIVED" },
+            ],
+          },
+          {
+            id: "category",
+            title: "Category",
+            options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),
+          },
+        ]}
+        batchActions={(selected, clear) => (
+          <div className="flex items-center gap-1.5 ml-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
+              className="h-7 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-md shadow-none"
+            >
+              Publish
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
+              className="h-7 px-3 text-xs font-semibold bg-white text-[#004776] border-slate-200 hover:bg-slate-50 rounded-md shadow-none"
+            >
+              Set Draft
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleBatchDelete(selected, clear)}
+              className="h-7 px-3 text-xs font-semibold bg-white text-rose-600 border-slate-200 hover:bg-rose-50 hover:text-rose-700 rounded-md shadow-none"
+            >
+              Delete selected
+            </Button>
           </div>
-        </div>
-
-        <TabsContent value={activeTab} className="mt-0">
-          <DataTable
-            columns={columns}
-            data={displayedPosts}
-            loading={loading}
-            onRowClick={(item) => router.push(`/admin/posts/${item.id}`)}
-            searchPlaceholder="Search by title, slug, summary..."
-            filterColumns={[
-              {
-                id: "status",
-                title: "Status",
-                options: [
-                  { label: "Published", value: "PUBLISHED" },
-                  { label: "Draft", value: "DRAFT" },
-                  { label: "Archived", value: "ARCHIVED" },
-                ],
-              },
-              {
-                id: "category",
-                title: "Category",
-                options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),
-              },
-            ]}
-            batchActions={(selected, clear) => (
-              <div className="flex items-center gap-1.5 ml-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => handleBatchStatus(selected, "PUBLISHED", clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-md shadow-none"
-                >
-                  Publish
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleBatchStatus(selected, "DRAFT", clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-white text-[#004776] border-slate-200 hover:bg-slate-50 rounded-md shadow-none"
-                >
-                  Set Draft
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBatchDelete(selected, clear)}
-                  className="h-7 px-3 text-xs font-semibold bg-white text-rose-600 border-slate-200 hover:bg-rose-50 hover:text-rose-700 rounded-md shadow-none"
-                >
-                  Delete selected
-                </Button>
-              </div>
-            )}
-          />
-        </TabsContent>
-      </Tabs>
-
-
+        )}
+      />
 
       {/* ── Delete Confirmation Dialog ── */}
       <PostDeleteDialog

@@ -57,7 +57,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b border-slate-100/80 transition-colors hover:bg-slate-50/80 data-[state=selected]:bg-blue-50/40",
+      "transition-colors hover:bg-slate-50/80 data-[state=selected]:bg-blue-50/40",
       className
     )}
     {...props}
@@ -72,7 +72,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 px-4 text-left align-middle font-semibold text-[#004776] text-xs select-none border-b border-slate-200/75 bg-slate-50/80",
+      "h-11 px-4 text-left align-middle font-bold text-[#004776] text-xs sm:text-[13px] select-none bg-slate-50/90",
       className
     )}
     {...props}
@@ -87,7 +87,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "px-4 py-3.5 align-middle text-xs sm:text-sm text-slate-700 border-b border-slate-100",
+      "px-4 py-2.5 align-middle text-xs sm:text-sm text-slate-700",
       className
     )}
     {...props}
