@@ -4,7 +4,6 @@ import React, { Suspense, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FileText, Globe, ShieldCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   UnitPostAnalyticsDashboard,
@@ -47,14 +46,7 @@ function AnalyticsContent() {
   };
 
   return (
-    <div className="space-y-6 relative pb-12">
-      <ManagementPageHeader
-        title="Analytics"
-        description="Editorial publishing metrics, website traffic telemetry, and system benchmarks"
-        image3d="/assets/3d-icons/analytics__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-stats-bg.jpg"
-      />
-
+    <div className="space-y-4 relative pb-12">
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-4 border-b border-border/70 pb-3">
           <TabsList className="bg-muted/60 p-1 rounded-xl gap-1">

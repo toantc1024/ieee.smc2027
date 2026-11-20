@@ -37,7 +37,6 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -444,41 +443,8 @@ export function PageListView() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Management Header */}
-      <ManagementPageHeader
-        title="Page Management"
-        description="Design and manage conference pages, navigation hierarchies, and content sections for IEEE SMC 2027."
-        image3d="/assets/3d-icons/website-pages__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-website-bg.jpg"
-        actions={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchPages}
-              disabled={loading}
-              className="gap-1.5 text-xs text-slate-600"
-            >
-              <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
-              Refresh
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setTargetParentId(null);
-                setTemplateModalOpen(true);
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-sm text-xs"
-            >
-              <Plus className="w-4 h-4" />
-              New Page
-            </Button>
-          </div>
-        }
-      />
-
-      {/* Control Bar: Search, Filters, View Modes */}
+    <div className="space-y-4">
+      {/* Control Bar: Search, Filters, View Modes, Actions */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
         {/* Search Input */}
         <div className="relative w-full sm:w-80">
@@ -584,6 +550,31 @@ export function PageListView() {
             >
               <Table2 className="w-4 h-4" />
             </button>
+          </div>
+
+          <div className="flex items-center gap-1.5 border-l border-slate-200 pl-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchPages}
+              disabled={loading}
+              className="h-8 w-8 p-0 text-slate-600"
+              title="Refresh"
+              aria-label="Refresh pages"
+            >
+              <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setTargetParentId(null);
+                setTemplateModalOpen(true);
+              }}
+              className="h-8 bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 text-xs font-semibold px-3"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Page</span>
+            </Button>
           </div>
         </div>
       </div>

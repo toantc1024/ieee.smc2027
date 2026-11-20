@@ -61,7 +61,6 @@ import { CreateUserModal, type CreateUserPayload } from "@/components/admin/user
 import { ResetPasswordModal } from "@/components/admin/users/ResetPasswordModal";
 import { UserDeleteDialog } from "@/components/admin/users/UserDeleteDialog";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -941,25 +940,6 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-4 font-sans">
-      {/* ── Page Header ── */}
-      <ManagementPageHeader
-        title="Users & Access Roles"
-        description="Manage conference participants, speakers, delegates, credentials, and access permissions"
-        image3d="/assets/3d-icons/users__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-users-bg.jpg"
-        actions={
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => setCreateOpen(true)}
-            className="h-8.5 px-3.5 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-none rounded-lg"
-          >
-            <Plus className="size-4 mr-1.5" />
-            Add User
-          </Button>
-        }
-      />
-
       {/* Alert Banner */}
       {alert && (
         <StatusAlertBanner
@@ -1094,6 +1074,16 @@ export default function AdminUsersPage() {
                 )}
               />
               <span className="hidden sm:inline">Refresh</span>
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setCreateOpen(true)}
+              className="h-9 px-3.5 text-xs font-semibold bg-[#115eff] hover:bg-[#0a4de6] text-white rounded-xl shrink-0 cursor-pointer"
+            >
+              <Plus className="size-4 mr-1.5" />
+              <span>Add User</span>
             </Button>
           </div>
         </div>

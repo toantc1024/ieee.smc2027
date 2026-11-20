@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Save, Eye, Code2, Loader2 } from "lucide-react";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
@@ -143,13 +142,8 @@ export default function AdminBroadcastPage() {
   const activeTemplate = templates.find((t) => t.slug === selectedSlug);
 
   return (
-    <div className="space-y-6">
-      <ManagementPageHeader
-        imageIcon="/assets/3d-icons/article-management__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-utilities-bg.jpg"
-        title="Milestone Email Templates & Broadcasts"
-        description="Customize PostgreSQL-backed HTML email templates for every IEEE SMC 2027 conference milestone and broadcast personalized notifications."
-      >
+    <div className="space-y-4">
+      <div className="flex items-center justify-end gap-2">
         <Button
           type="button"
           variant="outline"
@@ -181,7 +175,7 @@ export default function AdminBroadcastPage() {
           <Save className="size-4" />
           <span>{savingTemplate ? "Saving..." : "Save Template to DB"}</span>
         </Button>
-      </ManagementPageHeader>
+      </div>
 
       {statusBanner && (
         <StatusAlertBanner

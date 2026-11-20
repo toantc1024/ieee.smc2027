@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Upload, Loader2 } from "lucide-react";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { Button } from "@/components/ui/button";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 import { MediaFileGrid } from "@/components/admin/media/MediaFileGrid";
@@ -96,13 +95,8 @@ export default function AdminMediaLibraryPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <ManagementPageHeader
-        imageIcon="/assets/3d-icons/media-management__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-media-bg.jpg"
-        title="Media Upload Library"
-        description="Manage images, delegate badge portraits, IEEE/Student proof documents, passport scans, and generated conference PDFs stored in MinIO & PostgreSQL."
-      >
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <select
           value={uploadFolder}
           onChange={(e) => setUploadFolder(e.target.value as StorageFolder)}
@@ -133,7 +127,7 @@ export default function AdminMediaLibraryPage() {
           <Upload className="size-4" />
           <span>{uploading ? "Uploading..." : "Upload Files"}</span>
         </Button>
-      </ManagementPageHeader>
+      </div>
 
       <StatusAlertBanner
         variant="error"

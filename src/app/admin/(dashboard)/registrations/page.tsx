@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Download } from "lucide-react";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { Button } from "@/components/ui/button";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 import { JsonCodeEditorModal } from "@/components/shared/JsonCodeEditorModal";
@@ -228,18 +227,13 @@ export default function AdminRegistrationsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <ManagementPageHeader
-        imageIcon="/assets/3d-icons/online-portal__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-users-bg.jpg"
-        title="Registrations, Payoo & Visa Approvals"
-        description="Inspect delegate JSON formData, verify IEEE/Student proof uploads, reconcile Payoo VietQR & Card payments, and approve official Visa Support Letters."
-      >
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
         <Button type="button" variant="ute" size="sm" onClick={handleExportCsv}>
           <Download className="size-4" />
           Export Financial CSV
         </Button>
-      </ManagementPageHeader>
+      </div>
 
       <StatusAlertBanner
         variant="error"
