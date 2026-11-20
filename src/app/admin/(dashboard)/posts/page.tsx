@@ -715,15 +715,6 @@ export default function PostsManagementPage() {
         }
         filterColumns={[
           {
-            id: "status",
-            title: "Status",
-            options: [
-              { label: "Published", value: "PUBLISHED" },
-              { label: "Draft", value: "DRAFT" },
-              { label: "Archived", value: "ARCHIVED" },
-            ],
-          },
-          {
             id: "category",
             title: "Category",
             options: POST_CATEGORIES.map((c) => ({ label: c, value: c })),

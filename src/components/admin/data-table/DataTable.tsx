@@ -421,48 +421,11 @@ export function DataTable<TData, TValue = unknown>({
 
                   {/* Sort Section */}
                   {sortableColumns.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-semibold text-slate-500">
-                          Sort by
-                        </span>
-                        {activeSort && (
-                          <div className="inline-flex rounded-md border border-slate-200 bg-slate-50 p-0.5">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setSorting([{ id: activeSort.id, desc: false }])
-                              }
-                              className={cn(
-                                "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer",
-                                !activeSort.desc
-                                  ? "bg-[#115eff] text-white"
-                                  : "text-slate-600 hover:text-slate-900"
-                              )}
-                            >
-                              <ArrowUp className="size-3" />
-                              <span>Asc</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setSorting([{ id: activeSort.id, desc: true }])
-                              }
-                              className={cn(
-                                "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer",
-                                activeSort.desc
-                                  ? "bg-[#115eff] text-white"
-                                  : "text-slate-600 hover:text-slate-900"
-                              )}
-                            >
-                              <ArrowDown className="size-3" />
-                              <span>Desc</span>
-                            </button>
-                          </div>
-                        )}
+                    <div className="space-y-1.5">
+                      <div className="text-[11px] font-semibold text-slate-500">
+                        Sort by
                       </div>
-
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="space-y-0.5">
                         {sortableColumns.map((col) => {
                           const isActive = activeSort?.id === col.id;
                           return (
@@ -470,30 +433,39 @@ export function DataTable<TData, TValue = unknown>({
                               key={col.id}
                               type="button"
                               onClick={() => {
-                                if (isActive) {
-                                  setSorting([
-                                    { id: col.id, desc: !activeSort.desc },
-                                  ]);
-                                } else {
+                                if (!isActive) {
                                   const defaultDesc =
                                     col.id === "createdAt" || col.id === "views";
                                   setSorting([{ id: col.id, desc: defaultDesc }]);
+                                } else if (activeSort.desc) {
+                                  setSorting([{ id: col.id, desc: false }]);
+                                } else {
+                                  setSorting([]);
                                 }
                               }}
                               className={cn(
-                                "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
+                                "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors cursor-pointer",
                                 isActive
-                                  ? "bg-[#115eff] text-white border-[#115eff]"
-                                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-300"
+                                  ? "bg-blue-50 text-[#115eff] font-semibold"
+                                  : "text-slate-700 hover:bg-slate-50 font-medium"
                               )}
                             >
                               <span>{col.label}</span>
-                              {isActive &&
-                                (activeSort.desc ? (
-                                  <ArrowDown className="size-3" />
-                                ) : (
-                                  <ArrowUp className="size-3" />
-                                ))}
+                              {isActive && (
+                                <span className="inline-flex items-center gap-1 text-[11px]">
+                                  {activeSort.desc ? (
+                                    <>
+                                      <span>Desc</span>
+                                      <ArrowDown className="size-3.5" />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>Asc</span>
+                                      <ArrowUp className="size-3.5" />
+                                    </>
+                                  )}
+                                </span>
+                              )}
                             </button>
                           );
                         })}
