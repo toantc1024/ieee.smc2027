@@ -11,7 +11,6 @@ import {
   CopyPlus,
   Trash2,
   FileText,
-  ImageIcon,
   ChevronDown,
   Check,
   Archive,
@@ -75,7 +74,7 @@ function PostCoverThumbnail({
     <button
       type="button"
       onClick={onClick}
-      className="group relative w-full h-full min-h-[76px] overflow-hidden bg-slate-100 hover:brightness-95 transition-all cursor-pointer block"
+      className="group relative w-28 sm:w-32 aspect-video rounded-lg overflow-hidden bg-blue-50/50 border border-blue-100/90 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block shadow-2xs"
       title="Click to preview post"
     >
       {src && !imgError ? (
@@ -88,9 +87,13 @@ function PostCoverThumbnail({
           onError={() => setImgError(true)}
         />
       ) : (
-        <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
-          <ImageIcon className="size-5" />
-          <span className="text-[11px] font-medium text-slate-400">No cover</span>
+        <div className="size-full flex items-center justify-center p-2.5 bg-gradient-to-br from-blue-50/80 via-white to-blue-100/60">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo/ieee-smc-2027-conference-lockup-transparent.png"
+            alt="IEEE SMC 2027"
+            className="max-h-full max-w-full object-contain opacity-85 group-hover:opacity-100 transition-opacity"
+          />
         </div>
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-colors">
@@ -329,16 +332,15 @@ export default function PostsManagementPage() {
         accessorKey: "coverImage",
         header: "Cover",
         enableSorting: false,
-        size: 136,
+        size: 148,
         meta: {
           align: "center",
-          cellClassName: "p-0 h-px w-[136px] min-w-[136px] align-stretch",
         },
         cell: ({ row }) => {
           const item = row.original;
           return (
             <div
-              className="w-full h-full"
+              className="flex items-center justify-center py-1"
               onClick={(e) => e.stopPropagation()}
             >
               <PostCoverThumbnail
@@ -363,14 +365,14 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="w-full min-w-0 max-w-[420px] py-2 space-y-1 overflow-hidden whitespace-normal">
+            <div className="w-full min-w-0 max-w-[420px] py-1 space-y-1 overflow-hidden">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="font-bold text-[#004776] hover:text-[#115eff] text-[15px] sm:text-base text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
+                className="font-bold text-[#004776] hover:text-[#115eff] text-[15px] sm:text-base text-left truncate leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
@@ -378,7 +380,7 @@ export default function PostsManagementPage() {
 
               {item.summary && (
                 <p
-                  className="text-xs sm:text-[13px] text-slate-500 line-clamp-1 break-words [overflow-wrap:anywhere] leading-relaxed w-full"
+                  className="text-xs sm:text-[13px] text-slate-500 truncate leading-normal w-full"
                   title={item.summary}
                 >
                   {item.summary}
