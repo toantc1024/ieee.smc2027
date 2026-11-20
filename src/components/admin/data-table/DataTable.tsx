@@ -17,7 +17,6 @@ import {
   Search,
   ArrowUp,
   ArrowDown,
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
@@ -127,7 +126,7 @@ export function DataTable<TData, TValue = unknown>({
   const [columnFilters, setColumnFilters] = useState<Record<string, string>>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [searchOpen, setSearchOpen] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterSortOpen, setFilterSortOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filterMap = useMemo(() => {
@@ -186,6 +185,18 @@ export function DataTable<TData, TValue = unknown>({
     },
   });
 
+  const sortableColumns = useMemo(() => {
+    return table
+      .getAllLeafColumns()
+      .filter((col) => col.getCanSort() && typeof col.columnDef.header === "string")
+      .map((col) => ({
+        id: col.id,
+        label: String(col.columnDef.header),
+      }));
+  }, [table]);
+
+  const activeSort = sorting[0] || null;
+
   const selectedRows = table
     .getSelectedRowModel()
     .rows.map((row) => row.original);
@@ -195,23 +206,23 @@ export function DataTable<TData, TValue = unknown>({
   const activeFilterEntries = Object.entries(columnFilters).filter(
     ([, v]) => v && v !== "ALL"
   );
-  const activeFilterCount = activeFilterEntries.length;
-  const hasActiveFilters = Boolean(globalFilter.trim()) || activeFilterCount > 0;
+  const activeControlsCount = activeFilterEntries.length + (activeSort ? 1 : 0);
+  const hasActiveFilters = Boolean(globalFilter.trim()) || activeControlsCount > 0;
 
-  const clearAllFilters = () => {
+  const clearAll = () => {
     setGlobalFilter("");
     setColumnFilters({});
+    setSorting([]);
   };
 
   return (
     <div className="font-sans">
       <div className="relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-        {/* ── Unified Compact Toolbar (ute.short pattern: icon popovers + inline actions) ── */}
+        {/* ── Unified Toolbar: Left Slot + Active Chips | Right: Search Popover + Single Filter & Sort Popover + Actions ── */}
         <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 border-b border-slate-200 bg-white">
           <div className="flex flex-wrap items-center gap-2 min-w-0">
             {toolbarLeft}
 
-            {/* Active search chip */}
             {globalFilter.trim() && (
               <span className="inline-flex items-center gap-1 h-7 pl-2.5 pr-1.5 rounded-md bg-blue-50 border border-blue-200 text-xs font-medium text-[#004776]">
                 <Search className="size-3 text-[#115eff]" />
@@ -227,7 +238,28 @@ export function DataTable<TData, TValue = unknown>({
               </span>
             )}
 
-            {/* Active filter chips */}
+            {activeSort && (
+              <span className="inline-flex items-center gap-1 h-7 pl-2.5 pr-1.5 rounded-md bg-blue-50 border border-blue-200 text-xs font-medium text-[#004776]">
+                {activeSort.desc ? (
+                  <ArrowDown className="size-3 text-[#115eff]" />
+                ) : (
+                  <ArrowUp className="size-3 text-[#115eff]" />
+                )}
+                <span>
+                  {sortableColumns.find((c) => c.id === activeSort.id)?.label ||
+                    activeSort.id}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSorting([])}
+                  className="p-0.5 rounded hover:bg-blue-100 text-slate-500 hover:text-slate-800 cursor-pointer"
+                  aria-label="Clear sort"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            )}
+
             {activeFilterEntries.map(([key, val]) => {
               const fc = filterMap.get(key.toLowerCase());
               const optLabel =
@@ -256,16 +288,15 @@ export function DataTable<TData, TValue = unknown>({
             {hasActiveFilters && (
               <button
                 type="button"
-                onClick={clearAllFilters}
+                onClick={clearAll}
                 className="text-xs font-medium text-slate-500 hover:text-[#115eff] px-1.5 py-1 rounded transition-colors cursor-pointer"
               >
-                Clear all
+                Reset
               </button>
             )}
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            {/* Batch Actions */}
             {selectedRows.length > 0 && batchActions && (
               <div className="flex items-center gap-2 bg-blue-50/70 px-2.5 h-9 rounded-lg border border-blue-200 mr-1">
                 <span className="text-xs font-semibold text-[#004776]">
@@ -275,7 +306,7 @@ export function DataTable<TData, TValue = unknown>({
               </div>
             )}
 
-            {/* Search Icon Popover */}
+            {/* 1. Search Icon Popover */}
             <Popover
               open={searchOpen}
               onOpenChange={(open) => {
@@ -339,26 +370,28 @@ export function DataTable<TData, TValue = unknown>({
               </PopoverContent>
             </Popover>
 
-            {/* Filter Icon Popover */}
-            {filterColumns.length > 0 && (
-              <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+            {/* 2. Single Unified Filter & Sort Button Popover */}
+            {(filterColumns.length > 0 || sortableColumns.length > 0) && (
+              <Popover open={filterSortOpen} onOpenChange={setFilterSortOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     className={cn(
-                      "relative h-9 px-2.5 gap-1.5 rounded-lg border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 text-slate-700 transition-colors cursor-pointer",
-                      activeFilterCount > 0 &&
+                      "relative h-9 px-3 gap-1.5 rounded-lg border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 text-slate-700 transition-colors cursor-pointer",
+                      activeControlsCount > 0 &&
                         "border-[#115eff] bg-blue-50/60 text-[#115eff]"
                     )}
-                    title="Filters"
+                    title="Filter & Sort"
                   >
                     <SlidersHorizontal className="size-3.5" />
-                    <span className="hidden sm:inline text-xs font-semibold">Filter</span>
-                    {activeFilterCount > 0 && (
+                    <span className="hidden sm:inline text-xs font-semibold">
+                      Filter &amp; Sort
+                    </span>
+                    {activeControlsCount > 0 && (
                       <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#115eff] text-white text-[10px] font-bold">
-                        {activeFilterCount}
+                        {activeControlsCount}
                       </span>
                     )}
                   </Button>
@@ -366,14 +399,19 @@ export function DataTable<TData, TValue = unknown>({
                 <PopoverContent
                   align="end"
                   sideOffset={6}
-                  className="w-72 p-3 rounded-xl border border-slate-200 bg-white shadow-lg space-y-3"
+                  className="w-80 p-3.5 rounded-xl border border-slate-200 bg-white shadow-lg space-y-3.5"
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <span className="text-xs font-bold text-[#004776]">Filters</span>
-                    {activeFilterCount > 0 && (
+                    <span className="text-xs font-bold text-[#004776]">
+                      Filter &amp; Sort
+                    </span>
+                    {activeControlsCount > 0 && (
                       <button
                         type="button"
-                        onClick={() => setColumnFilters({})}
+                        onClick={() => {
+                          setColumnFilters({});
+                          setSorting([]);
+                        }}
                         className="text-xs font-medium text-[#115eff] hover:underline cursor-pointer"
                       >
                         Reset
@@ -381,10 +419,96 @@ export function DataTable<TData, TValue = unknown>({
                     )}
                   </div>
 
+                  {/* Sort Section */}
+                  {sortableColumns.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold text-slate-500">
+                          Sort by
+                        </span>
+                        {activeSort && (
+                          <div className="inline-flex rounded-md border border-slate-200 bg-slate-50 p-0.5">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSorting([{ id: activeSort.id, desc: false }])
+                              }
+                              className={cn(
+                                "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer",
+                                !activeSort.desc
+                                  ? "bg-[#115eff] text-white"
+                                  : "text-slate-600 hover:text-slate-900"
+                              )}
+                            >
+                              <ArrowUp className="size-3" />
+                              <span>Asc</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSorting([{ id: activeSort.id, desc: true }])
+                              }
+                              className={cn(
+                                "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer",
+                                activeSort.desc
+                                  ? "bg-[#115eff] text-white"
+                                  : "text-slate-600 hover:text-slate-900"
+                              )}
+                            >
+                              <ArrowDown className="size-3" />
+                              <span>Desc</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5">
+                        {sortableColumns.map((col) => {
+                          const isActive = activeSort?.id === col.id;
+                          return (
+                            <button
+                              key={col.id}
+                              type="button"
+                              onClick={() => {
+                                if (isActive) {
+                                  setSorting([
+                                    { id: col.id, desc: !activeSort.desc },
+                                  ]);
+                                } else {
+                                  const defaultDesc =
+                                    col.id === "createdAt" || col.id === "views";
+                                  setSorting([{ id: col.id, desc: defaultDesc }]);
+                                }
+                              }}
+                              className={cn(
+                                "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
+                                isActive
+                                  ? "bg-[#115eff] text-white border-[#115eff]"
+                                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-300"
+                              )}
+                            >
+                              <span>{col.label}</span>
+                              {isActive &&
+                                (activeSort.desc ? (
+                                  <ArrowDown className="size-3" />
+                                ) : (
+                                  <ArrowUp className="size-3" />
+                                ))}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Filter Sections */}
                   {filterColumns.map((fc) => {
                     const current = columnFilters[fc.id] || "ALL";
                     return (
-                      <div key={fc.id} className="space-y-1.5">
+                      <div
+                        key={fc.id}
+                        className="space-y-1.5 pt-2 border-t border-slate-100"
+                      >
                         <div className="text-[11px] font-semibold text-slate-500">
                           {fc.title}
                         </div>
@@ -392,16 +516,20 @@ export function DataTable<TData, TValue = unknown>({
                           <button
                             type="button"
                             onClick={() =>
-                              setColumnFilters((prev) => ({ ...prev, [fc.id]: "ALL" }))
+                              setColumnFilters((prev) => ({
+                                ...prev,
+                                [fc.id]: "ALL",
+                              }))
                             }
                             className={cn(
-                              "px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
+                              "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
                               current === "ALL"
-                                ? "bg-[#115eff] text-white border-[#115eff]"
+                                ? "bg-[#004776] text-white border-[#004776]"
                                 : "bg-white text-slate-600 border-slate-200 hover:border-blue-300"
                             )}
                           >
-                            All
+                            {current === "ALL" && <Check className="size-3" />}
+                            <span>All</span>
                           </button>
                           {fc.options.map((opt) => (
                             <button
@@ -414,13 +542,16 @@ export function DataTable<TData, TValue = unknown>({
                                 }))
                               }
                               className={cn(
-                                "px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
+                                "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer",
                                 current === opt.value
                                   ? "bg-[#115eff] text-white border-[#115eff]"
                                   : "bg-white text-slate-600 border-slate-200 hover:border-blue-300"
                               )}
                             >
-                              {opt.label}
+                              {current === opt.value && (
+                                <Check className="size-3" />
+                              )}
+                              <span>{opt.label}</span>
                             </button>
                           ))}
                         </div>
@@ -447,14 +578,15 @@ export function DataTable<TData, TValue = unknown>({
                   {headerGroup.headers.map((header) => {
                     const canSort = header.column.getCanSort();
                     const sortDirection = header.column.getIsSorted();
-                    const align = resolveAlign(header.column.id, header.column.columnDef);
-                    const colMeta = header.column.columnDef.meta as
-                      | { headerClassName?: string; searchable?: boolean }
-                      | undefined;
-                    const colFilter = filterMap.get(header.column.id.toLowerCase());
-                    const activeColFilterVal = colFilter
-                      ? columnFilters[colFilter.id] || "ALL"
-                      : "ALL";
+                    const align = resolveAlign(
+                      header.column.id,
+                      header.column.columnDef
+                    );
+                    const headerClassName = (
+                      header.column.columnDef.meta as
+                        | { headerClassName?: string }
+                        | undefined
+                    )?.headerClassName;
 
                     return (
                       <TableHead
@@ -466,136 +598,47 @@ export function DataTable<TData, TValue = unknown>({
                             : align === "right"
                             ? "text-right"
                             : "text-left",
-                          colMeta?.headerClassName
+                          headerClassName
                         )}
                         style={{
-                          width: header.getSize() !== 150 ? header.getSize() : undefined,
+                          width:
+                            header.getSize() !== 150
+                              ? header.getSize()
+                              : undefined,
                         }}
                       >
-                        {header.isPlaceholder ? null : (
-                          <div
+                        {header.isPlaceholder ? null : canSort ? (
+                          <button
+                            type="button"
+                            onClick={header.column.getToggleSortingHandler()}
                             className={cn(
-                              "flex items-center gap-1",
+                              "inline-flex items-center gap-1 hover:text-[#115eff] transition-colors cursor-pointer",
                               align === "center"
-                                ? "justify-center"
+                                ? "justify-center mx-auto"
                                 : align === "right"
-                                ? "justify-end"
-                                : "justify-start"
+                                ? "justify-end ml-auto"
+                                : "justify-start",
+                              sortDirection && "text-[#115eff]"
                             )}
                           >
-                            {canSort ? (
-                              <button
-                                type="button"
-                                onClick={header.column.getToggleSortingHandler()}
-                                className={cn(
-                                  "inline-flex items-center gap-1.5 py-1 rounded hover:text-[#115eff] transition-colors cursor-pointer group",
-                                  sortDirection && "text-[#115eff]"
-                                )}
-                              >
-                                <span>
-                                  {flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                  )}
-                                </span>
-                                <span className="shrink-0">
-                                  {sortDirection === "asc" ? (
-                                    <ArrowUp className="size-3.5 text-[#115eff]" />
-                                  ) : sortDirection === "desc" ? (
-                                    <ArrowDown className="size-3.5 text-[#115eff]" />
-                                  ) : (
-                                    <ArrowUpDown className="size-3 text-slate-400 opacity-50 group-hover:opacity-100 group-hover:text-[#115eff]" />
-                                  )}
-                                </span>
-                              </button>
-                            ) : (
-                              <span>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </span>
+                            <span>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </span>
+                            {sortDirection === "asc" && (
+                              <ArrowUp className="size-3.5 text-[#115eff] shrink-0" />
                             )}
-
-                            {/* Column-level quick search popover icon */}
-                            {colMeta?.searchable && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSearchOpen(true);
-                                  setTimeout(() => searchInputRef.current?.focus(), 20);
-                                }}
-                                className={cn(
-                                  "p-1 rounded hover:bg-blue-50 text-slate-400 hover:text-[#115eff] transition-colors cursor-pointer",
-                                  globalFilter.trim() && "text-[#115eff] bg-blue-50"
-                                )}
-                                title="Search"
-                                aria-label="Search posts"
-                              >
-                                <Search className="size-3.5" />
-                              </button>
+                            {sortDirection === "desc" && (
+                              <ArrowDown className="size-3.5 text-[#115eff] shrink-0" />
                             )}
-
-                            {/* Column-level quick filter popover icon */}
-                            {colFilter && (
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={cn(
-                                      "p-1 rounded hover:bg-blue-50 text-slate-400 hover:text-[#115eff] transition-colors cursor-pointer",
-                                      activeColFilterVal !== "ALL" &&
-                                        "text-[#115eff] bg-blue-50"
-                                    )}
-                                    title={`Filter by ${colFilter.title}`}
-                                  >
-                                    <SlidersHorizontal className="size-3" />
-                                  </button>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  align={align === "left" ? "start" : "center"}
-                                  sideOffset={6}
-                                  className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg"
-                                >
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setColumnFilters((prev) => ({
-                                        ...prev,
-                                        [colFilter.id]: "ALL",
-                                      }))
-                                    }
-                                    className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-lg hover:bg-slate-50 text-slate-700 cursor-pointer"
-                                  >
-                                    <span>All {colFilter.title}</span>
-                                    {activeColFilterVal === "ALL" && (
-                                      <Check className="size-3.5 text-[#115eff]" />
-                                    )}
-                                  </button>
-                                  {colFilter.options.map((opt) => (
-                                    <button
-                                      key={opt.value}
-                                      type="button"
-                                      onClick={() =>
-                                        setColumnFilters((prev) => ({
-                                          ...prev,
-                                          [colFilter.id]: opt.value,
-                                        }))
-                                      }
-                                      className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-lg hover:bg-slate-50 text-slate-700 cursor-pointer"
-                                    >
-                                      <span className="truncate">{opt.label}</span>
-                                      {activeColFilterVal === opt.value && (
-                                        <Check className="size-3.5 text-[#115eff] shrink-0" />
-                                      )}
-                                    </button>
-                                  ))}
-                                </PopoverContent>
-                              </Popover>
-                            )}
-                          </div>
+                          </button>
+                        ) : (
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )
                         )}
                       </TableHead>
                     );
@@ -645,7 +688,7 @@ export function DataTable<TData, TValue = unknown>({
                       {hasActiveFilters && (
                         <button
                           type="button"
-                          onClick={clearAllFilters}
+                          onClick={clearAll}
                           className="text-xs text-[#115eff] hover:underline cursor-pointer"
                         >
                           Clear current filters
