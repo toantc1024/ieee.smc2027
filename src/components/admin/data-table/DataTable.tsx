@@ -217,11 +217,11 @@ function ColumnHeaderMenu<TData>({
       <PopoverContent
         align={align === "right" ? "end" : align === "center" ? "center" : "start"}
         sideOffset={6}
-        className="w-64 p-2.5 rounded-xl border border-slate-200 bg-white shadow-lg space-y-2.5 text-left font-normal"
+        className="w-72 p-3 rounded-xl border border-slate-200 bg-white shadow-lg space-y-3 text-left font-normal"
       >
         {/* Header + Reset */}
         <div className="flex items-center justify-between px-1">
-          <span className="text-xs font-bold text-[#004776]">{title}</span>
+          <span className="text-sm font-bold text-[#004776]">{title}</span>
           {isActive && (
             <button
               type="button"
@@ -229,7 +229,7 @@ function ColumnHeaderMenu<TData>({
                 onResetColumn();
                 setOpen(false);
               }}
-              className="text-[11px] font-semibold text-[#115eff] hover:underline cursor-pointer"
+              className="text-xs font-semibold text-[#115eff] hover:underline cursor-pointer"
             >
               Reset
             </button>
@@ -238,7 +238,7 @@ function ColumnHeaderMenu<TData>({
 
         {/* Column Search Input */}
         <div className="relative flex items-center">
-          <Search className="size-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+          <Search className="size-4 text-slate-400 absolute left-3 pointer-events-none" />
           <Input
             ref={inputRef}
             type="text"
@@ -248,7 +248,7 @@ function ColumnHeaderMenu<TData>({
               if (e.key === "Escape" || e.key === "Enter") setOpen(false);
             }}
             placeholder={`Search ${title.toLowerCase()}...`}
-            className="h-8 pl-8 pr-7 text-xs bg-slate-50/70 border-slate-200 rounded-lg focus:bg-white focus:border-[#115eff]"
+            className="h-9 pl-9 pr-8 text-sm bg-slate-50/70 border-slate-200 rounded-lg focus:bg-white focus:border-[#115eff]"
           />
           {searchValue && (
             <button
@@ -257,17 +257,17 @@ function ColumnHeaderMenu<TData>({
                 onSearchChange("");
                 inputRef.current?.focus();
               }}
-              className="absolute right-2 p-0.5 text-slate-400 hover:text-slate-700 cursor-pointer"
+              className="absolute right-2.5 p-0.5 text-slate-400 hover:text-slate-700 cursor-pointer"
               aria-label={`Clear ${title} search`}
             >
-              <X className="size-3" />
+              <X className="size-3.5" />
             </button>
           )}
         </div>
 
         {/* Sort Actions */}
         {canSort && (
-          <div className="space-y-0.5 pt-1.5 border-t border-slate-100">
+          <div className="space-y-1 pt-2 border-t border-slate-100">
             <button
               type="button"
               onClick={() => {
@@ -275,17 +275,17 @@ function ColumnHeaderMenu<TData>({
                 setOpen(false);
               }}
               className={cn(
-                "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-colors cursor-pointer",
+                "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-sm transition-colors cursor-pointer",
                 sortDirection === "asc"
                   ? "bg-blue-50 text-[#115eff] font-semibold"
                   : "text-slate-700 hover:bg-slate-50 font-medium"
               )}
             >
               <span className="inline-flex items-center gap-2">
-                <ArrowUp className="size-3.5" />
+                <ArrowUp className="size-4" />
                 <span>Sort Ascending</span>
               </span>
-              {sortDirection === "asc" && <Check className="size-3.5" />}
+              {sortDirection === "asc" && <Check className="size-4" />}
             </button>
             <button
               type="button"
@@ -294,25 +294,25 @@ function ColumnHeaderMenu<TData>({
                 setOpen(false);
               }}
               className={cn(
-                "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-colors cursor-pointer",
+                "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-sm transition-colors cursor-pointer",
                 sortDirection === "desc"
                   ? "bg-blue-50 text-[#115eff] font-semibold"
                   : "text-slate-700 hover:bg-slate-50 font-medium"
               )}
             >
               <span className="inline-flex items-center gap-2">
-                <ArrowDown className="size-3.5" />
+                <ArrowDown className="size-4" />
                 <span>Sort Descending</span>
               </span>
-              {sortDirection === "desc" && <Check className="size-3.5" />}
+              {sortDirection === "desc" && <Check className="size-4" />}
             </button>
           </div>
         )}
 
         {/* Filter Options (when column has predefined filter choices) */}
         {filterConfig && filterConfig.options.length > 0 && (
-          <div className="space-y-0.5 pt-1.5 border-t border-slate-100 max-h-48 overflow-y-auto">
-            <div className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <div className="space-y-1 pt-2 border-t border-slate-100 max-h-56 overflow-y-auto">
+            <div className="px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Filter
             </div>
             <button
@@ -322,14 +322,14 @@ function ColumnHeaderMenu<TData>({
                 setOpen(false);
               }}
               className={cn(
-                "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-colors cursor-pointer",
+                "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-sm transition-colors cursor-pointer",
                 !hasFilter
                   ? "bg-blue-50 text-[#115eff] font-semibold"
                   : "text-slate-700 hover:bg-slate-50 font-medium"
               )}
             >
               <span>All</span>
-              {!hasFilter && <Check className="size-3.5" />}
+              {!hasFilter && <Check className="size-4" />}
             </button>
             {filterConfig.options.map((opt) => {
               const selected = filterValue === opt.value;
@@ -342,14 +342,14 @@ function ColumnHeaderMenu<TData>({
                     setOpen(false);
                   }}
                   className={cn(
-                    "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-colors cursor-pointer",
+                    "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-sm transition-colors cursor-pointer",
                     selected
                       ? "bg-blue-50 text-[#115eff] font-semibold"
                       : "text-slate-700 hover:bg-slate-50 font-medium"
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
-                  {selected && <Check className="size-3.5 shrink-0" />}
+                  {selected && <Check className="size-4 shrink-0" />}
                 </button>
               );
             })}

@@ -417,16 +417,16 @@ export default function PostsManagementPage() {
                     <ChevronDown className="size-3.5 text-slate-400 group-hover:text-[#115eff] transition-colors shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
+                <DropdownMenuContent align="start" className="w-56 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
                   {POST_CATEGORIES.map((categoryOption) => (
                     <DropdownMenuItem
                       key={categoryOption}
                       onClick={() => handleQuickCategoryChange(item.id, categoryOption)}
-                      className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                      className="flex items-center justify-between py-2 px-3 text-sm rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                     >
                       <span className="truncate" title={categoryOption}>{categoryOption}</span>
                       {cat === categoryOption && (
-                        <Check className="size-3.5 text-[#115eff] shrink-0 ml-2" />
+                        <Check className="size-4 text-[#115eff] shrink-0 ml-2" />
                       )}
                     </DropdownMenuItem>
                   ))}
@@ -484,41 +484,41 @@ export default function PostsManagementPage() {
                     <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-40 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
+                <DropdownMenuContent align="center" className="w-44 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "PUBLISHED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-2 px-3 text-sm rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-[#115eff]" />
+                      <span className="size-2 rounded-full bg-[#115eff]" />
                       Published
                     </span>
                     {status === "PUBLISHED" && (
-                      <Check className="size-3.5 text-[#115eff]" />
+                      <Check className="size-4 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "DRAFT")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-2 px-3 text-sm rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-slate-400" />
+                      <span className="size-2 rounded-full bg-slate-400" />
                       Draft
                     </span>
                     {status === "DRAFT" && (
-                      <Check className="size-3.5 text-[#115eff]" />
+                      <Check className="size-4 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleQuickStatusChange(item.id, "ARCHIVED")}
-                    className="flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
+                    className="flex items-center justify-between py-2 px-3 text-sm rounded-lg cursor-pointer text-slate-700 hover:bg-slate-50"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <span className="size-1.5 rounded-full bg-amber-500" />
+                      <span className="size-2 rounded-full bg-amber-500" />
                       Archived
                     </span>
                     {status === "ARCHIVED" && (
-                      <Check className="size-3.5 text-[#115eff]" />
+                      <Check className="size-4 text-[#115eff]" />
                     )}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
