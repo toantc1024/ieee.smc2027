@@ -75,7 +75,7 @@ function PostCoverThumbnail({
     <button
       type="button"
       onClick={onClick}
-      className="group relative w-24 h-14 sm:w-28 sm:h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 hover:border-[#115eff] transition-colors shrink-0 cursor-pointer block shadow-2xs"
+      className="group relative w-full h-full min-h-[76px] overflow-hidden bg-slate-100 hover:brightness-95 transition-all cursor-pointer block"
       title="Click to preview post"
     >
       {src && !imgError ? (
@@ -90,7 +90,7 @@ function PostCoverThumbnail({
       ) : (
         <div className="size-full flex flex-col items-center justify-center gap-1 text-slate-300 group-hover:text-slate-400 transition-colors">
           <ImageIcon className="size-5" />
-          <span className="text-xs font-medium text-slate-400">No cover</span>
+          <span className="text-[11px] font-medium text-slate-400">No cover</span>
         </div>
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-colors">
@@ -329,12 +329,16 @@ export default function PostsManagementPage() {
         accessorKey: "coverImage",
         header: "Cover",
         enableSorting: false,
-        size: 110,
+        size: 136,
+        meta: {
+          align: "center",
+          cellClassName: "p-0 h-px w-[136px] min-w-[136px] align-stretch",
+        },
         cell: ({ row }) => {
           const item = row.original;
           return (
             <div
-              className="flex items-center justify-center py-1"
+              className="w-full h-full"
               onClick={(e) => e.stopPropagation()}
             >
               <PostCoverThumbnail
@@ -352,46 +356,34 @@ export default function PostsManagementPage() {
       {
         accessorKey: "title",
         header: "Post",
-        size: 340,
+        size: 380,
+        meta: {
+          align: "left",
+        },
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="w-full min-w-0 max-w-[360px] sm:max-w-md py-1 space-y-1 overflow-hidden whitespace-normal">
-              {/* Title with word-wrap and caption */}
+            <div className="w-full min-w-0 max-w-[420px] py-2 space-y-1 overflow-hidden whitespace-normal">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   router.push(`/admin/posts/${item.id}`);
                 }}
-                className="font-semibold text-slate-900 hover:text-[#115eff] text-sm sm:text-base text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
+                className="font-bold text-[#004776] hover:text-[#115eff] text-[15px] sm:text-base text-left line-clamp-2 break-words [overflow-wrap:anywhere] leading-snug transition-colors cursor-pointer block w-full"
                 title={item.title}
               >
                 {item.title}
               </button>
 
-              {/* Summary with wrap and caption */}
               {item.summary && (
                 <p
-                  className="text-xs sm:text-sm text-slate-500 line-clamp-2 break-words [overflow-wrap:anywhere] leading-normal w-full"
+                  className="text-xs sm:text-[13px] text-slate-500 line-clamp-1 break-words [overflow-wrap:anywhere] leading-relaxed w-full"
                   title={item.summary}
                 >
                   {item.summary}
                 </p>
               )}
-
-              {/* Slug tag & Version badge with safe truncation */}
-              <div className="pt-0.5 min-w-0 max-w-full overflow-hidden flex items-center gap-1.5 flex-wrap">
-                <span
-                  className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-block max-w-full truncate align-middle"
-                  title={`/${item.slug}`}
-                >
-                  /{item.slug}
-                </span>
-                <span className="text-xs font-mono font-semibold text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">
-                  v{item.version || 1}
-                </span>
-              </div>
             </div>
           );
         },
@@ -399,27 +391,30 @@ export default function PostsManagementPage() {
       {
         accessorKey: "category",
         header: "Category",
-        size: 140,
+        size: 150,
+        meta: {
+          align: "left",
+        },
         cell: ({ row }) => {
           const item = row.original;
           const cat = (row.getValue("category") as string) || item.category;
           return (
             <div
-              className="flex items-center justify-center min-w-0 max-w-[150px] mx-auto overflow-hidden"
+              className="flex items-center justify-start min-w-0 max-w-[160px] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex items-center justify-between gap-1.5 h-7 px-3 max-w-full rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50 hover:bg-slate-100 focus:outline-none focus:border-[#115eff] transition-colors cursor-pointer group shadow-2xs"
+                    className="inline-flex items-center gap-1.5 py-1 px-2 -mx-2 max-w-full rounded-md text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#115eff] focus:outline-none transition-colors cursor-pointer group"
                     title={cat}
                   >
-                    <span className="truncate min-w-0 flex-1 text-left">{cat}</span>
-                    <ChevronDown className="size-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
+                    <span className="truncate min-w-0">{cat}</span>
+                    <ChevronDown className="size-3.5 text-slate-400 group-hover:text-[#115eff] transition-colors shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
+                <DropdownMenuContent align="start" className="w-48 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
                   {POST_CATEGORIES.map((categoryOption) => (
                     <DropdownMenuItem
                       key={categoryOption}

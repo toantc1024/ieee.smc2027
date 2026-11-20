@@ -226,7 +226,7 @@ export function DataTable<TData, TValue = unknown>({
                       <TableHead
                         key={header.id}
                         className={cn(
-                          "align-middle select-none",
+                          "align-middle select-none text-xs sm:text-[13px] font-bold text-[#004776] py-3.5",
                           (() => {
                             const colId = header.column.id.toLowerCase();
                             const customAlign = (header.column.columnDef as any).align || (header.column.columnDef.meta as any)?.align;
@@ -249,7 +249,8 @@ export function DataTable<TData, TValue = unknown>({
                               return "text-center";
                             }
                             return "text-left";
-                          })()
+                          })(),
+                          (header.column.columnDef.meta as { headerClassName?: string } | undefined)?.headerClassName
                         )}
                         style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                       >
@@ -407,7 +408,8 @@ export function DataTable<TData, TValue = unknown>({
                               return "text-center";
                             }
                             return "text-left";
-                          })()
+                          })(),
+                          (cell.column.columnDef.meta as { cellClassName?: string } | undefined)?.cellClassName
                         )}
                         style={{
                           width: cell.column.getSize() !== 150 ? cell.column.getSize() : undefined,
