@@ -29,7 +29,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DataTable } from "@/components/admin/data-table/DataTable";
 import { PostDeleteDialog } from "@/components/admin/posts/PostDeleteDialog";
-import { ManagementPageHeader } from "@/components/ui/management-page-header";
 import { cn } from "@/lib/utils";
 import { POSTS_SYNC_CHANNEL, broadcastPostSync } from "@/lib/post-sync";
 
@@ -658,39 +657,7 @@ export default function PostsManagementPage() {
   );
 
   return (
-    <div className="space-y-6 font-sans">
-      {/* ── Page Header ── */}
-      <ManagementPageHeader
-        title="Posts & News"
-        description="Conference announcements, call for papers, and news updates"
-        image3d="/assets/3d-icons/article-management__hcmute-3d-icon.png"
-        backgroundImage="/assets/manage-posts-bg.jpg"
-        actions={
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fetchPosts(false)}
-              disabled={loading}
-              className="gap-1.5 text-xs sm:text-sm text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg shadow-sm font-semibold h-9 px-3"
-              title="Refresh"
-            >
-              <RefreshCw className={cn("size-3.5 sm:size-4", loading && "animate-spin text-[#115eff]")} />
-              <span className="hidden sm:inline">Refresh</span>
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => router.push("/admin/posts/create")}
-              className="bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 shadow-sm text-xs sm:text-sm font-semibold rounded-lg h-9 px-3.5"
-            >
-              <Plus className="size-4" />
-              <span>New Post</span>
-            </Button>
-          </div>
-        }
-      />
-
+    <div className="space-y-4 font-sans">
       {/* ── Tabs Row ── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
@@ -712,6 +679,29 @@ export default function PostsManagementPage() {
               <span>Archived ({posts.filter((p) => p.status === "ARCHIVED").length})</span>
             </TabsTrigger>
           </TabsList>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fetchPosts(false)}
+              disabled={loading}
+              className="gap-1.5 text-xs sm:text-sm text-slate-600 bg-white hover:bg-slate-50 border-slate-200 rounded-lg font-semibold h-9 px-3"
+              title="Refresh"
+            >
+              <RefreshCw className={cn("size-3.5 sm:size-4", loading && "animate-spin text-[#115eff]")} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => router.push("/admin/posts/create")}
+              className="bg-[#115eff] hover:bg-[#0a4de6] text-white gap-1.5 text-xs sm:text-sm font-semibold rounded-lg h-9 px-3.5"
+            >
+              <Plus className="size-4" />
+              <span>New Post</span>
+            </Button>
+          </div>
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
