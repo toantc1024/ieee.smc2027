@@ -332,7 +332,7 @@ export default function PostsManagementPage() {
         accessorKey: "coverImage",
         header: "Cover",
         enableSorting: false,
-        size: 148,
+        size: 128,
         meta: {
           align: "center",
         },
@@ -358,7 +358,7 @@ export default function PostsManagementPage() {
       {
         accessorKey: "title",
         header: "Post",
-        size: 380,
+        size: 260,
         meta: {
           align: "left",
           searchable: true,
@@ -366,7 +366,7 @@ export default function PostsManagementPage() {
         cell: ({ row }) => {
           const item = row.original;
           return (
-            <div className="w-full min-w-0 max-w-[420px] space-y-1 overflow-hidden">
+            <div className="w-full min-w-0 max-w-[240px] lg:max-w-[260px] xl:max-w-[320px] space-y-1 overflow-hidden">
               <button
                 type="button"
                 onClick={(e) => {
@@ -394,7 +394,7 @@ export default function PostsManagementPage() {
       {
         accessorKey: "category",
         header: "Category",
-        size: 150,
+        size: 135,
         meta: {
           align: "left",
         },

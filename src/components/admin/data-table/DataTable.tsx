@@ -683,6 +683,7 @@ export function DataTable<TData, TValue = unknown>({
                     const isInteractiveColumn =
                       typeof header.column.columnDef.header === "string" &&
                       !NON_INTERACTIVE_COLUMN_IDS.has(colId.toLowerCase());
+                    const isStickyActions = colId.toLowerCase() === "actions";
                     const colFilter = filterMap.get(colId.toLowerCase());
 
                     return (
@@ -695,6 +696,8 @@ export function DataTable<TData, TValue = unknown>({
                             : align === "right"
                             ? "text-right"
                             : "text-left",
+                          isStickyActions &&
+                            "sticky right-0 z-20 bg-slate-50 border-l border-slate-200/80 shadow-[-6px_0_10px_-6px_rgba(15,23,42,0.08)]",
                           headerClassName
                         )}
                         style={{
@@ -822,7 +825,7 @@ export function DataTable<TData, TValue = unknown>({
                     data-state={row.getIsSelected() ? "selected" : undefined}
                     onClick={() => onRowClick?.(row.original)}
                     className={cn(
-                      "transition-colors",
+                      "group/row transition-colors",
                       onRowClick
                         ? "cursor-pointer hover:bg-blue-50/35"
                         : "hover:bg-slate-50/60"
@@ -833,6 +836,8 @@ export function DataTable<TData, TValue = unknown>({
                         cell.column.id,
                         cell.column.columnDef
                       );
+                      const isStickyActions =
+                        cell.column.id.toLowerCase() === "actions";
                       const cellClassName = (
                         cell.column.columnDef.meta as
                           | { cellClassName?: string }
@@ -849,6 +854,8 @@ export function DataTable<TData, TValue = unknown>({
                               : align === "right"
                               ? "text-right"
                               : "text-left",
+                            isStickyActions &&
+                              "sticky right-0 z-10 bg-white group-hover/row:bg-[#f4f8ff] border-l border-slate-100 shadow-[-6px_0_10px_-6px_rgba(15,23,42,0.08)] transition-colors",
                             cellClassName
                           )}
                           style={{
