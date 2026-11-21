@@ -51,7 +51,7 @@ export function CfpBrochureBannerBlock({
               className={`inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-2xs cursor-pointer ${
                 showPdfViewer
                   ? "bg-[#115eff] hover:bg-[#0a4de6] text-white border border-[#115eff]"
-                  : "bg-white hover:bg-blue-50 text-[#115eff] border border-blue-100/90"
+                  : "bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff]"
               }`}
             >
               <span>{showPdfViewer ? hidePreviewButtonLabel : previewButtonLabel}</span>

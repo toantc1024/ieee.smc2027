@@ -142,7 +142,7 @@ export function SubmissionCountdown({
                 href={resolvedPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-blue-50 text-[#115eff] border border-blue-100/90 hover:border-blue-300 font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff] font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-2xs whitespace-nowrap"
               >
                 <FileDown className="w-4 h-4" />
                 <span>{secondaryButtonLabel}</span>

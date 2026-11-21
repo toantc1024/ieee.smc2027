@@ -275,7 +275,7 @@ export function PaperTemplates({
                           <button
                             type="button"
                             onClick={() => handleCopyLink(tpl.name, downloadHref)}
-                            className="inline-flex items-center gap-1.5 min-h-[46px] px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-sm rounded-sm transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 min-h-[46px] px-4 py-2.5 bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff] font-bold text-sm rounded-sm transition-colors cursor-pointer"
                           >
                             {copiedLink === tpl.name ? (
                               <>

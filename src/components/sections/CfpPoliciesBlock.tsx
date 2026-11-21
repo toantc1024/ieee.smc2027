@@ -83,7 +83,7 @@ export function CfpPoliciesBlock({
                 href={cfpPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-blue-50/60 text-[#115eff] border border-blue-100/90 font-bold text-sm sm:text-[15px] rounded-[0.26rem] shadow-2xs transition-all hover:border-[#115eff]"
+                className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff] font-bold text-sm sm:text-[15px] rounded-[0.26rem] shadow-2xs transition-all"
               >
                 <FileDown className="w-4.5 h-4.5" />
                 <span>{downloadButtonLabel}</span>

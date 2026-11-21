@@ -856,7 +856,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={closeMenu}
-                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-sm font-semibold text-[#004776] hover:text-white bg-white hover:bg-[#115eff] border border-blue-200/90 hover:border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-sm font-semibold text-[#115eff] hover:text-white bg-white hover:bg-[#115eff] border border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
                   title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
                 >
                   <User className="size-4 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
@@ -1080,7 +1080,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                 <Link
                   href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-blue-50 text-[#004776] hover:text-[#115eff] border border-blue-100/90 hover:border-blue-300 font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff] font-bold text-sm sm:text-base rounded-sm transition-colors shadow-2xs"
                 >
                   <User className="w-4 h-4 text-current shrink-0" />
                   <span>
