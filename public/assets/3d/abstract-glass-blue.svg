@@ -90,3 +90,4 @@
   <!-- Subtle 4-corner geometric bracket ticks inside nested square -->
   <path d="M299 633 V617 H315 M585 617 H601 V633 M299 903 V919 H315 M585 919 H601 V903" stroke="#115eff" stroke-opacity="0.52" stroke-width="2.5" stroke-linecap="square" />
 </svg>
+
