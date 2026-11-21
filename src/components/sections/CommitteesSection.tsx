@@ -35,10 +35,9 @@ export const CHAIR_PHOTO_MAP: Record<string, string> = {
   "Vladik Kreinovich": "/chairs/prof-vladik-kreinovich.png",
 };
 
-// Abstract frosted-glass square fallback visuals (pink for female, blue for male)
+// Abstract frosted-glass square fallback visual (unified IEEE SMC blue)
 export const CLAY_AVATARS = [
   "/assets/3d/abstract-glass-blue.svg",
-  "/assets/3d/abstract-glass-pink.svg",
 ] as const;
 
 const KNOWN_FEMALE_FULL_NAMES = new Set([
@@ -143,15 +142,13 @@ export function inferMemberGender(
 }
 
 /**
- * Return the themed abstract frosted-glass fallback vector asset for a member.
+ * Return the unified blue abstract frosted-glass fallback vector asset for a member.
  */
 export function getClayAvatarForMember(
-  name: string,
-  explicitGender?: "male" | "female"
+  _name?: string,
+  _explicitGender?: "male" | "female"
 ): string {
-  return inferMemberGender(name, explicitGender) === "female"
-    ? "/assets/3d/abstract-glass-pink.svg"
-    : "/assets/3d/abstract-glass-blue.svg";
+  return "/assets/3d/abstract-glass-blue.svg";
 }
 
 export interface CommitteeMemberInput extends Omit<CommitteeMember, "gender"> {
@@ -194,35 +191,27 @@ const CARD_STATIC_CLASSES = cn(
  * Layered frosted-glass architectural squares fallback for committee members without photos
  */
 function AbstractGlassSquareFallback({
-  gender,
   seed,
 }: {
-  gender: "female" | "male";
+  gender?: "female" | "male";
   seed: string;
 }) {
-  const isPink = gender === "female";
   const mirrored = hashMemberSeed(seed) % 2 === 1;
 
   return (
     <div
-      data-fallback-theme={isPink ? "pink" : "blue"}
+      data-fallback-theme="blue"
       className="relative w-full h-full overflow-hidden pointer-events-none select-none"
     >
       {/* Layer 1: Top-transparent ambient fade dissolving cleanly on card hover */}
-      <div
-        className={cn(
-          "absolute inset-0 bg-linear-to-b from-transparent via-transparent transition-opacity duration-300 group-hover/card:opacity-0",
-          isPink ? "to-pink-100/60" : "to-blue-100/55"
-        )}
-      />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-blue-100/55 transition-opacity duration-300 group-hover/card:opacity-0" />
 
       {/* Layer 2a: Masked 18px dot matrix fading smoothly down from top */}
       <div
         className="absolute inset-0 opacity-100 group-hover/card:opacity-0 transition-opacity duration-300"
         style={{
-          backgroundImage: isPink
-            ? "radial-gradient(rgba(236, 72, 153, 0.44) 1.5px, transparent 1.5px)"
-            : "radial-gradient(rgba(17, 94, 255, 0.42) 1.5px, transparent 1.5px)",
+          backgroundImage:
+            "radial-gradient(rgba(17, 94, 255, 0.42) 1.5px, transparent 1.5px)",
           backgroundSize: "18px 18px",
           maskImage:
             "linear-gradient(to bottom, transparent 18%, rgba(0,0,0,0.45) 52%, black 92%)",
@@ -246,9 +235,8 @@ function AbstractGlassSquareFallback({
       <div
         className="absolute inset-0 opacity-100 group-hover/card:opacity-0 transition-opacity duration-300"
         style={{
-          background: isPink
-            ? "radial-gradient(circle at 65% 78%, rgba(236, 72, 153, 0.22), rgba(251, 113, 133, 0.08) 50%, transparent 75%)"
-            : "radial-gradient(circle at 65% 78%, rgba(17, 94, 255, 0.20), rgba(56, 189, 248, 0.08) 50%, transparent 75%)",
+          background:
+            "radial-gradient(circle at 65% 78%, rgba(17, 94, 255, 0.20), rgba(56, 189, 248, 0.08) 50%, transparent 75%)",
         }}
       />
 
@@ -257,9 +245,7 @@ function AbstractGlassSquareFallback({
         className={cn(
           "absolute top-[18%] w-[42%] aspect-square rounded-sm border bg-linear-to-b transition-all duration-300",
           mirrored ? "left-[13%]" : "right-[13%]",
-          isPink
-            ? "from-white/10 to-pink-400/22 border-pink-400/25"
-            : "from-white/10 to-blue-400/20 border-blue-400/20",
+          "from-white/10 to-blue-400/20 border-blue-400/20",
           "group-hover/card:from-white/5 group-hover/card:to-white/18 group-hover/card:border-white/30"
         )}
         style={{
@@ -273,9 +259,7 @@ function AbstractGlassSquareFallback({
         className={cn(
           "absolute top-[33%] w-[46%] aspect-square rounded-sm backdrop-blur-[3px] border bg-linear-to-br transition-all duration-300 group-hover/card:-translate-y-0.5",
           mirrored ? "right-[12%]" : "left-[12%]",
-          isPink
-            ? "from-pink-500/20 via-rose-300/14 to-white/30 border-pink-400/30"
-            : "from-[#115eff]/18 via-sky-300/12 to-white/30 border-[#115eff]/25",
+          "from-[#115eff]/18 via-sky-300/12 to-white/30 border-[#115eff]/25",
           "group-hover/card:from-white/22 group-hover/card:via-white/12 group-hover/card:to-white/5 group-hover/card:border-white/40"
         )}
       />
@@ -284,49 +268,23 @@ function AbstractGlassSquareFallback({
       <div className="absolute -bottom-[22%] left-1/2 -translate-x-1/2 w-[78%] aspect-square rounded-sm backdrop-blur-xs bg-linear-to-b from-white/35 to-white/65 border-t border-x border-white/85 group-hover/card:from-white/18 group-hover/card:to-white/8 group-hover/card:border-white/35 transition-all duration-300" />
 
       {/* Layer 3d: Foreground crystal frosted-glass square + nested geometric accent */}
-      <div
-        className={cn(
-          "absolute bottom-[15%] left-1/2 -translate-x-1/2 w-[56%] aspect-square rounded-sm backdrop-blur-md bg-linear-to-b from-white/35 via-white/68 to-white/88 border border-white/95 transition-all duration-300 group-hover/card:-translate-y-1 group-hover/card:from-white/28 group-hover/card:via-white/20 group-hover/card:to-white/12 group-hover/card:border-white/55",
-          isPink
-            ? "shadow-[inset_0_1px_1px_rgba(255,255,255,0.95),0_10px_24px_-6px_rgba(236,72,153,0.20)]"
-            : "shadow-[inset_0_1px_1px_rgba(255,255,255,0.95),0_10px_24px_-6px_rgba(17,94,255,0.18)]"
-        )}
-      >
-        <div
-          className={cn(
-            "absolute inset-[20%] rounded-[2px] border bg-linear-to-br transition-colors duration-300",
-            isPink
-              ? "from-pink-500/14 to-rose-300/6 border-pink-400/25 group-hover/card:from-white/20 group-hover/card:to-white/5 group-hover/card:border-white/45"
-              : "from-[#115eff]/14 to-sky-300/6 border-[#115eff]/22 group-hover/card:from-white/20 group-hover/card:to-white/5 group-hover/card:border-white/45"
-          )}
-        >
+      <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-[56%] aspect-square rounded-sm backdrop-blur-md bg-linear-to-b from-white/35 via-white/68 to-white/88 border border-white/95 transition-all duration-300 group-hover/card:-translate-y-1 group-hover/card:from-white/28 group-hover/card:via-white/20 group-hover/card:to-white/12 group-hover/card:border-white/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.95),0_10px_24px_-6px_rgba(17,94,255,0.18)]">
+        <div className="absolute inset-[20%] rounded-[2px] border bg-linear-to-br transition-colors duration-300 from-[#115eff]/14 to-sky-300/6 border-[#115eff]/22 group-hover/card:from-white/20 group-hover/card:to-white/5 group-hover/card:border-white/45">
           <span
             aria-hidden="true"
-            className={cn(
-              "absolute top-0 left-0 size-1.5 border-t border-l transition-colors duration-300 group-hover/card:border-white/80",
-              isPink ? "border-pink-500/55" : "border-[#115eff]/50"
-            )}
+            className="absolute top-0 left-0 size-1.5 border-t border-l transition-colors duration-300 group-hover/card:border-white/80 border-[#115eff]/50"
           />
           <span
             aria-hidden="true"
-            className={cn(
-              "absolute top-0 right-0 size-1.5 border-t border-r transition-colors duration-300 group-hover/card:border-white/80",
-              isPink ? "border-pink-500/55" : "border-[#115eff]/50"
-            )}
+            className="absolute top-0 right-0 size-1.5 border-t border-r transition-colors duration-300 group-hover/card:border-white/80 border-[#115eff]/50"
           />
           <span
             aria-hidden="true"
-            className={cn(
-              "absolute bottom-0 left-0 size-1.5 border-b border-l transition-colors duration-300 group-hover/card:border-white/80",
-              isPink ? "border-pink-500/55" : "border-[#115eff]/50"
-            )}
+            className="absolute bottom-0 left-0 size-1.5 border-b border-l transition-colors duration-300 group-hover/card:border-white/80 border-[#115eff]/50"
           />
           <span
             aria-hidden="true"
-            className={cn(
-              "absolute bottom-0 right-0 size-1.5 border-b border-r transition-colors duration-300 group-hover/card:border-white/80",
-              isPink ? "border-pink-500/55" : "border-[#115eff]/50"
-            )}
+            className="absolute bottom-0 right-0 size-1.5 border-b border-r transition-colors duration-300 group-hover/card:border-white/80 border-[#115eff]/50"
           />
         </div>
       </div>
@@ -360,16 +318,6 @@ function CommitteeCard({
   }, [photo]);
 
   const hasPhoto = Boolean(photo && !imgError);
-  const isFallback = !hasPhoto;
-  const explicitGender =
-    member.gender === "male" || member.gender === "female"
-      ? member.gender
-      : undefined;
-  const gender = useMemo(
-    () => inferMemberGender(name, explicitGender),
-    [name, explicitGender]
-  );
-  const isPinkFallback = isFallback && gender === "female";
 
   return (
     <div
@@ -377,23 +325,14 @@ function CommitteeCard({
       className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing"
     >
       {/* The Card Box */}
-      <div
-        className={cn(
-          "relative rounded-sm bg-white border transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full",
-          isPinkFallback
-            ? "border-pink-100/90 group-hover/card:border-pink-500"
-            : "border-blue-100/90 group-hover/card:border-[#115eff]"
-        )}
-      >
+      <div className="relative rounded-sm bg-white border border-blue-100/90 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
         {/* Top: Portrait Canvas or Top-Transparent Abstract Frosted Glass Fallback */}
         <div
           className={cn(
             "relative w-full aspect-[3/4] transition-colors duration-300 overflow-hidden flex items-end justify-center shrink-0 p-0 pointer-events-none select-none",
             hasPhoto
               ? "bg-blue-50/35 group-hover/card:bg-[#115eff]"
-              : isPinkFallback
-                ? "bg-transparent group-hover/card:bg-pink-500"
-                : "bg-transparent group-hover/card:bg-[#115eff]"
+              : "bg-transparent group-hover/card:bg-[#115eff]"
           )}
         >
           {/* Dot pattern overlay behind photo cutouts (top-only vertical fade) */}
@@ -434,27 +373,15 @@ function CommitteeCard({
                 onError={() => setImgError(true)}
               />
             ) : (
-              <AbstractGlassSquareFallback gender={gender} seed={name} />
+              <AbstractGlassSquareFallback seed={name} />
             )}
           </div>
         </div>
 
         {/* Bottom Details Section: Consistent vertical height across all cards */}
-        <div
-          className={cn(
-            "relative z-20 w-full p-3 sm:p-3.5 md:p-4 bg-white border-t group-hover/card:border-white/20 transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[112px] sm:min-h-[120px]",
-            isPinkFallback
-              ? "border-pink-100/85 group-hover/card:bg-pink-500"
-              : "border-blue-100/85 group-hover/card:bg-[#115eff]"
-          )}
-        >
+        <div className="relative z-20 w-full p-3 sm:p-3.5 md:p-4 bg-white border-t border-blue-100/85 group-hover/card:border-white/20 group-hover/card:bg-[#115eff] transition-colors duration-300 flex flex-col justify-between flex-1 min-h-[112px] sm:min-h-[120px]">
           <div className="relative z-10">
-            <span
-              className={cn(
-                "inline-block text-xs font-bold group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1",
-                isPinkFallback ? "text-pink-600" : "text-[#115eff]"
-              )}
-            >
+            <span className="inline-block text-xs font-bold text-[#115eff] group-hover/card:!text-white transition-colors duration-300 mb-1 line-clamp-1">
               {member.role || "Committee Member"}
             </span>
             <h4 className="text-sm sm:text-[15px] font-bold text-[#004776] group-hover/card:!text-white tracking-tight leading-snug transition-colors duration-300 line-clamp-1">
@@ -465,12 +392,7 @@ function CommitteeCard({
             </p>
           </div>
 
-          <div
-            className={cn(
-              "mt-2 sm:mt-2.5 pt-2 border-t group-hover/card:border-white/20 flex items-center justify-between text-xs text-slate-600 group-hover/card:text-white/85 transition-colors duration-300 gap-1",
-              isPinkFallback ? "border-pink-50" : "border-blue-50"
-            )}
-          >
+          <div className="mt-2 sm:mt-2.5 pt-2 border-t border-blue-50 group-hover/card:border-white/20 flex items-center justify-between text-xs text-slate-600 group-hover/card:text-white/85 transition-colors duration-300 gap-1">
             <span className="font-semibold text-[#004776] group-hover/card:text-white truncate">
               {member.country || "Vietnam"}
             </span>

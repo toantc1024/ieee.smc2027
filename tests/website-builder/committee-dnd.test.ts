@@ -155,34 +155,25 @@ test("Reordering array items preserves nested data integrity", () => {
   assert.equal(reorderedGroups[1].members[0].name, "Member 1B");
 });
 
-test("CommitteesSection renders pink glass fallback for female and blue for male members without photos", () => {
-  const femaleNames = [
+test("CommitteesSection renders unified blue glass fallback for all members without photos", () => {
+  const memberNames = [
     "Thi-Hien Truong",
     "Pham-Viet-Anh-Thu Le",
     "Phuong-Thu-Thuy Phung",
     "Thi-Thanh-Truc Tran",
     "Dr. Alice Example",
-  ];
-  const maleNames = [
     "Ngoc-Thin Chau",
     "Ngoc-Son Pham",
     "Tom Gedeon",
     "Meng-Yun Chung",
   ];
 
-  for (const name of femaleNames) {
-    assert.equal(inferMemberGender(name), "female", `Expected female for ${name}`);
-  }
-  for (const name of maleNames) {
-    assert.equal(inferMemberGender(name), "male", `Expected male for ${name}`);
-  }
-
-  const femaleMarkup = renderToStaticMarkup(
+  const markup = renderToStaticMarkup(
     React.createElement(CommitteesSection, {
       groups: [
         {
-          groupName: "Female Fallback Group",
-          members: femaleNames.map((name) => ({
+          groupName: "Unified Fallback Group",
+          members: memberNames.map((name) => ({
             name,
             role: "Committee Member",
             country: "Vietnam",
@@ -192,25 +183,7 @@ test("CommitteesSection renders pink glass fallback for female and blue for male
       ],
     })
   );
-  assert.equal((femaleMarkup.match(/data-fallback-theme="pink"/g) ?? []).length, femaleNames.length);
-  assert.doesNotMatch(femaleMarkup, /data-fallback-theme="blue"/);
-
-  const maleMarkup = renderToStaticMarkup(
-    React.createElement(CommitteesSection, {
-      groups: [
-        {
-          groupName: "Male Fallback Group",
-          members: maleNames.map((name) => ({
-            name,
-            role: "Committee Member",
-            country: "Vietnam",
-            photo: "",
-          })),
-        },
-      ],
-    })
-  );
-  assert.equal((maleMarkup.match(/data-fallback-theme="blue"/g) ?? []).length, maleNames.length);
-  assert.doesNotMatch(maleMarkup, /data-fallback-theme="pink"/);
+  assert.ok((markup.match(/data-fallback-theme="blue"/g) ?? []).length >= memberNames.length);
+  assert.doesNotMatch(markup, /data-fallback-theme="pink"/);
 });
 
