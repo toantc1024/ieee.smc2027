@@ -410,13 +410,16 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
   }, [rawNavLinks]);
 
   const mobileNavItems = useMemo(() => {
+    const liveCfpHref =
+      headerConfig.topbar?.quickLinks?.find((q) => q.id === "top-cfp-pdf")?.href ||
+      CONFERENCE_INFO.cfpPdfUrl;
     return [
       ...navLinks,
       { id: "mob-news", name: "News & Announcements", href: "/#news", type: "link" as const },
       { id: "mob-sponsors", name: "Partnership & Exhibition", href: "/#sponsors", type: "link" as const },
-      { id: "mob-cfp-pdf", name: "Download Call for Papers (PDF)", href: CONFERENCE_INFO.cfpPdfUrl, type: "link" as const },
+      { id: "mob-cfp-pdf", name: "Download Call for Papers (PDF)", href: liveCfpHref, type: "link" as const },
     ];
-  }, [navLinks]);
+  }, [navLinks, headerConfig.topbar?.quickLinks]);
 
   const hotline = headerConfig.topbar?.hotline || CONFERENCE_INFO.hotline;
   const email = headerConfig.topbar?.email || CONFERENCE_INFO.contactEmail;

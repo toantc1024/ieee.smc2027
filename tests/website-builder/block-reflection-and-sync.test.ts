@@ -11,6 +11,7 @@ import {
 import { resolveArchetype } from "../../src/modules/website-builder/components/studio/wireframes/archetype-resolver";
 import { BuilderBlockContext } from "../../src/modules/website-builder/utils/sub-item-path";
 import { migratePageBlocks } from "../../src/lib/cms-migration";
+import { applySharedBlockSyncToTargetBlocks } from "../../src/lib/block-sync";
 import { PublicPageRenderer } from "../../src/app/(public)/[slug]/public-page-renderer";
 import { InspectorField } from "../../src/modules/website-builder/components/studio/inspector-fields";
 import { PAPER_TEMPLATE_ITEMS } from "../../src/components/sections/PaperTemplates";
@@ -903,4 +904,96 @@ test("CommitteesSection defaults card postfix to IEEE SMC 2027, supports editing
 
   assert.match(editedHtml, />SENT_SECTION_POSTFIX</);
   assert.match(editedHtml, />SENT_MEMBER_OVERRIDE</);
+});
+
+test("applySharedBlockSyncToTargetBlocks syncs CFP blocks, cfpPdfUrl, and PaperTemplates bidirectionally between home and submissions/call-for-papers", () => {
+  // Direction A: Editing CallForPapers & PaperTemplates on `home` -> syncs to split CFP blocks on `submissions` / `call-for-papers`
+  const homeBlocks = [
+    {
+      id: "cfp-1",
+      type: "CallForPapers",
+      props: {
+        title: "Updated CFP 2027",
+        subtitle: "Updated Subtitle",
+        introText: "Updated Intro",
+        cfpPdfUrl: "/api/images/public/uploads/cfp-v2.pdf",
+        downloadButtonLabel: "Get CFP v2",
+        policyCards: [{ eyebrow: "Policy", title: "Updated Policy", description: "Desc", footerText: "May 2027" }],
+        trackCards: [{ badge: "Regular", deadline: "May 2027", title: "Regular Track", description: "Desc", checklist: [] }],
+        brochureBanner: { title: "CFP Brochure v2", description: "Updated banner", openButtonLabel: "Open v2" },
+      },
+    },
+    {
+      id: "tpl-1",
+      type: "PaperTemplates",
+      props: {
+        templatesHeading: "Updated Templates",
+        templates: [{ name: "LaTeX v2", format: "ZIP", description: "Updated", downloadUrl: "/api/images/public/uploads/latex-v2.zip" }],
+      },
+    },
+  ];
+
+  const submissionsBlocks = [
+    { id: "p1", type: "CfpPoliciesBlock", props: { cfpPdfUrl: "/cfp-ieee-smc-2027.pdf" } },
+    { id: "c1", type: "SubmissionCategoriesBlock", props: {} },
+    { id: "b1", type: "CfpBrochureBannerBlock", props: { cfpPdfUrl: "/cfp-ieee-smc-2027.pdf" } },
+    { id: "cd1", type: "SubmissionCountdown", props: { cfpPdfUrl: "/cfp-ieee-smc-2027.pdf" } },
+    { id: "t1", type: "PaperSubmissionGuidelinesSection", props: {} },
+  ];
+
+  const forward = applySharedBlockSyncToTargetBlocks(homeBlocks, submissionsBlocks);
+  assert.equal(forward.changed, true);
+  assert.equal(forward.syncedCfpPdfUrl, "/api/images/public/uploads/cfp-v2.pdf");
+  assert.equal(forward.updated[0].props?.title, "Updated CFP 2027");
+  assert.equal(forward.updated[0].props?.cfpPdfUrl, "/api/images/public/uploads/cfp-v2.pdf");
+  assert.equal((forward.updated[0].props?.policies as Array<{ title: string }>)[0].title, "Updated Policy");
+  assert.equal((forward.updated[1].props?.categories as Array<{ title: string }>)[0].title, "Regular Track");
+  assert.equal(forward.updated[2].props?.title, "CFP Brochure v2");
+  assert.equal(forward.updated[2].props?.cfpPdfUrl, "/api/images/public/uploads/cfp-v2.pdf");
+  assert.equal(forward.updated[3].props?.cfpPdfUrl, "/api/images/public/uploads/cfp-v2.pdf");
+  assert.equal(forward.updated[4].props?.templatesHeading, "Updated Templates");
+
+  // Direction B: Editing split CFP blocks on `submissions` -> syncs back to `CallForPapers` & `PaperTemplates` on `home`
+  const editedSubmissions = [
+    {
+      id: "p1",
+      type: "CfpPoliciesBlock",
+      props: {
+        title: "Submissions Policy Title",
+        cfpPdfUrl: "/api/images/public/uploads/cfp-v3.pdf",
+        policies: [{ eyebrow: "Rev", title: "Policy v3", description: "Desc 3", footerText: "June 2027" }],
+      },
+    },
+    {
+      id: "c1",
+      type: "SubmissionCategoriesBlock",
+      props: {
+        categories: [{ badge: "Special", deadline: "June 2027", title: "Special Track v3", description: "Desc", checklist: [] }],
+      },
+    },
+    {
+      id: "b1",
+      type: "CfpBrochureBannerBlock",
+      props: {
+        title: "Brochure v3",
+        cfpPdfUrl: "/api/images/public/uploads/cfp-v3.pdf",
+      },
+    },
+    {
+      id: "t1",
+      type: "PaperSubmissionGuidelinesSection",
+      props: {
+        templatesHeading: "Templates v3",
+      },
+    },
+  ];
+
+  const reverse = applySharedBlockSyncToTargetBlocks(editedSubmissions, homeBlocks);
+  assert.equal(reverse.changed, true);
+  assert.equal(reverse.updated[0].props?.title, "Submissions Policy Title");
+  assert.equal(reverse.updated[0].props?.cfpPdfUrl, "/api/images/public/uploads/cfp-v3.pdf");
+  assert.equal((reverse.updated[0].props?.policyCards as Array<{ title: string }>)[0].title, "Policy v3");
+  assert.equal((reverse.updated[0].props?.trackCards as Array<{ title: string }>)[0].title, "Special Track v3");
+  assert.equal((reverse.updated[0].props?.brochureBanner as { title: string }).title, "Brochure v3");
+  assert.equal(reverse.updated[1].props?.templatesHeading, "Templates v3");
 });

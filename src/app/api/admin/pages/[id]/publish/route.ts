@@ -50,6 +50,15 @@ export async function POST(
     if (updated.slug === "committees") {
       revalidatePagePaths("home");
     }
+    if (
+      updated.slug === "home" ||
+      updated.slug === "submissions" ||
+      updated.slug === "call-for-papers"
+    ) {
+      revalidatePagePaths("home");
+      revalidatePagePaths("submissions");
+      revalidatePagePaths("call-for-papers");
+    }
 
     return apiSuccess({ page: formatPageRecord(updated) });
   } catch (error: unknown) {
