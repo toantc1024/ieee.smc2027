@@ -13,54 +13,63 @@ export type PageBlockLike = {
   [key: string]: unknown;
 };
 
-const COMMITTEE_SYNC_PROP_KEYS = [
-  "groups",
-  "badge",
-  "title",
-  "titleAccent",
-  "subtitle",
-  "cardBadgeLabel",
-  "autoplayDelay",
+/**
+ * Canonical families of shared conference blocks and their legacy/alias names.
+ * Editing ANY block in a family on ANY page automatically propagates its props
+ * to all blocks in the same family across every other page.
+ *
+ * Page-specific layout/hero/text blocks (HeroCarousel, RichTextBlock, CustomHTML,
+ * Grid, Columns, etc.) are intentionally excluded so each page keeps its own layout.
+ */
+export const SHARED_BLOCK_FAMILIES: readonly (readonly string[])[] = [
+  ["CommitteesSection", "Committee"],
+  ["ContactCards", "ContactSupportSection"],
+  ["FAQ", "FaqAccordionSection"],
+  ["Keynotes", "KeynoteSpeakersSection"],
+  ["ConferenceVideo", "ConferenceVideoSection"],
+  ["NewsList", "NewsGridSection"],
+  ["ImportantDates", "ImportantDatesSection"],
+  ["TracksExplorer", "ConferenceTracksSection"],
+  ["PaperTemplates", "PaperSubmissionGuidelinesSection"],
+  ["CallForPapers"],
+  ["SubmissionPortalsBlock"],
+  ["CfpPoliciesBlock"],
+  ["SubmissionCategoriesBlock"],
+  ["CfpBrochureBannerBlock"],
+  ["SubmissionCountdown"],
+  ["CfpSubscribe"],
+  ["VenueOverviewBlock", "Venue"],
+  ["TransitLogisticsBlock"],
+  ["VisitorInfoBlock"],
+  ["CityAttractionsBlock"],
+  ["Sponsors", "SponsorsSection"],
+  ["RegistrationWizardBlock"],
+  ["RegistrationFeeTableBlock", "PaymentMethods"],
+  ["PaymentChannelsBlock"],
+  ["VatInvoiceNoticeBlock"],
+  ["ScheduleTimelineSection"],
+  ["TechnicalSessionsBlock"],
+  ["WorkshopTutorialSection"],
+  ["AwardsSection"],
+  ["PastConferencesSection"],
+  ["VisaInformationSection"],
+  ["TravelAccommodationSection"],
+  ["ConferenceHighlights", "ConferenceHighlightsSection"],
+  ["About", "AboutConferenceSection"],
+  ["WelcomeLetter", "WelcomeLetterSection"],
 ] as const;
 
-const PAPER_TEMPLATE_TYPES = new Set([
-  "PaperTemplates",
-  "PaperSubmissionGuidelinesSection",
-]);
+const TYPE_TO_FAMILY_INDEX = new Map<string, number>();
+SHARED_BLOCK_FAMILIES.forEach((family, idx) => {
+  for (const type of family) {
+    TYPE_TO_FAMILY_INDEX.set(type, idx);
+  }
+});
 
-const TRACKS_TYPES = new Set(["TracksExplorer", "ConferenceTracksSection"]);
-
-const IMPORTANT_DATES_TYPES = new Set([
-  "ImportantDatesSection",
-  "ImportantDates",
-]);
-
-const DIRECT_SHARED_CFP_TYPES = new Set([
-  "SubmissionPortalsBlock",
-  "CfpPoliciesBlock",
-  "SubmissionCategoriesBlock",
-  "CfpBrochureBannerBlock",
-  "SubmissionCountdown",
-  "CfpSubscribe",
-  "CallForPapers",
-]);
+const COMMITTEE_TYPES = new Set(["CommitteesSection", "Committee"]);
 
 function hasNonEmptyProps(props: unknown): boolean {
   return Boolean(props && typeof props === "object" && Object.keys(props).length > 0);
-}
-
-function mergeProps(
-  targetProps: Record<string, unknown> | undefined,
-  sourceProps: Record<string, unknown>,
-  keys: readonly string[]
-): Record<string, unknown> {
-  const nextProps: Record<string, unknown> = { ...(targetProps || {}) };
-  for (const key of keys) {
-    if (sourceProps[key] !== undefined) {
-      nextProps[key] = structuredClone(sourceProps[key]);
-    }
-  }
-  return nextProps;
 }
 
 function mergeAllDefinedProps(
@@ -74,38 +83,6 @@ function mergeAllDefinedProps(
     }
   }
   return nextProps;
-}
-
-function updateCommitteeBlocks(
-  blocks: PageBlockLike[],
-  sourceProps: Record<string, unknown>
-): { updated: PageBlockLike[]; changed: boolean } {
-  const hasCommitteesSection = blocks.some((b) => b?.type === "CommitteesSection");
-  let changed = false;
-
-  const updated = blocks
-    .filter((block) => {
-      if (hasCommitteesSection && block?.type === "Committee") {
-        changed = true;
-        return false;
-      }
-      return true;
-    })
-    .map((block) => {
-      if (
-        block?.type === "CommitteesSection" ||
-        (!hasCommitteesSection && block?.type === "Committee")
-      ) {
-        const nextProps = mergeProps(block.props, sourceProps, COMMITTEE_SYNC_PROP_KEYS);
-        if (JSON.stringify(block.props || {}) !== JSON.stringify(nextProps)) {
-          changed = true;
-          return { ...block, props: nextProps };
-        }
-      }
-      return block;
-    });
-
-  return { updated, changed };
 }
 
 function extractCfpPdfUrl(blocks: PageBlockLike[]): string | undefined {
@@ -125,26 +102,36 @@ function extractCfpPdfUrl(blocks: PageBlockLike[]): string | undefined {
 }
 
 /**
- * Pure, deterministic shared-block propagation from a saved source page's blocks
+ * Pure, deterministic universal shared-block propagation from a saved source page's blocks
  * into another page's blocks. Handles:
- * - CFP blocks (both monolithic `CallForPapers` <-> split `CfpPoliciesBlock`,
- *   `SubmissionCategoriesBlock`, `CfpBrochureBannerBlock`, plus `SubmissionPortalsBlock`,
- *   `SubmissionCountdown`, `CfpSubscribe`, and `cfpPdfUrl`)
- * - Paper Templates (`PaperTemplates` <-> `PaperSubmissionGuidelinesSection`)
- * - Important Dates (`ImportantDates` <-> `ImportantDatesSection`)
- * - Tracks (`TracksExplorer` <-> `ConferenceTracksSection`)
+ * - ALL shared conference block families (Committees, ContactCards, FAQ, Keynotes,
+ *   ConferenceVideo, NewsList, ImportantDates, TracksExplorer, PaperTemplates,
+ *   Sponsors, Venue, Registration, Schedule, TechnicalSessions, Workshops, Awards, etc.)
+ * - Bidirectional monolithic `CallForPapers` <-> split CFP blocks (`CfpPoliciesBlock`,
+ *   `SubmissionCategoriesBlock`, `CfpBrochureBannerBlock`)
+ * - Global `cfpPdfUrl` propagation across CFP blocks, SubmissionCountdown, and FooterSection
+ * - Legacy duplicate `Committee` cleanup when `CommitteesSection` exists
  */
 export function applySharedBlockSyncToTargetBlocks(
   sourceBlocks: PageBlockLike[],
   targetBlocks: PageBlockLike[]
 ): { updated: PageBlockLike[]; changed: boolean; syncedCfpPdfUrl?: string } {
   let changed = false;
-  let nextBlocks = [...targetBlocks];
 
+  // Index source blocks by exact type and by canonical family index
   const sourceByType = new Map<string, PageBlockLike>();
+  const sourceByFamily = new Map<number, PageBlockLike>();
+
   for (const b of sourceBlocks) {
-    if (b?.type && hasNonEmptyProps(b.props)) {
-      sourceByType.set(b.type, b);
+    if (!b?.type || !hasNonEmptyProps(b.props)) continue;
+    sourceByType.set(b.type, b);
+    const familyIdx = TYPE_TO_FAMILY_INDEX.get(b.type);
+    if (familyIdx !== undefined) {
+      // Prefer canonical (first) type in family if both exist on source page
+      const existing = sourceByFamily.get(familyIdx);
+      if (!existing || b.type === SHARED_BLOCK_FAMILIES[familyIdx][0]) {
+        sourceByFamily.set(familyIdx, b);
+      }
     }
   }
 
@@ -152,22 +139,43 @@ export function applySharedBlockSyncToTargetBlocks(
   const sourceCfpPolicies = sourceByType.get("CfpPoliciesBlock");
   const sourceSubmissionCategories = sourceByType.get("SubmissionCategoriesBlock");
   const sourceCfpBrochure = sourceByType.get("CfpBrochureBannerBlock");
-  const sourcePaperTemplates =
-    sourceBlocks.find((b) => b?.type && PAPER_TEMPLATE_TYPES.has(b.type) && hasNonEmptyProps(b.props));
-  const sourceTracks =
-    sourceBlocks.find((b) => b?.type && TRACKS_TYPES.has(b.type) && hasNonEmptyProps(b.props));
-  const sourceDates = sourceBlocks.find(
-    (b) => b?.type && IMPORTANT_DATES_TYPES.has(b.type) && Array.isArray(b.props?.dates)
-  );
   const syncedCfpPdfUrl = extractCfpPdfUrl(sourceBlocks);
 
-  nextBlocks = nextBlocks.map((target) => {
+  const targetHasCommitteesSection = targetBlocks.some(
+    (b) => b?.type === "CommitteesSection"
+  );
+  const hasSourceCommittee = sourceByFamily.has(
+    TYPE_TO_FAMILY_INDEX.get("CommitteesSection")!
+  );
+
+  // Deduplicate legacy Committee alias if target already has CommitteesSection
+  const filteredTargets = targetBlocks.filter((block) => {
+    if (
+      hasSourceCommittee &&
+      targetHasCommitteesSection &&
+      block?.type === "Committee"
+    ) {
+      changed = true;
+      return false;
+    }
+    return true;
+  });
+
+  const nextBlocks = filteredTargets.map((target) => {
     const type = target?.type || "";
     let nextProps: Record<string, unknown> = { ...(target.props || {}) };
 
-    // 1. Direct 1:1 shared CFP block sync (e.g. submissions <-> call-for-papers)
-    if (DIRECT_SHARED_CFP_TYPES.has(type) && sourceByType.has(type)) {
-      nextProps = mergeAllDefinedProps(nextProps, sourceByType.get(type)!.props!);
+    // 1. Universal family sync (matches exact type OR any alias in the same family)
+    const familyIdx = TYPE_TO_FAMILY_INDEX.get(type);
+    if (familyIdx !== undefined && sourceByFamily.has(familyIdx)) {
+      const sourceBlock = sourceByFamily.get(familyIdx)!;
+      if (
+        !COMMITTEE_TYPES.has(type) ||
+        type === "CommitteesSection" ||
+        !targetHasCommitteesSection
+      ) {
+        nextProps = mergeAllDefinedProps(nextProps, sourceBlock.props!);
+      }
     }
 
     // 2. Monolithic CallForPapers -> split CFP blocks
@@ -224,7 +232,10 @@ export function applySharedBlockSyncToTargetBlocks(
           nextProps.policyCards = structuredClone(sp.policies);
         }
       }
-      if (sourceSubmissionCategories?.props && Array.isArray(sourceSubmissionCategories.props.categories)) {
+      if (
+        sourceSubmissionCategories?.props &&
+        Array.isArray(sourceSubmissionCategories.props.categories)
+      ) {
         nextProps.trackCards = structuredClone(sourceSubmissionCategories.props.categories);
       }
       if (sourceCfpBrochure?.props) {
@@ -261,21 +272,6 @@ export function applySharedBlockSyncToTargetBlocks(
         type === "FooterSection")
     ) {
       nextProps.cfpPdfUrl = syncedCfpPdfUrl;
-    }
-
-    // 5. PaperTemplates <-> PaperSubmissionGuidelinesSection
-    if (PAPER_TEMPLATE_TYPES.has(type) && sourcePaperTemplates?.props) {
-      nextProps = mergeAllDefinedProps(nextProps, sourcePaperTemplates.props);
-    }
-
-    // 6. TracksExplorer <-> ConferenceTracksSection
-    if (TRACKS_TYPES.has(type) && sourceTracks?.props) {
-      nextProps = mergeAllDefinedProps(nextProps, sourceTracks.props);
-    }
-
-    // 7. ImportantDates <-> ImportantDatesSection
-    if (IMPORTANT_DATES_TYPES.has(type) && sourceDates?.props) {
-      nextProps.dates = structuredClone(sourceDates.props.dates);
     }
 
     if (JSON.stringify(target.props || {}) !== JSON.stringify(nextProps)) {
@@ -352,7 +348,8 @@ async function persistUpdatedPageBlocks(
 }
 
 /**
- * Synchronize shared sections across pages and Settings whenever a page is saved or rolled back.
+ * Synchronize ALL shared conference sections across every page and global Settings
+ * whenever a page is saved or rolled back.
  */
 export async function syncSharedBlocksAcrossPages(
   sourceSlug: string,
@@ -363,31 +360,7 @@ export async function syncSharedBlocksAcrossPages(
     : [];
   const normalizedSource = sourceSlug.replace(/^\/+|\/+$/g, "");
 
-  // 1. Bidirectional CommitteesSection sync between `home` and `committees`
-  if (normalizedSource === "home" || normalizedSource === "committees") {
-    const committeesSection = blockList.find((b) => b?.type === "CommitteesSection");
-    const committeeAlias = blockList.find(
-      (b) => b?.type === "Committee" && hasNonEmptyProps(b.props)
-    );
-    const sourceCommittee = committeesSection || committeeAlias;
-
-    if (sourceCommittee?.props && typeof sourceCommittee.props === "object") {
-      const targetSlug = normalizedSource === "home" ? "committees" : "home";
-      const targetPage = await prisma.page.findUnique({ where: { slug: targetSlug } });
-      if (targetPage) {
-        const currentBlocks = extractPageBlocks(targetPage) as PageBlockLike[];
-        const { updated, changed } = updateCommitteeBlocks(
-          currentBlocks,
-          sourceCommittee.props
-        );
-        if (changed) {
-          await persistUpdatedPageBlocks(targetPage, updated);
-        }
-      }
-    }
-  }
-
-  // 2. Sync CFP blocks, Paper Templates, Tracks, ImportantDates, and cfpPdfUrl across ALL other pages
+  // 1. Universal shared-block propagation across ALL other pages
   const otherPages = await prisma.page.findMany({
     where: { slug: { not: normalizedSource } },
     select: { id: true, slug: true, title: true, blocks: true, content: true },
@@ -407,7 +380,7 @@ export async function syncSharedBlocksAcrossPages(
     }
   }
 
-  // Also propagate updated cfpPdfUrl to global Header & Footer settings so topbar/footer CFP PDF links stay in sync
+  // 2. Propagate updated cfpPdfUrl to global Header & Footer settings
   if (propagatedCfpPdfUrl) {
     const headerSetting = await prisma.setting.findUnique({ where: { key: "header" } });
     const normalizedHeader = normalizeHeaderConfig(
@@ -457,7 +430,7 @@ export async function syncSharedBlocksAcrossPages(
     revalidatePagePaths("call-for-papers");
   }
 
-  // 3. FooterSection sync to global `footer` Setting and across pages
+  // 3. FooterSection sync to global `footer` Setting
   const footerBlock = blockList.find(
     (b) => b?.type === "FooterSection" && hasNonEmptyProps(b?.props)
   );
@@ -488,31 +461,6 @@ export async function syncSharedBlocksAcrossPages(
         data: sessionsData as unknown as Prisma.InputJsonValue,
       },
     });
-    if (normalizedSource !== "program/sessions") {
-      const targetPage = await prisma.page.findUnique({
-        where: { slug: "program/sessions" },
-      });
-      if (targetPage) {
-        const pageBlocks = extractPageBlocks(targetPage) as PageBlockLike[];
-        let pageChanged = false;
-        const updated = pageBlocks.map((b) => {
-          if (b?.type === "TechnicalSessionsBlock") {
-            pageChanged = true;
-            return {
-              ...b,
-              props: {
-                ...(b.props || {}),
-                sessions: structuredClone(sessionsData),
-              },
-            };
-          }
-          return b;
-        });
-        if (pageChanged) {
-          await persistUpdatedPageBlocks(targetPage, updated);
-        }
-      }
-    }
     revalidatePagePaths("program/sessions");
   }
 }

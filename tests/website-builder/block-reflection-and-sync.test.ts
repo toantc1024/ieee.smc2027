@@ -997,3 +997,37 @@ test("applySharedBlockSyncToTargetBlocks syncs CFP blocks, cfpPdfUrl, and PaperT
   assert.equal((reverse.updated[0].props?.brochureBanner as { title: string }).title, "Brochure v3");
   assert.equal(reverse.updated[1].props?.templatesHeading, "Templates v3");
 });
+
+test("applySharedBlockSyncToTargetBlocks syncs ALL other shared conference blocks and aliases across pages without touching page-specific blocks", () => {
+  const sourceBlocks = [
+    { id: "c1", type: "ContactCards", props: { title: "Updated Support", cards: [{ title: "Desk" }] } },
+    { id: "f1", type: "FAQ", props: { title: "Updated FAQ", items: [{ question: "Q1", answer: "A1" }] } },
+    { id: "k1", type: "Keynotes", props: { title: "Updated Keynotes", speakers: [{ name: "Dr. Ada" }] } },
+    { id: "v1", type: "ConferenceVideo", props: { title: "Updated Video", videoUrl: "https://youtu.be/abc" } },
+    { id: "n1", type: "NewsList", props: { title: "Updated News" } },
+    { id: "d1", type: "ImportantDates", props: { title: "Updated Dates", dates: [{ id: "1", title: "D1", date: "May 2027" }] } },
+    { id: "h1", type: "HeroCarousel", props: { slides: [{ title: "Home Only Hero" }] } },
+  ];
+
+  const targetBlocks = [
+    { id: "tc1", type: "ContactSupportSection", props: { title: "Old Support" } },
+    { id: "tf1", type: "FaqAccordionSection", props: { title: "Old FAQ" } },
+    { id: "tk1", type: "KeynoteSpeakersSection", props: { title: "Old Keynotes" } },
+    { id: "tv1", type: "ConferenceVideoSection", props: { title: "Old Video" } },
+    { id: "tn1", type: "NewsGridSection", props: { title: "Old News" } },
+    { id: "td1", type: "ImportantDatesSection", props: { title: "Old Dates", dates: [] } },
+    { id: "th1", type: "HeroCarousel", props: { slides: [{ title: "Target Own Hero" }] } },
+  ];
+
+  const res = applySharedBlockSyncToTargetBlocks(sourceBlocks, targetBlocks);
+  assert.equal(res.changed, true);
+  assert.equal(res.updated[0].props?.title, "Updated Support");
+  assert.equal(res.updated[1].props?.title, "Updated FAQ");
+  assert.equal(res.updated[2].props?.title, "Updated Keynotes");
+  assert.equal(res.updated[3].props?.title, "Updated Video");
+  assert.equal(res.updated[4].props?.title, "Updated News");
+  assert.equal(res.updated[5].props?.title, "Updated Dates");
+  assert.equal((res.updated[5].props?.dates as Array<{ title: string }>)[0].title, "D1");
+  // Page-specific HeroCarousel must NOT be overwritten
+  assert.equal((res.updated[6].props?.slides as Array<{ title: string }>)[0].title, "Target Own Hero");
+});
