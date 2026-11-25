@@ -140,7 +140,14 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
               exit="exit"
               className="w-full transform-gpu will-change-[transform,opacity]"
             >
-              <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-blue-100/80">
+              <div
+                className={cn(
+                  "flex flex-col items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-blue-100/80",
+                  activeItem.promoCardPosition === "left"
+                    ? "lg:flex-row-reverse lg:divide-x-reverse"
+                    : "lg:flex-row"
+                )}
+              >
                 {/* Columns Section */}
                 {columns.map((col, idx) => {
                   const isFirst = idx === 0;
@@ -819,8 +826,8 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                           className={cn(
                             "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-full rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
                             isActive
-                              ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
-                              : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
+                              ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                              : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40"
                           )}
                           aria-expanded={isMenuOpen}
                         >
@@ -900,8 +907,8 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                             className={cn(
                               "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-full rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
                               isActive
-                                ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
-                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
+                                ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40"
                             )}
                             aria-expanded={isMenuOpen}
                           >
@@ -1033,8 +1040,8 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                               "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
                               variant === "stacked" ? "h-10" : "h-full",
                               isActive
-                                ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
-                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
+                                ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40"
                             )}
                             aria-expanded={isMenuOpen}
                           >

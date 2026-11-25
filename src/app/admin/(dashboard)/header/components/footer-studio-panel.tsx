@@ -47,52 +47,55 @@ export type FooterInspectorTarget =
   | { type: "bottom" }
   | null;
 
-/* ── Left Palette for Footer Mode ─────────────────────────────────────────── */
+/* ── Left Palette for Footer Mode (Layers & Draggable Link Columns) ───────── */
 export function FooterPalette({
   config,
   selectedTarget,
   onSelectTarget,
   onAddLinkGroup,
+  onMoveLinkGroup,
   onDeleteLinkGroup,
 }: {
   config: FooterConfigData;
   selectedTarget: FooterInspectorTarget;
   onSelectTarget: (target: FooterInspectorTarget) => void;
   onAddLinkGroup: () => void;
+  onMoveLinkGroup: (fromIndex: number, toIndex: number) => void;
   onDeleteLinkGroup: (groupIndex: number) => void;
 }) {
+  const [dragColIdx, setDragColIdx] = useState<number | null>(null);
+  const [dragOverColIdx, setDragOverColIdx] = useState<number | null>(null);
+
   const sections: {
     id: "banner" | "brand" | "bottom";
     title: string;
     description: string;
-    icon: React.ComponentType<{ className?: string }>;
   }[] = [
     {
       id: "banner",
       title: "Top CFP Banner",
-      description: "Badge, dates, heading, CFP download & portal CTA.",
-      icon: Megaphone,
+      description: "Badge, dates, heading, CFP file & portal CTA.",
     },
     {
       id: "brand",
       title: "Brand, Contact & Social",
-      description: "Host university text, venue, hotline, email & social links.",
-      icon: Building2,
+      description: "Host university, venue, hotline, email & social.",
     },
     {
       id: "bottom",
       title: "Bottom Copyright Bar",
       description: "Copyright notice and right-side venue credit.",
-      icon: Copyright,
     },
   ];
 
   return (
     <aside className="w-[272px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-full select-none">
-      <div className="px-3 py-2.5 border-b border-slate-100 flex items-center gap-2">
-        <PanelBottom className="w-4 h-4 text-[#115eff]" />
+      <div className="px-3.5 py-2.5 border-b border-slate-100 flex items-center justify-between">
         <span className="text-xs font-extrabold text-[#004776]">
-          Footer Sections
+          Footer Layers
+        </span>
+        <span className="text-[10px] font-semibold text-slate-400">
+          Drag to reorder
         </span>
       </div>
 
@@ -103,7 +106,6 @@ export function FooterPalette({
             Layout Regions
           </div>
           {sections.map((sec) => {
-            const Icon = sec.icon;
             const isSelected = selectedTarget?.type === sec.id;
             return (
               <button
@@ -111,36 +113,24 @@ export function FooterPalette({
                 type="button"
                 onClick={() => onSelectTarget({ type: sec.id })}
                 className={cn(
-                  "w-full text-left p-2.5 rounded-lg border transition-all cursor-pointer flex items-start gap-2.5",
+                  "w-full text-left px-3 py-2.5 rounded-lg border transition-all cursor-pointer",
                   isSelected
                     ? "bg-blue-50/70 border-[#115eff] shadow-2xs"
                     : "bg-white border-slate-200 hover:border-blue-300 hover:bg-slate-50"
                 )}
               >
-                <div
-                  className={cn(
-                    "w-8 h-8 rounded-md border flex items-center justify-center shrink-0 transition-colors",
-                    isSelected
-                      ? "bg-[#115eff] border-[#115eff] text-white"
-                      : "bg-blue-50 border-blue-100 text-[#115eff]"
-                  )}
-                >
-                  <Icon className="w-4 h-4" />
+                <div className="text-xs font-bold text-[#004776] truncate">
+                  {sec.title}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-bold text-[#004776] truncate">
-                    {sec.title}
-                  </div>
-                  <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
-                    {sec.description}
-                  </p>
-                </div>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
+                  {sec.description}
+                </p>
               </button>
             );
           })}
         </div>
 
-        {/* Link Columns */}
+        {/* Draggable Link Columns */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between px-0.5">
             <span className="text-[11px] font-bold capitalize text-slate-400">
@@ -156,15 +146,42 @@ export function FooterPalette({
               return (
                 <div
                   key={`${group.heading}-${idx}`}
+                  draggable
+                  onDragStart={(e) => {
+                    setDragColIdx(idx);
+                    e.dataTransfer.setData("application/x-footer-col", String(idx));
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    if (dragColIdx !== null && dragColIdx !== idx) {
+                      e.preventDefault();
+                      setDragOverColIdx(idx);
+                    }
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverColIdx === idx) setDragOverColIdx(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (dragColIdx !== null && dragColIdx !== idx) {
+                      onMoveLinkGroup(dragColIdx, idx);
+                    }
+                    setDragColIdx(null);
+                    setDragOverColIdx(null);
+                  }}
+                  onDragEnd={() => {
+                    setDragColIdx(null);
+                    setDragOverColIdx(null);
+                  }}
                   onClick={() => onSelectTarget({ type: "group", groupIndex: idx })}
                   className={cn(
-                    "group flex items-center gap-2 px-2.5 py-2 rounded-md border transition-all cursor-pointer",
+                    "group flex items-center gap-2 px-2.5 py-2 rounded-md border transition-all cursor-grab active:cursor-grabbing",
                     isSelected
                       ? "bg-blue-50/80 border-[#115eff] shadow-2xs"
-                      : "bg-white border-slate-200 hover:border-blue-200 hover:bg-slate-50"
+                      : "bg-white border-slate-200 hover:border-blue-200 hover:bg-slate-50",
+                    dragOverColIdx === idx && "border-t-2 border-t-[#115eff]"
                   )}
                 >
-                  <Columns3 className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-semibold text-[#004776] truncate">
                       {group.heading || `Column ${idx + 1}`}
@@ -209,13 +226,15 @@ export function FooterPalette({
   );
 }
 
-/* ── Visual Footer Canvas ─────────────────────────────────────────────────── */
+/* ── Visual Footer Canvas (Matches live Footer.tsx layering + full drag) ──── */
 export function VisualFooterCanvas({
   config,
   viewport,
   selectedTarget,
   onSelectTarget,
   onMoveLinkGroup,
+  onReorderGroupLinks,
+  onReorderSocialLinks,
   onDeleteLinkGroup,
 }: {
   config: FooterConfigData;
@@ -223,8 +242,17 @@ export function VisualFooterCanvas({
   selectedTarget: FooterInspectorTarget;
   onSelectTarget: (target: FooterInspectorTarget) => void;
   onMoveLinkGroup: (fromIndex: number, toIndex: number) => void;
+  onReorderGroupLinks: (groupIndex: number, fromIndex: number, toIndex: number) => void;
+  onReorderSocialLinks: (fromIndex: number, toIndex: number) => void;
   onDeleteLinkGroup: (groupIndex: number) => void;
 }) {
+  const [dragColIdx, setDragColIdx] = useState<number | null>(null);
+  const [dragOverColIdx, setDragOverColIdx] = useState<number | null>(null);
+  const [dragLink, setDragLink] = useState<{ groupIndex: number; linkIndex: number } | null>(null);
+  const [dragOverLink, setDragOverLink] = useState<{ groupIndex: number; linkIndex: number } | null>(null);
+  const [dragSocialIdx, setDragSocialIdx] = useState<number | null>(null);
+  const [dragOverSocialIdx, setDragOverSocialIdx] = useState<number | null>(null);
+
   const frameClass =
     viewport === "mobile"
       ? "w-[390px]"
@@ -239,6 +267,26 @@ export function VisualFooterCanvas({
   return (
     <div className={cn(frameClass, "mx-auto py-6 px-4 select-none")}>
       <div className="rounded-xl border border-blue-200/80 shadow-2xl overflow-hidden bg-[#115eff] text-white relative">
+        {/* Background Texture & Royal Blue Overlay matching live Footer.tsx */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/cta-background.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-75 pointer-events-none"
+        />
+        <div className="absolute inset-0 bg-[#115eff]/85 pointer-events-none" />
+        <div
+          className="absolute inset-0 bg-dot-dark opacity-20 pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="corner-dot-dark-tr opacity-40 pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="corner-dot-dark-bl opacity-30 pointer-events-none"
+          aria-hidden="true"
+        />
         {/* Top Banner: Host University & CFP Action Bar */}
         <div
           onClick={() => onSelectTarget({ type: "banner" })}
@@ -356,7 +404,40 @@ export function VisualFooterCanvas({
               {config.socialLinks.map((social, idx) => (
                 <span
                   key={`${social.name}-${idx}`}
-                  className="px-2.5 py-1 rounded bg-white/10 border border-white/20 text-xs font-medium text-white"
+                  draggable
+                  onDragStart={(e) => {
+                    e.stopPropagation();
+                    setDragSocialIdx(idx);
+                    e.dataTransfer.setData("application/x-footer-social", String(idx));
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    if (dragSocialIdx !== null && dragSocialIdx !== idx) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDragOverSocialIdx(idx);
+                    }
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverSocialIdx === idx) setDragOverSocialIdx(null);
+                  }}
+                  onDrop={(e) => {
+                    if (dragSocialIdx !== null && dragSocialIdx !== idx) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onReorderSocialLinks(dragSocialIdx, idx);
+                    }
+                    setDragSocialIdx(null);
+                    setDragOverSocialIdx(null);
+                  }}
+                  onDragEnd={() => {
+                    setDragSocialIdx(null);
+                    setDragOverSocialIdx(null);
+                  }}
+                  className={cn(
+                    "px-2.5 py-1 rounded bg-white/10 border border-white/20 text-xs font-medium text-white cursor-grab active:cursor-grabbing transition-all",
+                    dragOverSocialIdx === idx && "ring-2 ring-white"
+                  )}
                 >
                   {social.name}
                 </span>
@@ -364,7 +445,7 @@ export function VisualFooterCanvas({
             </div>
           </div>
 
-          {/* Right Columns: Categorized Navigation Links */}
+          {/* Right Columns: Draggable Categorized Navigation Links */}
           <div className={viewport === "desktop" ? "col-span-7" : ""}>
             <div
               className={cn(
@@ -384,14 +465,42 @@ export function VisualFooterCanvas({
                 return (
                   <div
                     key={`${group.heading}-${gIdx}`}
+                    draggable
+                    onDragStart={(e) => {
+                      setDragColIdx(gIdx);
+                      e.dataTransfer.setData("application/x-footer-canvas-col", String(gIdx));
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      if (dragColIdx !== null && dragColIdx !== gIdx) {
+                        e.preventDefault();
+                        setDragOverColIdx(gIdx);
+                      }
+                    }}
+                    onDragLeave={() => {
+                      if (dragOverColIdx === gIdx) setDragOverColIdx(null);
+                    }}
+                    onDrop={(e) => {
+                      if (dragColIdx !== null && dragColIdx !== gIdx) {
+                        e.preventDefault();
+                        onMoveLinkGroup(dragColIdx, gIdx);
+                      }
+                      setDragColIdx(null);
+                      setDragOverColIdx(null);
+                    }}
+                    onDragEnd={() => {
+                      setDragColIdx(null);
+                      setDragOverColIdx(null);
+                    }}
                     onClick={() =>
                       onSelectTarget({ type: "group", groupIndex: gIdx })
                     }
                     className={cn(
-                      "group/col relative p-2.5 -m-2.5 rounded-lg cursor-pointer transition-all",
+                      "group/col relative p-2.5 -m-2.5 rounded-lg cursor-grab active:cursor-grabbing transition-all",
                       isGroupSelected
                         ? "ring-2 ring-inset ring-amber-300 bg-white/10"
-                        : "hover:bg-white/5"
+                        : "hover:bg-white/5",
+                      dragOverColIdx === gIdx && "border-l-2 border-l-white"
                     )}
                   >
                     {/* Floating Column Reorder/Delete Bar */}
@@ -438,14 +547,60 @@ export function VisualFooterCanvas({
                       {group.heading || `Column ${gIdx + 1}`}
                     </h4>
                     <ul className="space-y-1.5">
-                      {group.links.map((link, lIdx) => (
-                        <li
-                          key={`${link.label}-${lIdx}`}
-                          className="text-blue-100 text-xs sm:text-sm truncate"
-                        >
-                          {link.label || "Untitled Link"}
-                        </li>
-                      ))}
+                      {group.links.map((link, lIdx) => {
+                        const isLinkOver =
+                          dragOverLink?.groupIndex === gIdx &&
+                          dragOverLink.linkIndex === lIdx;
+                        return (
+                          <li
+                            key={`${link.label}-${lIdx}`}
+                            draggable
+                            onDragStart={(e) => {
+                              e.stopPropagation();
+                              setDragLink({ groupIndex: gIdx, linkIndex: lIdx });
+                              e.dataTransfer.setData("application/x-footer-link", String(lIdx));
+                              e.dataTransfer.effectAllowed = "move";
+                            }}
+                            onDragOver={(e) => {
+                              if (
+                                dragLink &&
+                                dragLink.groupIndex === gIdx &&
+                                dragLink.linkIndex !== lIdx
+                              ) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setDragOverLink({ groupIndex: gIdx, linkIndex: lIdx });
+                              }
+                            }}
+                            onDragLeave={() => {
+                              if (isLinkOver) setDragOverLink(null);
+                            }}
+                            onDrop={(e) => {
+                              if (
+                                dragLink &&
+                                dragLink.groupIndex === gIdx &&
+                                dragLink.linkIndex !== lIdx
+                              ) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onReorderGroupLinks(gIdx, dragLink.linkIndex, lIdx);
+                              }
+                              setDragLink(null);
+                              setDragOverLink(null);
+                            }}
+                            onDragEnd={() => {
+                              setDragLink(null);
+                              setDragOverLink(null);
+                            }}
+                            className={cn(
+                              "text-blue-100 text-xs sm:text-sm truncate px-1 py-0.5 -mx-1 rounded hover:bg-white/10 cursor-grab active:cursor-grabbing",
+                              isLinkOver && "border-t-2 border-t-white"
+                            )}
+                          >
+                            {link.label || "Untitled Link"}
+                          </li>
+                        );
+                      })}
                       {group.links.length === 0 && (
                         <li className="text-blue-200/70 text-xs italic">
                           No links yet

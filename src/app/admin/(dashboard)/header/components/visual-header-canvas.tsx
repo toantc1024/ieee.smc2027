@@ -57,6 +57,14 @@ interface VisualHeaderCanvasProps {
   ) => void;
   onDeleteColumn: (triggerId: string, columnId: string) => void;
   onMoveColumn: (triggerId: string, fromIndex: number, toIndex: number) => void;
+  onReorderTriggers: (fromIndex: number, toIndex: number) => void;
+  onReorderColumnLinks: (
+    triggerId: string,
+    columnId: string,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
+  onSetPromoPosition: (triggerId: string, position: "left" | "right") => void;
   onConvertTriggerToMega: (triggerId: string) => void;
   onDropPaletteBlock: (
     blockType: PaletteDragBlockType,
@@ -74,12 +82,27 @@ export function VisualHeaderCanvas({
   onAddColumn,
   onDeleteColumn,
   onMoveColumn,
+  onReorderTriggers,
+  onReorderColumnLinks,
+  onSetPromoPosition,
   onConvertTriggerToMega,
   onDropPaletteBlock,
 }: VisualHeaderCanvasProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
+  const [dragTriggerIdx, setDragTriggerIdx] = useState<number | null>(null);
+  const [dragOverTriggerIdx, setDragOverTriggerIdx] = useState<number | null>(null);
   const [dragColIdx, setDragColIdx] = useState<number | null>(null);
   const [dragOverColIdx, setDragOverColIdx] = useState<number | null>(null);
+  const [dragLinkState, setDragLinkState] = useState<{
+    colId: string;
+    index: number;
+  } | null>(null);
+  const [dragOverLink, setDragOverLink] = useState<{
+    colId: string;
+    index: number;
+  } | null>(null);
+  const [draggingPromo, setDraggingPromo] = useState(false);
+  const [promoDropSide, setPromoDropSide] = useState<"left" | "right" | null>(null);
   const [canvasDropActive, setCanvasDropActive] = useState(false);
 
   const activeTrigger: NavLinkItem | undefined =
@@ -417,7 +440,7 @@ export function VisualHeaderCanvas({
             </button>
           )}
 
-          {/* Nav Triggers Row */}
+          {/* Nav Triggers Row (Draggable to reorder, crisp square style) */}
           <nav
             className={cn(
               "flex items-stretch gap-0.5 flex-wrap",
@@ -428,23 +451,51 @@ export function VisualHeaderCanvas({
               variant === "minimal" && "flex-1 justify-end mr-2"
             )}
           >
-            {config.navLinks.map((item) => {
+            {config.navLinks.map((item, navIdx) => {
               const isActive = activeTrigger?.id === item.id;
               const isMega = item.type === "mega";
               return (
                 <button
                   key={item.id}
                   type="button"
+                  draggable
+                  onDragStart={(e) => {
+                    setDragTriggerIdx(navIdx);
+                    e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                      e.preventDefault();
+                      setDragOverTriggerIdx(navIdx);
+                    }
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                      onReorderTriggers(dragTriggerIdx, navIdx);
+                    }
+                    setDragTriggerIdx(null);
+                    setDragOverTriggerIdx(null);
+                  }}
+                  onDragEnd={() => {
+                    setDragTriggerIdx(null);
+                    setDragOverTriggerIdx(null);
+                  }}
                   onClick={() => {
                     onSelectTrigger(item.id);
                     onSelectTarget({ type: "trigger", triggerId: item.id });
                   }}
                   className={cn(
-                    "group relative px-3.5 rounded-none border-b-2 text-[14px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer",
+                    "group relative px-3.5 rounded-none border-b-2 text-[14px] font-semibold flex items-center gap-1.5 transition-colors cursor-grab active:cursor-grabbing",
                     variant === "stacked" ? "py-2" : "h-full",
                     isActive
-                      ? "border-[#115eff] text-[#115eff] bg-blue-50/60"
-                      : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
+                      ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                      : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
+                    dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
                   )}
                 >
                   <span>{item.name || "Untitled"}</span>
@@ -455,9 +506,6 @@ export function VisualHeaderCanvas({
                         isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
                       )}
                     />
-                  )}
-                  {item.isExternal && !isMega && (
-                    <ExternalLink className="w-3 h-3 text-slate-400" />
                   )}
                 </button>
               );
@@ -638,7 +686,31 @@ export function VisualHeaderCanvas({
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex items-stretch w-full divide-x divide-blue-100/80 border border-slate-100 rounded-lg overflow-hidden">
+                  <div
+                    onDragOver={(e) => {
+                      if (!draggingPromo) return;
+                      e.preventDefault();
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
+                      setPromoDropSide(side);
+                    }}
+                    onDrop={(e) => {
+                      if (e.dataTransfer.getData("application/x-promo-card") === "1") {
+                        e.preventDefault();
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
+                        onSetPromoPosition(activeTrigger.id, side);
+                        setDraggingPromo(false);
+                        setPromoDropSide(null);
+                      }
+                    }}
+                    className={cn(
+                      "flex items-stretch w-full divide-x divide-blue-100/80 border border-slate-100 rounded-lg overflow-hidden relative",
+                      activeTrigger.promoCardPosition === "left" && "flex-row-reverse divide-x-reverse",
+                      promoDropSide === "left" && "ring-2 ring-inset ring-[#115eff]/50",
+                      promoDropSide === "right" && "ring-2 ring-inset ring-[#115eff]/50"
+                    )}
+                  >
                     {columns.map((col, colIdx) => {
                       const isColSelected = selectedColumnId === col.id;
                       const showPromo =
@@ -789,13 +861,59 @@ export function VisualHeaderCanvas({
                           {/* Column Links */}
                           {col.type !== "promo-card" && (
                             <div className="flex flex-col gap-1 flex-1">
-                              {col.links.map((link) => {
+                              {col.links.map((link, linkIdx) => {
                                 const IconComp = getNavIcon(link.icon);
                                 const isLinkSelected =
                                   isColSelected && selectedLinkId === link.id;
+                                const isLinkDragOver =
+                                  dragOverLink?.colId === col.id &&
+                                  dragOverLink.index === linkIdx;
                                 return (
                                   <div
                                     key={link.id}
+                                    draggable
+                                    onDragStart={(e) => {
+                                      e.stopPropagation();
+                                      setDragLinkState({ colId: col.id, index: linkIdx });
+                                      e.dataTransfer.setData("application/x-col-link", String(linkIdx));
+                                      e.dataTransfer.effectAllowed = "move";
+                                    }}
+                                    onDragOver={(e) => {
+                                      if (
+                                        dragLinkState &&
+                                        dragLinkState.colId === col.id &&
+                                        dragLinkState.index !== linkIdx
+                                      ) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setDragOverLink({ colId: col.id, index: linkIdx });
+                                      }
+                                    }}
+                                    onDragLeave={() => {
+                                      if (isLinkDragOver) setDragOverLink(null);
+                                    }}
+                                    onDrop={(e) => {
+                                      if (
+                                        dragLinkState &&
+                                        dragLinkState.colId === col.id &&
+                                        dragLinkState.index !== linkIdx
+                                      ) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onReorderColumnLinks(
+                                          activeTrigger.id,
+                                          col.id,
+                                          dragLinkState.index,
+                                          linkIdx
+                                        );
+                                      }
+                                      setDragLinkState(null);
+                                      setDragOverLink(null);
+                                    }}
+                                    onDragEnd={() => {
+                                      setDragLinkState(null);
+                                      setDragOverLink(null);
+                                    }}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       onSelectTarget({
@@ -806,10 +924,11 @@ export function VisualHeaderCanvas({
                                       });
                                     }}
                                     className={cn(
-                                      "group/item flex flex-col gap-0.5 py-2 px-2 rounded-sm transition-all cursor-pointer",
+                                      "group/item flex flex-col gap-0.5 py-2 px-2 rounded-sm transition-all cursor-grab active:cursor-grabbing",
                                       isLinkSelected
                                         ? "bg-blue-100/70 ring-1 ring-[#115eff]"
-                                        : "hover:bg-blue-50/60"
+                                        : "hover:bg-blue-50/60",
+                                      isLinkDragOver && "border-t-2 border-t-[#115eff]"
                                     )}
                                   >
                                     <div className="flex items-center gap-2 min-w-0">
@@ -857,18 +976,59 @@ export function VisualHeaderCanvas({
                       );
                     })}
 
-                    {/* Trigger Featured Promo Card Sidebar */}
+                    {/* Draggable Featured Promo Card Sidebar */}
                     {activeTrigger.promoCard && (
                       <div
+                        draggable
+                        onDragStart={(e) => {
+                          e.stopPropagation();
+                          setDraggingPromo(true);
+                          e.dataTransfer.setData("application/x-promo-card", "1");
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragEnd={() => {
+                          setDraggingPromo(false);
+                          setPromoDropSide(null);
+                        }}
                         onClick={() =>
                           onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
                         }
-                        title="Click to edit Featured Promo Card in Trigger Settings"
+                        title="Drag left/right to move Featured Card, or click to edit"
                         className={cn(
-                          "w-[280px] shrink-0 p-4 bg-white border-l border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-pointer transition-all hover:bg-blue-50/40",
-                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]"
+                          "group/promo w-[280px] shrink-0 p-4 bg-white flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
+                          activeTrigger.promoCardPosition === "left"
+                            ? "border-r border-blue-100/80"
+                            : "border-l border-blue-100/80",
+                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]",
+                          draggingPromo && "opacity-60"
                         )}
                       >
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute top-2 right-2 z-20 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded px-1 py-0.5 shadow-2xs"
+                        >
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onSetPromoPosition(
+                                activeTrigger.id,
+                                activeTrigger.promoCardPosition === "left" ? "right" : "left"
+                              )
+                            }
+                            title={
+                              activeTrigger.promoCardPosition === "left"
+                                ? "Move to right"
+                                : "Move to left"
+                            }
+                            className="p-1 rounded text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                          >
+                            {activeTrigger.promoCardPosition === "left" ? (
+                              <ArrowRight className="w-3 h-3" />
+                            ) : (
+                              <ArrowLeft className="w-3 h-3" />
+                            )}
+                          </button>
+                        </div>
                         <div className="relative z-10 space-y-2.5">
                           {activeTrigger.promoCard.image && (
                             // eslint-disable-next-line @next/next/no-img-element

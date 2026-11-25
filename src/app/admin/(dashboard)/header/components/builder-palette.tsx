@@ -135,14 +135,13 @@ export function BuilderPalette({
             type="button"
             onClick={() => setTab("blocks")}
             className={cn(
-              "flex items-center justify-center gap-1.5 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer",
+              "flex items-center justify-center py-1.5 rounded text-xs font-semibold transition-all cursor-pointer",
               tab === "blocks"
-                ? "bg-white text-[#004776] shadow-2xs"
+                ? "bg-white text-[#115eff] shadow-2xs"
                 : "text-slate-600 hover:text-slate-900"
             )}
           >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Blocks</span>
+            Blocks
           </button>
           <button
             type="button"
@@ -150,13 +149,12 @@ export function BuilderPalette({
             className={cn(
               "flex items-center justify-center gap-1.5 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer",
               tab === "triggers"
-                ? "bg-white text-[#004776] shadow-2xs"
+                ? "bg-white text-[#115eff] shadow-2xs"
                 : "text-slate-600 hover:text-slate-900"
             )}
           >
-            <ListTree className="w-3.5 h-3.5" />
-            <span>Menu</span>
-            <span className="ml-0.5 text-[10px] px-1.5 py-0.2 rounded-full bg-blue-50 text-[#115eff] font-bold">
+            <span>Layers</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-50 text-[#115eff] font-bold">
               {navLinks.length}
             </span>
           </button>
@@ -186,35 +184,22 @@ export function BuilderPalette({
             <div className="space-y-2">
               {filteredBlocks
                 .filter((b) => b.group === "columns")
-                .map((block) => {
-                  const Icon = block.icon;
-                  return (
-                    <div
-                      key={block.id}
-                      draggable
-                      onDragStart={(e) => handleBlockDragStart(e, block.id)}
-                      onClick={() => handleBlockClick(block.id)}
-                      className="group p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#115eff] hover:bg-blue-50/30 transition-all cursor-grab active:cursor-grabbing shadow-2xs"
-                    >
-                      <div className="flex items-start gap-2.5">
-                        <div className="w-8 h-8 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover:bg-[#115eff] group-hover:border-[#115eff] transition-colors">
-                          <Icon className="w-4 h-4 text-[#115eff] group-hover:text-white transition-colors" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-xs font-bold text-slate-800 group-hover:text-[#004776] truncate">
-                              {block.title}
-                            </span>
-                            <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#115eff] shrink-0" />
-                          </div>
-                          <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
-                            {block.description}
-                          </p>
-                        </div>
-                      </div>
+                .map((block) => (
+                  <div
+                    key={block.id}
+                    draggable
+                    onDragStart={(e) => handleBlockDragStart(e, block.id)}
+                    onClick={() => handleBlockClick(block.id)}
+                    className="group px-3 py-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#115eff] hover:bg-blue-50/30 transition-all cursor-grab active:cursor-grabbing shadow-2xs"
+                  >
+                    <div className="text-xs font-bold text-[#004776] group-hover:text-[#115eff] truncate">
+                      {block.title}
                     </div>
-                  );
-                })}
+                    <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
+                      {block.description}
+                    </p>
+                  </div>
+                ))}
             </div>
           </div>
 
@@ -229,35 +214,22 @@ export function BuilderPalette({
             <div className="space-y-2">
               {filteredBlocks
                 .filter((b) => b.group === "navigation")
-                .map((block) => {
-                  const Icon = block.icon;
-                  return (
-                    <div
-                      key={block.id}
-                      draggable
-                      onDragStart={(e) => handleBlockDragStart(e, block.id)}
-                      onClick={() => handleBlockClick(block.id)}
-                      className="group p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#115eff] hover:bg-blue-50/30 transition-all cursor-pointer shadow-2xs"
-                    >
-                      <div className="flex items-start gap-2.5">
-                        <div className="w-8 h-8 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover:bg-[#115eff] group-hover:border-[#115eff] transition-colors">
-                          <Icon className="w-4 h-4 text-[#115eff] group-hover:text-white transition-colors" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-xs font-bold text-slate-800 group-hover:text-[#004776] truncate">
-                              {block.title}
-                            </span>
-                            <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#115eff] shrink-0" />
-                          </div>
-                          <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
-                            {block.description}
-                          </p>
-                        </div>
-                      </div>
+                .map((block) => (
+                  <div
+                    key={block.id}
+                    draggable
+                    onDragStart={(e) => handleBlockDragStart(e, block.id)}
+                    onClick={() => handleBlockClick(block.id)}
+                    className="group px-3 py-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#115eff] hover:bg-blue-50/30 transition-all cursor-pointer shadow-2xs"
+                  >
+                    <div className="text-xs font-bold text-[#004776] group-hover:text-[#115eff] truncate">
+                      {block.title}
                     </div>
-                  );
-                })}
+                    <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
+                      {block.description}
+                    </p>
+                  </div>
+                ))}
             </div>
           </div>
 

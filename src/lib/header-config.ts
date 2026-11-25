@@ -38,6 +38,7 @@ export interface NavLinkItem {
   children?: NavSubItem[];
   columns?: NavColumnItem[];
   promoCard?: NavPromoCard;
+  promoCardPosition?: "left" | "right";
 }
 
 export interface TopbarQuickLink {

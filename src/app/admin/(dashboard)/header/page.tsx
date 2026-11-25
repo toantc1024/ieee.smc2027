@@ -244,6 +244,48 @@ export default function HeaderStudioPage() {
     }
   };
 
+  const handleReorderFooterGroupLinks = (
+    groupIndex: number,
+    fromIndex: number,
+    toIndex: number
+  ) => {
+    updateFooterConfig((prev) => ({
+      ...prev,
+      linkGroups: prev.linkGroups.map((group, gIdx) => {
+        if (gIdx !== groupIndex) return group;
+        const nextLinks = [...group.links];
+        if (
+          fromIndex < 0 ||
+          fromIndex >= nextLinks.length ||
+          toIndex < 0 ||
+          toIndex >= nextLinks.length
+        ) {
+          return group;
+        }
+        const [moved] = nextLinks.splice(fromIndex, 1);
+        nextLinks.splice(toIndex, 0, moved);
+        return { ...group, links: nextLinks };
+      }),
+    }));
+  };
+
+  const handleReorderFooterSocialLinks = (fromIndex: number, toIndex: number) => {
+    updateFooterConfig((prev) => {
+      const next = [...prev.socialLinks];
+      if (
+        fromIndex < 0 ||
+        fromIndex >= next.length ||
+        toIndex < 0 ||
+        toIndex >= next.length
+      ) {
+        return prev;
+      }
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return { ...prev, socialLinks: next };
+    });
+  };
+
   // Trigger Actions
   const handleSelectTrigger = (triggerId: string) => {
     setActiveTriggerId(triggerId);
@@ -431,6 +473,47 @@ export default function HeaderStudioPage() {
         nextCols.splice(toIndex, 0, moved);
         return { ...nav, columns: nextCols };
       }),
+    }));
+  };
+
+  const handleReorderColumnLinks = (
+    triggerId: string,
+    columnId: string,
+    fromIndex: number,
+    toIndex: number
+  ) => {
+    updateConfig((prev) => ({
+      ...prev,
+      navLinks: prev.navLinks.map((nav) => {
+        if (nav.id !== triggerId) return nav;
+        return {
+          ...nav,
+          columns: (nav.columns || []).map((col) => {
+            if (col.id !== columnId) return col;
+            const nextLinks = [...col.links];
+            if (
+              fromIndex < 0 ||
+              fromIndex >= nextLinks.length ||
+              toIndex < 0 ||
+              toIndex >= nextLinks.length
+            ) {
+              return col;
+            }
+            const [moved] = nextLinks.splice(fromIndex, 1);
+            nextLinks.splice(toIndex, 0, moved);
+            return { ...col, links: nextLinks };
+          }),
+        };
+      }),
+    }));
+  };
+
+  const handleSetPromoPosition = (triggerId: string, position: "left" | "right") => {
+    updateConfig((prev) => ({
+      ...prev,
+      navLinks: prev.navLinks.map((nav) =>
+        nav.id === triggerId ? { ...nav, promoCardPosition: position } : nav
+      ),
     }));
   };
 
@@ -623,8 +706,7 @@ export default function HeaderStudioPage() {
             )}
           </Button>
 
-          <div className="hidden md:flex items-center gap-2 pr-2 border-r border-slate-200">
-            <LayoutTemplate className="w-4 h-4 text-[#115eff]" />
+          <div className="hidden md:flex items-center pr-2.5 border-r border-slate-200">
             <span className="text-sm font-extrabold text-[#004776] tracking-tight">
               Layout Studio
             </span>
@@ -636,27 +718,25 @@ export default function HeaderStudioPage() {
               type="button"
               onClick={() => setStudioMode("header")}
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer",
+                "px-3 py-1 rounded text-xs font-semibold transition-all cursor-pointer",
                 studioMode === "header"
                   ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               )}
             >
-              <PanelTop className="w-3.5 h-3.5" />
-              <span>Header</span>
+              Header
             </button>
             <button
               type="button"
               onClick={() => setStudioMode("footer")}
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer",
+                "px-3 py-1 rounded text-xs font-semibold transition-all cursor-pointer",
                 studioMode === "footer"
                   ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               )}
             >
-              <PanelBottom className="w-3.5 h-3.5" />
-              <span>Footer</span>
+              Footer
             </button>
           </div>
         </div>
@@ -846,6 +926,7 @@ export default function HeaderStudioPage() {
               selectedTarget={footerTarget}
               onSelectTarget={setFooterTarget}
               onAddLinkGroup={handleAddFooterGroup}
+              onMoveLinkGroup={handleMoveFooterGroup}
               onDeleteLinkGroup={handleDeleteFooterGroup}
             />
           ))}
@@ -891,6 +972,9 @@ export default function HeaderStudioPage() {
                     onAddColumn={handleAddColumn}
                     onDeleteColumn={handleDeleteColumn}
                     onMoveColumn={handleMoveColumn}
+                    onReorderTriggers={handleReorderTriggers}
+                    onReorderColumnLinks={handleReorderColumnLinks}
+                    onSetPromoPosition={handleSetPromoPosition}
                     onConvertTriggerToMega={handleConvertTriggerToMega}
                     onDropPaletteBlock={handleDropPaletteBlock}
                   />
@@ -901,6 +985,8 @@ export default function HeaderStudioPage() {
                     selectedTarget={footerTarget}
                     onSelectTarget={setFooterTarget}
                     onMoveLinkGroup={handleMoveFooterGroup}
+                    onReorderGroupLinks={handleReorderFooterGroupLinks}
+                    onReorderSocialLinks={handleReorderFooterSocialLinks}
                     onDeleteLinkGroup={handleDeleteFooterGroup}
                   />
                 )}
