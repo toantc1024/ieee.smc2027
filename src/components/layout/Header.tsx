@@ -152,7 +152,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                     <Link
                       href={col.promoCard.href || "/#cfp"}
                       onClick={closeMenu}
-                      className="group/colpromo block rounded-lg overflow-hidden border border-blue-100 bg-gradient-to-br from-[#004776] to-[#0a3161] text-white p-3.5 hover:shadow-md transition-all"
+                      className="group/colpromo block rounded-lg overflow-hidden border border-blue-200 bg-[#115eff] text-white p-3.5 hover:bg-[#0a4de6] hover:shadow-md transition-all"
                     >
                       {col.promoCard.image && (
                         // eslint-disable-next-line @next/next/no-img-element

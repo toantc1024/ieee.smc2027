@@ -126,8 +126,25 @@ export function Footer(props: FooterProps = {}) {
       .catch(() => {
         // Fallback silently to DEFAULT_FOOTER_CONFIG
       });
+
+    const onUpdated = (e: Event) => {
+      const detail = (e as CustomEvent<Partial<FooterProps>>).detail;
+      if (detail && !cancelled) setRemoteConfig(detail);
+    };
+    window.addEventListener("smc:footer-updated", onUpdated);
+
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      channel = new BroadcastChannel("smc_footer_sync");
+      channel.onmessage = (ev) => {
+        if (ev.data && !cancelled) setRemoteConfig(ev.data);
+      };
+    }
+
     return () => {
       cancelled = true;
+      window.removeEventListener("smc:footer-updated", onUpdated);
+      channel?.close();
     };
   }, [isHiddenOnAdmin, hasExplicitOverrides, builderCtx]);
 

@@ -8,6 +8,10 @@ import {
   type NavColumnItem,
   type NavLinkItem,
 } from "@/lib/header-config";
+import {
+  DEFAULT_FOOTER_CONFIG,
+  type FooterConfigData,
+} from "@/lib/footer-config";
 import { useAutoMinimizeSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,10 +31,18 @@ import {
   type SelectedInspectorTarget,
 } from "./components/visual-header-canvas";
 import { HeaderInspector } from "./components/header-inspector";
+import {
+  FooterPalette,
+  VisualFooterCanvas,
+  FooterInspector,
+  type FooterInspectorTarget,
+} from "./components/footer-studio-panel";
 import { useDragAutoScroll } from "./components/use-drag-auto-scroll";
 import {
   PanelLeftClose,
   PanelLeftOpen,
+  PanelTop,
+  PanelBottom,
   Monitor,
   Tablet,
   Smartphone,
@@ -39,7 +51,6 @@ import {
   RotateCcw,
   Save,
   ExternalLink,
-  SlidersHorizontal,
   Loader2,
   LayoutTemplate,
   CheckCircle2,
@@ -48,9 +59,12 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 type ZoomMode = "auto" | "75" | "85" | "100";
+type StudioMode = "header" | "footer";
 
 export default function HeaderStudioPage() {
   useAutoMinimizeSidebar();
+
+  const [studioMode, setStudioMode] = useState<StudioMode>("header");
 
   const [config, setConfig] = useState<HeaderConfig>(() =>
     normalizeHeaderConfig(DEFAULT_HEADER_DATA)
@@ -58,6 +72,15 @@ export default function HeaderStudioPage() {
   const [savedSnapshot, setSavedSnapshot] = useState<string>(() =>
     JSON.stringify(normalizeHeaderConfig(DEFAULT_HEADER_DATA))
   );
+
+  const [footerConfig, setFooterConfig] = useState<FooterConfigData>(() => ({
+    ...DEFAULT_FOOTER_CONFIG,
+  }));
+  const [savedFooterSnapshot, setSavedFooterSnapshot] = useState<string>(() =>
+    JSON.stringify(DEFAULT_FOOTER_CONFIG)
+  );
+  const [footerTarget, setFooterTarget] = useState<FooterInspectorTarget>(null);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -76,15 +99,21 @@ export default function HeaderStudioPage() {
 
   useDragAutoScroll(canvasScrollRef, { active: true });
 
-  // Load persisted header config on mount
+  // Load persisted header & footer configs on mount
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch("/api/admin/header")
-      .then((res) => (res.ok ? res.json() : ({} as { header?: Partial<HeaderConfig> })))
-      .then((res: { header?: Partial<HeaderConfig> }) => {
+    Promise.all([
+      fetch("/api/admin/header")
+        .then((res) => (res.ok ? res.json() : ({} as { header?: Partial<HeaderConfig> })))
+        .catch(() => ({} as { header?: Partial<HeaderConfig> })),
+      fetch("/api/footer")
+        .then((res) => (res.ok ? res.json() : ({} as { footer?: Partial<FooterConfigData> })))
+        .catch(() => ({} as { footer?: Partial<FooterConfigData> })),
+    ])
+      .then(([headerRes, footerRes]) => {
         if (!mounted) return;
-        const normalized = normalizeHeaderConfig(res.header || DEFAULT_HEADER_DATA);
+        const normalized = normalizeHeaderConfig(headerRes.header || DEFAULT_HEADER_DATA);
         setConfig(normalized);
         setSavedSnapshot(JSON.stringify(normalized));
         const firstMega =
@@ -92,10 +121,19 @@ export default function HeaderStudioPage() {
         if (firstMega) {
           setActiveTriggerId(firstMega.id);
         }
-      })
-      .catch(() => {
-        if (!mounted) return;
-        toast.error("Failed to load header configuration. Using defaults.");
+
+        const mergedFooter: FooterConfigData = {
+          ...DEFAULT_FOOTER_CONFIG,
+          ...(footerRes.footer || {}),
+          linkGroups: Array.isArray(footerRes.footer?.linkGroups)
+            ? footerRes.footer.linkGroups
+            : DEFAULT_FOOTER_CONFIG.linkGroups,
+          socialLinks: Array.isArray(footerRes.footer?.socialLinks)
+            ? footerRes.footer.socialLinks
+            : DEFAULT_FOOTER_CONFIG.socialLinks,
+        };
+        setFooterConfig(mergedFooter);
+        setSavedFooterSnapshot(JSON.stringify(mergedFooter));
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -130,9 +168,15 @@ export default function HeaderStudioPage() {
     return Number(zoomMode) / 100;
   }, [viewport, zoomMode, autoScale]);
 
-  const isDirty = useMemo(() => {
+  const isHeaderDirty = useMemo(() => {
     return JSON.stringify(config) !== savedSnapshot;
   }, [config, savedSnapshot]);
+
+  const isFooterDirty = useMemo(() => {
+    return JSON.stringify(footerConfig) !== savedFooterSnapshot;
+  }, [footerConfig, savedFooterSnapshot]);
+
+  const isDirty = isHeaderDirty || isFooterDirty;
 
   const updateConfig = useCallback(
     (updater: (prev: HeaderConfig) => HeaderConfig) => {
@@ -140,6 +184,63 @@ export default function HeaderStudioPage() {
     },
     []
   );
+
+  const updateFooterConfig = useCallback(
+    (updater: (prev: FooterConfigData) => FooterConfigData) => {
+      setFooterConfig((prev) => updater(prev));
+    },
+    []
+  );
+
+  // Footer Column Actions
+  const handleAddFooterGroup = () => {
+    const nextIndex = footerConfig.linkGroups.length;
+    updateFooterConfig((prev) => ({
+      ...prev,
+      linkGroups: [
+        ...prev.linkGroups,
+        {
+          heading: "New Column",
+          links: [{ label: "New Link", href: "/#about" }],
+        },
+      ],
+    }));
+    setFooterTarget({ type: "group", groupIndex: nextIndex });
+  };
+
+  const handleDeleteFooterGroup = (groupIndex: number) => {
+    if (footerConfig.linkGroups.length <= 1) {
+      toast.error("At least one footer link column is required.");
+      return;
+    }
+    updateFooterConfig((prev) => ({
+      ...prev,
+      linkGroups: prev.linkGroups.filter((_, i) => i !== groupIndex),
+    }));
+    if (footerTarget?.type === "group") {
+      setFooterTarget(null);
+    }
+  };
+
+  const handleMoveFooterGroup = (fromIndex: number, toIndex: number) => {
+    updateFooterConfig((prev) => {
+      const next = [...prev.linkGroups];
+      if (
+        fromIndex < 0 ||
+        fromIndex >= next.length ||
+        toIndex < 0 ||
+        toIndex >= next.length
+      ) {
+        return prev;
+      }
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return { ...prev, linkGroups: next };
+    });
+    if (footerTarget?.type === "group" && footerTarget.groupIndex === fromIndex) {
+      setFooterTarget({ type: "group", groupIndex: toIndex });
+    }
+  };
 
   // Trigger Actions
   const handleSelectTrigger = (triggerId: string) => {
@@ -354,49 +455,88 @@ export default function HeaderStudioPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload = normalizeHeaderConfig(config);
-      const res = await fetch("/api/admin/header", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error || "Failed to save header settings.");
-        return;
+      const saveHeader = isHeaderDirty || (!isFooterDirty && studioMode === "header");
+      const saveFooter = isFooterDirty || (!isHeaderDirty && studioMode === "footer");
+
+      if (saveHeader) {
+        const payload = normalizeHeaderConfig(config);
+        const res = await fetch("/api/admin/header", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast.error(data.error || "Failed to save header settings.");
+          return;
+        }
+        setConfig(payload);
+        setSavedSnapshot(JSON.stringify(payload));
+        window.dispatchEvent(
+          new CustomEvent("smc:header-updated", { detail: payload })
+        );
+        if (typeof BroadcastChannel !== "undefined") {
+          const channel = new BroadcastChannel("smc_header_sync");
+          channel.postMessage(payload);
+          channel.close();
+        }
       }
 
-      setConfig(payload);
-      setSavedSnapshot(JSON.stringify(payload));
-      toast.success("Header configuration published.");
+      if (saveFooter) {
+        const res = await fetch("/api/footer", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(footerConfig),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast.error(data.error || "Failed to save footer settings.");
+          return;
+        }
+        const savedFooter: FooterConfigData = data.data?.footer || data.footer || footerConfig;
+        setFooterConfig(savedFooter);
+        setSavedFooterSnapshot(JSON.stringify(savedFooter));
+        window.dispatchEvent(
+          new CustomEvent("smc:footer-updated", { detail: savedFooter })
+        );
+        if (typeof BroadcastChannel !== "undefined") {
+          const channel = new BroadcastChannel("smc_footer_sync");
+          channel.postMessage(savedFooter);
+          channel.close();
+        }
+      }
 
-      // Instant live broadcast for Header.tsx
-      window.dispatchEvent(
-        new CustomEvent("smc:header-updated", { detail: payload })
+      toast.success(
+        saveHeader && saveFooter
+          ? "Header & Footer published."
+          : saveFooter
+            ? "Footer configuration published."
+            : "Header configuration published."
       );
-      if (typeof BroadcastChannel !== "undefined") {
-        const channel = new BroadcastChannel("smc_header_sync");
-        channel.postMessage(payload);
-        channel.close();
-      }
     } catch {
-      toast.error("Network error while saving header configuration.");
+      toast.error("Network error while saving configuration.");
     } finally {
       setSaving(false);
     }
   };
 
   const handleExportJson = () => {
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
+    const data = studioMode === "footer" ? footerConfig : config;
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "ieee-smc-2027-header-config.json";
+    a.download =
+      studioMode === "footer"
+        ? "ieee-smc-2027-footer-config.json"
+        : "ieee-smc-2027-header-config.json";
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Exported header JSON.");
+    toast.success(
+      studioMode === "footer" ? "Exported footer JSON." : "Exported header JSON."
+    );
   };
 
   const handleImportJson = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -405,13 +545,29 @@ export default function HeaderStudioPage() {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      const normalized = normalizeHeaderConfig(parsed);
-      setConfig(normalized);
-      if (normalized.navLinks[0]) {
-        setActiveTriggerId(normalized.navLinks[0].id);
+      if (studioMode === "footer") {
+        const merged: FooterConfigData = {
+          ...DEFAULT_FOOTER_CONFIG,
+          ...parsed,
+          linkGroups: Array.isArray(parsed.linkGroups)
+            ? parsed.linkGroups
+            : DEFAULT_FOOTER_CONFIG.linkGroups,
+          socialLinks: Array.isArray(parsed.socialLinks)
+            ? parsed.socialLinks
+            : DEFAULT_FOOTER_CONFIG.socialLinks,
+        };
+        setFooterConfig(merged);
+        setFooterTarget(null);
+        toast.success("Imported footer JSON. Click Save Changes to publish.");
+      } else {
+        const normalized = normalizeHeaderConfig(parsed);
+        setConfig(normalized);
+        if (normalized.navLinks[0]) {
+          setActiveTriggerId(normalized.navLinks[0].id);
+        }
+        setSelectedTarget(null);
+        toast.success("Imported header JSON. Click Save Changes to publish.");
       }
-      setSelectedTarget(null);
-      toast.success("Imported header JSON. Click Save Changes to publish.");
     } catch {
       toast.error("Invalid JSON configuration file.");
     } finally {
@@ -420,6 +576,12 @@ export default function HeaderStudioPage() {
   };
 
   const handleResetDefaults = () => {
+    if (studioMode === "footer") {
+      setFooterConfig({ ...DEFAULT_FOOTER_CONFIG });
+      setFooterTarget(null);
+      toast.info("Restored default IEEE SMC 2027 footer template.");
+      return;
+    }
     const fresh = normalizeHeaderConfig(DEFAULT_HEADER_DATA);
     setConfig(fresh);
     const firstMega =
@@ -453,40 +615,37 @@ export default function HeaderStudioPage() {
           <div className="hidden md:flex items-center gap-2 pr-2 border-r border-slate-200">
             <LayoutTemplate className="w-4 h-4 text-[#115eff]" />
             <span className="text-sm font-extrabold text-[#004776] tracking-tight">
-              Header Studio
+              Layout Studio
             </span>
           </div>
 
-          {/* Canvas vs General Mode Switcher */}
+          {/* Header vs Footer Mode Switcher */}
           <div className="inline-flex rounded-md bg-slate-100 p-0.5 border border-slate-200/80">
             <button
               type="button"
-              onClick={() => {
-                if (selectedTarget?.type === "general") {
-                  setSelectedTarget(null);
-                }
-              }}
+              onClick={() => setStudioMode("header")}
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold transition-all cursor-pointer",
-                selectedTarget?.type !== "general"
-                  ? "bg-white text-[#004776] shadow-2xs"
+                "px-2.5 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer",
+                studioMode === "header"
+                  ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               )}
             >
-              Canvas
+              <PanelTop className="w-3.5 h-3.5" />
+              <span>Header</span>
             </button>
             <button
               type="button"
-              onClick={() => setSelectedTarget({ type: "general" })}
+              onClick={() => setStudioMode("footer")}
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer",
-                selectedTarget?.type === "general"
-                  ? "bg-white text-[#004776] shadow-2xs"
+                "px-2.5 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer",
+                studioMode === "footer"
+                  ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
               )}
             >
-              <SlidersHorizontal className="w-3 h-3" />
-              <span>General & Top Bar</span>
+              <PanelBottom className="w-3.5 h-3.5" />
+              <span>Footer</span>
             </button>
           </div>
         </div>
@@ -636,7 +795,7 @@ export default function HeaderStudioPage() {
             size="sm"
             disabled={saving}
             onClick={handleSave}
-            className="h-8 px-3.5 text-xs font-bold bg-[#004776] hover:bg-[#00365a] text-white shadow-xs"
+            className="h-8 px-3.5 text-xs font-bold bg-[#115eff] hover:bg-[#0a4de6] text-white shadow-xs"
           >
             {saving ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
@@ -650,21 +809,30 @@ export default function HeaderStudioPage() {
 
       {/* Main Studio Body: Left Palette + Center Dot-Grid Artboard */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
-        {paletteOpen && (
-          <BuilderPalette
-            navLinks={config.navLinks}
-            activeTriggerId={activeTriggerId}
-            onSelectTrigger={handleSelectTrigger}
-            onAddTrigger={handleAddTrigger}
-            onRenameTrigger={handleRenameTrigger}
-            onDeleteTrigger={handleDeleteTrigger}
-            onReorderTriggers={handleReorderTriggers}
-            onAddColumnBlock={(blockType) =>
-              handleAddColumn(activeTriggerId, blockType)
-            }
-            onSelectGeneral={() => setSelectedTarget({ type: "general" })}
-          />
-        )}
+        {paletteOpen &&
+          (studioMode === "header" ? (
+            <BuilderPalette
+              navLinks={config.navLinks}
+              activeTriggerId={activeTriggerId}
+              onSelectTrigger={handleSelectTrigger}
+              onAddTrigger={handleAddTrigger}
+              onRenameTrigger={handleRenameTrigger}
+              onDeleteTrigger={handleDeleteTrigger}
+              onReorderTriggers={handleReorderTriggers}
+              onAddColumnBlock={(blockType) =>
+                handleAddColumn(activeTriggerId, blockType)
+              }
+              onSelectGeneral={() => setSelectedTarget({ type: "general" })}
+            />
+          ) : (
+            <FooterPalette
+              config={footerConfig}
+              selectedTarget={footerTarget}
+              onSelectTarget={setFooterTarget}
+              onAddLinkGroup={handleAddFooterGroup}
+              onDeleteLinkGroup={handleDeleteFooterGroup}
+            />
+          ))}
 
         {/* Center Dot-Grid Workspace */}
         <div
@@ -679,7 +847,7 @@ export default function HeaderStudioPage() {
           {loading ? (
             <div className="h-full flex items-center justify-center gap-2.5 text-sm font-medium text-slate-500">
               <Loader2 className="w-5 h-5 animate-spin text-[#115eff]" />
-              Loading Header Studio...
+              Loading Layout Studio...
             </div>
           ) : (
             <div
@@ -694,33 +862,54 @@ export default function HeaderStudioPage() {
                   : undefined
               }
             >
-              <VisualHeaderCanvas
-                config={config}
-                viewport={viewport}
-                activeTriggerId={activeTriggerId}
-                selectedTarget={selectedTarget}
-                onSelectTrigger={setActiveTriggerId}
-                onSelectTarget={setSelectedTarget}
-                onAddColumn={handleAddColumn}
-                onDeleteColumn={handleDeleteColumn}
-                onMoveColumn={handleMoveColumn}
-                onConvertTriggerToMega={handleConvertTriggerToMega}
-                onDropPaletteBlock={handleDropPaletteBlock}
-              />
+              {studioMode === "header" ? (
+                <VisualHeaderCanvas
+                  config={config}
+                  viewport={viewport}
+                  activeTriggerId={activeTriggerId}
+                  selectedTarget={selectedTarget}
+                  onSelectTrigger={setActiveTriggerId}
+                  onSelectTarget={setSelectedTarget}
+                  onAddColumn={handleAddColumn}
+                  onDeleteColumn={handleDeleteColumn}
+                  onMoveColumn={handleMoveColumn}
+                  onConvertTriggerToMega={handleConvertTriggerToMega}
+                  onDropPaletteBlock={handleDropPaletteBlock}
+                />
+              ) : (
+                <VisualFooterCanvas
+                  config={footerConfig}
+                  viewport={viewport}
+                  selectedTarget={footerTarget}
+                  onSelectTarget={setFooterTarget}
+                  onMoveLinkGroup={handleMoveFooterGroup}
+                  onDeleteLinkGroup={handleDeleteFooterGroup}
+                />
+              )}
             </div>
           )}
         </div>
       </div>
 
       {/* Bottom Docked Inspector Drawer */}
-      <HeaderInspector
-        config={config}
-        target={selectedTarget}
-        onClose={() => setSelectedTarget(null)}
-        onUpdateConfig={updateConfig}
-        onDeleteColumn={handleDeleteColumn}
-        onDeleteTrigger={handleDeleteTrigger}
-      />
+      {studioMode === "header" ? (
+        <HeaderInspector
+          config={config}
+          target={selectedTarget}
+          onClose={() => setSelectedTarget(null)}
+          onUpdateConfig={updateConfig}
+          onDeleteColumn={handleDeleteColumn}
+          onDeleteTrigger={handleDeleteTrigger}
+        />
+      ) : (
+        <FooterInspector
+          config={footerConfig}
+          target={footerTarget}
+          onClose={() => setFooterTarget(null)}
+          onUpdateConfig={updateFooterConfig}
+          onDeleteLinkGroup={handleDeleteFooterGroup}
+        />
+      )}
     </div>
   );
 }

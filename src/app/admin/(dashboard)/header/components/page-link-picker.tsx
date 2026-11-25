@@ -258,7 +258,7 @@ export function PageLinkPicker({
                 type="button"
                 size="sm"
                 onClick={() => setShowCreate((prev) => !prev)}
-                className="h-8 text-xs bg-[#004776] hover:bg-[#00365a] text-white shrink-0"
+                className="h-8 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shrink-0"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
                 Create Page
@@ -624,7 +624,7 @@ export function PageLinkPicker({
                       });
                       setOpen(false);
                     }}
-                    className="bg-[#004776] hover:bg-[#00365a] text-white h-8 px-4 text-xs"
+                    className="bg-[#115eff] hover:bg-[#0a4de6] text-white h-8 px-4 text-xs"
                   >
                     <ArrowUpRight className="w-3.5 h-3.5 mr-1.5" />
                     Apply Link

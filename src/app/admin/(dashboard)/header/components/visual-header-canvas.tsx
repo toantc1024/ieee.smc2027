@@ -297,7 +297,7 @@ export function VisualHeaderCanvas({
 
               {ctaEnabled && (
                 <div className="pt-2">
-                  <div className="w-full py-2.5 px-4 rounded-md bg-[#004776] text-white text-center text-sm font-bold shadow-xs">
+                  <div className="w-full py-2.5 px-4 rounded-md bg-[#115eff] text-white text-center text-sm font-bold shadow-xs">
                     {config.ctaButton?.label || "Submit Paper"}
                   </div>
                 </div>
@@ -472,7 +472,7 @@ export function VisualHeaderCanvas({
               className="shrink-0 cursor-pointer"
               title="Click to edit Primary CTA Button"
             >
-              <div className="px-4 py-2 rounded-md bg-[#004776] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#00365a] transition-colors">
+              <div className="px-4 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
                 <span>{config.ctaButton?.label || "Submit Paper"}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
@@ -594,7 +594,7 @@ export function VisualHeaderCanvas({
                       type="button"
                       size="sm"
                       onClick={() => onConvertTriggerToMega(activeTrigger.id)}
-                      className="h-8 text-xs bg-[#004776] hover:bg-[#00365a] text-white"
+                      className="h-8 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"
                     >
                       <Columns3 className="w-3.5 h-3.5 mr-1.5" />
                       Convert to Mega Menu
@@ -631,7 +631,7 @@ export function VisualHeaderCanvas({
                       const promoTop = col.promoPosition === "top";
 
                       const promoEl = showPromo && col.promoCard ? (
-                        <div className="rounded-lg border border-blue-100 bg-gradient-to-br from-[#004776] to-[#0b3366] text-white p-3.5 space-y-2 relative overflow-hidden">
+                        <div className="rounded-lg border border-blue-200 bg-[#115eff] text-white p-3.5 space-y-2 relative overflow-hidden">
                           {col.promoCard.image && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -849,49 +849,33 @@ export function VisualHeaderCanvas({
                         }
                         title="Click to edit Featured Promo Card in Trigger Settings"
                         className={cn(
-                          "w-[280px] shrink-0 p-5 bg-gradient-to-br from-[#004776] via-[#0b3b75] to-[#072a57] text-white flex flex-col justify-between relative overflow-hidden cursor-pointer transition-all",
-                          isTriggerSelected && "ring-2 ring-inset ring-amber-300"
+                          "w-[280px] shrink-0 p-4 bg-white border-l border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-pointer transition-all hover:bg-blue-50/40",
+                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]"
                         )}
                       >
-                        {/* Subtle UTE dot matrix & flower watermark */}
-                        <div
-                          className="absolute inset-0 opacity-15 pointer-events-none"
-                          style={{
-                            backgroundImage:
-                              "radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px)",
-                            backgroundSize: "12px 12px",
-                          }}
-                        />
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src="/assets/flower-ute-white.png"
-                          alt=""
-                          className="absolute -bottom-8 -right-8 w-36 h-36 opacity-10 pointer-events-none select-none object-contain"
-                        />
-
                         <div className="relative z-10 space-y-2.5">
                           {activeTrigger.promoCard.image && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={activeTrigger.promoCard.image}
                               alt={activeTrigger.promoCard.title}
-                              className="w-full h-28 object-cover rounded-md border border-white/20 shadow-sm"
+                              className="w-full h-28 object-cover rounded-sm border border-blue-100 shadow-2xs"
                             />
                           )}
                           {activeTrigger.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-white/15 text-blue-100">
+                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-blue-50 text-[#115eff] border border-blue-100">
                               {activeTrigger.promoCard.badge}
                             </span>
                           )}
-                          <h4 className="text-sm font-bold leading-snug">
+                          <h4 className="text-sm font-bold text-[#004776] leading-snug">
                             {activeTrigger.promoCard.title}
                           </h4>
-                          <p className="text-xs text-blue-100/85 leading-relaxed line-clamp-3">
+                          <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
                             {activeTrigger.promoCard.description}
                           </p>
                         </div>
 
-                        <div className="relative z-10 pt-3 mt-3 border-t border-white/15 flex items-center justify-between text-xs font-bold text-amber-300">
+                        <div className="relative z-10 pt-3 mt-3 border-t border-blue-100 flex items-center justify-between text-xs font-bold text-[#115eff]">
                           <span>{activeTrigger.promoCard.ctaText || "Learn More"}</span>
                           <ArrowUpRight className="w-4 h-4" />
                         </div>

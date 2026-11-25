@@ -245,8 +245,8 @@ export function BuilderPalette({
                       className="group p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#115eff] hover:bg-blue-50/30 transition-all cursor-pointer shadow-2xs"
                     >
                       <div className="flex items-start gap-2.5">
-                        <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-[#004776] group-hover:border-[#004776] transition-colors">
-                          <Icon className="w-4 h-4 text-[#004776] group-hover:text-white transition-colors" />
+                        <div className="w-8 h-8 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 group-hover:bg-[#115eff] group-hover:border-[#115eff] transition-colors">
+                          <Icon className="w-4 h-4 text-[#115eff] group-hover:text-white transition-colors" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-1">
@@ -390,7 +390,7 @@ export function BuilderPalette({
               type="button"
               size="sm"
               onClick={onAddTrigger}
-              className="w-full h-8 text-xs bg-[#004776] hover:bg-[#00365a] text-white font-semibold"
+              className="w-full h-8 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold"
             >
               <Plus className="w-3.5 h-3.5 mr-1.5" />
               Add Menu Trigger

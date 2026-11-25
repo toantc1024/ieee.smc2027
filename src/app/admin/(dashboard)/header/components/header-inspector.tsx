@@ -654,7 +654,7 @@ function ColumnInspector({
                 className={cn(
                   "px-2.5 py-1 rounded border text-xs font-semibold cursor-pointer",
                   column.promoPosition === "top"
-                    ? "bg-[#004776] text-white border-[#004776]"
+                    ? "bg-[#115eff] text-white border-[#115eff]"
                     : "bg-white text-slate-600 border-slate-200"
                 )}
               >
@@ -666,7 +666,7 @@ function ColumnInspector({
                 className={cn(
                   "px-2.5 py-1 rounded border text-xs font-semibold cursor-pointer",
                   column.promoPosition !== "top"
-                    ? "bg-[#004776] text-white border-[#004776]"
+                    ? "bg-[#115eff] text-white border-[#115eff]"
                     : "bg-white text-slate-600 border-slate-200"
                 )}
               >
@@ -848,7 +848,7 @@ function TriggerInspector({
                   Right Sidebar Featured Promo Card
                 </div>
                 <div className="text-[11px] text-slate-500">
-                  Add a dark-navy featured spotlight banner on the right edge of this mega menu.
+                  Add a featured spotlight card on the right edge of this mega menu.
                 </div>
               </div>
               <Button
@@ -963,7 +963,7 @@ function GeneralInspector({
                 className={cn(
                   "px-2.5 py-1.5 rounded border text-xs font-semibold text-left transition-all cursor-pointer",
                   variant === opt.id
-                    ? "bg-[#004776] text-white border-[#004776]"
+                    ? "bg-[#115eff] text-white border-[#115eff]"
                     : "bg-white text-slate-700 border-slate-200 hover:border-blue-300"
                 )}
               >
@@ -1407,7 +1407,7 @@ function GeneralInspector({
         <div className="p-3 rounded-md bg-white border border-slate-200 flex items-center justify-between">
           <span className="text-[11px] font-medium text-slate-500">Live Preview</span>
           {cta.enabled !== false ? (
-            <div className="px-3.5 py-1.5 rounded-md bg-[#004776] text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs">
+            <div className="px-3.5 py-1.5 rounded-lg bg-[#115eff] text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs">
               <span>{cta.label || "Submit Paper"}</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </div>

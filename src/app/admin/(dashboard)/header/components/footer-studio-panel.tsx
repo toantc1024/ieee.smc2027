@@ -1,0 +1,1063 @@
+"use client";
+
+import React, { useState } from "react";
+import type {
+  FooterConfigData,
+  FooterLinkGroup,
+  FooterLinkItem,
+  FooterSocialLink,
+} from "@/lib/footer-config";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { PageLinkPicker } from "./page-link-picker";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  ArrowUpRight,
+  Globe,
+  FileDown,
+  Plus,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  Upload,
+  X,
+  Columns3,
+  PanelBottom,
+  Building2,
+  Megaphone,
+  Copyright,
+  SlidersHorizontal,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+export type FooterInspectorTarget =
+  | { type: "banner" }
+  | { type: "brand" }
+  | { type: "group"; groupIndex: number }
+  | { type: "bottom" }
+  | null;
+
+async function uploadFooterAsset(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", "footer-assets");
+
+  const res = await fetch("/api/admin/upload", {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok || (!data.proxyUrl && !data.url)) {
+    throw new Error(data.error || "Upload failed");
+  }
+  return data.proxyUrl || data.url;
+}
+
+/* ── Left Palette for Footer Mode ─────────────────────────────────────────── */
+export function FooterPalette({
+  config,
+  selectedTarget,
+  onSelectTarget,
+  onAddLinkGroup,
+  onDeleteLinkGroup,
+}: {
+  config: FooterConfigData;
+  selectedTarget: FooterInspectorTarget;
+  onSelectTarget: (target: FooterInspectorTarget) => void;
+  onAddLinkGroup: () => void;
+  onDeleteLinkGroup: (groupIndex: number) => void;
+}) {
+  const sections: {
+    id: "banner" | "brand" | "bottom";
+    title: string;
+    description: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }[] = [
+    {
+      id: "banner",
+      title: "Top CFP Banner",
+      description: "Badge, dates, heading, CFP download & portal CTA.",
+      icon: Megaphone,
+    },
+    {
+      id: "brand",
+      title: "Brand, Contact & Social",
+      description: "Host university text, venue, hotline, email & social links.",
+      icon: Building2,
+    },
+    {
+      id: "bottom",
+      title: "Bottom Copyright Bar",
+      description: "Copyright notice and right-side venue credit.",
+      icon: Copyright,
+    },
+  ];
+
+  return (
+    <aside className="w-[272px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-full select-none">
+      <div className="px-3 py-2.5 border-b border-slate-100 flex items-center gap-2">
+        <PanelBottom className="w-4 h-4 text-[#115eff]" />
+        <span className="text-xs font-extrabold text-[#004776]">
+          Footer Sections
+        </span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-3 space-y-4">
+        {/* Core Regions */}
+        <div className="space-y-1.5">
+          <div className="px-0.5 text-[11px] font-bold capitalize text-slate-400">
+            Layout Regions
+          </div>
+          {sections.map((sec) => {
+            const Icon = sec.icon;
+            const isSelected = selectedTarget?.type === sec.id;
+            return (
+              <button
+                key={sec.id}
+                type="button"
+                onClick={() => onSelectTarget({ type: sec.id })}
+                className={cn(
+                  "w-full text-left p-2.5 rounded-lg border transition-all cursor-pointer flex items-start gap-2.5",
+                  isSelected
+                    ? "bg-blue-50/70 border-[#115eff] shadow-2xs"
+                    : "bg-white border-slate-200 hover:border-blue-300 hover:bg-slate-50"
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-md border flex items-center justify-center shrink-0 transition-colors",
+                    isSelected
+                      ? "bg-[#115eff] border-[#115eff] text-white"
+                      : "bg-blue-50 border-blue-100 text-[#115eff]"
+                  )}
+                >
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-bold text-[#004776] truncate">
+                    {sec.title}
+                  </div>
+                  <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
+                    {sec.description}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Link Columns */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between px-0.5">
+            <span className="text-[11px] font-bold capitalize text-slate-400">
+              Link Columns ({config.linkGroups.length})
+            </span>
+          </div>
+
+          <div className="space-y-1.5">
+            {config.linkGroups.map((group, idx) => {
+              const isSelected =
+                selectedTarget?.type === "group" &&
+                selectedTarget.groupIndex === idx;
+              return (
+                <div
+                  key={`${group.heading}-${idx}`}
+                  onClick={() => onSelectTarget({ type: "group", groupIndex: idx })}
+                  className={cn(
+                    "group flex items-center gap-2 px-2.5 py-2 rounded-md border transition-all cursor-pointer",
+                    isSelected
+                      ? "bg-blue-50/80 border-[#115eff] shadow-2xs"
+                      : "bg-white border-slate-200 hover:border-blue-200 hover:bg-slate-50"
+                  )}
+                >
+                  <Columns3 className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-semibold text-[#004776] truncate">
+                      {group.heading || `Column ${idx + 1}`}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      {group.links.length}{" "}
+                      {group.links.length === 1 ? "link" : "links"}
+                    </div>
+                  </div>
+                  {config.linkGroups.length > 1 && (
+                    <button
+                      type="button"
+                      title="Delete column"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteLinkGroup(idx);
+                      }}
+                      className="p-1 rounded text-slate-300 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-2.5 border-t border-slate-100 bg-slate-50/50">
+        <Button
+          type="button"
+          size="sm"
+          onClick={onAddLinkGroup}
+          className="w-full h-8 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white font-semibold"
+        >
+          <Plus className="w-3.5 h-3.5 mr-1.5" />
+          Add Link Column
+        </Button>
+      </div>
+    </aside>
+  );
+}
+
+/* ── Visual Footer Canvas ─────────────────────────────────────────────────── */
+export function VisualFooterCanvas({
+  config,
+  viewport,
+  selectedTarget,
+  onSelectTarget,
+  onMoveLinkGroup,
+  onDeleteLinkGroup,
+}: {
+  config: FooterConfigData;
+  viewport: "desktop" | "tablet" | "mobile";
+  selectedTarget: FooterInspectorTarget;
+  onSelectTarget: (target: FooterInspectorTarget) => void;
+  onMoveLinkGroup: (fromIndex: number, toIndex: number) => void;
+  onDeleteLinkGroup: (groupIndex: number) => void;
+}) {
+  const frameClass =
+    viewport === "mobile"
+      ? "w-[390px]"
+      : viewport === "tablet"
+        ? "w-[768px]"
+        : "w-[1260px]";
+
+  const isBannerSelected = selectedTarget?.type === "banner";
+  const isBrandSelected = selectedTarget?.type === "brand";
+  const isBottomSelected = selectedTarget?.type === "bottom";
+
+  return (
+    <div className={cn(frameClass, "mx-auto py-6 px-4 select-none")}>
+      <div className="rounded-xl border border-blue-200/80 shadow-2xl overflow-hidden bg-[#115eff] text-white relative">
+        {/* Top Banner: Host University & CFP Action Bar */}
+        <div
+          onClick={() => onSelectTarget({ type: "banner" })}
+          title="Click to edit Top CFP Banner"
+          className={cn(
+            "relative z-10 px-6 py-7 border-b border-white/15 cursor-pointer transition-all group/banner",
+            viewport === "desktop"
+              ? "grid grid-cols-12 gap-6 items-center"
+              : "flex flex-col gap-5",
+            isBannerSelected
+              ? "ring-2 ring-inset ring-amber-300 bg-white/10"
+              : "hover:bg-white/5"
+          )}
+        >
+          <span className="absolute top-2.5 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/15 text-[10px] font-bold text-white opacity-0 group-hover/banner:opacity-100 transition-opacity">
+            <SlidersHorizontal className="w-3 h-3" />
+            Edit Banner
+          </span>
+
+          <div className={viewport === "desktop" ? "col-span-8" : ""}>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5">
+              <span>{config.badgeText}</span>
+              <span className="text-white/50">•</span>
+              <span>{config.datesText}</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+              {config.heading}
+            </h3>
+            <p className="mt-2 text-sm text-blue-100 max-w-2xl leading-relaxed">
+              {config.description}
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              "flex flex-col gap-2.5",
+              viewport === "desktop" ? "col-span-4" : ""
+            )}
+          >
+            {config.cfpButtonLabel && (
+              <div className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 bg-white text-[#115eff] font-bold text-sm rounded-[0.26rem] shadow-md">
+                <FileDown className="w-4 h-4 text-[#115eff]" />
+                <span>{config.cfpButtonLabel}</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </div>
+            )}
+            {config.portalButtonLabel && (
+              <div className="inline-flex items-center justify-center gap-2 min-h-[42px] px-4 py-2 bg-white/10 border border-white/25 text-white font-semibold text-sm rounded-[0.26rem]">
+                <Globe className="w-4 h-4" />
+                <span>{config.portalButtonLabel}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Footer Content Grid */}
+        <div
+          className={cn(
+            "relative z-10 px-6 py-8",
+            viewport === "desktop"
+              ? "grid grid-cols-12 gap-8"
+              : "flex flex-col gap-8"
+          )}
+        >
+          {/* Left Column: Brand & Contact */}
+          <div
+            onClick={() => onSelectTarget({ type: "brand" })}
+            title="Click to edit Brand, Contact & Social Links"
+            className={cn(
+              "space-y-4 p-3 -m-3 rounded-lg cursor-pointer transition-all relative group/brand",
+              viewport === "desktop" ? "col-span-5" : "",
+              isBrandSelected
+                ? "ring-2 ring-inset ring-amber-300 bg-white/10"
+                : "hover:bg-white/5"
+            )}
+          >
+            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/15 text-[10px] font-bold text-white opacity-0 group-hover/brand:opacity-100 transition-opacity">
+              Edit Brand
+            </span>
+
+            <div className="space-y-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo/rectangle-logo.png"
+                alt="HCM-UTE"
+                className="h-10 w-auto max-w-[280px] object-contain"
+              />
+              <p className="text-blue-100/90 text-sm font-medium leading-relaxed">
+                {config.universityNote}
+              </p>
+            </div>
+
+            <p className="text-blue-100 text-sm leading-relaxed">
+              {config.secondaryDescription}
+            </p>
+
+            <div className="space-y-2 text-sm text-blue-100 pt-1">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-white mt-0.5 shrink-0" />
+                <span>
+                  <strong>Venue:</strong> {config.venueName}, {config.address}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-white shrink-0" />
+                <span>Hotline: {config.hotline}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-white shrink-0" />
+                <span>Email: {config.contactEmail}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {config.socialLinks.map((social, idx) => (
+                <span
+                  key={`${social.name}-${idx}`}
+                  className="px-2.5 py-1 rounded bg-white/10 border border-white/20 text-xs font-medium text-white"
+                >
+                  {social.name}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Columns: Categorized Navigation Links */}
+          <div className={viewport === "desktop" ? "col-span-7" : ""}>
+            <div
+              className={cn(
+                "grid gap-5",
+                viewport === "mobile"
+                  ? "grid-cols-1"
+                  : viewport === "tablet"
+                    ? "grid-cols-2"
+                    : "grid-cols-4"
+              )}
+            >
+              {config.linkGroups.map((group, gIdx) => {
+                const isGroupSelected =
+                  selectedTarget?.type === "group" &&
+                  selectedTarget.groupIndex === gIdx;
+
+                return (
+                  <div
+                    key={`${group.heading}-${gIdx}`}
+                    onClick={() =>
+                      onSelectTarget({ type: "group", groupIndex: gIdx })
+                    }
+                    className={cn(
+                      "group/col relative p-2.5 -m-2.5 rounded-lg cursor-pointer transition-all",
+                      isGroupSelected
+                        ? "ring-2 ring-inset ring-amber-300 bg-white/10"
+                        : "hover:bg-white/5"
+                    )}
+                  >
+                    {/* Floating Column Reorder/Delete Bar */}
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className={cn(
+                        "absolute top-1 right-1 z-20 flex items-center gap-0.5 px-1 py-0.5 rounded bg-white text-slate-700 shadow-sm transition-opacity",
+                        isGroupSelected
+                          ? "opacity-100"
+                          : "opacity-0 group-hover/col:opacity-100"
+                      )}
+                    >
+                      <button
+                        type="button"
+                        disabled={gIdx === 0}
+                        onClick={() => onMoveLinkGroup(gIdx, gIdx - 1)}
+                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                        title="Move left"
+                      >
+                        <ArrowLeft className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={gIdx === config.linkGroups.length - 1}
+                        onClick={() => onMoveLinkGroup(gIdx, gIdx + 1)}
+                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                        title="Move right"
+                      >
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                      {config.linkGroups.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => onDeleteLinkGroup(gIdx)}
+                          className="p-0.5 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                          title="Delete column"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    <h4 className="text-white font-bold text-sm mb-3 border-b border-white/20 pb-2 pr-10">
+                      {group.heading || `Column ${gIdx + 1}`}
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {group.links.map((link, lIdx) => (
+                        <li
+                          key={`${link.label}-${lIdx}`}
+                          className="text-blue-100 text-xs sm:text-sm truncate"
+                        >
+                          {link.label || "Untitled Link"}
+                        </li>
+                      ))}
+                      {group.links.length === 0 && (
+                        <li className="text-blue-200/70 text-xs italic">
+                          No links yet
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Copyright Sub-bar */}
+        <div
+          onClick={() => onSelectTarget({ type: "bottom" })}
+          title="Click to edit Bottom Copyright Bar"
+          className={cn(
+            "relative border-t border-white/15 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs cursor-pointer transition-all",
+            isBottomSelected
+              ? "ring-2 ring-inset ring-amber-300 bg-white/10"
+              : "hover:bg-white/5"
+          )}
+        >
+          <p className="text-blue-100">{config.copyrightText}</p>
+          <span className="text-blue-200/90">{config.footerRightText}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Bottom Docked Footer Inspector Drawer ────────────────────────────────── */
+export function FooterInspector({
+  config,
+  target,
+  onClose,
+  onUpdateConfig,
+  onDeleteLinkGroup,
+}: {
+  config: FooterConfigData;
+  target: FooterInspectorTarget;
+  onClose: () => void;
+  onUpdateConfig: (updater: (prev: FooterConfigData) => FooterConfigData) => void;
+  onDeleteLinkGroup: (groupIndex: number) => void;
+}) {
+  const [uploadingCfp, setUploadingCfp] = useState(false);
+
+  if (!target) return null;
+
+  let headerTitle = "Footer Inspector";
+  let HeaderIcon = PanelBottom;
+  let body: React.ReactNode = null;
+
+  if (target.type === "banner") {
+    headerTitle = "Footer Top CFP Banner";
+    HeaderIcon = Megaphone;
+    body = (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Badge Text
+              </Label>
+              <Input
+                value={config.badgeText}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({ ...prev, badgeText: e.target.value }))
+                }
+                className="h-8 text-xs bg-white"
+              />
+            </div>
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Conference Dates
+              </Label>
+              <Input
+                value={config.datesText}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({ ...prev, datesText: e.target.value }))
+                }
+                className="h-8 text-xs bg-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Banner Heading
+            </Label>
+            <Input
+              value={config.heading}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({ ...prev, heading: e.target.value }))
+              }
+              className="h-8 text-xs bg-white font-semibold"
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Description
+            </Label>
+            <Textarea
+              value={config.description}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              rows={2}
+              className="text-xs bg-white min-h-[60px]"
+            />
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-3">
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Primary Button Label
+            </Label>
+            <Input
+              value={config.cfpButtonLabel}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({
+                  ...prev,
+                  cfpButtonLabel: e.target.value,
+                }))
+              }
+              className="h-8 text-xs bg-white"
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              CFP File / Target URL
+            </Label>
+            <div className="flex items-center gap-1.5">
+              <Input
+                value={config.cfpPdfUrl}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({ ...prev, cfpPdfUrl: e.target.value }))
+                }
+                className="h-8 text-xs font-mono bg-white"
+              />
+              <label
+                title="Upload PDF / ZIP file"
+                className="h-8 w-8 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+              >
+                <Upload className={cn("w-3.5 h-3.5", uploadingCfp && "animate-pulse")} />
+                <input
+                  type="file"
+                  accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    setUploadingCfp(true);
+                    try {
+                      const url = await uploadFooterAsset(f);
+                      onUpdateConfig((prev) => ({ ...prev, cfpPdfUrl: url }));
+                      toast.success(`Uploaded ${f.name}`);
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Upload failed");
+                    } finally {
+                      setUploadingCfp(false);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Secondary Button
+              </Label>
+              <Input
+                value={config.portalButtonLabel}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({
+                    ...prev,
+                    portalButtonLabel: e.target.value,
+                  }))
+                }
+                className="h-8 text-xs bg-white"
+              />
+            </div>
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Portal URL
+              </Label>
+              <Input
+                value={config.websiteUrl}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({ ...prev, websiteUrl: e.target.value }))
+                }
+                className="h-8 text-xs font-mono bg-white"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (target.type === "brand") {
+    headerTitle = "Brand, Venue, Contact & Social Links";
+    HeaderIcon = Building2;
+
+    const updateSocial = (idx: number, patch: Partial<FooterSocialLink>) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        socialLinks: prev.socialLinks.map((s, i) =>
+          i === idx ? { ...s, ...patch } : s
+        ),
+      }));
+    };
+
+    body = (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              University Note
+            </Label>
+            <Textarea
+              value={config.universityNote}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({
+                  ...prev,
+                  universityNote: e.target.value,
+                }))
+              }
+              rows={2}
+              className="text-xs bg-white"
+            />
+          </div>
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Conference Summary
+            </Label>
+            <Textarea
+              value={config.secondaryDescription}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({
+                  ...prev,
+                  secondaryDescription: e.target.value,
+                }))
+              }
+              rows={3}
+              className="text-xs bg-white"
+            />
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Venue Name
+            </Label>
+            <Input
+              value={config.venueName}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({ ...prev, venueName: e.target.value }))
+              }
+              className="h-8 text-xs bg-white"
+            />
+          </div>
+          <div>
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Address
+            </Label>
+            <Input
+              value={config.address}
+              onChange={(e) =>
+                onUpdateConfig((prev) => ({ ...prev, address: e.target.value }))
+              }
+              className="h-8 text-xs bg-white"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Hotline
+              </Label>
+              <Input
+                value={config.hotline}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({
+                    ...prev,
+                    hotline: e.target.value,
+                    hotlineRaw: e.target.value.replace(/[^+\d]/g, ""),
+                  }))
+                }
+                className="h-8 text-xs bg-white"
+              />
+            </div>
+            <div>
+              <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+                Contact Email
+              </Label>
+              <Input
+                value={config.contactEmail}
+                onChange={(e) =>
+                  onUpdateConfig((prev) => ({
+                    ...prev,
+                    contactEmail: e.target.value,
+                  }))
+                }
+                className="h-8 text-xs bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-bold text-[#004776]">
+              Social Links ({config.socialLinks.length})
+            </Label>
+            <button
+              type="button"
+              onClick={() =>
+                onUpdateConfig((prev) => ({
+                  ...prev,
+                  socialLinks: [
+                    ...prev.socialLinks,
+                    { name: "Website", href: "https://hcmute.edu.vn", platform: "globe" },
+                  ],
+                }))
+              }
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#115eff] hover:underline cursor-pointer"
+            >
+              <Plus className="w-3 h-3" />
+              Add Social
+            </button>
+          </div>
+          <div className="space-y-1.5 max-h-44 overflow-y-auto pr-0.5">
+            {config.socialLinks.map((social, idx) => (
+              <div key={idx} className="flex items-center gap-1.5">
+                <Input
+                  value={social.name}
+                  onChange={(e) => updateSocial(idx, { name: e.target.value })}
+                  placeholder="Name"
+                  className="h-7 text-xs bg-white w-28"
+                />
+                <Input
+                  value={social.href}
+                  onChange={(e) => updateSocial(idx, { href: e.target.value })}
+                  placeholder="https://..."
+                  className="h-7 text-xs font-mono bg-white flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    onUpdateConfig((prev) => ({
+                      ...prev,
+                      socialLinks: prev.socialLinks.filter((_, i) => i !== idx),
+                    }))
+                  }
+                  className="p-1 text-slate-400 hover:text-red-600 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  } else if (target.type === "group") {
+    const group: FooterLinkGroup | undefined = config.linkGroups[target.groupIndex];
+    if (!group) return null;
+
+    headerTitle = `Footer Column · ${group.heading || `Column ${target.groupIndex + 1}`}`;
+    HeaderIcon = Columns3;
+
+    const updateGroup = (patch: Partial<FooterLinkGroup>) => {
+      onUpdateConfig((prev) => ({
+        ...prev,
+        linkGroups: prev.linkGroups.map((g, idx) =>
+          idx === target.groupIndex ? { ...g, ...patch } : g
+        ),
+      }));
+    };
+
+    const updateLink = (linkIdx: number, patch: Partial<FooterLinkItem>) => {
+      updateGroup({
+        links: group.links.map((l, i) =>
+          i === linkIdx ? { ...l, ...patch } : l
+        ),
+      });
+    };
+
+    const moveLink = (linkIdx: number, dir: -1 | 1) => {
+      const nextIdx = linkIdx + dir;
+      if (nextIdx < 0 || nextIdx >= group.links.length) return;
+      const copy = [...group.links];
+      const [moved] = copy.splice(linkIdx, 1);
+      copy.splice(nextIdx, 0, moved);
+      updateGroup({ links: copy });
+    };
+
+    body = (
+      <div className="space-y-3">
+        <div className="flex items-end justify-between gap-3">
+          <div className="w-72">
+            <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+              Column Heading
+            </Label>
+            <Input
+              value={group.heading}
+              onChange={(e) => updateGroup({ heading: e.target.value })}
+              className="h-8 text-xs font-bold bg-white"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() =>
+                updateGroup({
+                  links: [...group.links, { label: "New Link", href: "/#about" }],
+                })
+              }
+              className="h-8 px-3 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"
+            >
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              Add Link
+            </Button>
+            {config.linkGroups.length > 1 && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => onDeleteLinkGroup(target.groupIndex)}
+                className="h-8 px-2.5 text-xs border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1" />
+                Delete Column
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {group.links.map((link, lIdx) => (
+            <div
+              key={lIdx}
+              className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 bg-slate-50/50"
+            >
+              <Input
+                value={link.label}
+                onChange={(e) => updateLink(lIdx, { label: e.target.value })}
+                placeholder="Link label"
+                className="h-8 text-xs bg-white w-56 font-medium"
+              />
+              <Input
+                value={link.href}
+                onChange={(e) => updateLink(lIdx, { href: e.target.value })}
+                placeholder="/submissions"
+                className="h-8 text-xs font-mono bg-white flex-1"
+              />
+              <label
+                title="Upload PDF / ZIP file"
+                className="h-8 w-8 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <input
+                  type="file"
+                  accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    try {
+                      const url = await uploadFooterAsset(f);
+                      updateLink(lIdx, { href: url });
+                      toast.success(`Uploaded ${f.name}`);
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Upload failed");
+                    } finally {
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </label>
+              <PageLinkPicker
+                value={link.href}
+                onSelect={(sel) =>
+                  updateLink(lIdx, {
+                    href: sel.href,
+                    label: link.label || sel.label || "Link",
+                  })
+                }
+                label="Page"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={lIdx === 0}
+                onClick={() => moveLink(lIdx, -1)}
+                className="h-7 w-7 p-0 text-slate-400 hover:text-slate-700"
+              >
+                <ArrowUp className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={lIdx === group.links.length - 1}
+                onClick={() => moveLink(lIdx, 1)}
+                className="h-7 w-7 p-0 text-slate-400 hover:text-slate-700"
+              >
+                <ArrowDown className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  updateGroup({
+                    links: group.links.filter((_, i) => i !== lIdx),
+                  })
+                }
+                className="h-7 w-7 p-0 text-slate-400 hover:text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  } else if (target.type === "bottom") {
+    headerTitle = "Bottom Copyright Bar";
+    HeaderIcon = Copyright;
+    body = (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+            Left Copyright Text
+          </Label>
+          <Input
+            value={config.copyrightText}
+            onChange={(e) =>
+              onUpdateConfig((prev) => ({
+                ...prev,
+                copyrightText: e.target.value,
+              }))
+            }
+            className="h-9 text-xs bg-white"
+          />
+        </div>
+        <div>
+          <Label className="text-xs font-semibold text-slate-700 mb-1 block">
+            Right Venue / Credit Text
+          </Label>
+          <Input
+            value={config.footerRightText}
+            onChange={(e) =>
+              onUpdateConfig((prev) => ({
+                ...prev,
+                footerRightText: e.target.value,
+              }))
+            }
+            className="h-9 text-xs bg-white"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <section className="h-[340px] shrink-0 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] flex flex-col z-20">
+      <div className="h-10 px-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <HeaderIcon className="w-4 h-4 text-[#115eff] shrink-0" />
+          <h3 className="text-xs font-extrabold capitalize text-[#004776] truncate">
+            {headerTitle}
+          </h3>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-7 w-7 p-0 text-slate-400 hover:text-slate-700"
+          title="Close Inspector"
+        >
+          <X className="w-4 h-4" />
+        </Button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-4">{body}</div>
+    </section>
+  );
+}
