@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PageLinkPicker } from "./page-link-picker";
+import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
 import {
   MapPin,
   Phone,
@@ -25,7 +26,7 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  Upload,
+  FolderOpen,
   X,
   Columns3,
   PanelBottom,
@@ -37,28 +38,14 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+const DOC_ACCEPT = ".pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx,application/pdf,application/zip";
+
 export type FooterInspectorTarget =
   | { type: "banner" }
   | { type: "brand" }
   | { type: "group"; groupIndex: number }
   | { type: "bottom" }
   | null;
-
-async function uploadFooterAsset(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("folder", "footer-assets");
-
-  const res = await fetch("/api/admin/upload", {
-    method: "POST",
-    body: formData,
-  });
-  const data = await res.json();
-  if (!res.ok || (!data.proxyUrl && !data.url)) {
-    throw new Error(data.error || "Upload failed");
-  }
-  return data.proxyUrl || data.url;
-}
 
 /* ── Left Palette for Footer Mode ─────────────────────────────────────────── */
 export function FooterPalette({
@@ -505,7 +492,11 @@ export function FooterInspector({
   onUpdateConfig: (updater: (prev: FooterConfigData) => FooterConfigData) => void;
   onDeleteLinkGroup: (groupIndex: number) => void;
 }) {
-  const [uploadingCfp, setUploadingCfp] = useState(false);
+  const [filePickerTarget, setFilePickerTarget] = useState<
+    | { kind: "cfp" }
+    | { kind: "group-link"; groupIndex: number; linkIndex: number }
+    | null
+  >(null);
   const [panelHeight, setPanelHeight] = useState<number | null>(null);
   const draggingRef = useRef<{ startY: number; startHeight: number } | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -631,32 +622,16 @@ export function FooterInspector({
                 }
                 className="h-8 text-xs font-mono bg-white"
               />
-              <label
-                title="Upload PDF / ZIP file"
-                className="h-8 w-8 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setFilePickerTarget({ kind: "cfp" })}
+                title="Select from File Manager"
+                className="h-8 w-8 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
               >
-                <Upload className={cn("w-3.5 h-3.5", uploadingCfp && "animate-pulse")} />
-                <input
-                  type="file"
-                  accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    if (!f) return;
-                    setUploadingCfp(true);
-                    try {
-                      const url = await uploadFooterAsset(f);
-                      onUpdateConfig((prev) => ({ ...prev, cfpPdfUrl: url }));
-                      toast.success(`Uploaded ${f.name}`);
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : "Upload failed");
-                    } finally {
-                      setUploadingCfp(false);
-                      e.target.value = "";
-                    }
-                  }}
-                />
-              </label>
+                <FolderOpen className="w-3.5 h-3.5" />
+              </Button>
             </div>
           </div>
 
@@ -951,30 +926,22 @@ export function FooterInspector({
                 placeholder="/submissions"
                 className="h-8 text-xs font-mono bg-white flex-1"
               />
-              <label
-                title="Upload PDF / ZIP file"
-                className="h-8 w-8 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  setFilePickerTarget({
+                    kind: "group-link",
+                    groupIndex: target.groupIndex,
+                    linkIndex: lIdx,
+                  })
+                }
+                title="Select from File Manager"
+                className="h-8 w-8 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
               >
-                <Upload className="w-3.5 h-3.5" />
-                <input
-                  type="file"
-                  accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    if (!f) return;
-                    try {
-                      const url = await uploadFooterAsset(f);
-                      updateLink(lIdx, { href: url });
-                      toast.success(`Uploaded ${f.name}`);
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : "Upload failed");
-                    } finally {
-                      e.target.value = "";
-                    }
-                  }}
-                />
-              </label>
+                <FolderOpen className="w-3.5 h-3.5" />
+              </Button>
               <PageLinkPicker
                 value={link.href}
                 onSelect={(sel) =>
@@ -1107,6 +1074,38 @@ export function FooterInspector({
         </Button>
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto p-4">{body}</div>
+
+      <MediaLibraryModal
+        open={filePickerTarget !== null}
+        onClose={() => setFilePickerTarget(null)}
+        onSelect={(url, file) => {
+          if (!filePickerTarget) return;
+          if (filePickerTarget.kind === "cfp") {
+            onUpdateConfig((prev) => ({ ...prev, cfpPdfUrl: url }));
+            toast.success(`Selected ${file?.filename || "file"}`);
+          } else if (filePickerTarget.kind === "group-link") {
+            onUpdateConfig((prev) => ({
+              ...prev,
+              linkGroups: prev.linkGroups.map((g, gIdx) =>
+                gIdx !== filePickerTarget.groupIndex
+                  ? g
+                  : {
+                      ...g,
+                      links: g.links.map((l, lIdx) =>
+                        lIdx === filePickerTarget.linkIndex
+                          ? { ...l, href: url }
+                          : l
+                      ),
+                    }
+              ),
+            }));
+            toast.success(`Selected ${file?.filename || "file"}`);
+          }
+        }}
+        accept={DOC_ACCEPT}
+        title={filePickerTarget?.kind === "cfp" ? "Select CFP File" : "Select File"}
+        allowDelete
+      />
     </section>
   );
 }

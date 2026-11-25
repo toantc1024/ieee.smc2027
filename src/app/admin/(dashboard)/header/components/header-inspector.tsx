@@ -18,6 +18,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { IconPicker } from "./icon-picker";
 import { PageLinkPicker } from "./page-link-picker";
+import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
 import type { SelectedInspectorTarget } from "./visual-header-canvas";
 import {
   X,
@@ -26,8 +27,7 @@ import {
   ArrowUp,
   ArrowDown,
   CornerDownLeft,
-  Upload,
-  Loader2,
+  FolderOpen,
   Columns3,
   Image as ImageIcon,
   SlidersHorizontal,
@@ -64,21 +64,7 @@ const LOGO_PRESETS = [
   { label: "Square Emblem", url: "/logo/square-logo.png" },
 ];
 
-async function uploadImageAsset(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("folder", "header-assets");
-
-  const res = await fetch("/api/admin/upload", {
-    method: "POST",
-    body: formData,
-  });
-  const data = await res.json();
-  if (!res.ok || (!data.proxyUrl && !data.url)) {
-    throw new Error(data.error || "Upload failed");
-  }
-  return data.proxyUrl || data.url;
-}
+const DOC_ACCEPT = ".pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx,application/pdf,application/zip";
 
 /* ── Promo Card Inspector ─────────────────────────────────────────────────── */
 function PromoCardInspector({
@@ -92,24 +78,7 @@ function PromoCardInspector({
   onRemove?: () => void;
   title?: string;
 }) {
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement | null>(null);
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const url = await uploadImageAsset(file);
-      onChange({ ...promoCard, image: url });
-      toast.success("Promo image uploaded.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to upload image.");
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
-  };
+  const [mediaModal, setMediaModal] = useState<"image" | "file" | null>(null);
 
   return (
     <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/70 space-y-3">
@@ -184,30 +153,16 @@ function PromoCardInspector({
                   placeholder="/submissions"
                   className="h-8 text-xs bg-white font-mono"
                 />
-                <label
-                  title="Upload PDF / ZIP file"
-                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setMediaModal("file")}
+                  title="Select from File Manager"
+                  className="h-8 w-8 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
                 >
-                  <Upload className="w-3.5 h-3.5" />
-                  <input
-                    type="file"
-                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const f = e.target.files?.[0];
-                      if (!f) return;
-                      try {
-                        const uploadedUrl = await uploadImageAsset(f);
-                        onChange({ ...promoCard, href: uploadedUrl });
-                        toast.success(`Uploaded ${f.name}`);
-                      } catch (err) {
-                        toast.error(err instanceof Error ? err.message : "Upload failed");
-                      } finally {
-                        e.target.value = "";
-                      }
-                    }}
-                  />
-                </label>
+                  <FolderOpen className="w-3.5 h-3.5" />
+                </Button>
                 <PageLinkPicker
                   value={promoCard.href}
                   onSelect={(sel) =>
@@ -224,7 +179,7 @@ function PromoCardInspector({
           </div>
         </div>
 
-        {/* Promo Image Uploader */}
+        {/* Promo Image Picker */}
         <div className="space-y-2">
           <Label className="text-[11px] text-slate-600 block">Cover Image</Label>
           <div className="relative aspect-[16/9] rounded-md border border-slate-200 bg-white overflow-hidden flex items-center justify-center">
@@ -246,30 +201,36 @@ function PromoCardInspector({
               placeholder="/assets/cta-background.webp"
               className="h-7 text-[11px] font-mono bg-white"
             />
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFile}
-              className="hidden"
-            />
             <Button
               type="button"
               size="sm"
               variant="outline"
-              disabled={uploading}
-              onClick={() => fileRef.current?.click()}
-              className="h-7 px-2 text-xs bg-white shrink-0"
+              onClick={() => setMediaModal("image")}
+              title="Select image from File Manager"
+              className="h-7 px-2 text-xs bg-white shrink-0 hover:bg-blue-50 hover:border-blue-300 hover:text-[#115eff]"
             >
-              {uploading ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Upload className="w-3.5 h-3.5" />
-              )}
+              <FolderOpen className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>
       </div>
+
+      <MediaLibraryModal
+        open={mediaModal !== null}
+        onClose={() => setMediaModal(null)}
+        onSelect={(url, file) => {
+          if (mediaModal === "image") {
+            onChange({ ...promoCard, image: url });
+            toast.success(`Selected ${file?.filename || "image"}`);
+          } else if (mediaModal === "file") {
+            onChange({ ...promoCard, href: url });
+            toast.success(`Selected ${file?.filename || "file"}`);
+          }
+        }}
+        accept={mediaModal === "image" ? "image/*" : DOC_ACCEPT}
+        title={mediaModal === "image" ? "Select Cover Image" : "Select File"}
+        allowDelete
+      />
     </div>
   );
 }
@@ -285,6 +246,7 @@ function LinksListEditor({
   onChange: (next: NavSubItem[]) => void;
 }) {
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [filePickerLinkId, setFilePickerLinkId] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeLinkId && itemRefs.current[activeLinkId]) {
@@ -451,31 +413,17 @@ function LinksListEditor({
                     placeholder="/submissions"
                     className="h-8 text-xs font-mono bg-slate-50"
                   />
-                  <label
-                  title="Upload PDF / ZIP file"
-                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <input
-                    type="file"
-                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const f = e.target.files?.[0];
-                      if (!f) return;
-                      try {
-                        const uploadedUrl = await uploadImageAsset(f);
-                        updateLink(link.id, { href: uploadedUrl, isExternal: true });
-                        toast.success(`Uploaded ${f.name}`);
-                      } catch (err) {
-                        toast.error(err instanceof Error ? err.message : "Upload failed");
-                      } finally {
-                        e.target.value = "";
-                      }
-                    }}
-                  />
-                </label>
-                <PageLinkPicker
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setFilePickerLinkId(link.id)}
+                    title="Select from File Manager"
+                    className="h-8 w-8 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
+                  >
+                    <FolderOpen className="w-3.5 h-3.5" />
+                  </Button>
+                  <PageLinkPicker
                     value={link.href}
                     isExternal={link.isExternal}
                     onSelect={(sel) =>
@@ -539,6 +487,20 @@ function LinksListEditor({
           </div>
         )}
       </div>
+
+      <MediaLibraryModal
+        open={filePickerLinkId !== null}
+        onClose={() => setFilePickerLinkId(null)}
+        onSelect={(url, file) => {
+          if (filePickerLinkId) {
+            updateLink(filePickerLinkId, { href: url, isExternal: true });
+            toast.success(`Selected ${file?.filename || "file"}`);
+          }
+        }}
+        accept={DOC_ACCEPT}
+        title="Select File"
+        allowDelete
+      />
     </div>
   );
 }
@@ -879,11 +841,13 @@ function GeneralInspector({
   config: HeaderConfig;
   onUpdateConfig: (updater: (prev: HeaderConfig) => HeaderConfig) => void;
 }) {
-  const [uploadingField, setUploadingField] = useState<"desktop" | "mobile" | null>(
-    null
-  );
-  const desktopFileRef = useRef<HTMLInputElement | null>(null);
-  const mobileFileRef = useRef<HTMLInputElement | null>(null);
+  const [mediaTarget, setMediaTarget] = useState<
+    | { kind: "desktop-logo" }
+    | { kind: "mobile-logo" }
+    | { kind: "quicklink"; id: string }
+    | { kind: "cta" }
+    | null
+  >(null);
 
   const variant: HeaderVariant = config.variant || "left-aligned";
   const topbar = config.topbar || {
@@ -901,27 +865,6 @@ function GeneralInspector({
   };
 
   const quickLinks: TopbarQuickLink[] = topbar.quickLinks || [];
-
-  const handleUploadLogo = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    kind: "desktop" | "mobile"
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingField(kind);
-    try {
-      const url = await uploadImageAsset(file);
-      onUpdateConfig((prev) =>
-        kind === "desktop" ? { ...prev, logoUrl: url } : { ...prev, mobileLogoUrl: url }
-      );
-      toast.success("Logo updated.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed.");
-    } finally {
-      setUploadingField(null);
-      e.target.value = "";
-    }
-  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1001,26 +944,15 @@ function GeneralInspector({
               }
               className="h-8 text-xs font-mono bg-white"
             />
-            <input
-              ref={desktopFileRef}
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleUploadLogo(e, "desktop")}
-              className="hidden"
-            />
             <Button
               type="button"
               size="sm"
               variant="outline"
-              disabled={uploadingField === "desktop"}
-              onClick={() => desktopFileRef.current?.click()}
-              className="h-8 px-2.5 bg-white shrink-0"
+              onClick={() => setMediaTarget({ kind: "desktop-logo" })}
+              title="Select logo from File Manager"
+              className="h-8 px-2.5 bg-white shrink-0 hover:bg-blue-50 hover:border-blue-300 hover:text-[#115eff]"
             >
-              {uploadingField === "desktop" ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Upload className="w-3.5 h-3.5" />
-              )}
+              <FolderOpen className="w-3.5 h-3.5" />
             </Button>
           </div>
           <div className="flex flex-wrap gap-1 pt-0.5">
@@ -1067,22 +999,15 @@ function GeneralInspector({
                 }
                 className="h-8 text-[11px] font-mono bg-white"
               />
-              <input
-                ref={mobileFileRef}
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleUploadLogo(e, "mobile")}
-                className="hidden"
-              />
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                disabled={uploadingField === "mobile"}
-                onClick={() => mobileFileRef.current?.click()}
-                className="h-8 px-2 bg-white shrink-0"
+                onClick={() => setMediaTarget({ kind: "mobile-logo" })}
+                title="Select mobile logo from File Manager"
+                className="h-8 px-2 bg-white shrink-0 hover:bg-blue-50 hover:border-blue-300 hover:text-[#115eff]"
               >
-                <Upload className="w-3.5 h-3.5" />
+                <FolderOpen className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>
@@ -1253,40 +1178,16 @@ function GeneralInspector({
                   placeholder="/news"
                   className="h-7 text-[11px] font-mono bg-white flex-1"
                 />
-                <label
-                  title="Upload PDF / ZIP file"
-                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setMediaTarget({ kind: "quicklink", id: ql.id })}
+                  title="Select from File Manager"
+                  className="h-7 w-7 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
                 >
-                  <Upload className="w-3.5 h-3.5" />
-                  <input
-                    type="file"
-                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const f = e.target.files?.[0];
-                      if (!f) return;
-                      try {
-                        const uploadedUrl = await uploadImageAsset(f);
-                        onUpdateConfig((prev) => ({
-                          ...prev,
-                          topbar: {
-                            ...prev.topbar,
-                            quickLinks: (prev.topbar?.quickLinks || []).map((item) =>
-                              item.id === ql.id
-                                ? { ...item, href: uploadedUrl, isExternal: true }
-                                : item
-                            ),
-                          },
-                        }));
-                        toast.success(`Uploaded ${f.name}`);
-                      } catch (err) {
-                        toast.error(err instanceof Error ? err.message : "Upload failed");
-                      } finally {
-                        e.target.value = "";
-                      }
-                    }}
-                  />
-                </label>
+                  <FolderOpen className="w-3.5 h-3.5" />
+                </Button>
                 <PageLinkPicker
                   value={ql.href}
                   isExternal={ql.isExternal}
@@ -1385,6 +1286,16 @@ function GeneralInspector({
                 placeholder="/submissions"
                 className="h-8 text-xs font-mono bg-white"
               />
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setMediaTarget({ kind: "cta" })}
+                title="Select from File Manager"
+                className="h-8 w-8 p-0 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0"
+              >
+                <FolderOpen className="w-3.5 h-3.5" />
+              </Button>
               <PageLinkPicker
                 value={cta.href || ""}
                 onSelect={(sel) =>
@@ -1418,6 +1329,51 @@ function GeneralInspector({
           )}
         </div>
       </div>
+
+      <MediaLibraryModal
+        open={mediaTarget !== null}
+        onClose={() => setMediaTarget(null)}
+        onSelect={(url, file) => {
+          if (!mediaTarget) return;
+          if (mediaTarget.kind === "desktop-logo") {
+            onUpdateConfig((prev) => ({ ...prev, logoUrl: url }));
+            toast.success(`Selected ${file?.filename || "logo"}`);
+          } else if (mediaTarget.kind === "mobile-logo") {
+            onUpdateConfig((prev) => ({ ...prev, mobileLogoUrl: url }));
+            toast.success(`Selected ${file?.filename || "logo"}`);
+          } else if (mediaTarget.kind === "quicklink") {
+            onUpdateConfig((prev) => ({
+              ...prev,
+              topbar: {
+                ...prev.topbar,
+                quickLinks: (prev.topbar?.quickLinks || []).map((item) =>
+                  item.id === mediaTarget.id
+                    ? { ...item, href: url, isExternal: true }
+                    : item
+                ),
+              },
+            }));
+            toast.success(`Selected ${file?.filename || "file"}`);
+          } else if (mediaTarget.kind === "cta") {
+            onUpdateConfig((prev) => ({
+              ...prev,
+              ctaButton: { ...prev.ctaButton, href: url },
+            }));
+            toast.success(`Selected ${file?.filename || "file"}`);
+          }
+        }}
+        accept={
+          mediaTarget?.kind === "desktop-logo" || mediaTarget?.kind === "mobile-logo"
+            ? "image/*"
+            : DOC_ACCEPT
+        }
+        title={
+          mediaTarget?.kind === "desktop-logo" || mediaTarget?.kind === "mobile-logo"
+            ? "Select Logo Image"
+            : "Select File"
+        }
+        allowDelete
+      />
     </div>
   );
 }

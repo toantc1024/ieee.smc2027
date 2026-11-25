@@ -118,9 +118,22 @@ export function MediaLibraryModal({
   useEffect(() => {
     if (open) {
       setUploadFolder(defaultFolder);
+      setSelectedFile(null);
+      const nextCategory: "all" | "IMAGE" | "DOCUMENT" =
+        accept.includes("image/") && !accept.includes(".zip") && !accept.includes("application/pdf")
+          ? "IMAGE"
+          : !accept.includes("image/")
+            ? "DOCUMENT"
+            : "all";
+      setActiveCategory(nextCategory);
+    }
+  }, [open, defaultFolder, accept]);
+
+  useEffect(() => {
+    if (open) {
       fetchMedia();
     }
-  }, [open, defaultFolder, fetchMedia]);
+  }, [open, fetchMedia]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -214,7 +227,7 @@ export function MediaLibraryModal({
                 onClick={() => setActiveCategory(cat.value)}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   activeCategory === cat.value
-                    ? "bg-slate-900 text-white"
+                    ? "bg-[#115eff] text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
