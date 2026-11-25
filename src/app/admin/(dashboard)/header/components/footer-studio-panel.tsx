@@ -53,6 +53,7 @@ export function FooterPalette({
   selectedTarget,
   onSelectTarget,
   onAddLinkGroup,
+  onSetColumnCount,
   onMoveLinkGroup,
   onDeleteLinkGroup,
 }: {
@@ -60,6 +61,7 @@ export function FooterPalette({
   selectedTarget: FooterInspectorTarget;
   onSelectTarget: (target: FooterInspectorTarget) => void;
   onAddLinkGroup: () => void;
+  onSetColumnCount: (count: number) => void;
   onMoveLinkGroup: (fromIndex: number, toIndex: number) => void;
   onDeleteLinkGroup: (groupIndex: number) => void;
 }) {
@@ -131,11 +133,29 @@ export function FooterPalette({
         </div>
 
         {/* Draggable Link Columns */}
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <div className="flex items-center justify-between px-0.5">
             <span className="text-[11px] font-bold capitalize text-slate-400">
               Link Columns ({config.linkGroups.length})
             </span>
+            <div className="inline-flex items-center gap-0.5 rounded bg-slate-100 p-0.5 border border-slate-200">
+              {[2, 3, 4, 5].map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  onClick={() => onSetColumnCount(count)}
+                  className={cn(
+                    "h-5 w-5 rounded text-[11px] font-bold transition-colors cursor-pointer",
+                    config.linkGroups.length === count
+                      ? "bg-[#115eff] text-white"
+                      : "text-slate-600 hover:bg-white hover:text-[#115eff]"
+                  )}
+                  title={`Set ${count} columns`}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-1.5">
@@ -286,6 +306,13 @@ export function VisualFooterCanvas({
         <div
           className="corner-dot-dark-bl opacity-30 pointer-events-none"
           aria-hidden="true"
+        />
+        {/* Giant HCM-UTE white flower watermark matching hcmute-website-frontend */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/flower-ute-white.png"
+          alt=""
+          className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[38rem] h-[38rem] opacity-[0.075] rotate-[30deg] pointer-events-none select-none object-contain"
         />
         {/* Top Banner: Host University & CFP Action Bar */}
         <div
@@ -448,14 +475,15 @@ export function VisualFooterCanvas({
           {/* Right Columns: Draggable Categorized Navigation Links */}
           <div className={viewport === "desktop" ? "col-span-7" : ""}>
             <div
-              className={cn(
-                "grid gap-5",
-                viewport === "mobile"
-                  ? "grid-cols-1"
-                  : viewport === "tablet"
-                    ? "grid-cols-2"
-                    : "grid-cols-4"
-              )}
+              className="grid gap-5"
+              style={{
+                gridTemplateColumns:
+                  viewport === "mobile"
+                    ? "repeat(1, minmax(0, 1fr))"
+                    : viewport === "tablet"
+                      ? "repeat(2, minmax(0, 1fr))"
+                      : `repeat(${Math.max(1, config.linkGroups.length)}, minmax(0, 1fr))`,
+              }}
             >
               {config.linkGroups.map((group, gIdx) => {
                 const isGroupSelected =
@@ -467,6 +495,7 @@ export function VisualFooterCanvas({
                     key={`${group.heading}-${gIdx}`}
                     draggable
                     onDragStart={(e) => {
+                      e.stopPropagation();
                       setDragColIdx(gIdx);
                       e.dataTransfer.setData("application/x-footer-canvas-col", String(gIdx));
                       e.dataTransfer.effectAllowed = "move";
@@ -474,6 +503,7 @@ export function VisualFooterCanvas({
                     onDragOver={(e) => {
                       if (dragColIdx !== null && dragColIdx !== gIdx) {
                         e.preventDefault();
+                        e.stopPropagation();
                         setDragOverColIdx(gIdx);
                       }
                     }}
@@ -483,6 +513,7 @@ export function VisualFooterCanvas({
                     onDrop={(e) => {
                       if (dragColIdx !== null && dragColIdx !== gIdx) {
                         e.preventDefault();
+                        e.stopPropagation();
                         onMoveLinkGroup(dragColIdx, gIdx);
                       }
                       setDragColIdx(null);

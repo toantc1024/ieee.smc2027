@@ -55,6 +55,7 @@ interface VisualHeaderCanvasProps {
     columnType: "category-links" | "promo-card",
     insertIndex?: number
   ) => void;
+  onSetColumnCount: (triggerId: string, count: number) => void;
   onDeleteColumn: (triggerId: string, columnId: string) => void;
   onMoveColumn: (triggerId: string, fromIndex: number, toIndex: number) => void;
   onReorderTriggers: (fromIndex: number, toIndex: number) => void;
@@ -80,6 +81,7 @@ export function VisualHeaderCanvas({
   onSelectTrigger,
   onSelectTarget,
   onAddColumn,
+  onSetColumnCount,
   onDeleteColumn,
   onMoveColumn,
   onReorderTriggers,
@@ -132,12 +134,14 @@ export function VisualHeaderCanvas({
       e.dataTransfer.types.includes("application/x-col-index");
     if (hasBlock) {
       e.preventDefault();
+      e.stopPropagation();
       setCanvasDropActive(true);
     }
   };
 
   const handleCanvasDrop = (e: React.DragEvent, insertIndex?: number) => {
     e.preventDefault();
+    e.stopPropagation();
     setCanvasDropActive(false);
     const blockType = e.dataTransfer.getData("application/x-builder-block") as
       | PaletteDragBlockType
@@ -402,128 +406,312 @@ export function VisualHeaderCanvas({
           </div>
         )}
 
-        {/* 2. Desktop Main Header Bar Mockup (4 variants supported) */}
+        {/* 2. Desktop Main Header Bar Mockup (matches hcmute-website-frontend 1:1) */}
         <div
           className={cn(
             "bg-white border-b border-blue-100 px-6 transition-all",
-            variant === "stacked" ? "py-3 space-y-2.5" : "h-[74px] flex items-center justify-between gap-4"
+            variant === "stacked"
+              ? "py-3 space-y-2.5"
+              : variant === "centered"
+                ? "h-[74px] grid grid-cols-[1fr_auto_1fr] items-center gap-4"
+                : "h-[74px] flex items-center justify-between gap-4"
           )}
         >
-          {/* Logo Slot */}
-          {showLogo ? (
-            <div
-              onClick={() => onSelectTarget({ type: "general" })}
-              title="Click to edit Brand Logo & Variant"
-              className={cn(
-                "flex items-center shrink-0 cursor-pointer rounded p-1 transition-all",
-                variant === "stacked" && "justify-center w-full border-b border-slate-100 pb-2",
-                isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
-              )}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={desktopLogo}
-                alt="IEEE SMC 2027"
-                className={cn(
-                  "w-auto object-contain",
-                  variant === "minimal" ? "h-9" : "h-11"
-                )}
-              />
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => onSelectTarget({ type: "general" })}
-              className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
-            >
-              Logo Hidden
-            </button>
-          )}
+          {variant === "centered" ? (
+            <>
+              {/* Left Half Nav */}
+              <nav className="flex items-stretch h-full gap-0.5 min-w-0">
+                {config.navLinks.slice(0, Math.ceil(config.navLinks.length / 2)).map((item, navIdx) => {
+                  const isActive = activeTrigger?.id === item.id;
+                  const isMega = item.type === "mega";
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      draggable
+                      onDragStart={(e) => {
+                        e.stopPropagation();
+                        setDragTriggerIdx(navIdx);
+                        e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragOver={(e) => {
+                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragOverTriggerIdx(navIdx);
+                        }
+                      }}
+                      onDragLeave={() => {
+                        if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                          onReorderTriggers(dragTriggerIdx, navIdx);
+                        }
+                        setDragTriggerIdx(null);
+                        setDragOverTriggerIdx(null);
+                      }}
+                      onDragEnd={() => {
+                        setDragTriggerIdx(null);
+                        setDragOverTriggerIdx(null);
+                      }}
+                      onClick={() => {
+                        onSelectTrigger(item.id);
+                        onSelectTarget({ type: "trigger", triggerId: item.id });
+                      }}
+                      className={cn(
+                        "group relative px-3 h-full rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1 transition-colors cursor-grab active:cursor-grabbing whitespace-nowrap",
+                        isActive
+                          ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                          : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
+                        dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
+                      )}
+                    >
+                      <span>{item.name || "Untitled"}</span>
+                      {isMega && (
+                        <ChevronDown
+                          className={cn(
+                            "w-3.5 h-3.5 transition-transform",
+                            isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
+                          )}
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
 
-          {/* Nav Triggers Row (Draggable to reorder, crisp square style) */}
-          <nav
-            className={cn(
-              "flex items-stretch gap-0.5 flex-wrap",
-              variant !== "stacked" && "h-full",
-              variant === "centered" && "flex-1 justify-center",
-              variant === "left-aligned" && "flex-1 justify-start ml-2",
-              variant === "stacked" && "w-full justify-center",
-              variant === "minimal" && "flex-1 justify-end mr-2"
-            )}
-          >
-            {config.navLinks.map((item, navIdx) => {
-              const isActive = activeTrigger?.id === item.id;
-              const isMega = item.type === "mega";
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  draggable
-                  onDragStart={(e) => {
-                    setDragTriggerIdx(navIdx);
-                    e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
-                    e.dataTransfer.effectAllowed = "move";
-                  }}
-                  onDragOver={(e) => {
-                    if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                      e.preventDefault();
-                      setDragOverTriggerIdx(navIdx);
-                    }
-                  }}
-                  onDragLeave={() => {
-                    if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                      onReorderTriggers(dragTriggerIdx, navIdx);
-                    }
-                    setDragTriggerIdx(null);
-                    setDragOverTriggerIdx(null);
-                  }}
-                  onDragEnd={() => {
-                    setDragTriggerIdx(null);
-                    setDragOverTriggerIdx(null);
-                  }}
-                  onClick={() => {
-                    onSelectTrigger(item.id);
-                    onSelectTarget({ type: "trigger", triggerId: item.id });
-                  }}
+              {/* Center Official HCM-UTE Logo */}
+              {showLogo ? (
+                <div
+                  onClick={() => onSelectTarget({ type: "general" })}
+                  title="Click to edit Brand Logo & Variant"
                   className={cn(
-                    "group relative px-3.5 rounded-none border-b-2 text-[14px] font-semibold flex items-center gap-1.5 transition-colors cursor-grab active:cursor-grabbing",
-                    variant === "stacked" ? "py-2" : "h-full",
-                    isActive
-                      ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
-                      : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
-                    dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
+                    "flex items-center justify-center shrink-0 cursor-pointer rounded px-2 py-1 transition-all",
+                    isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
                   )}
                 >
-                  <span>{item.name || "Untitled"}</span>
-                  {isMega && (
-                    <ChevronDown
-                      className={cn(
-                        "w-3.5 h-3.5 transition-transform",
-                        isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
-                      )}
-                    />
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={desktopLogo}
+                    alt="IEEE SMC 2027"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onSelectTarget({ type: "general" })}
+                  className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
+                >
+                  Logo Hidden
                 </button>
-              );
-            })}
-          </nav>
+              )}
 
-          {/* Right CTA Button */}
-          {ctaEnabled && variant !== "stacked" && (
-            <div
-              onClick={() => onSelectTarget({ type: "general" })}
-              className="shrink-0 cursor-pointer"
-              title="Click to edit Primary CTA Button"
-            >
-              <div className="px-4 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
-                <span>{config.ctaButton?.label || "Submit Paper"}</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+              {/* Right Half Nav + CTA */}
+              <div className="flex items-center justify-end h-full gap-2 min-w-0">
+                <nav className="flex items-stretch h-full gap-0.5">
+                  {config.navLinks.slice(Math.ceil(config.navLinks.length / 2)).map((item, offset) => {
+                    const navIdx = Math.ceil(config.navLinks.length / 2) + offset;
+                    const isActive = activeTrigger?.id === item.id;
+                    const isMega = item.type === "mega";
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        draggable
+                        onDragStart={(e) => {
+                          e.stopPropagation();
+                          setDragTriggerIdx(navIdx);
+                          e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDragOverTriggerIdx(navIdx);
+                          }
+                        }}
+                        onDragLeave={() => {
+                          if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                            onReorderTriggers(dragTriggerIdx, navIdx);
+                          }
+                          setDragTriggerIdx(null);
+                          setDragOverTriggerIdx(null);
+                        }}
+                        onDragEnd={() => {
+                          setDragTriggerIdx(null);
+                          setDragOverTriggerIdx(null);
+                        }}
+                        onClick={() => {
+                          onSelectTrigger(item.id);
+                          onSelectTarget({ type: "trigger", triggerId: item.id });
+                        }}
+                        className={cn(
+                          "group relative px-3 h-full rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1 transition-colors cursor-grab active:cursor-grabbing whitespace-nowrap",
+                          isActive
+                            ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                            : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
+                          dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
+                        )}
+                      >
+                        <span>{item.name || "Untitled"}</span>
+                        {isMega && (
+                          <ChevronDown
+                            className={cn(
+                              "w-3.5 h-3.5 transition-transform",
+                              isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
+                            )}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </nav>
+                {ctaEnabled && (
+                  <div
+                    onClick={() => onSelectTarget({ type: "general" })}
+                    className="shrink-0 cursor-pointer"
+                    title="Click to edit Primary CTA Button"
+                  >
+                    <div className="px-3.5 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
+                      <span>{config.ctaButton?.label || "Submit Paper"}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            </>
+          ) : (
+            <>
+              {/* Logo Slot */}
+              {showLogo ? (
+                <div
+                  onClick={() => onSelectTarget({ type: "general" })}
+                  title="Click to edit Brand Logo & Variant"
+                  className={cn(
+                    "flex items-center shrink-0 cursor-pointer rounded p-1 transition-all",
+                    variant === "stacked" && "justify-center w-full border-b border-slate-100 pb-2",
+                    isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={desktopLogo}
+                    alt="IEEE SMC 2027"
+                    className={cn(
+                      "w-auto object-contain",
+                      variant === "minimal" ? "h-9" : "h-11"
+                    )}
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onSelectTarget({ type: "general" })}
+                  className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
+                >
+                  Logo Hidden
+                </button>
+              )}
+
+              {/* Nav Triggers Row (Draggable to reorder, crisp square style) */}
+              <nav
+                className={cn(
+                  "flex items-stretch gap-0.5 flex-wrap",
+                  variant !== "stacked" && "h-full",
+                  variant === "left-aligned" && "flex-1 justify-start ml-2",
+                  variant === "stacked" && "w-full justify-center",
+                  variant === "minimal" && "flex-1 justify-end mr-2"
+                )}
+              >
+                {config.navLinks.map((item, navIdx) => {
+                  const isActive = activeTrigger?.id === item.id;
+                  const isMega = item.type === "mega";
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      draggable
+                      onDragStart={(e) => {
+                        e.stopPropagation();
+                        setDragTriggerIdx(navIdx);
+                        e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragOver={(e) => {
+                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragOverTriggerIdx(navIdx);
+                        }
+                      }}
+                      onDragLeave={() => {
+                        if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+                          onReorderTriggers(dragTriggerIdx, navIdx);
+                        }
+                        setDragTriggerIdx(null);
+                        setDragOverTriggerIdx(null);
+                      }}
+                      onDragEnd={() => {
+                        setDragTriggerIdx(null);
+                        setDragOverTriggerIdx(null);
+                      }}
+                      onClick={() => {
+                        onSelectTrigger(item.id);
+                        onSelectTarget({ type: "trigger", triggerId: item.id });
+                      }}
+                      className={cn(
+                        "group relative px-3.5 rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1.5 transition-colors cursor-grab active:cursor-grabbing",
+                        variant === "stacked" ? "py-2" : "h-full",
+                        isActive
+                          ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
+                          : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
+                        dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
+                      )}
+                    >
+                      <span>{item.name || "Untitled"}</span>
+                      {isMega && (
+                        <ChevronDown
+                          className={cn(
+                            "w-3.5 h-3.5 transition-transform",
+                            isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
+                          )}
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Right CTA Button */}
+              {ctaEnabled && variant !== "stacked" && (
+                <div
+                  onClick={() => onSelectTarget({ type: "general" })}
+                  className="shrink-0 cursor-pointer"
+                  title="Click to edit Primary CTA Button"
+                >
+                  <div className="px-4 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
+                    <span>{config.ctaButton?.label || "Submit Paper"}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -556,35 +744,59 @@ export function VisualHeaderCanvas({
 
               <div className="flex items-center gap-2 shrink-0">
                 {hasMegaCanvas && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-xs font-semibold border-blue-200 text-[#004776] hover:bg-blue-50"
-                      >
-                        <Plus className="w-3.5 h-3.5 mr-1 text-[#115eff]" />
-                        Add Block
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-52 bg-white">
-                      <DropdownMenuItem
-                        onClick={() => onAddColumn(activeTrigger.id, "category-links")}
-                        className="text-xs cursor-pointer gap-2"
-                      >
-                        <Columns3 className="w-3.5 h-3.5 text-[#115eff]" />
-                        Category Links Column
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onAddColumn(activeTrigger.id, "promo-card")}
-                        className="text-xs cursor-pointer gap-2"
-                      >
-                        <ImageIcon className="w-3.5 h-3.5 text-[#115eff]" />
-                        Promo Card Column
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <>
+                    {/* Quick Column Count Selector */}
+                    <div className="inline-flex items-center gap-1 rounded-md bg-slate-100 p-0.5 border border-slate-200">
+                      <span className="text-[11px] font-semibold text-slate-500 px-1.5">
+                        Columns
+                      </span>
+                      {[1, 2, 3, 4].map((count) => (
+                        <button
+                          key={count}
+                          type="button"
+                          onClick={() => onSetColumnCount(activeTrigger.id, count)}
+                          className={cn(
+                            "h-6 w-6 rounded text-xs font-bold transition-colors cursor-pointer",
+                            columns.length === count
+                              ? "bg-[#115eff] text-white shadow-2xs"
+                              : "text-slate-600 hover:bg-white hover:text-[#115eff]"
+                          )}
+                        >
+                          {count}
+                        </button>
+                      ))}
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs font-semibold border-blue-200 text-[#004776] hover:bg-blue-50"
+                        >
+                          <Plus className="w-3.5 h-3.5 mr-1 text-[#115eff]" />
+                          Add Block
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-52 bg-white">
+                        <DropdownMenuItem
+                          onClick={() => onAddColumn(activeTrigger.id, "category-links")}
+                          className="text-xs cursor-pointer gap-2"
+                        >
+                          <Columns3 className="w-3.5 h-3.5 text-[#115eff]" />
+                          Category Links Column
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => onAddColumn(activeTrigger.id, "promo-card")}
+                          className="text-xs cursor-pointer gap-2"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5 text-[#115eff]" />
+                          Promo Card Column
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </>
                 )}
 
                 <Button
@@ -824,12 +1036,15 @@ export function VisualHeaderCanvas({
                           key={col.id}
                           draggable
                           onDragStart={(e) => {
+                            e.stopPropagation();
                             setDragColIdx(colIdx);
                             e.dataTransfer.setData("application/x-col-index", String(colIdx));
                             e.dataTransfer.effectAllowed = "move";
                           }}
                           onDragOver={(e) => {
+                            if (draggingPromo) return;
                             e.preventDefault();
+                            e.stopPropagation();
                             if (dragColIdx !== null && dragColIdx !== colIdx) {
                               setDragOverColIdx(colIdx);
                             }
@@ -837,7 +1052,10 @@ export function VisualHeaderCanvas({
                           onDragLeave={() => {
                             if (dragOverColIdx === colIdx) setDragOverColIdx(null);
                           }}
-                          onDrop={(e) => handleCanvasDrop(e, colIdx)}
+                          onDrop={(e) => {
+                            if (e.dataTransfer.getData("application/x-promo-card") === "1") return;
+                            handleCanvasDrop(e, colIdx);
+                          }}
                           onDragEnd={() => {
                             setDragColIdx(null);
                             setDragOverColIdx(null);

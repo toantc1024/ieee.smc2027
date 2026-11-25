@@ -213,6 +213,27 @@ export default function HeaderStudioPage() {
     setFooterTarget({ type: "group", groupIndex: nextIndex });
   };
 
+  const handleSetFooterColumnCount = (count: number) => {
+    const safeCount = Math.max(1, Math.min(5, count));
+    updateFooterConfig((prev) => {
+      const current = [...prev.linkGroups];
+      if (current.length === safeCount) return prev;
+      if (current.length > safeCount) {
+        return { ...prev, linkGroups: current.slice(0, safeCount) };
+      }
+      while (current.length < safeCount) {
+        current.push({
+          heading: `Column ${current.length + 1}`,
+          links: [{ label: "New Link", href: "/" }],
+        });
+      }
+      return { ...prev, linkGroups: current };
+    });
+    if (footerTarget?.type === "group" && footerTarget.groupIndex >= safeCount) {
+      setFooterTarget(null);
+    }
+  };
+
   const handleDeleteFooterGroup = (groupIndex: number) => {
     if (footerConfig.linkGroups.length <= 1) {
       toast.error("At least one footer link column is required.");
@@ -433,6 +454,39 @@ export default function HeaderStudioPage() {
 
     setActiveTriggerId(triggerId);
     setSelectedTarget({ type: "column", triggerId, columnId: colId });
+  };
+
+  const handleSetColumnCount = (triggerId: string, count: number) => {
+    const safeCount = Math.max(1, Math.min(4, count));
+    updateConfig((prev) => ({
+      ...prev,
+      navLinks: prev.navLinks.map((nav) => {
+        if (nav.id !== triggerId) return nav;
+        const currentCols = [...(nav.columns || [])];
+        if (currentCols.length === safeCount) return nav;
+        if (currentCols.length > safeCount) {
+          return { ...nav, type: "mega", columns: currentCols.slice(0, safeCount) };
+        }
+        while (currentCols.length < safeCount) {
+          const idx = currentCols.length + 1;
+          currentCols.push({
+            id: `col-${Date.now()}-${idx}`,
+            title: `Column ${idx}`,
+            type: "category-links",
+            links: [
+              {
+                id: `sub-${Date.now()}-${idx}`,
+                title: "Conference Page",
+                href: "/",
+                description: "Brief description for this destination",
+                icon: "Globe",
+              },
+            ],
+          });
+        }
+        return { ...nav, type: "mega", columns: currentCols };
+      }),
+    }));
   };
 
   const handleDeleteColumn = (triggerId: string, columnId: string) => {
@@ -907,6 +961,7 @@ export default function HeaderStudioPage() {
               selectedTarget={footerTarget}
               onSelectTarget={setFooterTarget}
               onAddLinkGroup={handleAddFooterGroup}
+              onSetColumnCount={handleSetFooterColumnCount}
               onMoveLinkGroup={handleMoveFooterGroup}
               onDeleteLinkGroup={handleDeleteFooterGroup}
             />
@@ -951,6 +1006,7 @@ export default function HeaderStudioPage() {
                     onSelectTrigger={setActiveTriggerId}
                     onSelectTarget={setSelectedTarget}
                     onAddColumn={handleAddColumn}
+                    onSetColumnCount={handleSetColumnCount}
                     onDeleteColumn={handleDeleteColumn}
                     onMoveColumn={handleMoveColumn}
                     onReorderTriggers={handleReorderTriggers}

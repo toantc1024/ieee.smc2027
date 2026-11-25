@@ -13,6 +13,7 @@ import {
   FileDown,
 } from "lucide-react";
 import { CONFERENCE_INFO } from "@/data/conference";
+import { cn } from "@/lib/utils";
 import {
   BuilderBlockContext,
   subItemAttr,
@@ -227,6 +228,13 @@ export function Footer(props: FooterProps = {}) {
         className="corner-dot-dark-bl opacity-30 pointer-events-none"
         aria-hidden="true"
       />
+      {/* Giant HCM-UTE white flower watermark matching hcmute-website-frontend */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/flower-ute-white.png"
+        alt=""
+        className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[42rem] h-[42rem] opacity-[0.075] rotate-[30deg] pointer-events-none select-none object-contain"
+      />
 
       {/* Main Footer Container with Two Continuous Side Vertical Borders */}
       <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] relative z-10">
@@ -350,7 +358,16 @@ export function Footer(props: FooterProps = {}) {
 
             {/* Categorized Navigation Links */}
             <div className="lg:col-span-7">
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+              <div
+                className={cn(
+                  "grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8",
+                  activeLinkGroups.length === 1 && "md:grid-cols-1",
+                  activeLinkGroups.length === 2 && "md:grid-cols-2",
+                  activeLinkGroups.length === 3 && "md:grid-cols-3",
+                  activeLinkGroups.length === 4 && "md:grid-cols-4",
+                  activeLinkGroups.length >= 5 && "md:grid-cols-5"
+                )}
+              >
                 {activeLinkGroups.map((group, gIdx) => (
                   <div
                     key={`${group.heading}-${gIdx}`}
