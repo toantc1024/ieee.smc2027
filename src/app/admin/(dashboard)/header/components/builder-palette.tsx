@@ -181,11 +181,6 @@ export function BuilderPalette({
               <span className="text-[11px] font-bold capitalize text-slate-400">
                 Mega Menu Columns
               </span>
-              {!isMegaActive && (
-                <span className="text-[10px] text-amber-600 font-medium">
-                  Auto-converts
-                </span>
-              )}
             </div>
 
             <div className="space-y-2">

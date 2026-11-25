@@ -910,7 +910,7 @@ export function FooterInspector({
               size="sm"
               onClick={() =>
                 updateGroup({
-                  links: [...group.links, { label: "New Link", href: "/#about" }],
+                  links: [...group.links, { label: "New Link", href: "/" }],
                 })
               }
               className="h-8 px-3 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white"

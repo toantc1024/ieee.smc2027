@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
   DEFAULT_HEADER_DATA,
   normalizeHeaderConfig,
@@ -39,6 +40,7 @@ import {
 } from "./components/footer-studio-panel";
 import { useDragAutoScroll } from "./components/use-drag-auto-scroll";
 import {
+  ArrowLeft,
   PanelLeftClose,
   PanelLeftOpen,
   PanelTop,
@@ -201,7 +203,7 @@ export default function HeaderStudioPage() {
         ...prev.linkGroups,
         {
           heading: "New Column",
-          links: [{ label: "New Link", href: "/#about" }],
+          links: [{ label: "New Link", href: "/" }],
         },
       ],
     }));
@@ -253,7 +255,7 @@ export default function HeaderStudioPage() {
     const newTrigger: NavLinkItem = {
       id,
       name: "New Section",
-      href: "/#about",
+      href: "/",
       type: "mega",
       position: "left",
       columns: [
@@ -265,7 +267,7 @@ export default function HeaderStudioPage() {
             {
               id: `sub-${Date.now()}`,
               title: "Section Overview",
-              href: "/#about",
+              href: "/",
               description: "Introduction and key details",
               icon: "Globe",
             },
@@ -346,7 +348,7 @@ export default function HeaderStudioPage() {
               title: "IEEE SMC 2027 · Ho Chi Minh City",
               description: "Explore tracks, deadlines, and author submission details.",
               image: "/assets/cta-background.webp",
-              href: "/#cfp",
+              href: "/submissions",
               badge: "Featured",
               ctaText: "Explore",
             },
@@ -359,7 +361,7 @@ export default function HeaderStudioPage() {
               {
                 id: `sub-${Date.now()}`,
                 title: "Conference Page",
-                href: "/#about",
+                href: "/",
                 description: "Brief description for this destination",
                 icon: "Globe",
               },
@@ -597,6 +599,15 @@ export default function HeaderStudioPage() {
       <header className="h-13 shrink-0 bg-white border-b border-slate-200 px-3 sm:px-4 flex items-center justify-between gap-3 z-30">
         {/* Left Controls */}
         <div className="flex items-center gap-2 min-w-0">
+          <Link
+            href="/admin/pages"
+            className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:border-blue-300 hover:text-[#115eff] transition-colors shrink-0"
+            title="Back to Pages"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Back</span>
+          </Link>
+
           <Button
             type="button"
             variant="ghost"
@@ -726,7 +737,12 @@ export default function HeaderStudioPage() {
         {/* Right Actions */}
         <div className="flex items-center gap-1.5 shrink-0">
           {isDirty ? (
-            <Badge variant="warning" size="sm">
+            <Badge
+              variant="outline"
+              size="sm"
+              className="bg-rose-50 text-rose-700 border-rose-200"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
               Unsaved Changes
             </Badge>
           ) : (

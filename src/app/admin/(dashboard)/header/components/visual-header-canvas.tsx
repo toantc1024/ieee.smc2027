@@ -560,24 +560,29 @@ export function VisualHeaderCanvas({
             </div>
 
             {!hasMegaCanvas ? (
-              /* Direct Link Artboard */
-              <div className="p-8 flex items-center justify-center">
-                <div className="max-w-lg w-full bg-white rounded-xl border border-dashed border-slate-300 p-6 text-center space-y-3 shadow-xs">
-                  <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto text-[#115eff]">
-                    <Link2 className="w-5 h-5" />
+              /* Full-width Direct Link Artboard */
+              <div className="p-5 bg-white">
+                <div className="w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-5">
+                  <div className="flex items-center gap-4 min-w-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/assets/3d/empty-state__hcmute-3d-icon.png"
+                      alt="Direct Navigation Link"
+                      className="w-16 h-16 object-contain shrink-0 select-none"
+                    />
+                    <div className="min-w-0 text-left">
+                      <h4 className="text-sm font-bold text-[#004776]">
+                        Direct Navigation Link
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Clicking <span className="font-semibold text-slate-700">{activeTrigger.name}</span> navigates straight to{" "}
+                        <code className="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono text-[11px] text-[#004776]">
+                          {activeTrigger.href || "/"}
+                        </code>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#004776]">
-                      Direct Navigation Link
-                    </h4>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Clicking <span className="font-semibold text-slate-700">{activeTrigger.name}</span> navigates straight to{" "}
-                      <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-[11px] text-[#004776]">
-                        {activeTrigger.href || "/"}
-                      </code>
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 pt-1">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Button
                       type="button"
                       size="sm"
@@ -585,7 +590,7 @@ export function VisualHeaderCanvas({
                       onClick={() =>
                         onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
                       }
-                      className="h-8 text-xs"
+                      className="h-8 text-xs bg-white"
                     >
                       Edit Destination URL
                     </Button>
@@ -605,16 +610,28 @@ export function VisualHeaderCanvas({
               /* Interactive Mega Menu Columns Artboard */
               <div className="p-5 bg-white">
                 {columns.length === 0 && !activeTrigger.promoCard ? (
-                  <div className="py-12 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center gap-2.5 bg-slate-50/50">
-                    <Columns3 className="w-8 h-8 text-slate-300" />
-                    <div className="text-sm font-semibold text-slate-600">
-                      This mega menu has no columns yet
+                  <div className="w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+                    <div className="flex items-center gap-4 min-w-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/assets/3d/empty-state__hcmute-3d-icon.png"
+                        alt="Empty Mega Menu"
+                        className="w-16 h-16 object-contain shrink-0 select-none"
+                      />
+                      <div className="text-left">
+                        <div className="text-sm font-bold text-[#004776]">
+                          This mega menu has no columns yet
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Add a links column or drag a block from the left palette.
+                        </p>
+                      </div>
                     </div>
                     <Button
                       type="button"
                       size="sm"
                       onClick={() => onAddColumn(activeTrigger.id, "category-links")}
-                      className="h-8 text-xs bg-[#115eff] hover:bg-blue-700 text-white"
+                      className="h-8 text-xs bg-[#115eff] hover:bg-[#0a4de6] text-white shrink-0"
                     >
                       <Plus className="w-3.5 h-3.5 mr-1" />
                       Add First Column

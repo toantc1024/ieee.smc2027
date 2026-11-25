@@ -52,7 +52,7 @@ const DEFAULT_PROMO_CARD: NavPromoCard = {
   title: "IEEE SMC 2027 · Ho Chi Minh City",
   description: "Explore Call for Papers, Special Sessions, and submission guidelines.",
   image: "/assets/cta-background.webp",
-  href: "/#cfp",
+  href: "/submissions",
   badge: "Featured",
   ctaText: "Learn More",
 };
@@ -181,7 +181,7 @@ function PromoCardInspector({
                 <Input
                   value={promoCard.href}
                   onChange={(e) => onChange({ ...promoCard, href: e.target.value })}
-                  placeholder="/#cfp"
+                  placeholder="/submissions"
                   className="h-8 text-xs bg-white font-mono"
                 />
                 <label
@@ -312,7 +312,7 @@ function LinksListEditor({
     const newItem: NavSubItem = {
       id: `sub-${Date.now()}`,
       title: "New Navigation Link",
-      href: "/#about",
+      href: "/",
       description: "Short conference link description",
       icon: "Globe",
     };
@@ -448,7 +448,7 @@ function LinksListEditor({
                   <Input
                     value={link.href}
                     onChange={(e) => updateLink(link.id, { href: e.target.value })}
-                    placeholder="/#cfp"
+                    placeholder="/submissions"
                     className="h-8 text-xs font-mono bg-slate-50"
                   />
                   <label
@@ -759,7 +759,7 @@ function TriggerInspector({
                               {
                                 id: `sub-${Date.now()}`,
                                 title: trigger.name || "Explore Section",
-                                href: trigger.href || "/#about",
+                                href: trigger.href || "/",
                                 description: "Conference section overview",
                                 icon: "Globe",
                               },
@@ -788,7 +788,7 @@ function TriggerInspector({
             <Input
               value={trigger.href}
               onChange={(e) => onUpdateTrigger({ href: e.target.value })}
-              placeholder="/#about"
+              placeholder="/committees"
               className="h-9 text-xs font-mono"
             />
             <PageLinkPicker
@@ -896,7 +896,7 @@ function GeneralInspector({
   };
   const cta = config.ctaButton || {
     label: "Submit Paper",
-    href: "/#cfp",
+    href: "/submissions",
     enabled: true,
   };
 
@@ -1204,7 +1204,7 @@ function GeneralInspector({
                       {
                         id: `ql-${Date.now()}`,
                         label: "New Link",
-                        href: "/#news",
+                        href: "/news",
                       },
                     ],
                   },
@@ -1250,7 +1250,7 @@ function GeneralInspector({
                       },
                     }))
                   }
-                  placeholder="/#news"
+                  placeholder="/news"
                   className="h-7 text-[11px] font-mono bg-white flex-1"
                 />
                 <label
@@ -1382,7 +1382,7 @@ function GeneralInspector({
                     ctaButton: { ...prev.ctaButton, href: e.target.value },
                   }))
                 }
-                placeholder="/#cfp"
+                placeholder="/submissions"
                 className="h-8 text-xs font-mono bg-white"
               />
               <PageLinkPicker

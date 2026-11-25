@@ -29,7 +29,7 @@ function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
   }
 
   if (pathname.startsWith("/admin/posts")) {
-    items.push({ label: "Content Management" });
+    items.push({ label: "Content Management", href: "/admin/posts" });
     items.push({ label: "Posts & News", href: "/admin/posts" });
     if (pathname === "/admin/posts/new") {
       items.push({ label: "New Post" });
@@ -40,13 +40,13 @@ function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
   }
 
   if (pathname.startsWith("/admin/media")) {
-    items.push({ label: "Content Management" });
+    items.push({ label: "Content Management", href: "/admin/posts" });
     items.push({ label: "Media Library", href: "/admin/media" });
     return items;
   }
 
   if (pathname.startsWith("/admin/pages")) {
-    items.push({ label: "Website" });
+    items.push({ label: "Website", href: "/admin/pages" });
     items.push({ label: "Pages", href: "/admin/pages" });
     if (pathname !== "/admin/pages") {
       items.push({ label: "Visual Page Builder" });
@@ -55,31 +55,31 @@ function getBreadcrumbs(pathname: string): BreadcrumbItemData[] {
   }
 
   if (pathname.startsWith("/admin/header")) {
-    items.push({ label: "Website" });
-    items.push({ label: "Header & Navigation", href: "/admin/header" });
+    items.push({ label: "Website", href: "/admin/pages" });
+    items.push({ label: "Header & Footer", href: "/admin/header" });
     return items;
   }
 
   if (pathname.startsWith("/admin/registrations")) {
-    items.push({ label: "Conference & Finance" });
+    items.push({ label: "Conference & Finance", href: "/admin/registrations" });
     items.push({ label: "Registrations & Payoo", href: "/admin/registrations" });
     return items;
   }
 
   if (pathname.startsWith("/admin/broadcast")) {
-    items.push({ label: "Conference & Finance" });
+    items.push({ label: "Conference & Finance", href: "/admin/registrations" });
     items.push({ label: "Broadcast Emails", href: "/admin/broadcast" });
     return items;
   }
 
   if (pathname.startsWith("/admin/users")) {
-    items.push({ label: "Administration" });
+    items.push({ label: "Administration", href: "/admin/users" });
     items.push({ label: "Users & Roles", href: "/admin/users" });
     return items;
   }
 
   if (pathname.startsWith("/admin/oauth")) {
-    items.push({ label: "Administration" });
+    items.push({ label: "Administration", href: "/admin/users" });
     items.push({ label: "Google OAuth", href: "/admin/oauth" });
     return items;
   }
