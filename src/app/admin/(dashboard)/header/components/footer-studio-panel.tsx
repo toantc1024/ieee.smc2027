@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type {
   FooterConfigData,
   FooterLinkGroup,
@@ -506,6 +506,31 @@ export function FooterInspector({
   onDeleteLinkGroup: (groupIndex: number) => void;
 }) {
   const [uploadingCfp, setUploadingCfp] = useState(false);
+  const [panelHeight, setPanelHeight] = useState<number | null>(null);
+  const draggingRef = useRef<{ startY: number; startHeight: number } | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const delta = draggingRef.current.startY - e.clientY;
+      const maxH = Math.max(260, Math.round(window.innerHeight * 0.72));
+      const next = Math.min(maxH, Math.max(180, draggingRef.current.startHeight + delta));
+      setPanelHeight(next);
+    };
+    const onUp = () => {
+      if (!draggingRef.current) return;
+      draggingRef.current = null;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
 
   if (!target) return null;
 
@@ -1038,8 +1063,32 @@ export function FooterInspector({
   }
 
   return (
-    <section className="h-[340px] shrink-0 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] flex flex-col z-20">
-      <div className="h-10 px-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
+    <section
+      ref={sectionRef}
+      style={panelHeight ? { height: `${panelHeight}px` } : undefined}
+      className={cn(
+        "w-full shrink-0 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] flex flex-col z-20 min-h-0",
+        !panelHeight && "max-h-[48%]"
+      )}
+    >
+      {/* Fluid Resize Handle (VS Code style) */}
+      <div
+        onMouseDown={(e) => {
+          e.preventDefault();
+          const rect = sectionRef.current?.getBoundingClientRect();
+          draggingRef.current = {
+            startY: e.clientY,
+            startHeight: rect?.height || 300,
+          };
+          document.body.style.cursor = "row-resize";
+          document.body.style.userSelect = "none";
+        }}
+        title="Drag to resize panel"
+        className="h-1.5 w-full cursor-row-resize bg-transparent hover:bg-[#115eff]/25 active:bg-[#115eff]/40 transition-colors shrink-0 flex items-center justify-center group"
+      >
+        <span className="w-10 h-0.5 rounded-full bg-slate-300 group-hover:bg-[#115eff] transition-colors" />
+      </div>
+      <div className="h-9 px-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <HeaderIcon className="w-4 h-4 text-[#115eff] shrink-0" />
           <h3 className="text-xs font-extrabold capitalize text-[#004776] truncate">
@@ -1057,7 +1106,7 @@ export function FooterInspector({
           <X className="w-4 h-4" />
         </Button>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">{body}</div>
+      <div className="flex-1 min-h-0 overflow-y-auto p-4">{body}</div>
     </section>
   );
 }

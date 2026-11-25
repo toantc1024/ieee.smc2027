@@ -807,7 +807,7 @@ export default function HeaderStudioPage() {
         </div>
       </header>
 
-      {/* Main Studio Body: Left Palette + Center Dot-Grid Artboard */}
+      {/* Main Studio Body: Full-height Left Palette + Right Column (Canvas + Fluid Bottom Inspector like VS Code) */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
         {paletteOpen &&
           (studioMode === "header" ? (
@@ -834,82 +834,85 @@ export default function HeaderStudioPage() {
             />
           ))}
 
-        {/* Center Dot-Grid Workspace */}
-        <div
-          ref={canvasScrollRef}
-          className="flex-1 overflow-auto relative"
-          style={{
-            backgroundColor: "#f8fafc",
-            backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
-            backgroundSize: "20px 20px",
-          }}
-        >
-          {loading ? (
-            <div className="h-full flex items-center justify-center gap-2.5 text-sm font-medium text-slate-500">
-              <Loader2 className="w-5 h-5 animate-spin text-[#115eff]" />
-              Loading Layout Studio...
-            </div>
+        {/* Right Workspace Column: Canvas + Docked Fluid Bottom Inspector */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+          {/* Center Dot-Grid Workspace */}
+          <div
+            ref={canvasScrollRef}
+            className="flex-1 min-h-0 overflow-auto relative"
+            style={{
+              backgroundColor: "#f8fafc",
+              backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
+              backgroundSize: "20px 20px",
+            }}
+          >
+            {loading ? (
+              <div className="h-full flex items-center justify-center gap-2.5 text-sm font-medium text-slate-500">
+                <Loader2 className="w-5 h-5 animate-spin text-[#115eff]" />
+                Loading Layout Studio...
+              </div>
+            ) : (
+              <div
+                className="origin-top mx-auto transition-transform duration-150"
+                style={
+                  viewport === "desktop" && effectiveScale !== 1
+                    ? {
+                        transform: `scale(${effectiveScale})`,
+                        transformOrigin: "top center",
+                        width: "1260px",
+                      }
+                    : undefined
+                }
+              >
+                {studioMode === "header" ? (
+                  <VisualHeaderCanvas
+                    config={config}
+                    viewport={viewport}
+                    activeTriggerId={activeTriggerId}
+                    selectedTarget={selectedTarget}
+                    onSelectTrigger={setActiveTriggerId}
+                    onSelectTarget={setSelectedTarget}
+                    onAddColumn={handleAddColumn}
+                    onDeleteColumn={handleDeleteColumn}
+                    onMoveColumn={handleMoveColumn}
+                    onConvertTriggerToMega={handleConvertTriggerToMega}
+                    onDropPaletteBlock={handleDropPaletteBlock}
+                  />
+                ) : (
+                  <VisualFooterCanvas
+                    config={footerConfig}
+                    viewport={viewport}
+                    selectedTarget={footerTarget}
+                    onSelectTarget={setFooterTarget}
+                    onMoveLinkGroup={handleMoveFooterGroup}
+                    onDeleteLinkGroup={handleDeleteFooterGroup}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Fluid Bottom Inspector Drawer (aligned to canvas column, VS Code style) */}
+          {studioMode === "header" ? (
+            <HeaderInspector
+              config={config}
+              target={selectedTarget}
+              onClose={() => setSelectedTarget(null)}
+              onUpdateConfig={updateConfig}
+              onDeleteColumn={handleDeleteColumn}
+              onDeleteTrigger={handleDeleteTrigger}
+            />
           ) : (
-            <div
-              className="origin-top mx-auto transition-transform duration-150"
-              style={
-                viewport === "desktop" && effectiveScale !== 1
-                  ? {
-                      transform: `scale(${effectiveScale})`,
-                      transformOrigin: "top center",
-                      width: "1260px",
-                    }
-                  : undefined
-              }
-            >
-              {studioMode === "header" ? (
-                <VisualHeaderCanvas
-                  config={config}
-                  viewport={viewport}
-                  activeTriggerId={activeTriggerId}
-                  selectedTarget={selectedTarget}
-                  onSelectTrigger={setActiveTriggerId}
-                  onSelectTarget={setSelectedTarget}
-                  onAddColumn={handleAddColumn}
-                  onDeleteColumn={handleDeleteColumn}
-                  onMoveColumn={handleMoveColumn}
-                  onConvertTriggerToMega={handleConvertTriggerToMega}
-                  onDropPaletteBlock={handleDropPaletteBlock}
-                />
-              ) : (
-                <VisualFooterCanvas
-                  config={footerConfig}
-                  viewport={viewport}
-                  selectedTarget={footerTarget}
-                  onSelectTarget={setFooterTarget}
-                  onMoveLinkGroup={handleMoveFooterGroup}
-                  onDeleteLinkGroup={handleDeleteFooterGroup}
-                />
-              )}
-            </div>
+            <FooterInspector
+              config={footerConfig}
+              target={footerTarget}
+              onClose={() => setFooterTarget(null)}
+              onUpdateConfig={updateFooterConfig}
+              onDeleteLinkGroup={handleDeleteFooterGroup}
+            />
           )}
         </div>
       </div>
-
-      {/* Bottom Docked Inspector Drawer */}
-      {studioMode === "header" ? (
-        <HeaderInspector
-          config={config}
-          target={selectedTarget}
-          onClose={() => setSelectedTarget(null)}
-          onUpdateConfig={updateConfig}
-          onDeleteColumn={handleDeleteColumn}
-          onDeleteTrigger={handleDeleteTrigger}
-        />
-      ) : (
-        <FooterInspector
-          config={footerConfig}
-          target={footerTarget}
-          onClose={() => setFooterTarget(null)}
-          onUpdateConfig={updateFooterConfig}
-          onDeleteLinkGroup={handleDeleteFooterGroup}
-        />
-      )}
     </div>
   );
 }
