@@ -274,12 +274,6 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                       onClick={closeMenu}
                       className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-sm border border-blue-100/90 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
                     >
-                      {/* Dot Pattern in Default state */}
-                      <div
-                        className="absolute inset-0 bg-[radial-gradient(#93c5fd_1.2px,transparent_1.2px)] [background-size:12px_12px] opacity-60 group-hover/promo:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
-                        aria-hidden="true"
-                      />
-
                       {/* Top Image Banner */}
                       <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 z-[2]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -430,15 +424,25 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
     headerConfig.topbar?.quickLinks && headerConfig.topbar.quickLinks.length > 0
       ? headerConfig.topbar.quickLinks
       : DEFAULT_HEADER_DATA.topbar?.quickLinks || [];
+  const variant = headerConfig.variant || "left-aligned";
   const isSticky = headerConfig.sticky !== false;
   const showLogo = headerConfig.showLogo !== false;
   const desktopLogoUrl = headerConfig.logoUrl || DEFAULT_HEADER_DATA.logoUrl || "/logo/tagline.png";
-  const mobileLogoUrl = headerConfig.mobileLogoUrl || DEFAULT_HEADER_DATA.mobileLogoUrl || "/logo/square-logo.png";
+  const mobileLogoUrl = headerConfig.mobileLogoUrl || "/logo/tagline.png";
   const logoHref = headerConfig.logoHref || "/";
   const brandTitle = headerConfig.brand?.conferenceTitle || "IEEE SMC 2027";
   const ctaLabel = headerConfig.ctaButton?.label || "Submit Paper";
   const ctaHref = headerConfig.ctaButton?.href || "/#cfp";
   const showCta = headerConfig.ctaButton?.enabled !== false;
+
+  const leftNavLinks = useMemo(() => {
+    const mid = Math.ceil(navLinks.length / 2);
+    return navLinks.slice(0, mid);
+  }, [navLinks]);
+  const rightNavLinks = useMemo(() => {
+    const mid = Math.ceil(navLinks.length / 2);
+    return navLinks.slice(mid);
+  }, [navLinks]);
 
   const handleMobileNavClick = useCallback((href: string) => {
     setMobileMenuOpen(false);
@@ -769,118 +773,296 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
             isScrolled && "shadow-[-8px_0_25px_-10px_rgba(0,71,118,0.08),8px_0_25px_-10px_rgba(0,71,118,0.08)]"
           )}
         >
-          {/* Flush container matched exactly to site margins with comfortable height */}
-          <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between h-16 sm:h-[68px]">
-            {/* Desktop: Left Brand Logo + Navigation, Actions on Far Right */}
-            <div className="hidden lg:flex items-center justify-between w-full gap-3 xl:gap-5 min-w-0">
-              <div className="flex items-center gap-3 xl:gap-4 min-w-0">
-                {showLogo && desktopLogoUrl && (
-                  <>
-                    <Link
-                      href={logoHref}
-                      onClick={() => {
-                        closeMenu();
-                        if (logoHref === "/" && typeof window !== "undefined") {
-                          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-                        }
-                      }}
-                      className="flex items-center shrink-0 py-1 focus:outline-none group/logo"
-                      aria-label={brandTitle}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={desktopLogoUrl}
-                        alt={brandTitle}
-                        className="h-9 xl:h-10 w-auto max-w-[180px] xl:max-w-[220px] object-contain transition-opacity duration-150 group-hover/logo:opacity-90"
-                      />
-                    </Link>
-                    <span className="h-6 w-px bg-blue-100/90 shrink-0" aria-hidden="true" />
-                  </>
+          {/* Flush container matched exactly to site margins */}
+          <div
+            className={cn(
+              "w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] flex items-center justify-between",
+              variant === "stacked" ? "lg:py-2.5 h-16 lg:h-auto" : "h-16 sm:h-[72px]"
+            )}
+          >
+            {/* Desktop Header (supports left-aligned, centered HCM-UTE 3-column, stacked, minimal) */}
+            {variant === "centered" ? (
+              <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full gap-3 xl:gap-6 min-w-0">
+                <nav className="flex items-center gap-0.5 xl:gap-1 relative min-w-0">
+                  {leftNavLinks.map((link, index) => {
+                    const hasMegaMenu =
+                      link.type !== "link" &&
+                      ((link.columns && link.columns.length > 0) ||
+                        (link.children && link.children.length > 0));
+                    const isMenuOpen = activeMenuId === link.id;
+                    return (
+                      <div
+                        key={link.id}
+                        className={cn(
+                          "relative flex items-center h-full py-2 group/nav-item",
+                          isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
+                        )}
+                        onMouseEnter={() => {
+                          if (hasMegaMenu) handleMouseEnter(link.id, index);
+                          else closeMenu();
+                        }}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        <Link
+                          href={link.href}
+                          onClick={() => {
+                            closeMenu();
+                            if (link.href === "/" && typeof window !== "undefined") {
+                              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                            }
+                          }}
+                          className={cn(
+                            "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
+                            isMenuOpen
+                              ? "bg-[#115eff] text-white shadow-xs"
+                              : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                          )}
+                          aria-expanded={isMenuOpen}
+                        >
+                          <span>{link.name}</span>
+                          {hasMegaMenu && (
+                            <ChevronDown
+                              className={cn(
+                                "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
+                                isMenuOpen && "text-white rotate-180 opacity-100"
+                              )}
+                            />
+                          )}
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </nav>
+
+                {showLogo && desktopLogoUrl ? (
+                  <Link
+                    href={logoHref}
+                    onClick={() => {
+                      closeMenu();
+                      if (logoHref === "/" && typeof window !== "undefined") {
+                        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                      }
+                    }}
+                    className="flex items-center justify-center shrink-0 px-2 focus:outline-none group/logo"
+                    aria-label={brandTitle}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={desktopLogoUrl}
+                      alt={brandTitle}
+                      className="h-11 xl:h-12 w-auto max-w-[200px] object-contain transition-opacity duration-150 group-hover/logo:opacity-90"
+                    />
+                  </Link>
+                ) : (
+                  <div />
                 )}
 
-                <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
-                {navLinks.map((link, index) => {
-                  const hasMegaMenu =
-                    link.type !== "link" &&
-                    ((link.columns && link.columns.length > 0) ||
-                    (link.children && link.children.length > 0));
-                  const isMenuOpen = activeMenuId === link.id;
+                <div className="flex items-center justify-end gap-1.5 xl:gap-2 min-w-0">
+                  <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
+                    {rightNavLinks.map((link, offset) => {
+                      const index = leftNavLinks.length + offset;
+                      const hasMegaMenu =
+                        link.type !== "link" &&
+                        ((link.columns && link.columns.length > 0) ||
+                          (link.children && link.children.length > 0));
+                      const isMenuOpen = activeMenuId === link.id;
+                      return (
+                        <div
+                          key={link.id}
+                          className={cn(
+                            "relative flex items-center h-full py-2 group/nav-item",
+                            isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
+                          )}
+                          onMouseEnter={() => {
+                            if (hasMegaMenu) handleMouseEnter(link.id, index);
+                            else closeMenu();
+                          }}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          <Link
+                            href={link.href}
+                            onClick={() => {
+                              closeMenu();
+                              if (link.href === "/" && typeof window !== "undefined") {
+                                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                              }
+                            }}
+                            className={cn(
+                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
+                              isMenuOpen
+                                ? "bg-[#115eff] text-white shadow-xs"
+                                : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                            )}
+                            aria-expanded={isMenuOpen}
+                          >
+                            <span>{link.name}</span>
+                            {hasMegaMenu && (
+                              <ChevronDown
+                                className={cn(
+                                  "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
+                                  isMenuOpen && "text-white rotate-180 opacity-100"
+                                )}
+                              />
+                            )}
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </nav>
 
-                  return (
-                    <div
-                      key={link.id}
-                      className={cn(
-                        "relative flex items-center h-full py-2 group/nav-item",
-                        isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
-                      )}
-                      onMouseEnter={() => {
-                        if (hasMegaMenu) {
-                          handleMouseEnter(link.id, index);
-                        } else {
-                          closeMenu();
-                        }
-                      }}
-                      onMouseLeave={handleMouseLeave}
+                  <Link
+                    href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
+                    onClick={closeMenu}
+                    className="group/login inline-flex items-center justify-center gap-1.5 h-9 px-3 text-xs xl:text-sm font-semibold text-[#115eff] hover:text-white bg-white hover:bg-[#115eff] border border-[#115eff] rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap"
+                    title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
+                  >
+                    <User className="size-3.5 text-current shrink-0" />
+                    <span>
+                      {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
+                    </span>
+                  </Link>
+
+                  {showCta && (
+                    <a
+                      href={ctaHref}
+                      onClick={closeMenu}
+                      className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 text-xs xl:text-sm font-semibold text-white bg-[#115eff] hover:bg-[#0a4de6] border border-[#115eff] rounded-lg shadow-xs transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
                     >
+                      <span>{ctaLabel}</span>
+                      <ArrowUpRight className="size-3.5 text-current shrink-0" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  "hidden lg:flex w-full min-w-0",
+                  variant === "stacked"
+                    ? "flex-col items-center gap-2"
+                    : "items-center justify-between gap-3 xl:gap-5"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex items-center min-w-0",
+                    variant === "stacked"
+                      ? "flex-col gap-2 w-full"
+                      : "gap-3 xl:gap-4"
+                  )}
+                >
+                  {showLogo && desktopLogoUrl && (
+                    <>
                       <Link
-                        href={link.href}
+                        href={logoHref}
                         onClick={() => {
                           closeMenu();
-                          if (link.href === "/" && typeof window !== "undefined") {
+                          if (logoHref === "/" && typeof window !== "undefined") {
                             window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
                           }
                         }}
-                        className={cn(
-                          "group/btn inline-flex items-center gap-1.5 font-semibold text-sm px-3 xl:px-3.5 h-10 rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
-                          isMenuOpen
-                            ? "bg-[#115eff] text-white shadow-xs"
-                            : "text-[#004776] hover:bg-[#115eff] hover:text-white"
-                        )}
-                        aria-expanded={isMenuOpen}
+                        className="flex items-center shrink-0 py-1 focus:outline-none group/logo"
+                        aria-label={brandTitle}
                       >
-                        <span>{link.name}</span>
-                        {hasMegaMenu && (
-                          <ChevronDown
-                            className={cn(
-                              "size-4 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
-                              isMenuOpen && "text-white rotate-180 opacity-100"
-                            )}
-                          />
-                        )}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={desktopLogoUrl}
+                          alt={brandTitle}
+                          className="h-9 xl:h-10 w-auto max-w-[190px] xl:max-w-[230px] object-contain transition-opacity duration-150 group-hover/logo:opacity-90"
+                        />
                       </Link>
-                    </div>
-                  );
-                })}
-                </nav>
-              </div>
+                      {variant !== "stacked" && (
+                        <span className="h-6 w-px bg-blue-100/90 shrink-0" aria-hidden="true" />
+                      )}
+                    </>
+                  )}
 
-              {/* Actions on Far Right: Login + CTA Button */}
-              <div className="flex items-center gap-2 xl:gap-2.5 shrink-0">
-                <Link
-                  href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
-                  onClick={closeMenu}
-                  className="group/login inline-flex items-center justify-center gap-1.5 h-10 px-3.5 xl:px-4 text-sm font-semibold text-[#115eff] hover:text-white bg-white hover:bg-[#115eff] border border-[#115eff] rounded-sm transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
-                  title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
-                >
-                  <User className="size-4 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
-                  <span>
-                    {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
-                  </span>
-                </Link>
+                  <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
+                    {navLinks.map((link, index) => {
+                      const hasMegaMenu =
+                        link.type !== "link" &&
+                        ((link.columns && link.columns.length > 0) ||
+                        (link.children && link.children.length > 0));
+                      const isMenuOpen = activeMenuId === link.id;
 
-                {showCta && (
-                  <a
-                    href={ctaHref}
-                    onClick={closeMenu}
-                    className="inline-flex items-center justify-center gap-1.5 h-10 px-4 xl:px-4.5 text-sm font-semibold text-white bg-[#115eff] hover:bg-[#0a4de6] border border-[#115eff] rounded-sm shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
-                  >
-                    <FileText className="size-4 text-current shrink-0" />
-                    <span>{ctaLabel}</span>
-                    <ArrowUpRight className="size-4 text-current shrink-0" />
-                  </a>
+                      return (
+                        <div
+                          key={link.id}
+                          className={cn(
+                            "relative flex items-center h-full py-2 group/nav-item",
+                            isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
+                          )}
+                          onMouseEnter={() => {
+                            if (hasMegaMenu) {
+                              handleMouseEnter(link.id, index);
+                            } else {
+                              closeMenu();
+                            }
+                          }}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          <Link
+                            href={link.href}
+                            onClick={() => {
+                              closeMenu();
+                              if (link.href === "/" && typeof window !== "undefined") {
+                                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                              }
+                            }}
+                            className={cn(
+                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                              isMenuOpen
+                                ? "bg-[#115eff] text-white shadow-xs"
+                                : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                            )}
+                            aria-expanded={isMenuOpen}
+                          >
+                            <span>{link.name}</span>
+                            {hasMegaMenu && (
+                              <ChevronDown
+                                className={cn(
+                                  "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
+                                  isMenuOpen && "text-white rotate-180 opacity-100"
+                                )}
+                              />
+                            )}
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </nav>
+                </div>
+
+                {/* Actions on Far Right: Login + CTA Button */}
+                {variant !== "minimal" && (
+                  <div className="flex items-center gap-2 xl:gap-2.5 shrink-0">
+                    <Link
+                      href={!isLoggedIn ? "/admin/login" : currentUser?.role === "ADMIN" ? "/admin" : "/portal"}
+                      onClick={closeMenu}
+                      className="group/login inline-flex items-center justify-center gap-1.5 h-9 px-3.5 xl:px-4 text-xs xl:text-sm font-semibold text-[#115eff] hover:text-white bg-white hover:bg-[#115eff] border border-[#115eff] rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap shadow-2xs"
+                      title={!isLoggedIn ? "Portal Login" : currentUser?.role === "ADMIN" ? "Admin Console" : "Delegate Portal"}
+                    >
+                      <User className="size-4 text-current shrink-0 transition-transform duration-150 group-hover/login:scale-105" />
+                      <span>
+                        {!isLoggedIn ? "Login" : currentUser?.role === "ADMIN" ? "Dashboard" : "Portal"}
+                      </span>
+                    </Link>
+
+                    {showCta && (
+                      <a
+                        href={ctaHref}
+                        onClick={closeMenu}
+                        className="inline-flex items-center justify-center gap-1.5 h-9 px-4 xl:px-4.5 text-xs xl:text-sm font-semibold text-white bg-[#115eff] hover:bg-[#0a4de6] border border-[#115eff] rounded-lg shadow-xs hover:shadow-md transition-all duration-150 cursor-pointer select-none whitespace-nowrap shrink-0"
+                      >
+                        <FileText className="size-4 text-current shrink-0" />
+                        <span>{ctaLabel}</span>
+                        <ArrowUpRight className="size-4 text-current shrink-0" />
+                      </a>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
+            )}
 
             {/* Mobile Header: Brand Logo + Title on Left, Search + Hamburger on Right */}
             <div className="flex items-center justify-between w-full lg:hidden">
