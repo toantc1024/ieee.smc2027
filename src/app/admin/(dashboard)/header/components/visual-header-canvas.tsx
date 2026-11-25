@@ -420,7 +420,8 @@ export function VisualHeaderCanvas({
           {/* Nav Triggers Row */}
           <nav
             className={cn(
-              "flex items-center gap-1 flex-wrap",
+              "flex items-stretch gap-0.5 flex-wrap",
+              variant !== "stacked" && "h-full",
               variant === "centered" && "flex-1 justify-center",
               variant === "left-aligned" && "flex-1 justify-start ml-2",
               variant === "stacked" && "w-full justify-center",
@@ -439,10 +440,11 @@ export function VisualHeaderCanvas({
                     onSelectTarget({ type: "trigger", triggerId: item.id });
                   }}
                   className={cn(
-                    "group relative px-3 py-2 rounded-md text-[14px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
+                    "group relative px-3.5 rounded-none border-b-2 text-[14px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer",
+                    variant === "stacked" ? "py-2" : "h-full",
                     isActive
-                      ? "text-[#115eff] bg-blue-50/80 ring-1 ring-[#115eff]/30"
-                      : "text-slate-700 hover:text-[#115eff] hover:bg-slate-50"
+                      ? "border-[#115eff] text-[#115eff] bg-blue-50/60"
+                      : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
                   )}
                 >
                   <span>{item.name || "Untitled"}</span>
@@ -456,9 +458,6 @@ export function VisualHeaderCanvas({
                   )}
                   {item.isExternal && !isMega && (
                     <ExternalLink className="w-3 h-3 text-slate-400" />
-                  )}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-[#115eff] rounded-full" />
                   )}
                 </button>
               );

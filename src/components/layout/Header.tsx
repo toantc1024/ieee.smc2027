@@ -782,19 +782,24 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
           >
             {/* Desktop Header (supports left-aligned, centered HCM-UTE 3-column, stacked, minimal) */}
             {variant === "centered" ? (
-              <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full gap-3 xl:gap-6 min-w-0">
-                <nav className="flex items-center gap-0.5 xl:gap-1 relative min-w-0">
+              <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full h-full gap-3 xl:gap-6 min-w-0">
+                <nav className="flex items-stretch h-full gap-0.5 xl:gap-1 relative min-w-0">
                   {leftNavLinks.map((link, index) => {
                     const hasMegaMenu =
                       link.type !== "link" &&
                       ((link.columns && link.columns.length > 0) ||
                         (link.children && link.children.length > 0));
                     const isMenuOpen = activeMenuId === link.id;
+                    const isRouteActive =
+                      link.href === "/"
+                        ? pathname === "/"
+                        : Boolean(pathname && link.href && !link.href.startsWith("/#") && pathname.startsWith(link.href));
+                    const isActive = isMenuOpen || isRouteActive;
                     return (
                       <div
                         key={link.id}
                         className={cn(
-                          "relative flex items-center h-full py-2 group/nav-item",
+                          "relative flex items-stretch h-full group/nav-item",
                           isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
                         )}
                         onMouseEnter={() => {
@@ -812,10 +817,10 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                             }
                           }}
                           className={cn(
-                            "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
-                            isMenuOpen
-                              ? "bg-[#115eff] text-white shadow-xs"
-                              : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                            "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-full rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
+                            isActive
+                              ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
+                              : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
                           )}
                           aria-expanded={isMenuOpen}
                         >
@@ -824,7 +829,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                             <ChevronDown
                               className={cn(
                                 "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
-                                isMenuOpen && "text-white rotate-180 opacity-100"
+                                isMenuOpen && "text-[#115eff] rotate-180 opacity-100"
                               )}
                             />
                           )}
@@ -857,8 +862,8 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                   <div />
                 )}
 
-                <div className="flex items-center justify-end gap-1.5 xl:gap-2 min-w-0">
-                  <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
+                <div className="flex items-center justify-end h-full gap-1.5 xl:gap-2 min-w-0">
+                  <nav className="flex items-stretch h-full gap-0.5 xl:gap-1 relative shrink-0">
                     {rightNavLinks.map((link, offset) => {
                       const index = leftNavLinks.length + offset;
                       const hasMegaMenu =
@@ -866,11 +871,16 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                         ((link.columns && link.columns.length > 0) ||
                           (link.children && link.children.length > 0));
                       const isMenuOpen = activeMenuId === link.id;
+                      const isRouteActive =
+                        link.href === "/"
+                          ? pathname === "/"
+                          : Boolean(pathname && link.href && !link.href.startsWith("/#") && pathname.startsWith(link.href));
+                      const isActive = isMenuOpen || isRouteActive;
                       return (
                         <div
                           key={link.id}
                           className={cn(
-                            "relative flex items-center h-full py-2 group/nav-item",
+                            "relative flex items-stretch h-full group/nav-item",
                             isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
                           )}
                           onMouseEnter={() => {
@@ -888,10 +898,10 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                               }
                             }}
                             className={cn(
-                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
-                              isMenuOpen
-                                ? "bg-[#115eff] text-white shadow-xs"
-                                : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-full rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none",
+                              isActive
+                                ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
+                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
                             )}
                             aria-expanded={isMenuOpen}
                           >
@@ -900,7 +910,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                               <ChevronDown
                                 className={cn(
                                   "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
-                                  isMenuOpen && "text-white rotate-180 opacity-100"
+                                  isMenuOpen && "text-[#115eff] rotate-180 opacity-100"
                                 )}
                               />
                             )}
@@ -940,7 +950,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                   "hidden lg:flex w-full min-w-0",
                   variant === "stacked"
                     ? "flex-col items-center gap-2"
-                    : "items-center justify-between gap-3 xl:gap-5"
+                    : "items-center justify-between h-full gap-3 xl:gap-5"
                 )}
               >
                 <div
@@ -948,7 +958,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                     "flex items-center min-w-0",
                     variant === "stacked"
                       ? "flex-col gap-2 w-full"
-                      : "gap-3 xl:gap-4"
+                      : "h-full gap-3 xl:gap-4"
                   )}
                 >
                   {showLogo && desktopLogoUrl && (
@@ -977,19 +987,29 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                     </>
                   )}
 
-                  <nav className="flex items-center gap-0.5 xl:gap-1 relative shrink-0">
+                  <nav
+                    className={cn(
+                      "flex items-stretch gap-0.5 xl:gap-1 relative shrink-0",
+                      variant !== "stacked" && "h-full"
+                    )}
+                  >
                     {navLinks.map((link, index) => {
                       const hasMegaMenu =
                         link.type !== "link" &&
                         ((link.columns && link.columns.length > 0) ||
                         (link.children && link.children.length > 0));
                       const isMenuOpen = activeMenuId === link.id;
+                      const isRouteActive =
+                        link.href === "/"
+                          ? pathname === "/"
+                          : Boolean(pathname && link.href && !link.href.startsWith("/#") && pathname.startsWith(link.href));
+                      const isActive = isMenuOpen || isRouteActive;
 
                       return (
                         <div
                           key={link.id}
                           className={cn(
-                            "relative flex items-center h-full py-2 group/nav-item",
+                            "relative flex items-stretch h-full group/nav-item",
                             isMenuOpen && "before:absolute before:top-0 before:bottom-[-16px] before:inset-x-0 before:content-[''] before:pointer-events-auto"
                           )}
                           onMouseEnter={() => {
@@ -1010,10 +1030,11 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                               }
                             }}
                             className={cn(
-                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 h-9 rounded-lg transition-all duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
-                              isMenuOpen
-                                ? "bg-[#115eff] text-white shadow-xs"
-                                : "text-[#004776] hover:bg-[#115eff] hover:text-white"
+                              "group/btn inline-flex items-center gap-1 font-bold text-xs xl:text-sm px-2.5 xl:px-3.5 rounded-none border-b-2 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap z-10 focus:outline-none focus:ring-0",
+                              variant === "stacked" ? "h-10" : "h-full",
+                              isActive
+                                ? "border-[#115eff] text-[#115eff] bg-blue-50/50"
+                                : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/35 hover:border-[#115eff]/50"
                             )}
                             aria-expanded={isMenuOpen}
                           >
@@ -1022,7 +1043,7 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
                               <ChevronDown
                                 className={cn(
                                   "size-3.5 transition-transform duration-200 text-current opacity-70 group-hover/btn:opacity-100",
-                                  isMenuOpen && "text-white rotate-180 opacity-100"
+                                  isMenuOpen && "text-[#115eff] rotate-180 opacity-100"
                                 )}
                               />
                             )}
