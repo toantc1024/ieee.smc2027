@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ImageIcon, Upload, Crop, X, Link as LinkIcon } from "lucide-react";
+import { ImageIcon, Upload, Crop, X, Link as LinkIcon, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
 import { uploadPostMedia } from "./upload";
 
 interface ImageInsertModalProps {
@@ -23,6 +24,7 @@ export function ImageInsertModal({
   const [uploading, setUploading] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
   const [rawImageForCrop, setRawImageForCrop] = useState<string | null>(null);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -161,14 +163,19 @@ export function ImageInsertModal({
                   </div>
                 </div>
 
-                {/* Optional Crop & Upload Button */}
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-[11px] text-slate-500">
-                    Want to crop before inserting?
-                  </span>
+                {/* Select from Media Library + Crop & Upload */}
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setLibraryOpen(true)}
+                    className="h-8 px-3 rounded-lg border border-blue-200 hover:border-[#115eff] text-xs font-semibold text-[#115eff] bg-blue-50/50 hover:bg-blue-50 flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <FolderOpen className="size-3.5" />
+                    <span>Select from Library</span>
+                  </button>
                   <label
                     htmlFor="crop-file-input"
-                    className="h-7 px-2.5 rounded-lg border border-slate-200 hover:border-slate-300 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    className="h-8 px-2.5 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <Crop className="size-3.5 text-[#115eff]" />
                     <span>Crop & Upload</span>
@@ -253,6 +260,19 @@ export function ImageInsertModal({
           }}
         />
       )}
+      <MediaLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={(url, file) => {
+          onInsertImage(url, altText.trim() || file?.filename || "");
+          setLibraryOpen(false);
+          onClose();
+        }}
+        defaultFolder="public/news"
+        accept="image/*"
+        title="Select Image from Media Library"
+        allowDelete
+      />
     </>
   );
 }

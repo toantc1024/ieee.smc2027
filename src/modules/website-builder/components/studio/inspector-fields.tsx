@@ -421,6 +421,7 @@ function UploadField({ field, value, path, onChange, disabled, onBusyChange }: I
           defaultFolder="public/uploads"
           accept={accept}
           title={`Select ${field.label}`}
+          allowDelete
         />
       )}
     </div>

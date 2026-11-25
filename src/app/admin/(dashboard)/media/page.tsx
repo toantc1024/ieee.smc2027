@@ -1,13 +1,22 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { StatusAlertBanner } from "@/components/shared/StatusAlertBanner";
 import { MediaFileGrid } from "@/components/admin/media/MediaFileGrid";
 import { DEFAULT_ALL_MEDIA_ACCEPT } from "@/lib/media-types";
 import type { StorageFolder } from "@/types";
 import type { MediaFileItem } from "@/components/media/MediaLibraryModal";
+import { toast } from "sonner";
 
 export default function AdminMediaLibraryPage() {
   const [files, setFiles] = useState<MediaFileItem[]>([]);
@@ -19,6 +28,8 @@ export default function AdminMediaLibraryPage() {
   const [search, setSearch] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<MediaFileItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadFiles = useCallback(async () => {
@@ -77,14 +88,28 @@ export default function AdminMediaLibraryPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleRequestDelete = (id: string) => {
+    const target = files.find((item) => item.id === id) || null;
+    if (target) setPendingDelete(target);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    setError("");
     try {
-      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/media/${pendingDelete.id}`, { method: "DELETE" });
       if (res.ok) {
-        setFiles((prev) => prev.filter((item) => item.id !== id));
+        setFiles((prev) => prev.filter((item) => item.id !== pendingDelete.id));
+        toast.success(`Deleted ${pendingDelete.filename}`);
+        setPendingDelete(null);
+      } else {
+        setError("Unable to delete media file");
       }
     } catch {
       setError("Unable to delete media file");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -144,10 +169,58 @@ export default function AdminMediaLibraryPage() {
         onSearchChange={setSearch}
         copiedId={copiedId}
         onCopyUrl={handleCopyUrl}
-        onDelete={handleDelete}
+        onDelete={handleRequestDelete}
         onRefresh={loadFiles}
         onUploadClick={() => fileInputRef.current?.click()}
       />
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setPendingDelete(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[420px] bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-slate-900">
+              Delete File
+            </DialogTitle>
+            <DialogDescription className="text-sm text-slate-600">
+              Are you sure you want to permanently delete{" "}
+              <span className="font-semibold text-slate-900 break-all">
+                {pendingDelete?.filename}
+              </span>
+              ? Pages or links using this file will stop loading it.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={deleting}
+              onClick={() => setPendingDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={deleting}
+              onClick={handleConfirmDelete}
+              className="bg-rose-600 hover:bg-rose-700 text-white"
+            >
+              {deleting ? (
+                <Loader2 className="size-3.5 animate-spin mr-1.5" />
+              ) : (
+                <Trash2 className="size-3.5 mr-1.5" />
+              )}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import type { NodeViewProps } from "@tiptap/react";
 import {
   Image as ImageIcon,
   Upload,
+  FolderOpen,
   Maximize2,
   Minimize2,
   ExternalLink,
@@ -16,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { uploadPostMedia } from "./upload";
+import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
 import {
   BlockWrapper,
   type BlockAlignment,
@@ -34,6 +36,7 @@ export function ImageBlockView({
   const attrs = node.attrs as ImageBlockAttrs;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const src = attrs.src || "";
   const alt = attrs.alt || "";
@@ -94,6 +97,24 @@ export function ImageBlockView({
             onChange={handleUploadFile}
             className="hidden"
           />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLibraryOpen(true);
+            }}
+            title="Select from Media Library"
+            className={cn(
+              "h-6 px-2 rounded-md text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer",
+              selected
+                ? "bg-white/15 text-white hover:bg-white/25"
+                : "text-slate-600 hover:bg-slate-200/70"
+            )}
+          >
+            <FolderOpen className="size-3" />
+            <span className="hidden sm:inline">Library</span>
+          </button>
+
           <button
             type="button"
             onClick={(e) => {
@@ -331,6 +352,20 @@ export function ImageBlockView({
           </a>
         </div>
       )}
+      <MediaLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={(url, file) => {
+          updateAttributes({
+            src: url,
+            alt: alt || file?.filename?.replace(/\.[^/.]+$/, "") || "",
+          });
+        }}
+        defaultFolder="public/news"
+        accept="image/*"
+        title="Select Image"
+        allowDelete
+      />
     </BlockWrapper>
   );
 }

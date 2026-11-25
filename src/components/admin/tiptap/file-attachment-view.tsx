@@ -5,6 +5,7 @@ import type { NodeViewProps } from "@tiptap/react";
 import {
   FileText,
   Upload,
+  FolderOpen,
   Download,
   ExternalLink,
   Eye,
@@ -14,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { uploadPostMedia } from "./upload";
+import { MediaLibraryModal } from "@/components/media/MediaLibraryModal";
 import {
   BlockWrapper,
   type BlockAlignment,
@@ -30,6 +32,7 @@ export function FileAttachmentView({
   const attrs = node.attrs as FileAttachmentAttrs;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const src = attrs.src || "";
   const title = attrs.title ?? "Document";
@@ -95,6 +98,23 @@ export function FileAttachmentView({
             onChange={handleUploadFile}
             className="hidden"
           />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLibraryOpen(true);
+            }}
+            className={cn(
+              "h-6 px-2 rounded-md text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer",
+              selected
+                ? "bg-white/15 text-white hover:bg-white/25"
+                : "text-slate-600 hover:bg-slate-200/70"
+            )}
+          >
+            <FolderOpen className="size-3" />
+            <span className="hidden sm:inline">Library</span>
+          </button>
+
           <button
             type="button"
             onClick={(e) => {
@@ -226,6 +246,20 @@ export function FileAttachmentView({
           />
         </div>
       )}
+
+      <MediaLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={(url, file) => {
+          const name = file?.filename || title || "Document";
+          const ext = (name.split(".").pop() || "FILE").toUpperCase();
+          updateAttributes({ src: url, title: name, fileType: ext });
+        }}
+        defaultFolder="public/uploads"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,application/pdf,application/zip"
+        title="Select Document"
+        allowDelete
+      />
     </BlockWrapper>
   );
 }

@@ -90,6 +90,8 @@ export function MediaLibraryModal({
   );
   const [uploadFolder, setUploadFolder] = useState<StorageFolder>(defaultFolder);
   const [selectedFile, setSelectedFile] = useState<MediaFileItem | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<MediaFileItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchMedia = useCallback(async () => {
@@ -173,16 +175,27 @@ export function MediaLibraryModal({
     }
   };
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const handleRequestDelete = (item: MediaFileItem, e: React.MouseEvent) => {
     e.stopPropagation();
+    setPendingDelete(item);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/media/${pendingDelete.id}`, { method: "DELETE" });
       if (res.ok) {
-        setFiles((prev) => prev.filter((f) => f.id !== id));
-        if (selectedFile?.id === id) setSelectedFile(null);
+        setFiles((prev) => prev.filter((f) => f.id !== pendingDelete.id));
+        if (selectedFile?.id === pendingDelete.id) setSelectedFile(null);
+        setPendingDelete(null);
+      } else {
+        setError("Failed to delete file");
       }
     } catch {
       setError("Failed to delete file");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -190,7 +203,7 @@ export function MediaLibraryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
-      <div className="flex flex-col w-full max-w-4xl max-h-[88vh] rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+      <div className="relative flex flex-col w-full max-w-4xl max-h-[88vh] rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/70">
           <div className="flex items-center gap-3">
@@ -405,8 +418,8 @@ export function MediaLibraryModal({
                       {allowDelete && item.id && (
                         <button
                           type="button"
-                          onClick={(e) => handleDelete(item.id, e)}
-                          className="opacity-0 group-hover:opacity-100 absolute top-2 left-2 size-6 rounded-lg bg-red-600/90 text-white flex items-center justify-center transition-opacity"
+                          onClick={(e) => handleRequestDelete(item, e)}
+                          className="opacity-0 group-hover:opacity-100 absolute top-2 left-2 size-6 rounded-lg bg-red-600/90 text-white flex items-center justify-center transition-opacity cursor-pointer"
                           title="Delete file"
                         >
                           <Trash2 className="size-3" />
@@ -465,6 +478,49 @@ export function MediaLibraryModal({
             </Button>
           </div>
         </div>
+
+        {/* Confirm Delete Overlay inside Modal */}
+        {pendingDelete && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/50 backdrop-blur-[2px] p-4">
+            <div className="w-full max-w-sm rounded-xl bg-white border border-slate-200 shadow-2xl p-5 space-y-4">
+              <div className="space-y-1.5">
+                <h4 className="text-sm font-bold text-slate-900">Delete File</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Are you sure you want to permanently delete{" "}
+                  <span className="font-semibold text-slate-900 break-all">
+                    {pendingDelete.filename}
+                  </span>
+                  ?
+                </p>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={deleting}
+                  onClick={() => setPendingDelete(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={deleting}
+                  onClick={handleConfirmDelete}
+                  className="bg-rose-600 hover:bg-rose-700 text-white"
+                >
+                  {deleting ? (
+                    <Loader2 className="size-3.5 animate-spin mr-1" />
+                  ) : (
+                    <Trash2 className="size-3.5 mr-1" />
+                  )}
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
