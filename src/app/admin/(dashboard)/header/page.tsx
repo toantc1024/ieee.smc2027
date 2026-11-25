@@ -17,13 +17,6 @@ import { useAutoMinimizeSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   BuilderPalette,
   type PaletteDragBlockType,
 } from "./components/builder-palette";
@@ -60,7 +53,6 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-type ZoomMode = "auto" | "75" | "85" | "100";
 type StudioMode = "header" | "footer";
 
 export default function HeaderStudioPage() {
@@ -88,7 +80,6 @@ export default function HeaderStudioPage() {
 
   const [paletteOpen, setPaletteOpen] = useState(true);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [zoomMode, setZoomMode] = useState<ZoomMode>("auto");
   const [autoScale, setAutoScale] = useState(1);
 
   const [activeTriggerId, setActiveTriggerId] = useState<string>(
@@ -166,9 +157,8 @@ export default function HeaderStudioPage() {
 
   const effectiveScale = useMemo(() => {
     if (viewport !== "desktop") return 1;
-    if (zoomMode === "auto") return autoScale;
-    return Number(zoomMode) / 100;
-  }, [viewport, zoomMode, autoScale]);
+    return autoScale;
+  }, [viewport, autoScale]);
 
   const isHeaderDirty = useMemo(() => {
     return JSON.stringify(config) !== savedSnapshot;
@@ -741,7 +731,7 @@ export default function HeaderStudioPage() {
           </div>
         </div>
 
-        {/* Center Viewport & Zoom Controls */}
+        {/* Center Viewport Controls */}
         <div className="hidden xl:flex items-center gap-2">
           <div className="inline-flex rounded-md bg-slate-100 p-0.5 border border-slate-200/80">
             <button
@@ -751,7 +741,7 @@ export default function HeaderStudioPage() {
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer",
                 viewport === "desktop"
-                  ? "bg-white text-[#004776] shadow-2xs"
+                  ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-500 hover:text-slate-800"
               )}
             >
@@ -765,7 +755,7 @@ export default function HeaderStudioPage() {
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer",
                 viewport === "tablet"
-                  ? "bg-white text-[#004776] shadow-2xs"
+                  ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-500 hover:text-slate-800"
               )}
             >
@@ -779,7 +769,7 @@ export default function HeaderStudioPage() {
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer",
                 viewport === "mobile"
-                  ? "bg-white text-[#004776] shadow-2xs"
+                  ? "bg-white text-[#115eff] shadow-2xs"
                   : "text-slate-500 hover:text-slate-800"
               )}
             >
@@ -787,31 +777,6 @@ export default function HeaderStudioPage() {
               <span>Mobile</span>
             </button>
           </div>
-
-          {viewport === "desktop" && (
-            <Select
-              value={zoomMode}
-              onValueChange={(v) => setZoomMode(v as ZoomMode)}
-            >
-              <SelectTrigger className="h-7 w-24 text-xs bg-white border-slate-200">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="auto" className="text-xs">
-                  Fit {Math.round(autoScale * 100)}%
-                </SelectItem>
-                <SelectItem value="75" className="text-xs">
-                  75%
-                </SelectItem>
-                <SelectItem value="85" className="text-xs">
-                  85%
-                </SelectItem>
-                <SelectItem value="100" className="text-xs">
-                  100%
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          )}
         </div>
 
         {/* Right Actions */}
