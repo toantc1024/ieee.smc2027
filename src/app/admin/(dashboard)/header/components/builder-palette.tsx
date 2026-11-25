@@ -178,7 +178,7 @@ export function BuilderPalette({
           {/* Group 1: Mega Menu Columns */}
           <div className="space-y-2">
             <div className="flex items-center justify-between px-0.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-bold capitalize text-slate-400">
                 Mega Menu Columns
               </span>
               {!isMegaActive && (
@@ -226,7 +226,7 @@ export function BuilderPalette({
           {/* Group 2: Navigation & Utility */}
           <div className="space-y-2">
             <div className="px-0.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-bold capitalize text-slate-400">
                 Header & Navigation
               </span>
             </div>

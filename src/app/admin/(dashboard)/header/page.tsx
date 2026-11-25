@@ -158,7 +158,7 @@ export default function HeaderStudioPage() {
       columns: [
         {
           id: `col-${Date.now()}`,
-          title: "QUICK LINKS",
+          title: "Quick Links",
           type: "category-links",
           links: [
             {

@@ -251,7 +251,7 @@ export function VisualHeaderCanvas({
                                 : "border-transparent hover:border-blue-200"
                             )}
                           >
-                            <div className="text-[11px] font-bold uppercase tracking-wider text-[#004776] mb-1.5">
+                            <div className="text-[11px] font-bold capitalize text-[#004776] mb-1.5">
                               {col.title}
                             </div>
                             <div className="space-y-1">
@@ -322,7 +322,7 @@ export function VisualHeaderCanvas({
             onClick={() => onSelectTarget({ type: "general" })}
             title="Click to edit Top Utility Bar & General Settings"
             className={cn(
-              "bg-[#004776] text-white px-6 py-2 flex items-center justify-between gap-4 cursor-pointer transition-all relative group/topbar",
+              "bg-[#115eff] text-white px-6 py-2 flex items-center justify-between gap-4 cursor-pointer transition-all relative group/topbar",
               isGeneralSelected && "ring-2 ring-inset ring-amber-300"
             )}
           >
@@ -494,7 +494,7 @@ export function VisualHeaderCanvas({
             {/* Artboard Control Sub-header */}
             <div className="px-6 py-2.5 bg-white border-b border-slate-200/80 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-bold capitalize text-slate-400">
                   Editing Trigger
                 </span>
                 <span className="text-sm font-extrabold text-[#004776] truncate">
@@ -641,7 +641,7 @@ export function VisualHeaderCanvas({
                             />
                           )}
                           {col.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/15 text-blue-100">
+                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-white/15 text-blue-100">
                               {col.promoCard.badge}
                             </span>
                           )}
@@ -754,7 +754,7 @@ export function VisualHeaderCanvas({
 
                           {/* Column Heading + Animated Gradient Underline */}
                           <div className="relative pb-2.5 mb-3 shrink-0 pr-16">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-[#004776] whitespace-pre-line">
+                            <h3 className="text-xs font-bold capitalize text-[#004776] whitespace-pre-line">
                               {col.title || "UNTITLED COLUMN"}
                             </h3>
                             <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
@@ -879,7 +879,7 @@ export function VisualHeaderCanvas({
                             />
                           )}
                           {activeTrigger.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/15 text-blue-100">
+                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-white/15 text-blue-100">
                               {activeTrigger.promoCard.badge}
                             </span>
                           )}

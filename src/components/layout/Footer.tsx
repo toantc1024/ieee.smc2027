@@ -153,12 +153,26 @@ export function Footer(props: FooterProps = {}) {
   const hotline = props.hotline ?? base.hotline;
   const hotlineRaw = props.hotlineRaw ?? base.hotlineRaw;
   const contactEmail = props.contactEmail ?? base.contactEmail;
-  const activeLinkGroups =
+  const rawLinkGroups =
     props.linkGroups !== undefined
       ? Array.isArray(props.linkGroups)
         ? props.linkGroups
         : []
       : base.linkGroups;
+  const activeLinkGroups = rawLinkGroups.map((group) => ({
+    ...group,
+    links: Array.isArray(group.links)
+      ? group.links.map((link) => {
+          const isStaticCfpPdf =
+            typeof link.href === "string" &&
+            (link.href === "/cfp-ieee-smc-2027.pdf" ||
+              link.href === "/CFP - IEEE SMC 2027.pdf");
+          return isStaticCfpPdf && cfpPdfUrl
+            ? { ...link, href: cfpPdfUrl }
+            : link;
+        })
+      : [],
+  }));
   const activeSocialLinks =
     props.socialLinks !== undefined
       ? Array.isArray(props.socialLinks)

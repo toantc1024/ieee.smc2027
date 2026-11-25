@@ -262,16 +262,65 @@ export function applySharedBlockSyncToTargetBlocks(
       }
     }
 
-    // 4. Propagate updated cfpPdfUrl to all CFP-linked blocks
-    if (
-      syncedCfpPdfUrl &&
-      (type === "CallForPapers" ||
+    // 4. Propagate updated cfpPdfUrl to all CFP-linked blocks (including HeroCarousel / Hero / Footer links)
+    if (syncedCfpPdfUrl) {
+      if (
+        type === "CallForPapers" ||
         type === "CfpPoliciesBlock" ||
         type === "CfpBrochureBannerBlock" ||
         type === "SubmissionCountdown" ||
-        type === "FooterSection")
-    ) {
-      nextProps.cfpPdfUrl = syncedCfpPdfUrl;
+        type === "FooterSection"
+      ) {
+        nextProps.cfpPdfUrl = syncedCfpPdfUrl;
+      }
+
+      if (type === "HeroCarousel" && Array.isArray(nextProps.slides)) {
+        nextProps.slides = (nextProps.slides as Array<Record<string, unknown>>).map((slide) => {
+          if (!slide || typeof slide !== "object") return slide;
+          const sec = slide.secondaryAction as { label?: string; href?: string } | undefined;
+          if (
+            sec &&
+            typeof sec.href === "string" &&
+            (/\.pdf($|\?)/i.test(sec.href) ||
+              sec.href.startsWith("/api/images/") ||
+              /cfp/i.test(sec.label || ""))
+          ) {
+            return { ...slide, secondaryAction: { ...sec, href: syncedCfpPdfUrl } };
+          }
+          return slide;
+        });
+      }
+
+      if (type === "Hero" && nextProps.secondaryAction && typeof nextProps.secondaryAction === "object") {
+        const sec = nextProps.secondaryAction as { label?: string; href?: string };
+        if (
+          typeof sec.href === "string" &&
+          (/\.pdf($|\?)/i.test(sec.href) ||
+            sec.href.startsWith("/api/images/") ||
+            /cfp/i.test(sec.label || ""))
+        ) {
+          nextProps.secondaryAction = { ...sec, href: syncedCfpPdfUrl };
+        }
+      }
+
+      if (type === "FooterSection" && Array.isArray(nextProps.linkGroups)) {
+        nextProps.linkGroups = (nextProps.linkGroups as Array<Record<string, unknown>>).map((grp) => {
+          if (!grp || typeof grp !== "object" || !Array.isArray(grp.links)) return grp;
+          return {
+            ...grp,
+            links: (grp.links as Array<Record<string, unknown>>).map((l) => {
+              if (
+                l &&
+                typeof l.href === "string" &&
+                (/\.pdf($|\?)/i.test(l.href) || /cfp/i.test(String(l.label || "")))
+              ) {
+                return { ...l, href: syncedCfpPdfUrl };
+              }
+              return l;
+            }),
+          };
+        });
+      }
     }
 
     if (JSON.stringify(target.props || {}) !== JSON.stringify(nextProps)) {

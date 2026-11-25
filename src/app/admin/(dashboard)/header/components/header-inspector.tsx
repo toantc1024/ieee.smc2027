@@ -184,6 +184,30 @@ function PromoCardInspector({
                   placeholder="/#cfp"
                   className="h-8 text-xs bg-white font-mono"
                 />
+                <label
+                  title="Upload PDF / ZIP file"
+                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <input
+                    type="file"
+                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      try {
+                        const uploadedUrl = await uploadImageAsset(f);
+                        onChange({ ...promoCard, href: uploadedUrl });
+                        toast.success(`Uploaded ${f.name}`);
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Upload failed");
+                      } finally {
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </label>
                 <PageLinkPicker
                   value={promoCard.href}
                   onSelect={(sel) =>
@@ -298,7 +322,7 @@ function LinksListEditor({
   return (
     <div className="space-y-2.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        <span className="text-xs font-bold capitalize text-slate-500">
           Column Links ({links.length})
         </span>
         <Button
@@ -427,7 +451,31 @@ function LinksListEditor({
                     placeholder="/#cfp"
                     className="h-8 text-xs font-mono bg-slate-50"
                   />
-                  <PageLinkPicker
+                  <label
+                  title="Upload PDF / ZIP file"
+                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <input
+                    type="file"
+                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      try {
+                        const uploadedUrl = await uploadImageAsset(f);
+                        updateLink(link.id, { href: uploadedUrl, isExternal: true });
+                        toast.success(`Uploaded ${f.name}`);
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Upload failed");
+                      } finally {
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </label>
+                <PageLinkPicker
                     value={link.href}
                     isExternal={link.isExternal}
                     onSelect={(sel) =>
@@ -523,7 +571,7 @@ function ColumnInspector({
             onChange={(e) => onUpdateColumn({ title: e.target.value })}
             rows={1}
             placeholder="SECTION HEADING"
-            className="min-h-[34px] h-9 text-xs font-bold uppercase tracking-wide"
+            className="min-h-[34px] h-9 text-xs font-bold capitalize"
           />
         </div>
 
@@ -1205,6 +1253,40 @@ function GeneralInspector({
                   placeholder="/#news"
                   className="h-7 text-[11px] font-mono bg-white flex-1"
                 />
+                <label
+                  title="Upload PDF / ZIP file"
+                  className="h-7 w-7 inline-flex items-center justify-center rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-600 hover:text-[#115eff] shrink-0 cursor-pointer transition-colors"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <input
+                    type="file"
+                    accept=".pdf,.zip,.doc,.docx,application/pdf,application/zip"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      try {
+                        const uploadedUrl = await uploadImageAsset(f);
+                        onUpdateConfig((prev) => ({
+                          ...prev,
+                          topbar: {
+                            ...prev.topbar,
+                            quickLinks: (prev.topbar?.quickLinks || []).map((item) =>
+                              item.id === ql.id
+                                ? { ...item, href: uploadedUrl, isExternal: true }
+                                : item
+                            ),
+                          },
+                        }));
+                        toast.success(`Uploaded ${f.name}`);
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Upload failed");
+                      } finally {
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </label>
                 <PageLinkPicker
                   value={ql.href}
                   isExternal={ql.isExternal}
@@ -1415,7 +1497,7 @@ export function HeaderInspector({
       <div className="h-10 px-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <HeaderIcon className="w-4 h-4 text-[#115eff] shrink-0" />
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#004776] truncate">
+          <h3 className="text-xs font-extrabold capitalize text-[#004776] truncate">
             {headerTitle}
           </h3>
         </div>

@@ -60,6 +60,7 @@ export function CallForPapers({
   brochureBanner,
 }: CallForPapersProps) {
   const [showPdfViewer, setShowPdfViewer] = React.useState(false);
+  const resolvedPdfUrl = (cfpPdfUrl ?? "").trim();
 
   const resolvedPolicies: CfpPolicyCardItem[] = Array.isArray(policyCards)
     ? policyCards
@@ -118,10 +119,10 @@ export function CallForPapers({
             </p>
           </div>
 
-          {downloadButtonLabel && (
+          {downloadButtonLabel && resolvedPdfUrl && (
             <div className="relative z-10 flex items-center gap-3">
               <a
-                href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+                href={resolvedPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 min-h-[46px] px-5 py-2.5 bg-white hover:bg-[#115eff] text-[#115eff] hover:text-white border border-[#115eff] font-bold text-sm sm:text-[15px] rounded-[0.26rem] shadow-2xs transition-all"
@@ -269,7 +270,7 @@ export function CallForPapers({
           </div>
         )}
 
-        {showBrochureBanner && (
+        {showBrochureBanner && resolvedPdfUrl && (
           <>
             <div className="mt-8 p-6 sm:p-7 bg-blue-50/35 border border-blue-100/90 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -298,7 +299,7 @@ export function CallForPapers({
                 </button>
 
                 <a
-                  href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+                  href={resolvedPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
@@ -314,7 +315,7 @@ export function CallForPapers({
                 <div className="px-4 py-2.5 bg-blue-50/80 border-b border-blue-100/90 flex items-center justify-between text-xs font-semibold text-[#004776]">
                   <span>{bannerTitle}</span>
                   <a
-                    href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+                    href={resolvedPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#115eff] font-bold hover:underline flex items-center gap-1"
@@ -324,7 +325,7 @@ export function CallForPapers({
                   </a>
                 </div>
                 <iframe
-                  src={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+                  src={resolvedPdfUrl}
                   title={bannerTitle}
                   className="w-full h-[640px] border-0"
                 />

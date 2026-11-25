@@ -163,7 +163,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                         />
                       )}
                       {col.promoCard.badge && (
-                        <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/15 text-blue-100 mb-1.5">
+                        <span className="inline-block text-[11px] font-bold capitalize px-2 py-0.5 rounded bg-white/15 text-blue-100 mb-1.5">
                           {col.promoCard.badge}
                         </span>
                       )}
@@ -198,7 +198,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                     >
                       {/* Fixed Title Header */}
                       <div className="relative pb-2.5 mb-3.5 shrink-0">
-                        <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] transition-colors whitespace-pre-line">
+                        <h3 className="text-xs sm:text-sm font-bold capitalize text-[#004776] transition-colors whitespace-pre-line">
                           {col.title}
                         </h3>
                         {/* Thin track line */}
@@ -259,7 +259,7 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                 {activeItem.promoCard && (
                   <div className="w-72 xl:w-84 shrink-0 py-7 pl-6 pr-2 flex flex-col justify-start self-stretch">
                     <div className="relative pb-2.5 mb-3.5">
-                      <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#004776] whitespace-nowrap">
+                      <h3 className="text-xs sm:text-sm font-bold capitalize text-[#004776] whitespace-nowrap">
                         {activeItem.promoCard.badge || "Featured"}
                       </h3>
                       <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
@@ -665,14 +665,14 @@ export function Header({ previewInBuilder = false }: { previewInBuilder?: boolea
               {topbarQuickLinks.map((ql, idx) => (
                 <React.Fragment key={ql.id}>
                   {idx > 0 && <span className="text-white/30">•</span>}
-                  {ql.isExternal || ql.href.endsWith(".pdf") ? (
+                  {ql.isExternal || ql.href.toLowerCase().includes(".pdf") || ql.href.startsWith("/api/images/") ? (
                     <a
                       href={ql.href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group/cfp px-2 py-0.5 rounded hover:bg-white/10 hover:text-white transition-colors flex items-center gap-1.5 font-medium text-blue-100"
                     >
-                      {ql.href.endsWith(".pdf") && (
+                      {(ql.href.toLowerCase().includes(".pdf") || ql.href.startsWith("/api/images/")) && (
                         <FileDown className="size-3.5 text-current opacity-85 group-hover/cfp:opacity-100 shrink-0 transition-opacity" />
                       )}
                       <span>{ql.label}</span>

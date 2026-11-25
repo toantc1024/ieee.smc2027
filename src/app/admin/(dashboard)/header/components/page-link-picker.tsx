@@ -407,7 +407,7 @@ export function PageLinkPicker({
                   </div>
                 ) : filteredPages.length > 0 ? (
                   <div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 px-1">
+                    <div className="text-[11px] font-bold capitalize text-slate-400 mb-1.5 px-1">
                       CMS Pages
                     </div>
                     <div className="space-y-1">

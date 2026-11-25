@@ -27,6 +27,7 @@ export function CfpBrochureBannerBlock({
   defaultExpanded = false,
 }: CfpBrochureBannerBlockProps) {
   const [showPdfViewer, setShowPdfViewer] = useState(defaultExpanded);
+  const resolvedPdfUrl = (cfpPdfUrl ?? "").trim();
 
   return (
     <SectionContainer id="cfp-brochure" fullWidthBg="bg-white">
@@ -57,24 +58,26 @@ export function CfpBrochureBannerBlock({
               <span>{showPdfViewer ? hidePreviewButtonLabel : previewButtonLabel}</span>
             </button>
 
-            <a
-              href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
-            >
-              <span>{openButtonLabel}</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
+            {resolvedPdfUrl && (
+              <a
+                href={resolvedPdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 sm:px-6 py-2.5 bg-[#115eff] hover:bg-[#0a4de6] text-white font-bold text-sm sm:text-[15px] rounded-[0.26rem] transition-all shadow-sm hover:shadow-md"
+              >
+                <span>{openButtonLabel}</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
           </div>
         </div>
 
-        {showPdfViewer && (
+        {showPdfViewer && resolvedPdfUrl && (
           <div className="mt-4 border border-blue-100/90 rounded-md overflow-hidden bg-blue-50/40 shadow-sm">
             <div className="px-4 py-2.5 bg-blue-50/80 border-b border-blue-100/90 flex items-center justify-between text-xs font-semibold text-[#004776]">
               <span>{viewerHeading}</span>
               <a
-                href={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+                href={resolvedPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#115eff] font-bold hover:underline flex items-center gap-1"
@@ -84,7 +87,7 @@ export function CfpBrochureBannerBlock({
               </a>
             </div>
             <iframe
-              src={cfpPdfUrl || CONFERENCE_INFO.cfpPdfUrl}
+              src={resolvedPdfUrl}
               title={title}
               className="w-full h-[640px] border-0"
             />

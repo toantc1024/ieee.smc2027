@@ -60,7 +60,7 @@ export function SubmissionCountdown({
   )}&location=${encodeURIComponent(calendarLocation)}`;
 
   const resolvedIcon = iconImage?.trim() || "/assets/3d/calendar-dates-3d.png";
-  const resolvedPdfUrl = cfpPdfUrl?.trim() || CONFERENCE_INFO.cfpPdfUrl;
+  const resolvedPdfUrl = (cfpPdfUrl ?? "").trim();
 
   return (
     <SectionContainer id="submission-countdown" fullWidthBg="bg-white">
@@ -137,7 +137,7 @@ export function SubmissionCountdown({
               </a>
             )}
 
-            {secondaryButtonLabel && (
+            {secondaryButtonLabel && resolvedPdfUrl && (
               <a
                 href={resolvedPdfUrl}
                 target="_blank"
