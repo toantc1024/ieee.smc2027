@@ -23,6 +23,7 @@ export default function AdminMediaLibraryPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [activeFolder, setActiveFolder] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "IMAGE" | "DOCUMENT">("all");
   const [uploadFolder, setUploadFolder] =
     useState<StorageFolder>("public/uploads");
   const [search, setSearch] = useState("");
@@ -38,6 +39,7 @@ export default function AdminMediaLibraryPage() {
     try {
       const params = new URLSearchParams();
       if (activeFolder !== "all") params.set("folder", activeFolder);
+      if (activeCategory !== "all") params.set("category", activeCategory);
       if (search.trim()) params.set("search", search.trim());
 
       const res = await fetch(`/api/media?${params.toString()}`);
@@ -52,7 +54,7 @@ export default function AdminMediaLibraryPage() {
     } finally {
       setLoading(false);
     }
-  }, [activeFolder, search]);
+  }, [activeFolder, activeCategory, search]);
 
   useEffect(() => {
     loadFiles();
@@ -165,6 +167,8 @@ export default function AdminMediaLibraryPage() {
         loading={loading}
         activeFolder={activeFolder}
         onFolderChange={setActiveFolder}
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
         search={search}
         onSearchChange={setSearch}
         copiedId={copiedId}

@@ -170,6 +170,19 @@ export default function HeaderStudioPage() {
 
   const isDirty = isHeaderDirty || isFooterDirty;
 
+  // Keyboard shortcut Cmd/Ctrl+S to save changes immediately
+  const saveRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        saveRef.current();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   const updateConfig = useCallback(
     (updater: (prev: HeaderConfig) => HeaderConfig) => {
       setConfig((prev) => updater(prev));
@@ -593,6 +606,9 @@ export default function HeaderStudioPage() {
     } finally {
       setSaving(false);
     }
+  };
+  saveRef.current = () => {
+    if (!saving) void handleSave();
   };
 
   const handleExportJson = () => {

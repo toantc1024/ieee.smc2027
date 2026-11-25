@@ -694,9 +694,15 @@ export function VisualHeaderCanvas({
                       const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
                       setPromoDropSide(side);
                     }}
+                    onDragLeave={(e) => {
+                      if (draggingPromo && !e.currentTarget.contains(e.relatedTarget as Node)) {
+                        setPromoDropSide(null);
+                      }
+                    }}
                     onDrop={(e) => {
                       if (e.dataTransfer.getData("application/x-promo-card") === "1") {
                         e.preventDefault();
+                        e.stopPropagation();
                         const rect = e.currentTarget.getBoundingClientRect();
                         const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
                         onSetPromoPosition(activeTrigger.id, side);
@@ -706,11 +712,74 @@ export function VisualHeaderCanvas({
                     }}
                     className={cn(
                       "flex items-stretch w-full divide-x divide-blue-100/80 border border-slate-100 rounded-lg overflow-hidden relative",
-                      activeTrigger.promoCardPosition === "left" && "flex-row-reverse divide-x-reverse",
-                      promoDropSide === "left" && "ring-2 ring-inset ring-[#115eff]/50",
-                      promoDropSide === "right" && "ring-2 ring-inset ring-[#115eff]/50"
+                      promoDropSide === "left" && "border-l-4 border-l-[#115eff]",
+                      promoDropSide === "right" && "border-r-4 border-r-[#115eff]"
                     )}
                   >
+                    {/* Left Featured Promo Card (when dragged to left) */}
+                    {activeTrigger.promoCard && activeTrigger.promoCardPosition === "left" && (
+                      <div
+                        draggable
+                        onDragStart={(e) => {
+                          e.stopPropagation();
+                          setDraggingPromo(true);
+                          e.dataTransfer.setData("application/x-promo-card", "1");
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragEnd={() => {
+                          setDraggingPromo(false);
+                          setPromoDropSide(null);
+                        }}
+                        onClick={() =>
+                          onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
+                        }
+                        title="Drag right to move Featured Card, or click to edit"
+                        className={cn(
+                          "group/promo w-[280px] shrink-0 p-4 bg-white border-r border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
+                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]",
+                          draggingPromo && "opacity-60"
+                        )}
+                      >
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute top-2 right-2 z-20 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded px-1 py-0.5 shadow-2xs"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => onSetPromoPosition(activeTrigger.id, "right")}
+                            title="Move to right"
+                            className="p-1 rounded text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                          >
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div className="relative z-10 space-y-2.5">
+                          {activeTrigger.promoCard.image && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={activeTrigger.promoCard.image}
+                              alt={activeTrigger.promoCard.title}
+                              className="w-full h-28 object-cover rounded-sm border border-blue-100 shadow-2xs"
+                            />
+                          )}
+                          {activeTrigger.promoCard.badge && (
+                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-blue-50 text-[#115eff] border border-blue-100">
+                              {activeTrigger.promoCard.badge}
+                            </span>
+                          )}
+                          <h4 className="text-sm font-bold text-[#004776] leading-snug">
+                            {activeTrigger.promoCard.title}
+                          </h4>
+                          <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                            {activeTrigger.promoCard.description}
+                          </p>
+                        </div>
+                        <div className="relative z-10 pt-3 mt-3 border-t border-blue-100 flex items-center justify-between text-xs font-bold text-[#115eff]">
+                          <span>{activeTrigger.promoCard.ctaText || "Learn More"}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    )}
                     {columns.map((col, colIdx) => {
                       const isColSelected = selectedColumnId === col.id;
                       const showPromo =
@@ -976,8 +1045,8 @@ export function VisualHeaderCanvas({
                       );
                     })}
 
-                    {/* Draggable Featured Promo Card Sidebar */}
-                    {activeTrigger.promoCard && (
+                    {/* Draggable Featured Promo Card Sidebar (Right side default) */}
+                    {activeTrigger.promoCard && activeTrigger.promoCardPosition !== "left" && (
                       <div
                         draggable
                         onDragStart={(e) => {
@@ -993,12 +1062,9 @@ export function VisualHeaderCanvas({
                         onClick={() =>
                           onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
                         }
-                        title="Drag left/right to move Featured Card, or click to edit"
+                        title="Drag left to move Featured Card, or click to edit"
                         className={cn(
-                          "group/promo w-[280px] shrink-0 p-4 bg-white flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
-                          activeTrigger.promoCardPosition === "left"
-                            ? "border-r border-blue-100/80"
-                            : "border-l border-blue-100/80",
+                          "group/promo w-[280px] shrink-0 p-4 bg-white border-l border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
                           isTriggerSelected && "ring-2 ring-inset ring-[#115eff]",
                           draggingPromo && "opacity-60"
                         )}
@@ -1009,24 +1075,11 @@ export function VisualHeaderCanvas({
                         >
                           <button
                             type="button"
-                            onClick={() =>
-                              onSetPromoPosition(
-                                activeTrigger.id,
-                                activeTrigger.promoCardPosition === "left" ? "right" : "left"
-                              )
-                            }
-                            title={
-                              activeTrigger.promoCardPosition === "left"
-                                ? "Move to right"
-                                : "Move to left"
-                            }
+                            onClick={() => onSetPromoPosition(activeTrigger.id, "left")}
+                            title="Move to left"
                             className="p-1 rounded text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
                           >
-                            {activeTrigger.promoCardPosition === "left" ? (
-                              <ArrowRight className="w-3 h-3" />
-                            ) : (
-                              <ArrowLeft className="w-3 h-3" />
-                            )}
+                            <ArrowLeft className="w-3 h-3" />
                           </button>
                         </div>
                         <div className="relative z-10 space-y-2.5">

@@ -140,14 +140,56 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
               exit="exit"
               className="w-full transform-gpu will-change-[transform,opacity]"
             >
-              <div
-                className={cn(
-                  "flex flex-col items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-blue-100/80",
-                  activeItem.promoCardPosition === "left"
-                    ? "lg:flex-row-reverse lg:divide-x-reverse"
-                    : "lg:flex-row"
+              <div className="flex flex-col lg:flex-row items-stretch w-full divide-y lg:divide-y-0 lg:divide-x divide-blue-100/80">
+                {/* Left Side Featured Promo Card (when promoCardPosition === "left") */}
+                {activeItem.promoCard && activeItem.promoCardPosition === "left" && (
+                  <div className="w-72 xl:w-84 shrink-0 py-7 pl-2 pr-6 flex flex-col justify-start self-stretch">
+                    <div className="relative pb-2.5 mb-3.5">
+                      <h3 className="text-xs sm:text-sm font-bold capitalize text-[#004776] whitespace-nowrap">
+                        {activeItem.promoCard.badge || "Featured"}
+                      </h3>
+                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full" />
+                    </div>
+
+                    <a
+                      href={activeItem.promoCard.href}
+                      target={activeItem.promoCard.href.startsWith("http") ? "_blank" : undefined}
+                      rel={activeItem.promoCard.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      onClick={closeMenu}
+                      className="header-promo-card group/promo relative flex flex-col overflow-hidden rounded-sm border border-blue-100/90 bg-white hover:bg-[#115eff] hover:border-[#115eff] shadow-sm hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform-gpu cursor-pointer"
+                    >
+                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 z-[2]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={activeItem.promoCard.image}
+                          alt={activeItem.promoCard.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover/promo:scale-105"
+                        />
+                        {activeItem.promoCard.badge && (
+                          <div className="promo-card-badge absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-sm text-xs font-bold bg-white/95 text-[#115eff] backdrop-blur-sm shadow-xs transition-colors">
+                            {activeItem.promoCard.badge}
+                          </div>
+                        )}
+                      </div>
+                      <div className="relative z-[2] p-4 flex flex-col gap-1.5">
+                        <h4 className="promo-card-title text-base sm:text-lg font-bold text-slate-900 transition-colors duration-200 leading-snug">
+                          {activeItem.promoCard.title}
+                        </h4>
+                        {activeItem.promoCard.description && (
+                          <p className="promo-card-desc text-xs sm:text-sm text-slate-600 transition-colors duration-200 font-normal leading-relaxed line-clamp-2">
+                            {activeItem.promoCard.description}
+                          </p>
+                        )}
+                        <span className="promo-card-cta text-sm font-bold text-[#115eff] transition-colors duration-200 inline-flex items-center gap-1.5 mt-1 group-hover/promo:gap-2">
+                          {activeItem.promoCard.ctaText || "Explore Now"}
+                          <span aria-hidden="true">›</span>
+                        </span>
+                      </div>
+                    </a>
+                  </div>
                 )}
-              >
+
                 {/* Columns Section */}
                 {columns.map((col, idx) => {
                   const isFirst = idx === 0;
@@ -262,8 +304,8 @@ const DynamicHeightMenu = React.memo(function DynamicHeightMenu({
                   );
                 })}
 
-                {/* Right Side Featured Promo Card (Exact HCMUTE UTE Flower style) */}
-                {activeItem.promoCard && (
+                {/* Right Side Featured Promo Card (default when promoCardPosition !== "left") */}
+                {activeItem.promoCard && activeItem.promoCardPosition !== "left" && (
                   <div className="w-72 xl:w-84 shrink-0 py-7 pl-6 pr-2 flex flex-col justify-start self-stretch">
                     <div className="relative pb-2.5 mb-3.5">
                       <h3 className="text-xs sm:text-sm font-bold capitalize text-[#004776] whitespace-nowrap">

@@ -48,6 +48,8 @@ interface MediaFileGridProps {
   loading: boolean;
   activeFolder: string;
   onFolderChange: (folder: string) => void;
+  activeCategory?: "all" | "IMAGE" | "DOCUMENT";
+  onCategoryChange?: (category: "all" | "IMAGE" | "DOCUMENT") => void;
   search: string;
   onSearchChange: (val: string) => void;
   copiedId: string | null;
@@ -62,6 +64,8 @@ export function MediaFileGrid({
   loading,
   activeFolder,
   onFolderChange,
+  activeCategory = "all",
+  onCategoryChange,
   search,
   onSearchChange,
   copiedId,
@@ -74,6 +78,31 @@ export function MediaFileGrid({
     <Card className="p-4 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-1.5">
+          {onCategoryChange && (
+            <>
+              {(
+                [
+                  { value: "all", label: "All Types" },
+                  { value: "IMAGE", label: "Images" },
+                  { value: "DOCUMENT", label: "Files & ZIP" },
+                ] as const
+              ).map((cat) => (
+                <button
+                  key={cat.value}
+                  type="button"
+                  onClick={() => onCategoryChange(cat.value)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                    activeCategory === cat.value
+                      ? "bg-[#115eff] text-white"
+                      : "bg-blue-50/70 text-[#004776] hover:bg-blue-100/70"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+              <span className="mx-1 h-4 w-px bg-slate-200" />
+            </>
+          )}
           {MEDIA_FOLDERS.map((folder) => (
             <button
               key={folder.value}
@@ -126,16 +155,28 @@ export function MediaFileGrid({
           ))}
         </div>
       ) : files.length === 0 ? (
-        <div className="py-16 text-center space-y-3">
-          <ImageIcon className="size-10 text-slate-300 mx-auto" />
-          <p className="text-sm font-bold text-slate-700">
-            No media files found in this folder
-          </p>
+        <div className="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/3d/empty-state__hcmute-3d-icon.png"
+              alt="No media files"
+              className="w-16 h-16 object-contain shrink-0 select-none"
+            />
+            <div className="text-left">
+              <p className="text-sm font-bold text-[#004776]">
+                No media files found in this view
+              </p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Upload images, PDFs, or ZIP archives to reuse across pages, header, and footer.
+              </p>
+            </div>
+          </div>
           <Button
             type="button"
-            variant="outline"
             size="sm"
             onClick={onUploadClick}
+            className="bg-[#115eff] hover:bg-[#0a4de6] text-white shrink-0"
           >
             <Upload className="size-3.5" />
             Upload First File
