@@ -5,6 +5,7 @@ import type {
   HeaderConfig,
   NavColumnItem,
   NavLinkItem,
+  NavPromoCard,
 } from "@/lib/header-config";
 import { getNavIcon } from "@/lib/nav-icons";
 import { Button } from "@/components/ui/button";
@@ -30,9 +31,8 @@ import {
   Trash2,
   Menu,
   X,
-  ExternalLink,
   PanelTop,
-  Link2,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PaletteDragBlockType } from "./builder-palette";
@@ -42,6 +42,103 @@ export type SelectedInspectorTarget =
   | { type: "trigger"; triggerId: string }
   | { type: "column"; triggerId: string; columnId: string; linkId?: string }
   | null;
+
+/* ─── Crisp Square Hover / Selection Bounding Box for Admin Canvas ─── */
+function AdminSquareFrame({
+  selected,
+  groupHoverClass = "group-hover/slot:border-[#115eff]/85 group-hover/slot:opacity-100",
+  cornerHoverClass = "group-hover/slot:opacity-100",
+}: {
+  selected?: boolean;
+  groupHoverClass?: string;
+  cornerHoverClass?: string;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute inset-0 z-20 rounded-none border-2 transition-all duration-150",
+        selected
+          ? "border-[#115eff] opacity-100"
+          : cn("border-dashed border-transparent opacity-0", groupHoverClass)
+      )}
+    >
+      {["-top-1 -left-1", "-top-1 -right-1", "-bottom-1 -left-1", "-bottom-1 -right-1"].map(
+        (pos) => (
+          <span
+            key={pos}
+            className={cn(
+              "absolute size-2 rounded-none bg-white border-2 border-[#115eff] transition-opacity duration-150",
+              pos,
+              selected ? "opacity-100" : cn("opacity-0", cornerHoverClass)
+            )}
+          />
+        )
+      )}
+    </div>
+  );
+}
+
+/* ─── Canvas Promo Card Preview (Matches Live HCM-UTE PromoCardBlock 1:1) ─── */
+function CanvasPromoCardPreview({ promoCard }: { promoCard: NavPromoCard }) {
+  return (
+    <div className="group/promocard relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white hover:bg-primary hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/25 transition-all duration-300">
+      <div
+        className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.3px,transparent_1.3px)] [background-size:12px_12px] opacity-60 group-hover/promocard:opacity-0 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_10%,transparent_58%)]"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:16px_16px] opacity-0 group-hover/promocard:opacity-100 transition-opacity duration-300 pointer-events-none z-[1] [mask-image:radial-gradient(ellipse_55%_48%_at_bottom_right,white_15%,transparent_65%)]"
+        aria-hidden="true"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/flower-ute.png"
+        alt=""
+        className="pointer-events-none absolute -bottom-10 -right-10 w-44 h-44 object-contain select-none opacity-[0.06] group-hover/promocard:opacity-0 transition-opacity duration-300 z-[1]"
+        aria-hidden="true"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/flower-ute-white.png"
+        alt=""
+        className="pointer-events-none absolute -bottom-10 -right-10 w-44 h-44 object-contain select-none opacity-0 group-hover/promocard:opacity-35 transition-opacity duration-300 z-[1]"
+        aria-hidden="true"
+      />
+
+      {promoCard.image && (
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 z-[2]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={promoCard.image}
+            alt={promoCard.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover/promocard:scale-105"
+          />
+          {promoCard.badge && (
+            <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/90 text-primary backdrop-blur-sm shadow-sm group-hover/promocard:bg-white group-hover/promocard:text-primary transition-colors">
+              {promoCard.badge}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="relative z-[2] p-3.5 flex flex-col gap-1">
+        <h4 className="text-[13.5px] font-bold text-foreground group-hover/promocard:text-white transition-colors duration-200 leading-snug">
+          {promoCard.title || "Featured Spotlight"}
+        </h4>
+        {promoCard.description && (
+          <p className="text-[11.5px] text-muted-foreground group-hover/promocard:text-white/90 transition-colors duration-200 font-normal leading-relaxed line-clamp-3">
+            {promoCard.description}
+          </p>
+        )}
+        <span className="text-[12px] font-semibold text-primary group-hover/promocard:text-white transition-colors duration-200 inline-flex items-center gap-1 mt-1">
+          {promoCard.ctaText || "Explore now"}
+          <span aria-hidden="true">›</span>
+        </span>
+      </div>
+    </div>
+  );
+}
 
 interface VisualHeaderCanvasProps {
   config: HeaderConfig;
@@ -161,47 +258,123 @@ export function VisualHeaderCanvas({
     setDragOverColIdx(null);
   };
 
+  const renderTriggerButton = (item: NavLinkItem, navIdx: number) => {
+    const isViewing = activeTrigger?.id === item.id;
+    const isEditingThis =
+      selectedTarget?.type === "trigger" && selectedTarget.triggerId === item.id;
+    const isMega = item.type === "mega";
+
+    return (
+      <div
+        key={item.id}
+        draggable
+        onDragStart={(e) => {
+          e.stopPropagation();
+          setDragTriggerIdx(navIdx);
+          e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
+          e.dataTransfer.effectAllowed = "move";
+        }}
+        onDragOver={(e) => {
+          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragOverTriggerIdx(navIdx);
+          }
+        }}
+        onDragLeave={() => {
+          if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
+            onReorderTriggers(dragTriggerIdx, navIdx);
+          }
+          setDragTriggerIdx(null);
+          setDragOverTriggerIdx(null);
+        }}
+        onDragEnd={() => {
+          setDragTriggerIdx(null);
+          setDragOverTriggerIdx(null);
+        }}
+        className={cn(
+          "group/trig relative p-1 cursor-grab active:cursor-grabbing shrink-0",
+          dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
+        )}
+      >
+        {/* Admin Square Hover/Selected Frame */}
+        <AdminSquareFrame
+          selected={isEditingThis}
+          groupHoverClass="group-hover/trig:border-[#115eff]/85 group-hover/trig:opacity-100"
+          cornerHoverClass="group-hover/trig:opacity-100"
+        />
+
+        {/* Exact Live HCM-UTE Nav Button Inside */}
+        <button
+          type="button"
+          onClick={() => {
+            onSelectTrigger(item.id);
+            onSelectTarget({ type: "trigger", triggerId: item.id });
+          }}
+          className={cn(
+            "group/btn inline-flex items-center gap-1 font-bold uppercase text-xs xl:text-[13px] px-2.5 xl:px-3 h-8 xl:h-9 rounded-lg transition-all duration-150 cursor-pointer whitespace-nowrap",
+            isViewing
+              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:text-primary-foreground"
+              : "text-foreground hover:bg-primary hover:text-primary-foreground hover:shadow-sm"
+          )}
+        >
+          <span>{item.name || "Untitled"}</span>
+          {isMega && (
+            <ChevronDown
+              className={cn(
+                "w-3.5 h-3.5 transition-transform duration-200",
+                isViewing
+                  ? "rotate-180 text-primary-foreground"
+                  : "text-foreground/80 group-hover/btn:text-primary-foreground"
+              )}
+            />
+          )}
+        </button>
+      </div>
+    );
+  };
+
   // Mobile / Tablet Frame Mockup
   if (viewport === "mobile" || viewport === "tablet") {
     const frameWidth = viewport === "mobile" ? "w-[390px]" : "w-[768px]";
 
     return (
-      <div className="flex flex-col items-center py-6 px-4">
+      <div className="flex flex-col items-center py-6 px-4 select-none">
         <div
           className={cn(
             frameWidth,
             "bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden transition-all duration-300"
           )}
         >
-          {/* Clickable Mobile Header Bar */}
+          {/* Clickable Mobile Header Bar (Matches live mobile header) */}
           <div
             onClick={() => onSelectTarget({ type: "general" })}
-            className={cn(
-              "px-4 py-3 bg-white border-b border-blue-100 flex items-center justify-between cursor-pointer transition-all",
-              isGeneralSelected && "ring-2 ring-inset ring-[#115eff] bg-blue-50/20"
-            )}
+            className="group/mbar relative px-4 h-[62px] bg-white border-b border-border/60 flex items-center justify-between cursor-pointer"
           >
-            <div className="flex items-center gap-2.5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={mobileLogo}
-                alt="IEEE SMC 2027"
-                className="h-9 w-auto object-contain"
-              />
-              <div className="leading-tight">
-                <div className="text-xs font-extrabold text-[#004776]">
-                  {config.brand?.conferenceTitle || "IEEE SMC 2027"}
-                </div>
-                <div className="text-[10px] font-medium text-slate-500">
-                  {config.brand?.conferenceSubtitle || "Ho Chi Minh City"}
-                </div>
-              </div>
-            </div>
+            <AdminSquareFrame
+              selected={isGeneralSelected}
+              groupHoverClass="group-hover/mbar:border-[#115eff]/85 group-hover/mbar:opacity-100"
+              cornerHoverClass="group-hover/mbar:opacity-100"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={mobileLogo}
+              alt="IEEE SMC 2027"
+              className="h-10 w-auto object-contain"
+            />
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {config.mobileHeader?.showSearch !== false && (
-                <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500">
-                  <Search className="w-3.5 h-3.5" />
+                <div className="h-9 px-3 rounded-full bg-slate-100/90 border border-slate-200/90 flex items-center gap-2 text-xs text-muted-foreground w-36">
+                  <Search className="w-3.5 h-3.5 text-foreground/60 shrink-0" />
+                  <span className="truncate">
+                    {config.mobileHeader?.searchPlaceholder || "Search..."}
+                  </span>
                 </div>
               )}
               <button
@@ -210,7 +383,7 @@ export function VisualHeaderCanvas({
                   e.stopPropagation();
                   setMobileMenuOpen((prev) => !prev);
                 }}
-                className="w-9 h-9 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center text-[#004776] cursor-pointer"
+                className="w-11 h-9.5 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary cursor-pointer"
               >
                 {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
@@ -219,39 +392,42 @@ export function VisualHeaderCanvas({
 
           {/* Mobile Drawer Content */}
           {mobileMenuOpen && (
-            <div className="bg-slate-50/70 p-4 space-y-2.5 max-h-[680px] overflow-y-auto">
+            <div className="bg-white p-3.5 space-y-2 max-h-[680px] overflow-y-auto">
               {config.navLinks.map((item) => {
                 const isActive = activeTrigger?.id === item.id;
+                const isEditingTrig =
+                  selectedTarget?.type === "trigger" &&
+                  selectedTarget.triggerId === item.id;
                 const isMega = item.type === "mega" && (item.columns?.length || 0) > 0;
                 return (
                   <div
                     key={item.id}
-                    className={cn(
-                      "rounded-lg border bg-white overflow-hidden transition-all",
-                      isActive ? "border-[#115eff] shadow-xs" : "border-slate-200"
-                    )}
+                    className="group/mtrig relative border-b border-slate-100 pb-1.5"
                   >
+                    <AdminSquareFrame
+                      selected={isEditingTrig}
+                      groupHoverClass="group-hover/mtrig:border-[#115eff]/85 group-hover/mtrig:opacity-100"
+                      cornerHoverClass="group-hover/mtrig:opacity-100"
+                    />
                     <button
                       type="button"
                       onClick={() => {
                         onSelectTrigger(item.id);
                         onSelectTarget({ type: "trigger", triggerId: item.id });
                       }}
-                      className="w-full px-3.5 py-2.5 flex items-center justify-between text-left cursor-pointer"
+                      className={cn(
+                        "w-full px-3.5 py-3 rounded-2xl flex items-center justify-between text-left cursor-pointer uppercase font-bold text-sm transition-colors",
+                        isActive
+                          ? "text-primary bg-primary/[0.05]"
+                          : "text-foreground hover:bg-slate-50"
+                      )}
                     >
-                      <span
-                        className={cn(
-                          "text-sm font-bold",
-                          isActive ? "text-[#115eff]" : "text-slate-800"
-                        )}
-                      >
-                        {item.name}
-                      </span>
+                      <span>{item.name}</span>
                       {isMega ? (
                         <ChevronDown
                           className={cn(
                             "w-4 h-4 text-slate-400 transition-transform",
-                            isActive && "rotate-180 text-[#115eff]"
+                            isActive && "rotate-180 text-primary"
                           )}
                         />
                       ) : (
@@ -260,7 +436,7 @@ export function VisualHeaderCanvas({
                     </button>
 
                     {isActive && isMega && (
-                      <div className="px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3 bg-slate-50/40">
+                      <div className="mt-1.5 p-2 rounded-2xl bg-slate-50/70 border border-slate-200/60 space-y-2.5">
                         {item.columns?.map((col) => (
                           <div
                             key={col.id}
@@ -271,19 +447,23 @@ export function VisualHeaderCanvas({
                                 columnId: col.id,
                               })
                             }
-                            className={cn(
-                              "p-2 rounded border border-dashed cursor-pointer",
-                              selectedColumnId === col.id
-                                ? "border-[#115eff] bg-blue-50/40"
-                                : "border-transparent hover:border-blue-200"
-                            )}
+                            className="group/mcol relative p-2 rounded-2xl bg-white border border-slate-200/70 cursor-pointer"
                           >
-                            <div className="text-[11px] font-bold capitalize text-[#004776] mb-1.5">
-                              {col.title}
+                            <AdminSquareFrame
+                              selected={selectedColumnId === col.id && !selectedLinkId}
+                              groupHoverClass="group-hover/mcol:border-[#115eff]/85 group-hover/mcol:opacity-100"
+                              cornerHoverClass="group-hover/mcol:opacity-100"
+                            />
+                            <div className="flex items-center gap-1.5 px-2 pt-1 pb-1.5">
+                              <div className="w-1.5 h-3.5 rounded-full bg-primary shrink-0" />
+                              <span className="text-xs font-extrabold uppercase tracking-wide text-foreground truncate">
+                                {col.title}
+                              </span>
                             </div>
-                            <div className="space-y-1">
+                            <div className="space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-2">
                               {col.links.map((link) => {
                                 const IconComp = getNavIcon(link.icon);
+                                const isThisLink = selectedLinkId === link.id;
                                 return (
                                   <div
                                     key={link.id}
@@ -296,20 +476,24 @@ export function VisualHeaderCanvas({
                                         linkId: link.id,
                                       });
                                     }}
-                                    className={cn(
-                                      "flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer",
-                                      selectedLinkId === link.id
-                                        ? "bg-blue-100/70 text-[#004776] font-semibold"
-                                        : "hover:bg-white text-slate-700"
-                                    )}
+                                    className="group/mlink relative"
                                   >
-                                    <IconComp className="w-3.5 h-3.5 text-[#115eff] shrink-0" />
-                                    <span className="truncate flex-1">{link.title}</span>
-                                    {link.badge && (
-                                      <Badge variant="ute" size="sm">
-                                        {link.badge}
-                                      </Badge>
-                                    )}
+                                    <AdminSquareFrame
+                                      selected={isThisLink}
+                                      groupHoverClass="group-hover/mlink:border-[#115eff] group-hover/mlink:opacity-100"
+                                      cornerHoverClass="group-hover/mlink:opacity-100"
+                                    />
+                                    <div className="group/item flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-foreground hover:bg-primary hover:text-white transition-colors cursor-pointer">
+                                      <div className="size-6 rounded-lg bg-primary/10 text-primary group-hover/item:bg-white/20 group-hover/item:text-white flex items-center justify-center shrink-0">
+                                        <IconComp className="w-3.5 h-3.5" />
+                                      </div>
+                                      <span className="truncate flex-1">{link.title}</span>
+                                      {link.badge && (
+                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-700 group-hover/item:bg-white/20 group-hover/item:text-white">
+                                          {link.badge}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -323,8 +507,8 @@ export function VisualHeaderCanvas({
               })}
 
               {ctaEnabled && (
-                <div className="pt-2">
-                  <div className="w-full py-2.5 px-4 rounded-md bg-[#115eff] text-white text-center text-sm font-bold shadow-xs">
+                <div className="pt-2 space-y-2 border-t border-slate-200/80">
+                  <div className="w-full h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold uppercase shadow-xs">
                     {config.ctaButton?.label || "Submit Paper"}
                   </div>
                 </div>
@@ -336,61 +520,85 @@ export function VisualHeaderCanvas({
     );
   }
 
-  // Desktop Canvas Mockup
+  // Desktop Canvas Mockup (Matches live Header.tsx + HCM-UTE 1280px standard)
   const columns: NavColumnItem[] = activeTrigger?.columns || [];
   const hasMegaCanvas = activeTrigger?.type === "mega";
+  const halfIndex = Math.ceil(config.navLinks.length / 2);
 
   return (
-    <div className="w-[1260px] mx-auto py-6 px-4 select-none">
+    <div className="w-[1280px] mx-auto py-6 px-4 select-none">
       <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xl overflow-hidden">
-        {/* 1. Clickable Top Utility Bar Mockup */}
+        {/* 1. Clickable TopBar Mockup (Matches live TopBar 1:1 with Admin Square Hover Frame) */}
         {showTopbar ? (
           <div
             onClick={() => onSelectTarget({ type: "general" })}
-            title="Click to edit Top Utility Bar & General Settings"
-            className={cn(
-              "bg-[#115eff] text-white px-6 py-2 flex items-center justify-between gap-4 cursor-pointer transition-all relative group/topbar",
-              isGeneralSelected && "ring-2 ring-inset ring-amber-300"
-            )}
+            title="Click to edit Top Bar & General Settings"
+            className="group/topbar relative bg-primary text-primary-foreground px-6 py-1.5 flex items-center justify-between gap-4 cursor-pointer transition-all"
           >
-            <div className="flex items-center gap-4 text-xs text-blue-100 min-w-0">
+            <AdminSquareFrame
+              selected={isGeneralSelected}
+              groupHoverClass="group-hover/topbar:border-white group-hover/topbar:opacity-100"
+              cornerHoverClass="group-hover/topbar:opacity-100"
+            />
+            {/* Left: Hotline + Email + Quick Links */}
+            <div className="flex items-center gap-4 text-xs min-w-0 flex-1 overflow-hidden h-8">
               {config.topbar?.hotline && (
-                <span className="inline-flex items-center gap-1.5 truncate">
-                  <Phone className="w-3 h-3 text-blue-300 shrink-0" />
-                  <span className="font-medium text-white">{config.topbar.hotline}</span>
+                <span className="inline-flex items-center gap-1.5 font-semibold text-primary-foreground/95 shrink-0">
+                  <Phone className="w-3 h-3 text-primary-foreground/80 shrink-0" />
+                  <span>{config.topbar.hotline}</span>
                 </span>
               )}
               {config.topbar?.email && (
-                <span className="inline-flex items-center gap-1.5 truncate">
-                  <Mail className="w-3 h-3 text-blue-300 shrink-0" />
-                  <span className="truncate">{config.topbar.email}</span>
+                <span className="inline-flex items-center gap-1.5 font-medium text-primary-foreground/90 shrink-0">
+                  <Mail className="w-3 h-3 text-primary-foreground/70 shrink-0" />
+                  <span>{config.topbar.email}</span>
                 </span>
+              )}
+              {quickLinks.length > 0 && (
+                <div className="flex items-center shrink-0">
+                  {quickLinks.map((ql, idx) => (
+                    <React.Fragment key={ql.id}>
+                      <span className="px-2 py-0.5 rounded-md text-xs font-semibold hover:bg-primary-foreground/10 whitespace-nowrap">
+                        {ql.label}
+                      </span>
+                      {idx < quickLinks.length - 1 && (
+                        <span className="h-3 w-px bg-primary-foreground/20 mx-0.5 shrink-0" />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
               )}
             </div>
 
-            <div className="flex items-center gap-2.5 text-xs shrink-0">
-              {quickLinks.map((ql, idx) => (
-                <React.Fragment key={ql.id}>
-                  {idx > 0 && <span className="text-white/30">•</span>}
-                  <span className="px-1.5 py-0.5 rounded text-blue-100 hover:text-white font-medium">
-                    {ql.label}
-                  </span>
-                </React.Fragment>
-              ))}
-
+            {/* Right: Search Pill + Login + CTA */}
+            <div className="flex items-center gap-2 shrink-0">
               {showSearch && (
-                <>
-                  {quickLinks.length > 0 && <span className="text-white/30">•</span>}
-                  <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[11px] text-blue-100 w-44">
-                    <Search className="w-3 h-3 opacity-80 shrink-0" />
+                <div className="flex items-center justify-between gap-2 bg-white/10 border border-white/20 rounded-full px-3.5 h-8 min-w-[200px] text-xs font-medium text-white/95">
+                  <span className="flex items-center gap-2 truncate">
+                    <Search className="w-3.5 h-3.5 text-white/90 shrink-0" />
                     <span className="truncate">
-                      {config.topbar?.searchPlaceholder || "Search IEEE SMC 2027..."}
+                      {config.topbar?.searchPlaceholder || "Search conference, tracks..."}
                     </span>
-                  </div>
-                </>
+                  </span>
+                  <kbd className="text-[10px] font-semibold text-white/90 bg-black/25 border border-white/15 rounded px-1.5 py-0.5">
+                    ⌘K
+                  </kbd>
+                </div>
               )}
 
-              <span className="ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/15 text-[10px] font-bold text-white opacity-0 group-hover/topbar:opacity-100 transition-opacity">
+              <span className="inline-flex items-center gap-1.5 h-8 px-2.5 text-xs font-bold uppercase text-white rounded-lg">
+                <User className="size-3.5" />
+                <span>Login</span>
+              </span>
+
+              {ctaEnabled && (
+                <span className="inline-flex items-center gap-1 h-8 px-3 text-xs font-bold uppercase bg-white text-primary rounded-lg shadow-2xs">
+                  <span>{config.ctaButton?.label || "Submit Paper"}</span>
+                  <ArrowUpRight className="size-3.5" />
+                </span>
+              )}
+
+              <span className="ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-black/35 text-[10px] font-bold text-white opacity-0 group-hover/topbar:opacity-100 transition-opacity">
                 <PanelTop className="w-3 h-3" />
                 Edit Top Bar
               </span>
@@ -401,216 +609,91 @@ export function VisualHeaderCanvas({
             onClick={() => onSelectTarget({ type: "general" })}
             className="bg-slate-100 border-b border-slate-200 px-6 py-1.5 text-[11px] text-slate-500 flex items-center justify-between cursor-pointer hover:bg-blue-50"
           >
-            <span>Top Utility Bar is currently hidden</span>
+            <span>Top Bar is currently hidden</span>
             <span className="font-semibold text-[#115eff]">Enable in General Settings</span>
           </div>
         )}
 
-        {/* 2. Desktop Main Header Bar Mockup (matches hcmute-website-frontend 1:1) */}
+        {/* 2. Desktop Main White Header Bar Mockup (Matches hcmute-website-frontend 1:1) */}
         <div
           className={cn(
-            "bg-white border-b border-blue-100 px-6 transition-all",
+            "bg-white border-b border-border/60 px-6 transition-all",
             variant === "stacked"
               ? "py-3 space-y-2.5"
               : variant === "centered"
-                ? "h-[74px] grid grid-cols-[1fr_auto_1fr] items-center gap-4"
-                : "h-[74px] flex items-center justify-between gap-4"
+                ? "h-[72px] grid grid-cols-[1fr_auto_1fr] items-center gap-4"
+                : "h-[72px] flex items-center justify-start gap-6"
           )}
         >
           {variant === "centered" ? (
             <>
-              {/* Left Half Nav */}
-              <nav className="flex items-stretch h-full gap-0.5 min-w-0">
-                {config.navLinks.slice(0, Math.ceil(config.navLinks.length / 2)).map((item, navIdx) => {
-                  const isActive = activeTrigger?.id === item.id;
-                  const isMega = item.type === "mega";
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      draggable
-                      onDragStart={(e) => {
-                        e.stopPropagation();
-                        setDragTriggerIdx(navIdx);
-                        e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
-                        e.dataTransfer.effectAllowed = "move";
-                      }}
-                      onDragOver={(e) => {
-                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDragOverTriggerIdx(navIdx);
-                        }
-                      }}
-                      onDragLeave={() => {
-                        if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                          onReorderTriggers(dragTriggerIdx, navIdx);
-                        }
-                        setDragTriggerIdx(null);
-                        setDragOverTriggerIdx(null);
-                      }}
-                      onDragEnd={() => {
-                        setDragTriggerIdx(null);
-                        setDragOverTriggerIdx(null);
-                      }}
-                      onClick={() => {
-                        onSelectTrigger(item.id);
-                        onSelectTarget({ type: "trigger", triggerId: item.id });
-                      }}
-                      className={cn(
-                        "group relative px-3 h-full rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1 transition-colors cursor-grab active:cursor-grabbing whitespace-nowrap",
-                        isActive
-                          ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
-                          : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
-                        dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
-                      )}
-                    >
-                      <span>{item.name || "Untitled"}</span>
-                      {isMega && (
-                        <ChevronDown
-                          className={cn(
-                            "w-3.5 h-3.5 transition-transform",
-                            isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
-                          )}
-                        />
-                      )}
-                    </button>
-                  );
-                })}
+              <nav className="flex items-center justify-start h-full gap-1 min-w-0">
+                {config.navLinks
+                  .slice(0, halfIndex)
+                  .map((item, navIdx) => renderTriggerButton(item, navIdx))}
               </nav>
 
-              {/* Center Official HCM-UTE Logo */}
               {showLogo ? (
                 <div
                   onClick={() => onSelectTarget({ type: "general" })}
                   title="Click to edit Brand Logo & Variant"
-                  className={cn(
-                    "flex items-center justify-center shrink-0 cursor-pointer rounded px-2 py-1 transition-all",
-                    isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
-                  )}
+                  className="group/logo relative flex items-center justify-center shrink-0 cursor-pointer px-3 py-1.5"
                 >
+                  <AdminSquareFrame
+                    selected={isGeneralSelected}
+                    groupHoverClass="group-hover/logo:border-[#115eff]/85 group-hover/logo:opacity-100"
+                    cornerHoverClass="group-hover/logo:opacity-100"
+                  />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={desktopLogo}
                     alt="IEEE SMC 2027"
-                    className="h-12 w-auto object-contain"
+                    className="h-12 w-auto max-w-[160px] object-contain"
                   />
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => onSelectTarget({ type: "general" })}
-                  className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
+                  className="px-2 py-1 border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
                 >
                   Logo Hidden
                 </button>
               )}
 
-              {/* Right Half Nav + CTA */}
-              <div className="flex items-center justify-end h-full gap-2 min-w-0">
-                <nav className="flex items-stretch h-full gap-0.5">
-                  {config.navLinks.slice(Math.ceil(config.navLinks.length / 2)).map((item, offset) => {
-                    const navIdx = Math.ceil(config.navLinks.length / 2) + offset;
-                    const isActive = activeTrigger?.id === item.id;
-                    const isMega = item.type === "mega";
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        draggable
-                        onDragStart={(e) => {
-                          e.stopPropagation();
-                          setDragTriggerIdx(navIdx);
-                          e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
-                          e.dataTransfer.effectAllowed = "move";
-                        }}
-                        onDragOver={(e) => {
-                          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setDragOverTriggerIdx(navIdx);
-                          }
-                        }}
-                        onDragLeave={() => {
-                          if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                            onReorderTriggers(dragTriggerIdx, navIdx);
-                          }
-                          setDragTriggerIdx(null);
-                          setDragOverTriggerIdx(null);
-                        }}
-                        onDragEnd={() => {
-                          setDragTriggerIdx(null);
-                          setDragOverTriggerIdx(null);
-                        }}
-                        onClick={() => {
-                          onSelectTrigger(item.id);
-                          onSelectTarget({ type: "trigger", triggerId: item.id });
-                        }}
-                        className={cn(
-                          "group relative px-3 h-full rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1 transition-colors cursor-grab active:cursor-grabbing whitespace-nowrap",
-                          isActive
-                            ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
-                            : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
-                          dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
-                        )}
-                      >
-                        <span>{item.name || "Untitled"}</span>
-                        {isMega && (
-                          <ChevronDown
-                            className={cn(
-                              "w-3.5 h-3.5 transition-transform",
-                              isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
-                            )}
-                          />
-                        )}
-                      </button>
-                    );
-                  })}
-                </nav>
-                {ctaEnabled && (
-                  <div
-                    onClick={() => onSelectTarget({ type: "general" })}
-                    className="shrink-0 cursor-pointer"
-                    title="Click to edit Primary CTA Button"
-                  >
-                    <div className="px-3.5 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
-                      <span>{config.ctaButton?.label || "Submit Paper"}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <nav className="flex items-center justify-end h-full gap-1 min-w-0">
+                {config.navLinks
+                  .slice(halfIndex)
+                  .map((item, offset) =>
+                    renderTriggerButton(item, halfIndex + offset)
+                  )}
+              </nav>
             </>
           ) : (
             <>
-              {/* Logo Slot */}
+              {/* Left Logo Slot */}
               {showLogo ? (
                 <div
                   onClick={() => onSelectTarget({ type: "general" })}
                   title="Click to edit Brand Logo & Variant"
                   className={cn(
-                    "flex items-center shrink-0 cursor-pointer rounded p-1 transition-all",
-                    variant === "stacked" && "justify-center w-full border-b border-slate-100 pb-2",
-                    isGeneralSelected && "ring-2 ring-[#115eff] bg-blue-50/40"
+                    "group/logo relative flex items-center shrink-0 cursor-pointer p-1.5",
+                    variant === "stacked" &&
+                      "justify-center w-full border-b border-slate-100 pb-2.5"
                   )}
                 >
+                  <AdminSquareFrame
+                    selected={isGeneralSelected}
+                    groupHoverClass="group-hover/logo:border-[#115eff]/85 group-hover/logo:opacity-100"
+                    cornerHoverClass="group-hover/logo:opacity-100"
+                  />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={desktopLogo}
                     alt="IEEE SMC 2027"
                     className={cn(
                       "w-auto object-contain",
-                      variant === "minimal" ? "h-9" : "h-11"
+                      variant === "minimal" ? "h-10" : "h-12 xl:h-13"
                     )}
                   />
                 </div>
@@ -618,99 +701,26 @@ export function VisualHeaderCanvas({
                 <button
                   type="button"
                   onClick={() => onSelectTarget({ type: "general" })}
-                  className="px-2 py-1 rounded border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
+                  className="px-2 py-1 border border-dashed border-slate-300 text-[10px] font-semibold text-slate-400 hover:border-[#115eff] hover:text-[#115eff] shrink-0 cursor-pointer"
                 >
                   Logo Hidden
                 </button>
               )}
 
-              {/* Nav Triggers Row (Draggable to reorder, crisp square style) */}
+              {/* Nav Triggers Row (HCM-UTE Solid Blue Hover + Admin Square Hover Frame) */}
               <nav
                 className={cn(
-                  "flex items-stretch gap-0.5 flex-wrap",
+                  "flex items-center gap-1 flex-wrap",
                   variant !== "stacked" && "h-full",
-                  variant === "left-aligned" && "flex-1 justify-start ml-2",
+                  variant === "left-aligned" && "flex-1 justify-start",
                   variant === "stacked" && "w-full justify-center",
-                  variant === "minimal" && "flex-1 justify-end mr-2"
+                  variant === "minimal" && "flex-1 justify-end"
                 )}
               >
-                {config.navLinks.map((item, navIdx) => {
-                  const isActive = activeTrigger?.id === item.id;
-                  const isMega = item.type === "mega";
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      draggable
-                      onDragStart={(e) => {
-                        e.stopPropagation();
-                        setDragTriggerIdx(navIdx);
-                        e.dataTransfer.setData("application/x-nav-trigger", String(navIdx));
-                        e.dataTransfer.effectAllowed = "move";
-                      }}
-                      onDragOver={(e) => {
-                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDragOverTriggerIdx(navIdx);
-                        }
-                      }}
-                      onDragLeave={() => {
-                        if (dragOverTriggerIdx === navIdx) setDragOverTriggerIdx(null);
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (dragTriggerIdx !== null && dragTriggerIdx !== navIdx) {
-                          onReorderTriggers(dragTriggerIdx, navIdx);
-                        }
-                        setDragTriggerIdx(null);
-                        setDragOverTriggerIdx(null);
-                      }}
-                      onDragEnd={() => {
-                        setDragTriggerIdx(null);
-                        setDragOverTriggerIdx(null);
-                      }}
-                      onClick={() => {
-                        onSelectTrigger(item.id);
-                        onSelectTarget({ type: "trigger", triggerId: item.id });
-                      }}
-                      className={cn(
-                        "group relative px-3.5 rounded-none border-b-2 text-[14px] font-bold flex items-center gap-1.5 transition-colors cursor-grab active:cursor-grabbing",
-                        variant === "stacked" ? "py-2" : "h-full",
-                        isActive
-                          ? "border-[#115eff] text-[#115eff] bg-blue-50/40"
-                          : "border-transparent text-[#004776] hover:text-[#115eff] hover:bg-blue-50/40",
-                        dragOverTriggerIdx === navIdx && "border-l-2 border-l-[#115eff]"
-                      )}
-                    >
-                      <span>{item.name || "Untitled"}</span>
-                      {isMega && (
-                        <ChevronDown
-                          className={cn(
-                            "w-3.5 h-3.5 transition-transform",
-                            isActive ? "rotate-180 text-[#115eff]" : "text-slate-400"
-                          )}
-                        />
-                      )}
-                    </button>
-                  );
-                })}
+                {config.navLinks.map((item, navIdx) =>
+                  renderTriggerButton(item, navIdx)
+                )}
               </nav>
-
-              {/* Right CTA Button */}
-              {ctaEnabled && variant !== "stacked" && (
-                <div
-                  onClick={() => onSelectTarget({ type: "general" })}
-                  className="shrink-0 cursor-pointer"
-                  title="Click to edit Primary CTA Button"
-                >
-                  <div className="px-4 py-2 rounded-lg bg-[#115eff] text-white text-[13px] font-bold flex items-center gap-1.5 shadow-xs hover:bg-[#0a4de6] transition-colors">
-                    <span>{config.ctaButton?.label || "Submit Paper"}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>
@@ -722,17 +732,17 @@ export function VisualHeaderCanvas({
             onDragLeave={() => setCanvasDropActive(false)}
             onDrop={(e) => handleCanvasDrop(e)}
             className={cn(
-              "bg-slate-50/60 border-t border-slate-100 transition-colors",
+              "bg-slate-50/60 transition-colors",
               canvasDropActive && "bg-blue-50/60 ring-2 ring-inset ring-[#115eff]/40"
             )}
           >
             {/* Artboard Control Sub-header */}
-            <div className="px-6 py-2.5 bg-white border-b border-slate-200/80 flex items-center justify-between gap-3">
+            <div className="px-6 py-2.5 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <span className="text-xs font-bold capitalize text-slate-400">
+                <span className="text-xs font-bold uppercase tracking-wide text-slate-400">
                   Editing Trigger
                 </span>
-                <span className="text-sm font-extrabold text-[#004776] truncate">
+                <span className="text-sm font-extrabold text-foreground uppercase truncate">
                   {activeTrigger.name}
                 </span>
                 <Badge variant={hasMegaCanvas ? "ute" : "secondary"} size="sm">
@@ -745,8 +755,7 @@ export function VisualHeaderCanvas({
               <div className="flex items-center gap-2 shrink-0">
                 {hasMegaCanvas && (
                   <>
-                    {/* Quick Column Count Selector */}
-                    <div className="inline-flex items-center gap-1 rounded-md bg-slate-100 p-0.5 border border-slate-200">
+                    <div className="inline-flex items-center gap-1 rounded-md bg-white p-0.5 border border-slate-200">
                       <span className="text-[11px] font-semibold text-slate-500 px-1.5">
                         Columns
                       </span>
@@ -759,7 +768,7 @@ export function VisualHeaderCanvas({
                             "h-6 w-6 rounded text-xs font-bold transition-colors cursor-pointer",
                             columns.length === count
                               ? "bg-[#115eff] text-white shadow-2xs"
-                              : "text-slate-600 hover:bg-white hover:text-[#115eff]"
+                              : "text-slate-600 hover:bg-slate-100 hover:text-[#115eff]"
                           )}
                         >
                           {count}
@@ -773,7 +782,7 @@ export function VisualHeaderCanvas({
                           type="button"
                           size="sm"
                           variant="outline"
-                          className="h-7 text-xs font-semibold border-blue-200 text-[#004776] hover:bg-blue-50"
+                          className="h-7 text-xs font-semibold border-blue-200 text-foreground bg-white hover:bg-blue-50"
                         >
                           <Plus className="w-3.5 h-3.5 mr-1 text-[#115eff]" />
                           Add Block
@@ -810,7 +819,7 @@ export function VisualHeaderCanvas({
                     "h-7 text-xs font-semibold",
                     isTriggerSelected
                       ? "bg-[#115eff] hover:bg-blue-700 text-white"
-                      : "border-slate-200 text-slate-700"
+                      : "bg-white border-slate-200 text-slate-700"
                   )}
                 >
                   <SlidersHorizontal className="w-3 h-3 mr-1" />
@@ -820,9 +829,8 @@ export function VisualHeaderCanvas({
             </div>
 
             {!hasMegaCanvas ? (
-              /* Full-width Direct Link Artboard */
-              <div className="p-5 bg-white">
-                <div className="w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-5">
+              <div className="p-6 bg-white">
+                <div className="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-5">
                   <div className="flex items-center gap-4 min-w-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -831,12 +839,16 @@ export function VisualHeaderCanvas({
                       className="w-16 h-16 object-contain shrink-0 select-none"
                     />
                     <div className="min-w-0 text-left">
-                      <h4 className="text-sm font-bold text-[#004776]">
+                      <h4 className="text-sm font-bold text-foreground">
                         Direct Navigation Link
                       </h4>
                       <p className="text-xs text-slate-500 mt-1">
-                        Clicking <span className="font-semibold text-slate-700">{activeTrigger.name}</span> navigates straight to{" "}
-                        <code className="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono text-[11px] text-[#004776]">
+                        Clicking{" "}
+                        <span className="font-semibold text-slate-700">
+                          {activeTrigger.name}
+                        </span>{" "}
+                        navigates straight to{" "}
+                        <code className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[11px] text-foreground">
                           {activeTrigger.href || "/"}
                         </code>
                       </p>
@@ -867,10 +879,10 @@ export function VisualHeaderCanvas({
                 </div>
               </div>
             ) : (
-              /* Interactive Mega Menu Columns Artboard */
-              <div className="p-5 bg-white">
+              /* Interactive Mega Menu Columns Artboard (Matches Live HCM-UTE Mega Menu 1:1) */
+              <div className="px-6 py-5 bg-white">
                 {columns.length === 0 && !activeTrigger.promoCard ? (
-                  <div className="w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+                  <div className="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-5">
                     <div className="flex items-center gap-4 min-w-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -879,7 +891,7 @@ export function VisualHeaderCanvas({
                         className="w-16 h-16 object-contain shrink-0 select-none"
                       />
                       <div className="text-left">
-                        <div className="text-sm font-bold text-[#004776]">
+                        <div className="text-sm font-bold text-foreground">
                           This mega menu has no columns yet
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5">
@@ -903,11 +915,15 @@ export function VisualHeaderCanvas({
                       if (!draggingPromo) return;
                       e.preventDefault();
                       const rect = e.currentTarget.getBoundingClientRect();
-                      const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
+                      const side =
+                        e.clientX < rect.left + rect.width / 2 ? "left" : "right";
                       setPromoDropSide(side);
                     }}
                     onDragLeave={(e) => {
-                      if (draggingPromo && !e.currentTarget.contains(e.relatedTarget as Node)) {
+                      if (
+                        draggingPromo &&
+                        !e.currentTarget.contains(e.relatedTarget as Node)
+                      ) {
                         setPromoDropSide(null);
                       }
                     }}
@@ -916,120 +932,84 @@ export function VisualHeaderCanvas({
                         e.preventDefault();
                         e.stopPropagation();
                         const rect = e.currentTarget.getBoundingClientRect();
-                        const side = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
+                        const side =
+                          e.clientX < rect.left + rect.width / 2 ? "left" : "right";
                         onSetPromoPosition(activeTrigger.id, side);
                         setDraggingPromo(false);
                         setPromoDropSide(null);
                       }
                     }}
                     className={cn(
-                      "flex items-stretch w-full divide-x divide-blue-100/80 border border-slate-100 rounded-lg overflow-hidden relative",
+                      "flex items-stretch w-full divide-x divide-slate-200/80 border border-border rounded-b-2xl overflow-hidden relative bg-white shadow-sm",
                       promoDropSide === "left" && "border-l-4 border-l-[#115eff]",
                       promoDropSide === "right" && "border-r-4 border-r-[#115eff]"
                     )}
                   >
-                    {/* Left Featured Promo Card (when dragged to left) */}
-                    {activeTrigger.promoCard && activeTrigger.promoCardPosition === "left" && (
-                      <div
-                        draggable
-                        onDragStart={(e) => {
-                          e.stopPropagation();
-                          setDraggingPromo(true);
-                          e.dataTransfer.setData("application/x-promo-card", "1");
-                          e.dataTransfer.effectAllowed = "move";
-                        }}
-                        onDragEnd={() => {
-                          setDraggingPromo(false);
-                          setPromoDropSide(null);
-                        }}
-                        onClick={() =>
-                          onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
-                        }
-                        title="Drag right to move Featured Card, or click to edit"
-                        className={cn(
-                          "group/promo w-[280px] shrink-0 p-4 bg-white border-r border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
-                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]",
-                          draggingPromo && "opacity-60"
-                        )}
-                      >
+                    {/* Left Featured Promo Card */}
+                    {activeTrigger.promoCard &&
+                      activeTrigger.promoCardPosition === "left" && (
                         <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute top-2 right-2 z-20 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded px-1 py-0.5 shadow-2xs"
+                          draggable
+                          onDragStart={(e) => {
+                            e.stopPropagation();
+                            setDraggingPromo(true);
+                            e.dataTransfer.setData("application/x-promo-card", "1");
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragEnd={() => {
+                            setDraggingPromo(false);
+                            setPromoDropSide(null);
+                          }}
+                          onClick={() =>
+                            onSelectTarget({
+                              type: "trigger",
+                              triggerId: activeTrigger.id,
+                            })
+                          }
+                          title="Drag right to move Featured Card, or click to edit"
+                          className={cn(
+                            "group/promo w-[264px] shrink-0 py-6 px-5 bg-white flex flex-col justify-start relative cursor-grab active:cursor-grabbing",
+                            draggingPromo && "opacity-60"
+                          )}
                         >
-                          <button
-                            type="button"
-                            onClick={() => onSetPromoPosition(activeTrigger.id, "right")}
-                            title="Move to right"
-                            className="p-1 rounded text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                          <AdminSquareFrame
+                            selected={isTriggerSelected}
+                            groupHoverClass="group-hover/promo:border-[#115eff]/85 group-hover/promo:opacity-100"
+                            cornerHoverClass="group-hover/promo:opacity-100"
+                          />
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-2 right-2 z-30 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded-none px-1 py-0.5 shadow-2xs"
                           >
-                            <ArrowRight className="w-3 h-3" />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => onSetPromoPosition(activeTrigger.id, "right")}
+                              title="Move to right"
+                              className="p-1 text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                            >
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <div className="relative pb-2 mb-3">
+                            <h3 className="text-[13px] font-bold text-foreground whitespace-nowrap">
+                              {activeTrigger.promoCard.badge || "Spotlight"}
+                            </h3>
+                            <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                          </div>
+                          <CanvasPromoCardPreview promoCard={activeTrigger.promoCard} />
                         </div>
-                        <div className="relative z-10 space-y-2.5">
-                          {activeTrigger.promoCard.image && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={activeTrigger.promoCard.image}
-                              alt={activeTrigger.promoCard.title}
-                              className="w-full h-28 object-cover rounded-sm border border-blue-100 shadow-2xs"
-                            />
-                          )}
-                          {activeTrigger.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-blue-50 text-[#115eff] border border-blue-100">
-                              {activeTrigger.promoCard.badge}
-                            </span>
-                          )}
-                          <h4 className="text-sm font-bold text-[#004776] leading-snug">
-                            {activeTrigger.promoCard.title}
-                          </h4>
-                          <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                            {activeTrigger.promoCard.description}
-                          </p>
-                        </div>
-                        <div className="relative z-10 pt-3 mt-3 border-t border-blue-100 flex items-center justify-between text-xs font-bold text-[#115eff]">
-                          <span>{activeTrigger.promoCard.ctaText || "Learn More"}</span>
-                          <ArrowUpRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    )}
+                      )}
+
+                    {/* Mega Menu Columns */}
                     {columns.map((col, colIdx) => {
-                      const isColSelected = selectedColumnId === col.id;
+                      const isColSelected =
+                        selectedColumnId === col.id && !selectedLinkId;
                       const showPromo =
                         Boolean(col.promoCard) &&
-                        (col.type === "promo-card" || Boolean(col.promoCard?.title || col.promoCard?.image));
+                        (col.type === "promo-card" ||
+                          Boolean(col.promoCard?.title || col.promoCard?.image));
                       const promoTop = col.promoPosition === "top";
-
-                      const promoEl = showPromo && col.promoCard ? (
-                        <div className="rounded-lg border border-blue-200 bg-[#115eff] text-white p-3.5 space-y-2 relative overflow-hidden">
-                          {col.promoCard.image && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={col.promoCard.image}
-                              alt={col.promoCard.title}
-                              className="w-full h-24 object-cover rounded border border-white/15"
-                            />
-                          )}
-                          {col.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-white/15 text-blue-100">
-                              {col.promoCard.badge}
-                            </span>
-                          )}
-                          <div className="text-xs font-bold leading-snug">
-                            {col.promoCard.title || "Featured Highlight"}
-                          </div>
-                          {col.promoCard.description && (
-                            <p className="text-[11px] text-blue-100/85 line-clamp-2">
-                              {col.promoCard.description}
-                            </p>
-                          )}
-                          {col.promoCard.ctaText && (
-                            <div className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-300">
-                              <span>{col.promoCard.ctaText}</span>
-                              <ArrowUpRight className="w-3 h-3" />
-                            </div>
-                          )}
-                        </div>
-                      ) : null;
+                      const hasAnyIconInCol = col.links.some((l) => Boolean(l.icon));
 
                       return (
                         <div
@@ -1038,7 +1018,10 @@ export function VisualHeaderCanvas({
                           onDragStart={(e) => {
                             e.stopPropagation();
                             setDragColIdx(colIdx);
-                            e.dataTransfer.setData("application/x-col-index", String(colIdx));
+                            e.dataTransfer.setData(
+                              "application/x-col-index",
+                              String(colIdx)
+                            );
                             e.dataTransfer.effectAllowed = "move";
                           }}
                           onDragOver={(e) => {
@@ -1053,7 +1036,11 @@ export function VisualHeaderCanvas({
                             if (dragOverColIdx === colIdx) setDragOverColIdx(null);
                           }}
                           onDrop={(e) => {
-                            if (e.dataTransfer.getData("application/x-promo-card") === "1") return;
+                            if (
+                              e.dataTransfer.getData("application/x-promo-card") ===
+                              "1"
+                            )
+                              return;
                             handleCanvasDrop(e, colIdx);
                           }}
                           onDragEnd={() => {
@@ -1068,19 +1055,23 @@ export function VisualHeaderCanvas({
                             })
                           }
                           className={cn(
-                            "group/col relative flex-1 min-w-0 p-4 flex flex-col cursor-pointer transition-all",
-                            isColSelected
-                              ? "bg-blue-50/35 shadow-[inset_0_0_0_2px_#115eff]"
-                              : "hover:bg-slate-50/70 hover:shadow-[inset_0_0_0_1px_rgba(17,94,255,0.35)]",
+                            "group/col relative flex-1 min-w-0 py-6 px-0 flex flex-col cursor-pointer transition-all",
                             dragOverColIdx === colIdx && "border-l-4 border-l-[#115eff]"
                           )}
                         >
+                          {/* Admin Square Hover/Selected Frame on Column */}
+                          <AdminSquareFrame
+                            selected={isColSelected}
+                            groupHoverClass="group-hover/col:border-[#115eff]/75 group-hover/col:opacity-100"
+                            cornerHoverClass="group-hover/col:opacity-100"
+                          />
+
                           {/* Floating Column Action Bar */}
                           <div
                             onClick={(e) => e.stopPropagation()}
                             className={cn(
-                              "absolute top-2 right-2 z-20 flex items-center gap-0.5 px-1 py-0.5 rounded bg-white border border-slate-200 shadow-sm transition-opacity",
-                              isColSelected
+                              "absolute top-2 right-2 z-30 flex items-center gap-0.5 px-1 py-0.5 rounded-none bg-white border border-slate-200 shadow-sm transition-opacity",
+                              selectedColumnId === col.id
                                 ? "opacity-100"
                                 : "opacity-0 group-hover/col:opacity-100"
                             )}
@@ -1088,18 +1079,22 @@ export function VisualHeaderCanvas({
                             <button
                               type="button"
                               disabled={colIdx === 0}
-                              onClick={() => onMoveColumn(activeTrigger.id, colIdx, colIdx - 1)}
+                              onClick={() =>
+                                onMoveColumn(activeTrigger.id, colIdx, colIdx - 1)
+                              }
                               title="Move left"
-                              className="p-1 rounded text-slate-500 hover:text-[#004776] hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                              className="p-1 text-slate-500 hover:text-foreground hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                             >
                               <ArrowLeft className="w-3 h-3" />
                             </button>
                             <button
                               type="button"
                               disabled={colIdx === columns.length - 1}
-                              onClick={() => onMoveColumn(activeTrigger.id, colIdx, colIdx + 1)}
+                              onClick={() =>
+                                onMoveColumn(activeTrigger.id, colIdx, colIdx + 1)
+                              }
                               title="Move right"
-                              className="p-1 rounded text-slate-500 hover:text-[#004776] hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                              className="p-1 text-slate-500 hover:text-foreground hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                             >
                               <ArrowRight className="w-3 h-3" />
                             </button>
@@ -1113,7 +1108,7 @@ export function VisualHeaderCanvas({
                                 })
                               }
                               title="Inspect column"
-                              className="p-1 rounded text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                              className="p-1 text-[#115eff] hover:bg-blue-50 cursor-pointer"
                             >
                               <SlidersHorizontal className="w-3 h-3" />
                             </button>
@@ -1121,48 +1116,62 @@ export function VisualHeaderCanvas({
                               type="button"
                               onClick={() => onDeleteColumn(activeTrigger.id, col.id)}
                               title="Delete column"
-                              className="p-1 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
                           </div>
 
                           {/* Column Heading + Animated Gradient Underline */}
-                          <div className="relative pb-2.5 mb-3 shrink-0 pr-16">
-                            <h3 className="text-xs font-bold capitalize text-[#004776] whitespace-pre-line">
-                              {col.title || "UNTITLED COLUMN"}
+                          <div className="relative pb-2 mb-2 shrink-0 px-5 pr-20">
+                            <h3 className="text-[13.5px] font-extrabold text-foreground whitespace-pre-line">
+                              {col.title || "Untitled Column"}
                             </h3>
-                            <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-blue-100 rounded-full" />
+                            <div className="absolute bottom-0 left-5 right-5 h-[1.5px] bg-slate-200/80 rounded-full" />
                             <div
                               className={cn(
-                                "absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full origin-left transition-transform duration-300",
-                                isColSelected
+                                "absolute bottom-0 left-5 right-5 h-[1.5px] bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500 rounded-full origin-left transition-transform duration-300",
+                                selectedColumnId === col.id
                                   ? "scale-x-100"
                                   : "scale-x-0 group-hover/col:scale-x-100"
                               )}
                             />
                           </div>
 
-                          {promoTop && promoEl && <div className="mb-3">{promoEl}</div>}
+                          {promoTop && showPromo && col.promoCard && (
+                            <div className="px-5 mb-2">
+                              <CanvasPromoCardPreview promoCard={col.promoCard} />
+                            </div>
+                          )}
 
-                          {/* Column Links */}
+                          {/* Column Links (Full-bleed Solid Blue Hover + Admin Square Selection Frame) */}
                           {col.type !== "promo-card" && (
-                            <div className="flex flex-col gap-1 flex-1">
+                            <div className="flex flex-col flex-1 w-full">
                               {col.links.map((link, linkIdx) => {
-                                const IconComp = getNavIcon(link.icon);
+                                const IconComp = link.icon
+                                  ? getNavIcon(link.icon)
+                                  : null;
                                 const isLinkSelected =
-                                  isColSelected && selectedLinkId === link.id;
+                                  selectedColumnId === col.id &&
+                                  selectedLinkId === link.id;
                                 const isLinkDragOver =
                                   dragOverLink?.colId === col.id &&
                                   dragOverLink.index === linkIdx;
+
                                 return (
                                   <div
                                     key={link.id}
                                     draggable
                                     onDragStart={(e) => {
                                       e.stopPropagation();
-                                      setDragLinkState({ colId: col.id, index: linkIdx });
-                                      e.dataTransfer.setData("application/x-col-link", String(linkIdx));
+                                      setDragLinkState({
+                                        colId: col.id,
+                                        index: linkIdx,
+                                      });
+                                      e.dataTransfer.setData(
+                                        "application/x-col-link",
+                                        String(linkIdx)
+                                      );
                                       e.dataTransfer.effectAllowed = "move";
                                     }}
                                     onDragOver={(e) => {
@@ -1173,7 +1182,10 @@ export function VisualHeaderCanvas({
                                       ) {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        setDragOverLink({ colId: col.id, index: linkIdx });
+                                        setDragOverLink({
+                                          colId: col.id,
+                                          index: linkIdx,
+                                        });
                                       }
                                     }}
                                     onDragLeave={() => {
@@ -1211,123 +1223,148 @@ export function VisualHeaderCanvas({
                                       });
                                     }}
                                     className={cn(
-                                      "group/item flex flex-col gap-0.5 py-2 px-2 rounded-sm transition-all cursor-grab active:cursor-grabbing",
-                                      isLinkSelected
-                                        ? "bg-blue-100/70 ring-1 ring-[#115eff]"
-                                        : "hover:bg-blue-50/60",
+                                      "group/linkslot relative w-full cursor-grab active:cursor-grabbing",
                                       isLinkDragOver && "border-t-2 border-t-[#115eff]"
                                     )}
                                   >
-                                    <div className="flex items-center gap-2 min-w-0">
-                                      <div
+                                    <AdminSquareFrame
+                                      selected={isLinkSelected}
+                                      groupHoverClass="group-hover/linkslot:border-white/90 group-hover/linkslot:opacity-100"
+                                      cornerHoverClass="group-hover/linkslot:opacity-100"
+                                    />
+                                    <div
+                                      className={cn(
+                                        "group/item w-full flex items-start gap-2.5 py-3 px-5 rounded-none transition-colors duration-150",
+                                        isLinkSelected
+                                          ? "bg-primary text-white"
+                                          : "hover:bg-primary hover:text-white"
+                                      )}
+                                    >
+                                      {IconComp ? (
+                                        <div
+                                          className={cn(
+                                            "size-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-colors shadow-2xs",
+                                            isLinkSelected
+                                              ? "bg-white/20 text-white"
+                                              : "bg-primary/10 text-primary group-hover/item:bg-white/20 group-hover/item:text-white"
+                                          )}
+                                        >
+                                          <IconComp className="w-3.5 h-3.5" />
+                                        </div>
+                                      ) : hasAnyIconInCol ? (
+                                        <div className="size-6 shrink-0" />
+                                      ) : null}
+
+                                      <span
                                         className={cn(
-                                          "w-7 h-7 rounded-sm border flex items-center justify-center shrink-0 transition-colors",
+                                          "text-[14.5px] font-bold leading-snug flex-1 min-w-0 whitespace-pre-line",
                                           isLinkSelected
-                                            ? "bg-[#115eff] border-[#115eff] text-white"
-                                            : "bg-blue-50 border-blue-100 text-[#115eff] group-hover/item:bg-[#115eff] group-hover/item:text-white"
+                                            ? "text-white"
+                                            : "text-foreground group-hover/item:text-white"
                                         )}
                                       >
-                                        <IconComp className="w-3.5 h-3.5" />
-                                      </div>
-                                      <span className="text-[13px] font-semibold text-slate-900 whitespace-pre-line leading-tight flex-1 min-w-0">
                                         {link.title || "Untitled Link"}
                                       </span>
+
                                       {link.badge && (
-                                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-[#115eff] font-bold shrink-0">
+                                        <span
+                                          className={cn(
+                                            "shrink-0 text-[9.5px] font-extrabold uppercase px-1.5 py-0.5 rounded-md mt-0.5",
+                                            isLinkSelected
+                                              ? "bg-white/20 text-white"
+                                              : "bg-amber-500/15 text-amber-700 group-hover/item:bg-white/20 group-hover/item:text-white"
+                                          )}
+                                        >
                                           {link.badge}
                                         </span>
                                       )}
+
                                       {link.isExternal && (
-                                        <ArrowUpRight className="w-3 h-3 text-slate-400 shrink-0" />
+                                        <ArrowUpRight
+                                          className={cn(
+                                            "w-3.5 h-3.5 shrink-0 mt-0.5",
+                                            isLinkSelected
+                                              ? "text-white"
+                                              : "text-muted-foreground/60 group-hover/item:text-white"
+                                          )}
+                                        />
                                       )}
                                     </div>
-                                    {link.description && (
-                                      <p className="text-[11px] text-slate-500 pl-9 line-clamp-1">
-                                        {link.description}
-                                      </p>
-                                    )}
                                   </div>
                                 );
                               })}
 
                               {col.links.length === 0 && (
-                                <div className="py-4 text-center text-[11px] text-slate-400 border border-dashed border-slate-200 rounded">
+                                <div className="mx-5 py-4 text-center text-[11px] text-slate-400 border border-dashed border-slate-200">
                                   No links in this column
                                 </div>
                               )}
                             </div>
                           )}
 
-                          {!promoTop && promoEl && <div className="mt-3">{promoEl}</div>}
+                          {!promoTop && showPromo && col.promoCard && (
+                            <div className="px-5 mt-2">
+                              <CanvasPromoCardPreview promoCard={col.promoCard} />
+                            </div>
+                          )}
                         </div>
                       );
                     })}
 
-                    {/* Draggable Featured Promo Card Sidebar (Right side default) */}
-                    {activeTrigger.promoCard && activeTrigger.promoCardPosition !== "left" && (
-                      <div
-                        draggable
-                        onDragStart={(e) => {
-                          e.stopPropagation();
-                          setDraggingPromo(true);
-                          e.dataTransfer.setData("application/x-promo-card", "1");
-                          e.dataTransfer.effectAllowed = "move";
-                        }}
-                        onDragEnd={() => {
-                          setDraggingPromo(false);
-                          setPromoDropSide(null);
-                        }}
-                        onClick={() =>
-                          onSelectTarget({ type: "trigger", triggerId: activeTrigger.id })
-                        }
-                        title="Drag left to move Featured Card, or click to edit"
-                        className={cn(
-                          "group/promo w-[280px] shrink-0 p-4 bg-white border-l border-blue-100/80 flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing transition-all hover:bg-blue-50/40",
-                          isTriggerSelected && "ring-2 ring-inset ring-[#115eff]",
-                          draggingPromo && "opacity-60"
-                        )}
-                      >
+                    {/* Right Featured Promo Card Sidebar (Default right side) */}
+                    {activeTrigger.promoCard &&
+                      activeTrigger.promoCardPosition !== "left" && (
                         <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute top-2 right-2 z-20 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded px-1 py-0.5 shadow-2xs"
+                          draggable
+                          onDragStart={(e) => {
+                            e.stopPropagation();
+                            setDraggingPromo(true);
+                            e.dataTransfer.setData("application/x-promo-card", "1");
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragEnd={() => {
+                            setDraggingPromo(false);
+                            setPromoDropSide(null);
+                          }}
+                          onClick={() =>
+                            onSelectTarget({
+                              type: "trigger",
+                              triggerId: activeTrigger.id,
+                            })
+                          }
+                          title="Drag left to move Featured Card, or click to edit"
+                          className={cn(
+                            "group/promo w-[264px] shrink-0 py-6 px-5 bg-white flex flex-col justify-start relative cursor-grab active:cursor-grabbing",
+                            draggingPromo && "opacity-60"
+                          )}
                         >
-                          <button
-                            type="button"
-                            onClick={() => onSetPromoPosition(activeTrigger.id, "left")}
-                            title="Move to left"
-                            className="p-1 rounded text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                          <AdminSquareFrame
+                            selected={isTriggerSelected}
+                            groupHoverClass="group-hover/promo:border-[#115eff]/85 group-hover/promo:opacity-100"
+                            cornerHoverClass="group-hover/promo:opacity-100"
+                          />
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-2 right-2 z-30 opacity-0 group-hover/promo:opacity-100 transition-opacity flex items-center gap-0.5 bg-white border border-slate-200 rounded-none px-1 py-0.5 shadow-2xs"
                           >
-                            <ArrowLeft className="w-3 h-3" />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => onSetPromoPosition(activeTrigger.id, "left")}
+                              title="Move to left"
+                              className="p-1 text-slate-500 hover:text-[#115eff] hover:bg-blue-50 cursor-pointer"
+                            >
+                              <ArrowLeft className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <div className="relative pb-2 mb-3">
+                            <h3 className="text-[13px] font-bold text-foreground whitespace-nowrap">
+                              {activeTrigger.promoCard.badge || "Spotlight"}
+                            </h3>
+                            <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-slate-200/80 rounded-full" />
+                          </div>
+                          <CanvasPromoCardPreview promoCard={activeTrigger.promoCard} />
                         </div>
-                        <div className="relative z-10 space-y-2.5">
-                          {activeTrigger.promoCard.image && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={activeTrigger.promoCard.image}
-                              alt={activeTrigger.promoCard.title}
-                              className="w-full h-28 object-cover rounded-sm border border-blue-100 shadow-2xs"
-                            />
-                          )}
-                          {activeTrigger.promoCard.badge && (
-                            <span className="inline-block text-[10px] font-bold capitalize px-2 py-0.5 rounded bg-blue-50 text-[#115eff] border border-blue-100">
-                              {activeTrigger.promoCard.badge}
-                            </span>
-                          )}
-                          <h4 className="text-sm font-bold text-[#004776] leading-snug">
-                            {activeTrigger.promoCard.title}
-                          </h4>
-                          <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                            {activeTrigger.promoCard.description}
-                          </p>
-                        </div>
-
-                        <div className="relative z-10 pt-3 mt-3 border-t border-blue-100 flex items-center justify-between text-xs font-bold text-[#115eff]">
-                          <span>{activeTrigger.promoCard.ctaText || "Learn More"}</span>
-                          <ArrowUpRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 )}
               </div>

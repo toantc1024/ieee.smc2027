@@ -145,9 +145,11 @@ export function inferMemberGender(
  * Return the unified blue abstract frosted-glass fallback vector asset for a member.
  */
 export function getClayAvatarForMember(
-  _name?: string,
-  _explicitGender?: "male" | "female"
+  name?: string,
+  explicitGender?: "male" | "female"
 ): string {
+  void name;
+  void explicitGender;
   return "/assets/3d/abstract-glass-blue.svg";
 }
 
@@ -304,6 +306,7 @@ function CommitteeCard({
   subPath?: SubItemPath;
   cardBadgeLabel?: string;
 }) {
+  const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
   if (!member) return null;
   const name = member.name?.trim() || "Committee Member";
   const resolvedBadge = member.badgeLabel?.trim() || cardBadgeLabel.trim();
@@ -311,13 +314,8 @@ function CommitteeCard({
     typeof member.photo === "string" && member.photo.trim().length > 0
       ? member.photo.trim()
       : CHAIR_PHOTO_MAP[name];
-  const [imgError, setImgError] = useState(false);
 
-  useEffect(() => {
-    setImgError(false);
-  }, [photo]);
-
-  const hasPhoto = Boolean(photo && !imgError);
+  const hasPhoto = Boolean(photo && failedPhoto !== photo);
 
   return (
     <div
@@ -325,7 +323,7 @@ function CommitteeCard({
       className="group/card relative flex flex-col w-full h-full select-none cursor-grab active:cursor-grabbing"
     >
       {/* The Card Box */}
-      <div className="relative rounded-sm bg-white border border-blue-100/90 group-hover/card:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md h-full">
+      <div className="relative rounded-xl bg-white border border-border/80 ring-1 ring-border/50 group-hover/card:border-primary group-hover/card:ring-primary/40 transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-xl h-full">
         {/* Top: Portrait Canvas or Top-Transparent Abstract Frosted Glass Fallback */}
         <div
           className={cn(
@@ -370,7 +368,7 @@ function CommitteeCard({
                 draggable={false}
                 className="object-cover object-bottom scale-105 origin-bottom pointer-events-none select-none"
                 sizes="(max-width: 640px) 150px, (max-width: 768px) 175px, (max-width: 1024px) 195px, (max-width: 1280px) 210px, 220px"
-                onError={() => setImgError(true)}
+                onError={() => setFailedPhoto(photo || null)}
               />
             ) : (
               <AbstractGlassSquareFallback seed={name} />
@@ -535,7 +533,7 @@ function CommitteeGroupCarousel({
 
   const members = useMemo(
     () => (Array.isArray(group?.members) ? group.members.filter(Boolean) : []),
-    [group?.members]
+    [group]
   );
   const memberCount = members.length;
 

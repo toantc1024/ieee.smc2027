@@ -463,11 +463,11 @@ export function SortableBlock({
         </BuilderBlockContext.Provider>
       </div>
 
-      {/* Blue Selection Border & 4 Corner Handles */}
+      {/* Blue Selection Border & 4 Corner Handles (Square Frame) */}
       <div
         data-builder-outline
         className={cn(
-          "absolute inset-0 pointer-events-none z-[60] transition-colors duration-100 border-2",
+          "absolute inset-0 pointer-events-none z-[60] transition-colors duration-100 border-2 rounded-none",
           isSelected
             ? isHidden ? "border-amber-500 shadow-xs" : "border-blue-600 shadow-xs"
             : isHovered

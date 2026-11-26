@@ -132,7 +132,7 @@ export function ImportantDates({
       </div>
 
       <div className="px-4 sm:px-6 pb-12 sm:pb-16 w-full">
-        <div className="w-full bg-white border border-blue-100/85 rounded-[var(--radius)] overflow-hidden shadow-2xs">
+        <div className="w-full bg-white border border-border/80 ring-1 ring-border/50 rounded-xl overflow-hidden shadow-2xs">
           <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-5 sm:px-6 lg:px-8 py-4 bg-blue-50/50 font-bold text-sm sm:text-base lg:text-[17px] text-[#004776] border-b border-blue-100/90">
             <div className="sm:col-span-7 lg:col-span-8 flex items-center gap-2.5">
               <span>{colMilestoneLabel}</span>

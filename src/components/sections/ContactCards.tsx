@@ -175,7 +175,7 @@ export function ContactCards({
                 <div
                   key={idx}
                   {...subItemAttr(["cards", idx])}
-                  className="relative overflow-hidden bg-white border border-blue-100/90 hover:border-[#115eff] hover:bg-[#115eff] rounded-sm shadow-2xs hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                  className="relative overflow-hidden bg-white border border-border/80 ring-1 ring-border/50 hover:border-primary hover:bg-primary rounded-xl shadow-2xs hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div className="corner-grid-tr opacity-40 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
                   <div className="corner-dot-bl opacity-30 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
@@ -187,7 +187,15 @@ export function ContactCards({
                       WebkitMaskImage: "radial-gradient(ellipse at top right, black 20%, transparent 80%)",
                     }}
                   />
-                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <Image
+                    src="/assets/flower-ute-white.png"
+                    alt=""
+                    width={240}
+                    height={240}
+                    unoptimized
+                    className="pointer-events-none absolute -bottom-16 -right-16 z-[1] rotate-[25deg] select-none opacity-0 transition-opacity duration-300 group-hover:opacity-20"
+                    aria-hidden="true"
+                  />
 
                   <div className="p-6 sm:p-7 relative z-10 flex-1 flex flex-col justify-between">
                     <div>

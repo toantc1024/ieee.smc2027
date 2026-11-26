@@ -246,7 +246,43 @@ export function FooterPalette({
   );
 }
 
-/* ── Visual Footer Canvas (Matches live Footer.tsx layering + full drag) ──── */
+/* ── Crisp Square Hover / Selection Frame for Admin Footer Canvas ─────────── */
+function FooterSquareFrame({
+  selected,
+  groupHoverClass = "group-hover/slot:border-white group-hover/slot:opacity-100",
+  cornerHoverClass = "group-hover/slot:opacity-100",
+}: {
+  selected?: boolean;
+  groupHoverClass?: string;
+  cornerHoverClass?: string;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute inset-0 z-20 rounded-none border-2 transition-all duration-150",
+        selected
+          ? "border-amber-300 opacity-100"
+          : cn("border-dashed border-transparent opacity-0", groupHoverClass)
+      )}
+    >
+      {["-top-1 -left-1", "-top-1 -right-1", "-bottom-1 -left-1", "-bottom-1 -right-1"].map(
+        (pos) => (
+          <span
+            key={pos}
+            className={cn(
+              "absolute size-2 rounded-none bg-white border-2 border-[#115eff] transition-opacity duration-150",
+              pos,
+              selected ? "opacity-100" : cn("opacity-0", cornerHoverClass)
+            )}
+          />
+        )
+      )}
+    </div>
+  );
+}
+
+/* ── Visual Footer Canvas (Matches live HCM-UTE Footer.tsx 1:1 + Square Hover Frames) ── */
 export function VisualFooterCanvas({
   config,
   viewport,
@@ -278,7 +314,7 @@ export function VisualFooterCanvas({
       ? "w-[390px]"
       : viewport === "tablet"
         ? "w-[768px]"
-        : "w-[1260px]";
+        : "w-[1280px]";
 
   const isBannerSelected = selectedTarget?.type === "banner";
   const isBrandSelected = selectedTarget?.type === "brand";
@@ -286,55 +322,39 @@ export function VisualFooterCanvas({
 
   return (
     <div className={cn(frameClass, "mx-auto py-6 px-4 select-none")}>
-      <div className="rounded-xl border border-blue-200/80 shadow-2xl overflow-hidden bg-[#115eff] text-white relative">
-        {/* Background Texture & Royal Blue Overlay matching live Footer.tsx */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/assets/cta-background.webp"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-75 pointer-events-none"
-        />
-        <div className="absolute inset-0 bg-[#115eff]/85 pointer-events-none" />
-        <div
-          className="absolute inset-0 bg-dot-dark opacity-20 pointer-events-none"
-          aria-hidden="true"
-        />
-        <div
-          className="corner-dot-dark-tr opacity-40 pointer-events-none"
-          aria-hidden="true"
-        />
-        <div
-          className="corner-dot-dark-bl opacity-30 pointer-events-none"
-          aria-hidden="true"
-        />
+      <div className="rounded-xl border border-blue-200/80 shadow-2xl overflow-hidden bg-blue-600 text-white relative">
         {/* Giant HCM-UTE white flower watermark matching hcmute-website-frontend */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/assets/flower-ute-white.png"
           alt=""
-          className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[38rem] h-[38rem] opacity-[0.075] rotate-[30deg] pointer-events-none select-none object-contain"
+          className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[45rem] h-[45rem] opacity-[0.075] rotate-[30deg] pointer-events-none select-none object-contain"
         />
+
         {/* Top Banner: Host University & CFP Action Bar */}
         <div
           onClick={() => onSelectTarget({ type: "banner" })}
           title="Click to edit Top CFP Banner"
           className={cn(
-            "relative z-10 px-6 py-7 border-b border-white/15 cursor-pointer transition-all group/banner",
+            "relative z-10 px-6 py-7 border-b border-white/20 cursor-pointer transition-all group/banner",
             viewport === "desktop"
               ? "grid grid-cols-12 gap-6 items-center"
               : "flex flex-col gap-5",
-            isBannerSelected
-              ? "ring-2 ring-inset ring-amber-300 bg-white/10"
-              : "hover:bg-white/5"
+            isBannerSelected ? "bg-white/10" : "hover:bg-white/5"
           )}
         >
-          <span className="absolute top-2.5 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/15 text-[10px] font-bold text-white opacity-0 group-hover/banner:opacity-100 transition-opacity">
+          <FooterSquareFrame
+            selected={isBannerSelected}
+            groupHoverClass="group-hover/banner:border-white group-hover/banner:opacity-100"
+            cornerHoverClass="group-hover/banner:opacity-100"
+          />
+          <span className="absolute top-2.5 right-3 z-30 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-black/35 text-[10px] font-bold text-white opacity-0 group-hover/banner:opacity-100 transition-opacity">
             <SlidersHorizontal className="w-3 h-3" />
             Edit Banner
           </span>
 
           <div className={viewport === "desktop" ? "col-span-8" : ""}>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5">
               <span>{config.badgeText}</span>
               <span className="text-white/50">•</span>
               <span>{config.datesText}</span>
@@ -342,7 +362,7 @@ export function VisualFooterCanvas({
             <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
               {config.heading}
             </h3>
-            <p className="mt-2 text-sm text-blue-100 max-w-2xl leading-relaxed">
+            <p className="mt-1.5 text-sm text-white/90 max-w-2xl leading-relaxed">
               {config.description}
             </p>
           </div>
@@ -354,14 +374,14 @@ export function VisualFooterCanvas({
             )}
           >
             {config.cfpButtonLabel && (
-              <div className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 bg-white text-[#115eff] font-bold text-sm rounded-[0.26rem] shadow-md">
-                <FileDown className="w-4 h-4 text-[#115eff]" />
+              <div className="inline-flex items-center justify-center gap-2 h-11 px-5 bg-white text-blue-700 font-bold text-sm rounded-lg shadow-sm">
+                <FileDown className="w-4 h-4 text-blue-700" />
                 <span>{config.cfpButtonLabel}</span>
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             )}
             {config.portalButtonLabel && (
-              <div className="inline-flex items-center justify-center gap-2 min-h-[42px] px-4 py-2 bg-white/10 border border-white/25 text-white font-semibold text-sm rounded-[0.26rem]">
+              <div className="inline-flex items-center justify-center gap-2 h-10 px-4 bg-white/10 border border-white/25 text-white font-semibold text-sm rounded-lg">
                 <Globe className="w-4 h-4" />
                 <span>{config.portalButtonLabel}</span>
               </div>
@@ -369,65 +389,65 @@ export function VisualFooterCanvas({
           </div>
         </div>
 
-        {/* Main Footer Content Grid */}
+        {/* Main Footer Content Grid (Matches 4+8 col HCM-UTE layout) */}
         <div
           className={cn(
-            "relative z-10 px-6 py-8",
+            "relative z-10 px-6 py-10",
             viewport === "desktop"
-              ? "grid grid-cols-12 gap-8"
+              ? "grid grid-cols-12 gap-10"
               : "flex flex-col gap-8"
           )}
         >
-          {/* Left Column: Brand & Contact */}
+          {/* Left Column: Brand & Contact (col-span-4) */}
           <div
             onClick={() => onSelectTarget({ type: "brand" })}
             title="Click to edit Brand, Contact & Social Links"
             className={cn(
-              "space-y-4 p-3 -m-3 rounded-lg cursor-pointer transition-all relative group/brand",
-              viewport === "desktop" ? "col-span-5" : "",
-              isBrandSelected
-                ? "ring-2 ring-inset ring-amber-300 bg-white/10"
-                : "hover:bg-white/5"
+              "space-y-4 p-3 -m-3 cursor-pointer transition-all relative group/brand",
+              viewport === "desktop" ? "col-span-4" : "",
+              isBrandSelected ? "bg-white/10" : "hover:bg-white/5"
             )}
           >
-            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/15 text-[10px] font-bold text-white opacity-0 group-hover/brand:opacity-100 transition-opacity">
+            <FooterSquareFrame
+              selected={isBrandSelected}
+              groupHoverClass="group-hover/brand:border-white group-hover/brand:opacity-100"
+              cornerHoverClass="group-hover/brand:opacity-100"
+            />
+            <span className="absolute top-2 right-2 z-30 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-black/35 text-[10px] font-bold text-white opacity-0 group-hover/brand:opacity-100 transition-opacity">
               Edit Brand
             </span>
 
-            <div className="space-y-2.5">
+            <div className="mb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo/rectangle-logo.png"
                 alt="HCM-UTE"
-                className="h-10 w-auto max-w-[280px] object-contain"
+                className="h-14 w-auto object-contain"
               />
-              <p className="text-blue-100/90 text-sm font-medium leading-relaxed">
-                {config.universityNote}
-              </p>
             </div>
 
-            <p className="text-blue-100 text-sm leading-relaxed">
-              {config.secondaryDescription}
+            <p className="text-white/95 text-sm leading-relaxed">
+              {config.secondaryDescription || config.universityNote}
             </p>
 
-            <div className="space-y-2 text-sm text-blue-100 pt-1">
-              <div className="flex items-start gap-2">
+            <div className="space-y-2.5 text-sm text-white/95 pt-1">
+              <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-white mt-0.5 shrink-0" />
                 <span>
-                  <strong>Venue:</strong> {config.venueName}, {config.address}
+                  {config.venueName}, {config.address}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-white shrink-0" />
-                <span>Hotline: {config.hotline}</span>
+                <span>{config.hotline}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-white shrink-0" />
-                <span>Email: {config.contactEmail}</span>
+                <span>{config.contactEmail}</span>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-2 pt-2">
               {config.socialLinks.map((social, idx) => (
                 <span
                   key={`${social.name}-${idx}`}
@@ -462,7 +482,7 @@ export function VisualFooterCanvas({
                     setDragOverSocialIdx(null);
                   }}
                   className={cn(
-                    "px-2.5 py-1 rounded bg-white/10 border border-white/20 text-xs font-medium text-white cursor-grab active:cursor-grabbing transition-all",
+                    "px-2.5 py-1 rounded-[var(--radius)] bg-white/10 border border-white/20 text-xs font-medium text-white cursor-grab active:cursor-grabbing transition-all",
                     dragOverSocialIdx === idx && "ring-2 ring-white"
                   )}
                 >
@@ -472,10 +492,10 @@ export function VisualFooterCanvas({
             </div>
           </div>
 
-          {/* Right Columns: Draggable Categorized Navigation Links */}
-          <div className={viewport === "desktop" ? "col-span-7" : ""}>
+          {/* Right Columns: Draggable Categorized Navigation Links (col-span-8) */}
+          <div className={viewport === "desktop" ? "col-span-8" : ""}>
             <div
-              className="grid gap-5"
+              className="grid gap-6"
               style={{
                 gridTemplateColumns:
                   viewport === "mobile"
@@ -527,18 +547,22 @@ export function VisualFooterCanvas({
                       onSelectTarget({ type: "group", groupIndex: gIdx })
                     }
                     className={cn(
-                      "group/col relative p-2.5 -m-2.5 rounded-lg cursor-grab active:cursor-grabbing transition-all",
-                      isGroupSelected
-                        ? "ring-2 ring-inset ring-amber-300 bg-white/10"
-                        : "hover:bg-white/5",
+                      "group/col relative p-2.5 -m-2.5 cursor-grab active:cursor-grabbing transition-all",
+                      isGroupSelected ? "bg-white/10" : "hover:bg-white/5",
                       dragOverColIdx === gIdx && "border-l-2 border-l-white"
                     )}
                   >
+                    <FooterSquareFrame
+                      selected={isGroupSelected}
+                      groupHoverClass="group-hover/col:border-white group-hover/col:opacity-100"
+                      cornerHoverClass="group-hover/col:opacity-100"
+                    />
+
                     {/* Floating Column Reorder/Delete Bar */}
                     <div
                       onClick={(e) => e.stopPropagation()}
                       className={cn(
-                        "absolute top-1 right-1 z-20 flex items-center gap-0.5 px-1 py-0.5 rounded bg-white text-slate-700 shadow-sm transition-opacity",
+                        "absolute top-1 right-1 z-30 flex items-center gap-0.5 px-1 py-0.5 rounded-none bg-white text-slate-700 shadow-sm transition-opacity",
                         isGroupSelected
                           ? "opacity-100"
                           : "opacity-0 group-hover/col:opacity-100"
@@ -548,7 +572,7 @@ export function VisualFooterCanvas({
                         type="button"
                         disabled={gIdx === 0}
                         onClick={() => onMoveLinkGroup(gIdx, gIdx - 1)}
-                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                        className="p-0.5 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                         title="Move left"
                       >
                         <ArrowLeft className="w-3 h-3" />
@@ -557,16 +581,16 @@ export function VisualFooterCanvas({
                         type="button"
                         disabled={gIdx === config.linkGroups.length - 1}
                         onClick={() => onMoveLinkGroup(gIdx, gIdx + 1)}
-                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
+                        className="p-0.5 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                         title="Move right"
                       >
-                        <ArrowRight className="w-3 h-3" />
+                      <ArrowRight className="w-3 h-3" />
                       </button>
                       {config.linkGroups.length > 1 && (
                         <button
                           type="button"
                           onClick={() => onDeleteLinkGroup(gIdx)}
-                          className="p-0.5 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                          className="p-0.5 text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                           title="Delete column"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -574,10 +598,10 @@ export function VisualFooterCanvas({
                       )}
                     </div>
 
-                    <h4 className="text-white font-bold text-sm mb-3 border-b border-white/20 pb-2 pr-10">
+                    <h4 className="text-white font-semibold text-sm uppercase mb-4 tracking-wide pr-10">
                       {group.heading || `Column ${gIdx + 1}`}
                     </h4>
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-2">
                       {group.links.map((link, lIdx) => {
                         const isLinkOver =
                           dragOverLink?.groupIndex === gIdx &&
@@ -624,7 +648,7 @@ export function VisualFooterCanvas({
                               setDragOverLink(null);
                             }}
                             className={cn(
-                              "text-blue-100 text-xs sm:text-sm truncate px-1 py-0.5 -mx-1 rounded hover:bg-white/10 cursor-grab active:cursor-grabbing",
+                              "text-white/90 text-sm truncate px-1 py-0.5 -mx-1 hover:bg-white/10 hover:text-white cursor-grab active:cursor-grabbing",
                               isLinkOver && "border-t-2 border-t-white"
                             )}
                           >
@@ -633,7 +657,7 @@ export function VisualFooterCanvas({
                         );
                       })}
                       {group.links.length === 0 && (
-                        <li className="text-blue-200/70 text-xs italic">
+                        <li className="text-white/60 text-xs italic">
                           No links yet
                         </li>
                       )}
@@ -650,14 +674,17 @@ export function VisualFooterCanvas({
           onClick={() => onSelectTarget({ type: "bottom" })}
           title="Click to edit Bottom Copyright Bar"
           className={cn(
-            "relative border-t border-white/15 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs cursor-pointer transition-all",
-            isBottomSelected
-              ? "ring-2 ring-inset ring-amber-300 bg-white/10"
-              : "hover:bg-white/5"
+            "group/bottom relative border-t border-white/20 px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-sm cursor-pointer transition-all",
+            isBottomSelected ? "bg-white/10" : "hover:bg-white/5"
           )}
         >
-          <p className="text-blue-100">{config.copyrightText}</p>
-          <span className="text-blue-200/90">{config.footerRightText}</span>
+          <FooterSquareFrame
+            selected={isBottomSelected}
+            groupHoverClass="group-hover/bottom:border-white group-hover/bottom:opacity-100"
+            cornerHoverClass="group-hover/bottom:opacity-100"
+          />
+          <p className="text-white/90">{config.copyrightText}</p>
+          <span className="text-white/80">{config.footerRightText}</span>
         </div>
       </div>
     </div>

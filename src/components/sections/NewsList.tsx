@@ -9,14 +9,11 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Share2,
-  Check,
-  ExternalLink,
+  CalendarDays,
 } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { CarouselNavButton } from "@/components/ui/CarouselNavButton";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { POSTS_SYNC_CHANNEL } from "@/lib/post-sync";
 import { subItemAttr } from "@/modules/website-builder/utils/sub-item-path";
@@ -37,19 +34,20 @@ export function NewsList({
 }: NewsListProps) {
   const router = useRouter();
   const hasExplicitItems = itemsProp !== undefined;
-  const [items, setItems] = useState<NewsItem[]>(() =>
-    hasExplicitItems ? (Array.isArray(itemsProp) ? itemsProp : []) : []
-  );
+  const [fetchedItems, setItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(() => !hasExplicitItems);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    if (itemsProp !== undefined) {
-      setItems(Array.isArray(itemsProp) ? itemsProp : []);
-      setLoading(false);
-    }
-  }, [itemsProp]);
+  const items = useMemo(
+    () =>
+      hasExplicitItems
+        ? Array.isArray(itemsProp)
+          ? itemsProp
+          : []
+        : fetchedItems,
+    [hasExplicitItems, itemsProp, fetchedItems]
+  );
+  const isLoading = !hasExplicitItems && loading;
 
   useEffect(() => {
     if (hasExplicitItems) return;
@@ -339,13 +337,6 @@ export function NewsList({
     }
   }, []);
 
-  const handleShare = (news: NewsItem) => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(`${window.location.origin}/#news-${news.id}`);
-      toast.success("Link copied to clipboard");
-    }
-  };
-
   return (
     <SectionContainer id="news" fullWidthBg="bg-white">
       {/* Section Header matching standard HCMUTE 2-line headline style (No divider or badge) */}
@@ -369,23 +360,23 @@ export function NewsList({
         </div>
       </div>
 
-      {/* Controls Container: Full Width Search + Draggable Fade Categories & Sorting */}
+      {/* Controls Container: Full Width Search + Draggable Fade Categories */}
       <div className="px-4 sm:px-6 space-y-4 w-full">
-        {/* Full Width Search Bar — Rounded-full and Bigger */}
+        {/* Full Width Search Bar — Rounded-full matching HCM-UTE */}
         <div className="relative w-full">
-          <Search className="w-5 h-5 text-slate-400 absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4.5 h-4.5 text-slate-400 absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Search news, announcements, tracks, speakers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-3.5 bg-blue-50/35 hover:bg-blue-50/60 focus:bg-white border border-blue-100/90 hover:border-blue-300 focus:border-[#115eff] !rounded-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-[#115eff]/10 transition-all shadow-2xs"
+            className="w-full pl-11 sm:pl-13 pr-11 py-3 bg-slate-50/80 hover:bg-slate-100/70 focus:bg-white border border-border hover:border-primary/40 focus:border-primary rounded-full text-sm sm:text-base text-foreground placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/15 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-sm hover:bg-slate-100 transition-colors cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
@@ -393,62 +384,58 @@ export function NewsList({
           )}
         </div>
 
-        {/* Category Badges: Exact pattern from http://localhost:3000/bai-viet */}
+        {/* Category Badges: Solid Blue Hover matching HCM-UTE */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Fixed "All" badge */}
           <button
             type="button"
             onClick={() => handleCategorySelect("All")}
             className={cn(
-              "shrink-0 rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none",
+              "shrink-0 rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none border",
               activeCategory === "All"
-                ? "bg-primary text-white shadow-xs"
-                : "bg-white text-[#004776]/80 border border-blue-100/90 hover:bg-blue-50/60 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                : "bg-white text-foreground border-border/80 hover:bg-primary hover:text-primary-foreground hover:border-primary"
             )}
           >
             All
           </button>
 
           {/* Separator */}
-          <div className="h-6 w-px shrink-0 bg-blue-100 dark:bg-border" />
+          <div className="h-6 w-px shrink-0 bg-border" />
 
           {/* Scrollable category badges with two-side fade + chevron */}
           <div className="relative min-w-0 flex-1 overflow-hidden">
-            {/* Left fade — exact same pure gradient as http://localhost:3000/bai-viet */}
             <div
               className={cn(
                 "pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-12 bg-gradient-to-r from-background to-transparent transition-opacity duration-300",
                 canScrollCatLeft ? "opacity-100" : "opacity-0"
               )}
             />
-            {/* Left chevron */}
             {canScrollCatLeft && (
               <button
                 type="button"
                 onClick={() => scrollCategories("left")}
-                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-blue-100/90 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute left-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-border bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:border-primary/50 cursor-pointer"
                 aria-label="Scroll left"
               >
-                <ChevronLeft className="size-3.5 text-foreground/80" />
+                <ChevronLeft className="size-3.5 text-primary" />
               </button>
             )}
 
-            {/* Right fade — exact same pure gradient as http://localhost:3000/bai-viet */}
             <div
               className={cn(
                 "pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-12 bg-gradient-to-l from-background to-transparent transition-opacity duration-300",
                 canScrollCatRight ? "opacity-100" : "opacity-0"
               )}
             />
-            {/* Right chevron */}
             {canScrollCatRight && (
               <button
                 type="button"
                 onClick={() => scrollCategories("right")}
-                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-sm border border-blue-100/90 bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer dark:bg-card dark:border-border"
+                className="absolute right-1 top-1/2 z-20 -translate-y-1/2 hidden sm:flex size-7 items-center justify-center rounded-full border border-border bg-white/95 backdrop-blur-xs shadow-md transition-all hover:scale-105 hover:border-primary/50 cursor-pointer"
                 aria-label="Scroll right"
               >
-                <ChevronRight className="size-3.5 text-foreground/80" />
+                <ChevronRight className="size-3.5 text-primary" />
               </button>
             )}
 
@@ -466,17 +453,16 @@ export function NewsList({
                   type="button"
                   onClick={() => handleCategorySelect(activeCategory === cat ? "All" : cat)}
                   className={cn(
-                    "shrink-0 whitespace-nowrap rounded-sm px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                    "shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer border",
                     activeCategory === cat
-                      ? "bg-primary text-white shadow-xs"
-                      : "bg-white text-[#004776]/80 border border-blue-100/90 hover:bg-blue-50/60 dark:bg-card dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                      ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                      : "bg-white text-foreground border-border/80 hover:bg-primary hover:text-primary-foreground hover:border-primary"
                   )}
                 >
                   {cat}
                 </button>
               ))}
 
-              {/* Spacer so fade doesn't cover last badge */}
               {canScrollCatRight && <div className="shrink-0 w-6" />}
             </div>
           </div>
@@ -487,7 +473,7 @@ export function NewsList({
       {/* NEWS CAROUSEL with Progressive Blur & Left/Right Chevrons     */}
       {/* ------------------------------------------------------------- */}
       <div className="relative w-full pt-1.5 sm:pt-2 pb-10 sm:pb-14 group/carousel">
-        {loading ? (
+        {isLoading ? (
           <div className="mx-4 sm:mx-6 p-12 text-center bg-blue-50/35 border border-blue-100/90 rounded-sm text-slate-500 text-sm sm:text-base">
             Loading published announcements...
           </div>
@@ -557,7 +543,6 @@ export function NewsList({
               onPointerUp={onCardsPointerUp}
               onPointerLeave={onCardsPointerUp}
               className="flex items-stretch gap-5 sm:gap-6 overflow-x-auto scrollbar-none py-3 px-4 sm:px-6 cursor-grab active:cursor-grabbing select-none touch-pan-x"
-              style={{ scrollBehavior: isDraggingCards.current ? "auto" : "smooth" }}
             >
               {filteredAndSortedItems.map(({ item: news, origIdx }) => {
                 const detailUrl = getNewsDetailUrl(news);
@@ -570,34 +555,34 @@ export function NewsList({
                       if (hasDraggedCards.current) return;
                       router.push(detailUrl);
                     }}
-                    className="w-[82vw] max-w-[340px] sm:w-[340px] lg:w-[370px] shrink-0 group group/card relative flex flex-col overflow-hidden rounded-sm bg-white border border-blue-100/90 hover:border-[#115eff] hover:bg-[#115eff] transition-all duration-300 cursor-pointer select-none"
+                    className="w-[82vw] max-w-[340px] sm:w-[340px] lg:w-[370px] shrink-0 group/card relative flex flex-col overflow-hidden rounded-xl bg-background border border-border/80 ring-1 ring-border/50 transition-all duration-300 ease-out hover:border-primary hover:bg-primary hover:shadow-xl cursor-pointer select-none"
                   >
-                    {/* Grid pattern — visible on hover at bottom right (HCMUTE style) */}
+                    {/* Grid pattern — visible on hover at bottom right (Exact HCM-UTE PostCard) */}
                     <GridPattern
                       width={32}
                       height={32}
-                      className="pointer-events-none absolute inset-0 z-[1] stroke-white/0 fill-transparent transition-colors duration-200 group-hover:stroke-white/[0.08] group-hover/card:stroke-white/[0.08] [mask-image:radial-gradient(ellipse_75%_65%_at_bottom_right,white_40%,transparent_100%)]"
+                      className="pointer-events-none absolute inset-0 z-[1] stroke-primary-foreground/0 fill-transparent transition-colors duration-200 group-hover/card:stroke-primary-foreground/[0.08] [mask-image:radial-gradient(ellipse_75%_65%_at_bottom_right,white_40%,transparent_100%)]"
                     />
 
-                    {/* UTE Flower watermark — appears subtle at bottom right on hover without rotation */}
+                    {/* UTE Flower watermark — appears subtle at bottom right on hover */}
                     <Image
                       src="/assets/flower-ute-white.png"
                       alt=""
                       width={260}
                       height={260}
                       unoptimized
-                      className="pointer-events-none absolute -bottom-16 -right-16 z-[1] select-none opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-[0.14] group-hover/card:opacity-[0.14]"
+                      className="pointer-events-none absolute -bottom-16 -right-16 z-[1] select-none opacity-0 transition-opacity duration-200 ease-out group-hover/card:opacity-[0.14]"
                       aria-hidden="true"
                     />
 
-                    {/* Padded Image Container with aspect-[16/9] (hcmute-website style) */}
-                    <div className="relative z-[2] overflow-hidden p-2 sm:p-2.5">
+                    {/* Padded Image Container with aspect-[16/10] & bottom-right Category Badge (Exact HCM-UTE PostCard) */}
+                    <div className="relative z-[2] overflow-hidden p-2">
                       <Link
                         href={detailUrl}
                         onClick={(e) => {
                           if (hasDraggedCards.current) e.preventDefault();
                         }}
-                        className="block relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-slate-100"
+                        className="block relative aspect-[16/10] w-full overflow-hidden rounded-sm bg-slate-100"
                       >
                         {news.image ? (
                           <Image
@@ -605,62 +590,46 @@ export function NewsList({
                             alt={news.title}
                             fill
                             unoptimized
-                            className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-105 group-hover/card:scale-105"
+                            className="object-cover transition-transform duration-200 will-change-transform group-hover/card:scale-[1.03]"
                             sizes="(max-width: 640px) 85vw, (max-width: 1024px) 350px, 380px"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#115eff] to-[#004776]">
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary to-[#004776]">
                             <span className="text-xl font-bold text-white/30">IEEE SMC</span>
                           </div>
+                        )}
+                        {news.category && (
+                          <span className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center rounded-[var(--radius-sm)] bg-primary text-white px-3 py-1 text-xs font-semibold leading-normal shadow-xs border border-primary/20 group-hover/card:bg-white group-hover/card:text-primary group-hover/card:border-white transition-colors duration-200">
+                            {news.category}
+                          </span>
                         )}
                       </Link>
                     </div>
 
-                    {/* Card Content Area: Title, Summary, and Bigger Post Detail Button */}
-                    <div className="relative z-[2] flex flex-1 flex-col px-5 pb-5 pt-2 justify-between gap-4">
-                      <div className="space-y-2.5">
-                        {/* Title: Dark blue-black unhovered, crisp white on hover */}
-                        <Link
-                          href={detailUrl}
-                          onClick={(e) => {
-                            if (hasDraggedCards.current) e.preventDefault();
-                          }}
-                          className="block"
-                        >
-                          <h3 className="news-card-title line-clamp-2 text-base sm:text-lg font-semibold leading-snug text-slate-900 group-hover:!text-white group-hover/card:!text-white transition-colors duration-200">
-                            {news.title}
-                          </h3>
-                        </Link>
+                    {/* Card Content Area: Title, Calendar Date, and Summary (Exact HCM-UTE PostCard) */}
+                    <div className="relative z-[2] flex flex-1 flex-col px-5 pb-5 pt-1">
+                      <Link
+                        href={detailUrl}
+                        onClick={(e) => {
+                          if (hasDraggedCards.current) e.preventDefault();
+                        }}
+                        className="block"
+                      >
+                        <h3 className="line-clamp-2 text-base font-semibold tracking-tight text-foreground transition-colors duration-200 group-hover/card:text-primary-foreground">
+                          {news.title}
+                        </h3>
+                      </Link>
 
-                        {/* Summary text: Slate-600 unhovered, white/80 on hover */}
-                        {news.summary && (
-                          <p className="news-card-summary line-clamp-2 text-sm text-slate-600 group-hover:!text-white/80 group-hover/card:!text-white/80 leading-relaxed transition-colors duration-200 font-normal">
-                            {news.summary}
-                          </p>
-                        )}
+                      <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm font-medium text-muted-foreground group-hover/card:text-primary-foreground/85 transition-colors duration-200 [&_svg]:transition-colors [&_svg]:duration-200 group-hover/card:[&_svg]:text-white">
+                        <CalendarDays className="size-3.5 sm:size-4" />
+                        <span>{news.date}</span>
                       </div>
 
-                      {/* Bottom Action Row: Date + Post Detail Button */}
-                      <div className="pt-3 border-t border-blue-50 group-hover:border-white/20 group-hover/card:border-white/20 flex items-center justify-between gap-3">
-                        <span className="news-card-date text-xs sm:text-sm font-medium text-slate-500 group-hover:!text-white/85 group-hover/card:!text-white/85 transition-colors duration-200 whitespace-nowrap">
-                          {news.date}
-                        </span>
-
-                        <Link
-                          href={detailUrl}
-                          onClick={(e) => {
-                            if (hasDraggedCards.current) {
-                              e.preventDefault();
-                              return;
-                            }
-                            e.stopPropagation();
-                          }}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#115eff] group-hover:bg-white text-white group-hover:!text-[#115eff] group-hover/card:bg-white group-hover/card:!text-[#115eff] text-xs sm:text-sm font-semibold rounded-sm transition-all duration-200 whitespace-nowrap shadow-xs hover:shadow-md cursor-pointer shrink-0"
-                        >
-                          <span>View Details</span>
-                          <ChevronRight className="size-4" />
-                        </Link>
-                      </div>
+                      {news.summary && (
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground transition-colors duration-200 group-hover/card:text-primary-foreground/80">
+                          {news.summary}
+                        </p>
+                      )}
                     </div>
                   </article>
                 );

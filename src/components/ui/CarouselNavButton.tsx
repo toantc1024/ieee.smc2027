@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -8,7 +7,7 @@ import { cn } from "@/lib/utils";
 const FLOWER_BLUE = "/assets/flower-blue-gradient.png";
 const FLOWER_WHITE = "/assets/flower-ute-white.png";
 
-interface CarouselNavButtonProps {
+export interface CarouselNavButtonProps {
   direction: "prev" | "next";
   onClick: () => void;
   onMouseEnter?: () => void;
@@ -26,47 +25,47 @@ export function CarouselNavButton({
   onMouseLeave,
   className,
   size = "md",
-  variant = "glass",
+  variant = "light",
   disabled = false,
 }: CarouselNavButtonProps) {
   const Icon = direction === "prev" ? ChevronLeft : ChevronRight;
-  const sizeClasses = size === "sm" ? "p-2" : "p-2.5 sm:p-3";
-  const iconSize = size === "sm" ? "w-4 h-4" : "w-5 h-5 sm:w-6 sm:h-6";
+  const sizeClasses = size === "sm" ? "size-8.5 sm:size-10" : "size-9 sm:size-12";
+  const iconSize = size === "sm" ? "size-4 sm:size-5" : "size-4.5 sm:size-6";
 
   const variantClasses =
     variant === "glass"
-      ? "bg-white/10 hover:bg-white/25 backdrop-blur-xl border-white/20 hover:border-white/40 shadow-lg hover:shadow-xl"
-      : "bg-white/80 hover:bg-white/95 backdrop-blur-md border-slate-200/90 hover:border-[#115eff]/60 shadow-sm hover:shadow-lg hover:shadow-blue-500/15";
+      ? "bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 hover:border-white/50 shadow-sm hover:shadow-md text-white"
+      : "bg-white/95 dark:bg-card hover:bg-blue-50/80 dark:hover:bg-muted border border-slate-200 dark:border-zinc-700 hover:border-primary/50 shadow-sm hover:shadow-md text-primary";
 
   const iconColor =
     variant === "glass"
       ? "text-white group-hover/nav:text-white"
-      : "text-slate-700 group-hover/nav:text-[#115eff]";
+      : "text-primary group-hover/nav:text-primary";
 
   const flowerSrc = variant === "glass" ? FLOWER_WHITE : FLOWER_BLUE;
 
   return (
     <button
       type="button"
+      aria-label={direction === "prev" ? "Previous slide" : "Next slide"}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       disabled={disabled}
       className={cn(
-        "group/nav relative overflow-hidden rounded-full border transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95",
+        "group/nav relative overflow-hidden rounded-full border transition-all duration-300 flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 active:scale-95",
         sizeClasses,
         variantClasses,
-        disabled && "opacity-40 pointer-events-none cursor-not-allowed",
+        disabled && "opacity-0 pointer-events-none invisible select-none transition-all duration-300 scale-90",
         className
       )}
-      aria-label={direction === "prev" ? "Previous slide" : "Next slide"}
     >
       <span
         className={cn(
           "absolute inset-0 rounded-full opacity-0 group-hover/nav:opacity-100 transition-opacity duration-500 pointer-events-none",
           variant === "glass"
-            ? "bg-[radial-gradient(circle,rgba(255,255,255,0.15)_0%,transparent_70%)]"
-            : "bg-[radial-gradient(circle,rgba(59,130,246,0.12)_0%,transparent_70%)]"
+            ? "bg-[radial-gradient(circle,rgba(255,255,255,0.2)_0%,transparent_70%)]"
+            : "bg-[radial-gradient(circle,rgba(0,102,204,0.15)_0%,transparent_70%)]"
         )}
       />
 
@@ -79,13 +78,13 @@ export function CarouselNavButton({
           "absolute inset-0 -translate-x-full group-hover/nav:translate-x-full transition-transform duration-600 ease-out pointer-events-none",
           variant === "glass"
             ? "bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            : "bg-gradient-to-r from-transparent via-blue-300/30 to-transparent"
+            : "bg-gradient-to-r from-transparent via-primary/20 to-transparent"
         )}
       />
 
       <Icon
         className={cn(
-          "relative z-10 transition-all duration-300 group-hover/nav:drop-shadow-sm",
+          "relative z-10 transition-all duration-300 stroke-[2]",
           iconColor,
           iconSize
         )}

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { ArrowRight, PlayCircle, Globe } from "lucide-react";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export interface ConferenceVideoProps {
   badge?: string;
@@ -45,7 +44,7 @@ export function ConferenceVideo({
   videoUrl = "https://www.youtube.com/embed/vTwRHpRNtls",
   qqVideoVid = "x3508h1k2m9",
   cardTitle = "Experience IEEE SMC in Ho Chi Minh City",
-  cardDescription = "Hosted by Ho Chi Minh City University of Technology and Education in Vietnam's vibrant technological hub — where systems science, human-machine interaction, and cybernetics converge for global research collaboration.",
+  cardDescription = "Hosted by Ho Chi Minh City University of Technology and Engineering • HCM-UTE in Vietnam's vibrant technological hub — where systems science, human-machine interaction, and cybernetics converge for global research collaboration.",
   buttonLabel = "Explore Venue & City Details",
   youtubeTabLabel = "International Stream",
   qqTabLabel = "QQ Video · China Access",
@@ -92,14 +91,14 @@ export function ConferenceVideo({
           </div>
 
           {/* China-Friendly QQ Video / International YouTube Switcher */}
-          <div className="inline-flex flex-wrap items-center rounded-sm border border-blue-100/90 bg-white p-1 shadow-2xs shrink-0 self-start md:self-auto">
+          <div className="inline-flex flex-wrap items-center rounded-xl border border-border/80 bg-white p-1 shadow-2xs shrink-0 self-start md:self-auto">
             <button
               type="button"
               onClick={() => setPlayerSource("YOUTUBE")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "YOUTUBE"
-                  ? "bg-[#115eff] text-white"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-primary text-primary-foreground shadow-2xs"
+                  : "text-slate-600 hover:bg-primary hover:text-primary-foreground"
               }`}
             >
               <PlayCircle className="size-3.5" />
@@ -108,10 +107,10 @@ export function ConferenceVideo({
             <button
               type="button"
               onClick={() => setPlayerSource("QQ_VIDEO")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 playerSource === "QQ_VIDEO"
-                  ? "bg-[#115eff] text-white"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-primary text-primary-foreground shadow-2xs"
+                  : "text-slate-600 hover:bg-primary hover:text-primary-foreground"
               }`}
             >
               <Globe className="size-3.5" />
@@ -124,7 +123,7 @@ export function ConferenceVideo({
       <div className="relative overflow-hidden px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch relative z-10">
           <div className="lg:col-span-7 flex flex-col h-full">
-            <div className="relative w-full h-full min-h-[240px] sm:min-h-[320px] aspect-video lg:aspect-auto rounded-sm overflow-hidden border border-blue-100/90 bg-slate-900 shadow-md">
+            <div className="relative w-full h-full min-h-[240px] sm:min-h-[320px] aspect-video lg:aspect-auto rounded-xl overflow-hidden border border-border/80 ring-1 ring-border/50 bg-slate-900 shadow-md">
               <iframe
                 key={playerSource}
                 src={playerSource === "QQ_VIDEO" ? qqEmbedUrl : safeYoutubeUrl}
@@ -138,7 +137,7 @@ export function ConferenceVideo({
           </div>
 
           <div className="lg:col-span-5 flex flex-col h-full min-h-[260px] lg:min-h-0">
-            <div className="relative overflow-hidden p-6 sm:p-8 bg-white border border-blue-100/90 rounded-sm shadow-2xs flex flex-col justify-between h-full">
+            <div className="relative overflow-hidden p-6 sm:p-8 bg-white border border-border/80 ring-1 ring-border/50 rounded-xl shadow-2xs flex flex-col justify-between h-full">
               <div className="corner-dot-tr opacity-60 pointer-events-none" />
 
               <div className="relative z-10 space-y-4">

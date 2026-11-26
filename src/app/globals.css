@@ -4,12 +4,12 @@
 
 :root {
   /* ── Site layout standard ── */
-  --site-width: min(88vw, 90rem);
-  /* 1440px max / 88vw on medium-large screens (~12% side margin) */
-  --site-px: 1rem;
-  /* 16px — mobile horizontal padding */
-  --site-px-lg: 1.25rem;
-  /* 20px — desktop horizontal padding */
+  --site-width: 80rem;
+  /* 1280px — the single source of truth */
+  --site-px: 1.25rem;
+  /* 20px — mobile horizontal padding */
+  --site-px-lg: 1.5rem;
+  /* 24px — desktop horizontal padding */
 
   /* ── Navbar height tokens ── */
   --topbar-h: 48px;
@@ -34,7 +34,7 @@
   --accent-foreground: oklch(0.421 0.1203 261.7139);
   --destructive: oklch(0.6207 0.2306 24.9164);
   --destructive-foreground: oklch(0.9801 0.0096 252.8096);
-  --border: oklch(0.925 0.022 255);
+  --border: oklch(0.93 0.03 264);
   --input: oklch(0.925 0.018 255);
   --ring: oklch(0.632 0.1979 260.8448);
   --chart-1: oklch(0.6723 0.1606 244.9955);
@@ -272,36 +272,20 @@ body {
   overflow-x: hidden;
 }
 
-/* Global HCMUTE Blue-Black (rgb(0, 71, 118) / #004776) Override:
-   Transforms all black/slate-900/slate-800 text into authentic HCMUTE blue-black across the entire website */
-.text-black,
-.text-slate-900,
-.text-gray-900,
-.text-neutral-900,
-.text-zinc-900 {
-  color: rgb(0, 71, 118) !important;
-}
-
-.text-slate-950 {
-  color: #05225c !important;
-}
-
-.text-slate-800 {
-  color: #082445 !important;
-}
-
-h1:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]),
-h2:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]),
-h3:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]),
-h4:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]),
-h5:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]),
-h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-primary"]) {
-  color: rgb(0, 71, 118);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: inherit;
   }
 }
 
@@ -521,119 +505,62 @@ h6:not([class*="text-white"]):not([class*="text-blue-"]):not([class*="text-emera
   border-top: 1px solid rgba(17, 94, 255, 0.12);
 }
 
-/* Unified Frame & Control Radius System:
-   - All buttons, inputs, selects, textareas use --radius-btn (0.26rem)
-   - All frames, cards, modals, and containers stay locked to the unified --radius scale */
-button:not([class*="rounded-full"]),
-a.inline-flex:not([class*="rounded-full"])[class*="px-"][class*="py-"],
-input:not([class*="rounded-full"]),
-select:not([class*="rounded-full"]),
-textarea:not([class*="rounded-full"]) {
-  border-radius: var(--radius-btn) !important;
+/* ── Navbar scroll state (attribute-driven, no React re-renders) ── */
+.navbar-header {
+  transition: background-color 0.2s ease-out;
+  box-shadow: -8px 0 25px -10px rgba(0, 0, 0, 0.05), 8px 0 25px -10px rgba(0, 0, 0, 0.05);
 }
 
-.rounded-lg,
-.rounded-xl,
-.rounded-2xl,
-.rounded-3xl,
-[class*="rounded-["]:not([class*="rounded-full"]) {
-  border-radius: var(--radius-lg) !important;
+.navbar-header[data-scrolled] {
+  box-shadow: -8px 0 25px -10px rgba(0, 0, 0, 0.05), 8px 0 25px -10px rgba(0, 0, 0, 0.05);
 }
 
-/* Hero Carousel Responsive Height & Aspect Ratio */
-.hero-carousel-height {
+@supports (backdrop-filter: blur(1px)) {
+  .navbar-header[data-scrolled] {
+    background-color: #ffffff;
+  }
+}
+
+/* Logo: GPU-accelerated scaling on scroll (no layout reflow) */
+.navbar-header .navbar-logo {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.navbar-header[data-scrolled] .navbar-logo {
+  transform: scale(0.85);
+}
+
+.navbar-header[data-scrolled] .navbar-bottom-line {
+  background: var(--border);
+}
+
+/* Mega menu column scrollbar: hidden while maintaining smooth scrollability */
+.mega-menu-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mega-menu-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ── Hero carousel: RESPONSIVE RATIO — banner on mobile, wide on desktop ── */
+.hero-carousel-height,
+.hero-carousel-custom-ratio {
   width: 100%;
-  min-height: 260px;
-  height: 56vw;
-  max-height: 420px;
+  aspect-ratio: var(--hero-ratio-mobile, 3 / 4);
+  height: auto;
 }
 
-@media (min-width: 640px) {
-  .hero-carousel-height {
-    height: 440px;
-    min-height: 400px;
-    max-height: 480px;
+@media (min-width: 768px) {
+  .hero-carousel-height,
+  .hero-carousel-custom-ratio {
+    aspect-ratio: var(--hero-ratio-desktop, 2.4 / 1);
   }
-}
-
-@media (min-width: 1024px) {
-  .hero-carousel-height {
-    aspect-ratio: 2.4 / 1;
-    height: auto;
-    min-height: 480px;
-    max-height: 760px;
-  }
-}
-
-/* News Card hover styling: ensure title and text turn crisp white with zero specificity conflicts */
-article:hover .news-card-title,
-.group\/card:hover .news-card-title,
-.group:hover .news-card-title {
-  color: #ffffff !important;
-}
-
-article:hover .news-card-date,
-.group\/card:hover .news-card-date,
-.group:hover .news-card-date {
-  color: rgba(255, 255, 255, 0.85) !important;
-}
-
-article:hover .news-card-summary,
-.group\/card:hover .news-card-summary,
-.group:hover .news-card-summary {
-  color: rgba(255, 255, 255, 0.80) !important;
-}
-
-article:hover .news-card-badge,
-.group\/card:hover .news-card-badge,
-.group:hover .news-card-badge {
-  background-color: #ffffff !important;
-  color: #115eff !important;
-  border-color: #ffffff !important;
-}
-
-/* Header Mega Menu Promo Card hover styling: guarantee pure white text on hover */
-.header-promo-card:hover {
-  background-color: #115eff !important;
-  border-color: #115eff !important;
-}
-
-.header-promo-card:hover .promo-card-title,
-.header-promo-card:hover h4 {
-  color: #ffffff !important;
-}
-
-.header-promo-card:hover .promo-card-desc,
-.header-promo-card:hover p {
-  color: rgba(255, 255, 255, 0.92) !important;
-}
-
-.header-promo-card:hover .promo-card-cta,
-.header-promo-card:hover span {
-  color: #ffffff !important;
-}
-
-.header-promo-card:hover .promo-card-badge {
-  background-color: #ffffff !important;
-  color: #115eff !important;
-}
-
-/* Customized prominent button heights (avoiding cramped default shadcn heights on public marketing pages only) */
-body:not(:has(.admin-page-root)) a.inline-flex[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]):not([data-slot="badge"]):not([class*="badge"]),
-body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*="min-h-"]):not([class*="text-[11px]"]):not([class*="py-0.5"]):not([class*="py-1"]):not([data-sidebar]):not([data-slot]):not([data-slot="badge"]):not([class*="badge"]) {
-  min-height: 2.75rem; /* at least 44px height */
-}
-
-/* Ensure shadcn admin and sidebar controls stay perfectly sized */
-.admin-page-root button,
-.admin-page-root a.inline-flex,
-.admin-page-root [data-slot="button"],
-[data-sidebar] button,
-[data-sidebar] a,
-[data-sidebar="menu-button"],
-[data-slot="sidebar-trigger"],
-[data-slot="sidebar-rail"] {
-  min-height: unset !important;
 }
 
 /* Custom smooth scrollbar */
@@ -756,7 +683,7 @@ body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*=
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HCMUTE Signature Page Borders: Fixed lines at --site-width boundaries
+   HCM-UTE Signature Page Borders: Fixed lines at --site-width boundaries
    ═══════════════════════════════════════════════════════════════ */
 .page-border-x::before,
 .page-border-x::after {
@@ -765,8 +692,7 @@ body:not(:has(.admin-page-root)) button[class*="px-"][class*="py-"]:not([class*=
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(17, 94, 255, 0.12);
-  opacity: 1;
+  background: var(--border);
   z-index: 10;
   pointer-events: none;
 }
@@ -790,7 +716,7 @@ body.no-page-borders::after {
 }
 
 /* ── Colored section: white border-x overlay ── */
-.page-border-x-light {
+.page-border-x-light:not(.sticky):not([class*="sticky"]) {
   position: relative;
 }
 
@@ -802,7 +728,6 @@ body.no-page-borders::after {
   bottom: 0;
   width: 1px;
   background: rgba(255, 255, 255, 0.15);
-  opacity: 0.45;
   z-index: 10;
   pointer-events: none;
 }
@@ -816,7 +741,7 @@ body.no-page-borders::after {
 }
 
 /* ── Standard section: border-color overlay for white/light backgrounds ── */
-.page-border-x-dark {
+.page-border-x-dark:not(.sticky):not([class*="sticky"]) {
   position: relative;
 }
 
@@ -827,8 +752,7 @@ body.no-page-borders::after {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(147, 197, 253, 0.22);
-  opacity: 1;
+  background: var(--border);
   z-index: 10;
   pointer-events: none;
 }
@@ -1973,17 +1897,19 @@ div[data-type="layout-column"] > blockquote:last-child {
   margin-top: 0.5rem !important;
 }
 
-/* Studio Canvas Sub-Item Reflection Highlights (Builder Edit Mode Only) */
+/* Studio Canvas Sub-Item Reflection Highlights (Builder Edit Mode Only — Crisp Square Frames) */
 [data-builder-block] [data-builder-substate="hovered"],
 [data-builder-nested] [data-builder-substate="hovered"] {
-  outline: 1.5px dashed rgba(17, 94, 255, 0.78);
+  outline: 1.5px dashed rgba(17, 94, 255, 0.85);
   outline-offset: 2px;
+  border-radius: 0 !important;
 }
 
 [data-builder-block] [data-builder-substate="selected"],
 [data-builder-nested] [data-builder-substate="selected"] {
   outline: 2px solid #115eff;
   outline-offset: 2px;
+  border-radius: 0 !important;
   box-shadow: 0 0 0 4px rgba(17, 94, 255, 0.14);
 }
 

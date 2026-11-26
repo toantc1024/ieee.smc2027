@@ -152,8 +152,8 @@ export function WelcomeLetter({
                     {...subItemAttr(["chairs", idx])}
                     className="group relative flex flex-col"
                   >
-                    <div className="relative rounded-sm bg-white border border-blue-100/90 group-hover:border-[#115eff] transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-md">
-                      <div className="relative w-full h-64 sm:h-72 bg-blue-50/35 group-hover:bg-[#115eff] transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
+                    <div className="relative rounded-xl bg-white border border-border/80 ring-1 ring-border/50 group-hover:border-primary group-hover:ring-primary/40 transition-all duration-300 flex flex-col flex-1 overflow-hidden shadow-2xs hover:shadow-xl">
+                      <div className="relative w-full h-64 sm:h-72 bg-blue-50/35 group-hover:bg-primary transition-colors duration-300 overflow-hidden flex items-end justify-center pt-4 px-2">
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                           <div
                             className="absolute inset-0 bg-dot-pattern opacity-50 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"

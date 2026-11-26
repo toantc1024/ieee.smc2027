@@ -12,7 +12,6 @@ import {
   Globe,
   FileDown,
 } from "lucide-react";
-import { CONFERENCE_INFO } from "@/data/conference";
 import { cn } from "@/lib/utils";
 import {
   BuilderBlockContext,
@@ -26,9 +25,14 @@ import {
   type FooterSocialLink,
 } from "@/lib/footer-config";
 
-export { DEFAULT_FOOTER_CONFIG, type FooterLinkItem, type FooterLinkGroup, type FooterSocialLink };
+export {
+  DEFAULT_FOOTER_CONFIG,
+  type FooterLinkItem,
+  type FooterLinkGroup,
+  type FooterSocialLink,
+};
 
-const AGENT_BACKGROUND = "/assets/cta-background.webp";
+const FLOWER_WHITE = "/assets/flower-ute-white.png";
 
 export interface FooterProps {
   badgeText?: string;
@@ -66,7 +70,7 @@ function renderSocialIcon(social: FooterSocialLink) {
 
   if (platform === "facebook") {
     return (
-      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
       </svg>
     );
@@ -74,7 +78,7 @@ function renderSocialIcon(social: FooterSocialLink) {
 
   if (platform === "youtube") {
     return (
-      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
       </svg>
     );
@@ -82,13 +86,13 @@ function renderSocialIcon(social: FooterSocialLink) {
 
   if (platform === "smc") {
     return (
-      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
       </svg>
     );
   }
 
-  return <Globe className="w-4 h-4" />;
+  return <Globe className="w-5 h-5" />;
 }
 
 export function Footer(props: FooterProps = {}) {
@@ -124,9 +128,7 @@ export function Footer(props: FooterProps = {}) {
           setRemoteConfig(data.footer);
         }
       })
-      .catch(() => {
-        // Fallback silently to DEFAULT_FOOTER_CONFIG
-      });
+      .catch(() => {});
 
     const onUpdated = (e: Event) => {
       const detail = (e as CustomEvent<Partial<FooterProps>>).detail;
@@ -149,7 +151,6 @@ export function Footer(props: FooterProps = {}) {
     };
   }, [isHiddenOnAdmin, hasExplicitOverrides, builderCtx]);
 
-  // Hide footer on CMS admin dashboard pages unless inside builder preview
   if (isHiddenOnAdmin) {
     return null;
   }
@@ -201,92 +202,72 @@ export function Footer(props: FooterProps = {}) {
   const footerRightText = props.footerRightText ?? base.footerRightText;
 
   return (
-    <footer className="page-border-x-light w-full bg-[#115eff] text-white relative z-40 overflow-hidden">
-      {/* Background Texture & Royal Blue Overlay matching hcmute-website-frontend */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <Image
-          src={AGENT_BACKGROUND}
-          alt=""
-          fill
-          priority
-          className="object-cover opacity-75"
-          sizes="100vw"
-        />
-      </div>
-      <div className="absolute inset-0 bg-[#115eff]/85 pointer-events-none" />
+    <footer className="page-border-x-light relative z-40 bg-blue-600 text-white">
+      <div className="relative overflow-hidden bg-blue-600">
+        {/* Giant HCM-UTE white flower watermark matching hcmute-website-frontend 1:1 */}
+        <div className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[45rem] h-[45rem] sm:w-[60rem] sm:h-[60rem] opacity-[0.075] pointer-events-none rotate-[30deg]">
+          <Image src={FLOWER_WHITE} alt="" fill className="object-contain" />
+        </div>
 
-      {/* Decorative High-Tech Grid & Dot Pattern */}
-      <div
-        className="absolute inset-0 bg-dot-dark opacity-20 pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="corner-dot-dark-tr opacity-40 pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="corner-dot-dark-bl opacity-30 pointer-events-none"
-        aria-hidden="true"
-      />
-      {/* Giant HCM-UTE white flower watermark matching hcmute-website-frontend */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/assets/flower-ute-white.png"
-        alt=""
-        className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[42rem] h-[42rem] opacity-[0.075] rotate-[30deg] pointer-events-none select-none object-contain"
-      />
-
-      {/* Main Footer Container with Two Continuous Side Vertical Borders */}
-      <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] relative z-10">
-        <div className="w-full flex flex-col relative">
-          {/* Top Banner: Host University & CFP Action Bar */}
-          <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 border-b border-white/15 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-8">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5 backdrop-blur-xs">
-                <span>{badgeText}</span>
-                <span className="text-white/50">•</span>
-                <span>{datesText}</span>
+        {/* Optional Top CFP Action Band */}
+        {(heading || cfpButtonLabel || portalButtonLabel) && (
+          <div className="relative z-10 border-b border-white/20">
+            <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] py-7 lg:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              <div className="lg:col-span-8">
+                {(badgeText || datesText) && (
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/15 border border-white/25 text-xs font-semibold text-white mb-2.5">
+                    {badgeText && <span>{badgeText}</span>}
+                    {badgeText && datesText && <span className="text-white/50">•</span>}
+                    {datesText && <span>{datesText}</span>}
+                  </div>
+                )}
+                {heading && (
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+                    {heading}
+                  </h3>
+                )}
+                {description && (
+                  <p className="mt-1.5 text-sm text-white/90 max-w-2xl leading-relaxed">
+                    {description}
+                  </p>
+                )}
               </div>
-              <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold text-white tracking-tight leading-snug">
-                {heading}
-              </h3>
-              <p className="mt-2 text-sm sm:text-[15px] text-blue-100 max-w-2xl font-normal leading-relaxed">
-                {description}
-              </p>
-            </div>
 
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
-              {cfpButtonLabel && (
-                <a
-                  href={cfpPdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-white hover:bg-blue-50 text-[#115eff] font-bold text-sm sm:text-base rounded-[0.26rem] transition-all shadow-md hover:shadow-lg group"
-                >
-                  <FileDown className="w-4.5 h-4.5 text-[#115eff]" />
-                  <span>{cfpButtonLabel}</span>
-                  <ArrowUpRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
-              )}
-              {portalButtonLabel && (
-                <a
-                  href={websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-sm rounded-[0.26rem] transition-colors backdrop-blur-xs"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span>{portalButtonLabel}</span>
-                </a>
-              )}
+              <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-2.5">
+                {cfpButtonLabel && (
+                  <a
+                    href={cfpPdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 h-11 px-5 bg-white hover:bg-blue-50 text-blue-700 font-bold text-sm rounded-lg transition-all shadow-sm hover:shadow-md group"
+                  >
+                    <FileDown className="w-4 h-4 text-blue-700" />
+                    <span>{cfpButtonLabel}</span>
+                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                )}
+                {portalButtonLabel && (
+                  <a
+                    href={websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 h-10 px-4 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-sm rounded-lg transition-colors"
+                  >
+                    <Globe className="w-4 h-4" />
+                    <span>{portalButtonLabel}</span>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Main Footer Content Grid */}
-          <div className="relative z-10 px-4 sm:px-6 py-8 sm:py-10 lg:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
-            {/* Column 1: HCM-UTE Official Rectangle Logo & Contact Details */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="space-y-3">
+        {/* Main 12-Column Footer Grid matching hcmute-website-frontend 1:1 */}
+        <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] py-10 lg:py-14 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Left: Brand Identity & Contact (lg:col-span-4) */}
+            <div className="lg:col-span-4">
+              <div className="flex items-center gap-3 mb-6">
                 <a
                   href="https://hcmute.edu.vn"
                   target="_blank"
@@ -294,78 +275,91 @@ export function Footer(props: FooterProps = {}) {
                   className="inline-flex items-center transition-opacity hover:opacity-90 max-w-full"
                   title="HCM-UTE • Ho Chi Minh City University of Technology and Engineering"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src="/logo/rectangle-logo.png"
                     alt="HCM-UTE • Ho Chi Minh City University of Technology and Engineering"
-                    className="h-10 sm:h-11 w-auto max-w-[260px] sm:max-w-[320px] object-contain drop-shadow-xs select-none"
+                    width={240}
+                    height={56}
+                    className="h-14 sm:h-16 w-auto object-contain"
                   />
                 </a>
-                <p className="text-blue-100/90 text-sm font-medium leading-relaxed max-w-md">
-                  {universityNote}
+              </div>
+
+              {(secondaryDescription || universityNote) && (
+                <p className="text-white/95 text-sm leading-relaxed mb-6">
+                  {secondaryDescription || universityNote}
                 </p>
+              )}
+
+              <div className="space-y-3 text-sm">
+                {(venueName || address) && (
+                  <div className="flex items-start gap-3 text-white/95">
+                    <MapPin className="w-4 h-4 mt-1 text-white shrink-0" />
+                    <span>
+                      {venueName}
+                      {venueName && address ? `, ${address}` : address}
+                    </span>
+                  </div>
+                )}
+                {hotline && (
+                  <div className="flex items-center gap-3 text-white/95">
+                    <Phone className="w-4 h-4 text-white shrink-0" />
+                    <a
+                      href={`tel:${hotlineRaw}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {hotline}
+                    </a>
+                  </div>
+                )}
+                {contactEmail && (
+                  <div className="flex items-center gap-3 text-white/95">
+                    <Mail className="w-4 h-4 text-white shrink-0" />
+                    <a
+                      href={`mailto:${contactEmail}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {contactEmail}
+                    </a>
+                  </div>
+                )}
               </div>
 
-              <p className="text-blue-100 text-sm leading-relaxed max-w-md font-normal">
-                {secondaryDescription}
-              </p>
-
-              <div className="space-y-3 text-sm text-blue-100 pt-1">
-                <div className="flex items-start gap-2.5">
-                  <MapPin className="w-4 h-4 text-white mt-0.5 shrink-0" />
-                  <span>
-                    <strong>Venue:</strong> {venueName}, {address}
-                  </span>
+              {activeSocialLinks.length > 0 && (
+                <div className="flex items-center gap-3 mt-6">
+                  {activeSocialLinks.map((social, sIdx) => (
+                    <a
+                      key={`${social.name}-${sIdx}`}
+                      href={social.href || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...subItemAttr(["socialLinks", sIdx])}
+                      className="p-2 rounded-[var(--radius)] bg-white/10 border border-white/20 text-white transition-all duration-300 backdrop-blur-sm hover:bg-white/20"
+                      title={social.name}
+                      aria-label={social.name}
+                    >
+                      {renderSocialIcon(social)}
+                      <span className="sr-only">{social.name}</span>
+                    </a>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <Phone className="w-4 h-4 text-white shrink-0" />
-                  <a
-                    href={`tel:${hotlineRaw}`}
-                    className="hover:text-white transition-colors"
-                  >
-                    Hotline: {hotline}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <Mail className="w-4 h-4 text-white shrink-0" />
-                  <a
-                    href={`mailto:${contactEmail}`}
-                    className="hover:text-white transition-colors"
-                  >
-                    Email: {contactEmail}
-                  </a>
-                </div>
-              </div>
-
-              {/* Social Media Links */}
-              <div className="flex items-center gap-2.5 pt-2">
-                {activeSocialLinks.map((social, sIdx) => (
-                  <a
-                    key={`${social.name}-${sIdx}`}
-                    href={social.href || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    {...subItemAttr(["socialLinks", sIdx])}
-                    className="p-2.5 rounded-[var(--radius)] bg-white/10 border border-white/20 text-white transition-all duration-300 backdrop-blur-sm hover:bg-white/25 hover:scale-105"
-                    title={social.name}
-                    aria-label={social.name}
-                  >
-                    {renderSocialIcon(social)}
-                  </a>
-                ))}
-              </div>
+              )}
             </div>
 
-            {/* Categorized Navigation Links */}
-            <div className="lg:col-span-7">
+            {/* Right: Content Columns (lg:col-span-8) */}
+            <div className="lg:col-span-8">
               <div
                 className={cn(
-                  "grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8",
-                  activeLinkGroups.length === 1 && "md:grid-cols-1",
-                  activeLinkGroups.length === 2 && "md:grid-cols-2",
-                  activeLinkGroups.length === 3 && "md:grid-cols-3",
-                  activeLinkGroups.length === 4 && "md:grid-cols-4",
-                  activeLinkGroups.length >= 5 && "md:grid-cols-5"
+                  "grid gap-8",
+                  activeLinkGroups.length === 1
+                    ? "grid-cols-1"
+                    : activeLinkGroups.length === 2
+                      ? "grid-cols-1 sm:grid-cols-2"
+                      : activeLinkGroups.length === 3
+                        ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+                        : activeLinkGroups.length >= 5
+                          ? "grid-cols-2 md:grid-cols-5"
+                          : "grid-cols-2 md:grid-cols-4"
                 )}
               >
                 {activeLinkGroups.map((group, gIdx) => (
@@ -373,9 +367,9 @@ export function Footer(props: FooterProps = {}) {
                     key={`${group.heading}-${gIdx}`}
                     {...subItemAttr(["linkGroups", gIdx])}
                   >
-                    <h4 className="text-white font-bold text-sm mb-3.5 border-b border-white/20 pb-2">
+                    <h3 className="text-white font-semibold text-sm uppercase mb-4 tracking-wide">
                       {group.heading}
-                    </h4>
+                    </h3>
                     <ul className="space-y-2">
                       {(group.links || []).map((link, lIdx) => {
                         const resolvedHref = normalizeFooterHref(link.href);
@@ -400,19 +394,19 @@ export function Footer(props: FooterProps = {}) {
                                 href={resolvedHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-100 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
+                                className="text-white/90 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
                               >
                                 <span>{link.label}</span>
-                                <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
+                                <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
                               </a>
                             ) : (
                               <Link
                                 href={resolvedHref}
                                 prefetch={false}
-                                className="text-blue-100 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
+                                className="text-white/90 text-sm hover:text-white transition-colors duration-200 inline-flex items-center gap-1 group"
                               >
                                 <span>{link.label}</span>
-                                <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
+                                <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
                               </Link>
                             )}
                           </li>
@@ -427,16 +421,20 @@ export function Footer(props: FooterProps = {}) {
         </div>
       </div>
 
-      {/* FULL WIDTH DIVIDER & SUB-BAR */}
-      <div className="relative border-t border-white/15">
-        <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)]">
-          <div className="w-full px-4 sm:px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-[13px]">
-            <p className="text-blue-100 text-center md:text-left leading-relaxed">
-              {copyrightText}
-            </p>
-            <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 text-blue-200/90 text-xs sm:text-[13px]">
-              <span>{footerRightText}</span>
-            </div>
+      {/* Bottom Copyright Bar matching hcmute-website-frontend 1:1 */}
+      <div className="relative border-t border-white/20">
+        <div className="w-full max-w-[var(--site-width)] mx-auto px-[var(--site-px)] lg:px-[var(--site-px-lg)] py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {copyrightText ? (
+              <p className="text-white/90 text-sm text-center md:text-left">
+                {copyrightText}
+              </p>
+            ) : (
+              <div />
+            )}
+            {footerRightText && (
+              <p className="text-white/80 text-sm">{footerRightText}</p>
+            )}
           </div>
         </div>
       </div>

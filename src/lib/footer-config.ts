@@ -42,11 +42,11 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfigData = {
   badgeText: "Flagship Conference",
   datesText: CONFERENCE_INFO.dates,
   heading: "IEEE SMC 2027 • Ho Chi Minh City, Vietnam",
-  description: `The 2027 IEEE International Conference on Systems, Man, and Cybernetics, hosted by Ho Chi Minh City University of Technology and Engineering (HCM-UTE). Theme: "${CONFERENCE_INFO.theme}".`,
+  description: `The 2027 IEEE International Conference on Systems, Man, and Cybernetics, hosted by Ho Chi Minh City University of Technology and Engineering • HCM-UTE. Theme: "${CONFERENCE_INFO.theme}".`,
   universityNote:
-    "A premier hub for technical education, research, and innovation in Vietnam.",
+    "Ho Chi Minh City University of Technology and Engineering • HCM-UTE",
   secondaryDescription: `Hosted by HCM-UTE Vietnam under the theme "${CONFERENCE_INFO.theme}". Bringing together worldwide researchers and industry innovators in systems science, human–machine symbiosis, and cybernetics.`,
-  cfpButtonLabel: "Download Official CFP (PDF)",
+  cfpButtonLabel: "Download Official CFP",
   cfpPdfUrl: CONFERENCE_INFO.cfpPdfUrl,
   portalButtonLabel: "Visit Conference Portal",
   websiteUrl: CONFERENCE_INFO.website,
@@ -92,7 +92,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfigData = {
       heading: "Authors & CFP",
       links: [
         { label: "Call for Papers Guidelines", href: "/submissions" },
-        { label: "Download CFP PDF", href: CONFERENCE_INFO.cfpPdfUrl },
+        { label: "Download CFP Brochure", href: CONFERENCE_INFO.cfpPdfUrl },
         { label: "Online Submission Portal", href: "/submissions" },
         { label: "Special Session Proposals", href: "/program" },
         { label: "Workshop & Tutorial Tracks", href: "/#tracks" },
@@ -101,9 +101,9 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfigData = {
     {
       heading: "Technical Tracks",
       links: [
-        { label: "Systems Science & Eng. (SSE)", href: "/#tracks" },
-        { label: "Cybernetics Systems (CYB)", href: "/#tracks" },
-        { label: "Human-Machine Systems (HMS)", href: "/#tracks" },
+        { label: "Systems Science & Engineering", href: "/#tracks" },
+        { label: "Cybernetics Systems", href: "/#tracks" },
+        { label: "Human-Machine Systems", href: "/#tracks" },
         { label: "AI & Autonomous Symbiosis", href: "/#tracks" },
         { label: "Paper Formatting Guidelines", href: "/submissions" },
       ],
@@ -130,4 +130,3 @@ export function normalizeFooterHref(href?: string): string {
   if (raw.startsWith("#")) return `/${raw}`;
   return raw;
 }
-

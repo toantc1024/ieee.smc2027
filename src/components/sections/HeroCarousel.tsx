@@ -45,7 +45,7 @@ export const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [
       href: "#cfp",
     },
     secondaryAction: {
-      label: "Download CFP (PDF)",
+      label: "Download Call for Papers",
       href: "/CFP - IEEE SMC 2027.pdf",
     },
   },
@@ -412,7 +412,7 @@ export function HeroCarousel({
               </div>
             )}
 
-            {/* Right: Chevron Navigation Controls with light glassmorphism, aligned with two-side margin, revealed on carousel hover */}
+            {/* Right: Chevron Navigation Controls with glassmorphism, aligned with two-side margin */}
             <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 opacity-90 sm:opacity-0 sm:group-hover/carousel:opacity-100 sm:translate-y-1 sm:group-hover/carousel:translate-y-0 transition-all duration-300">
               <button
                 type="button"
@@ -422,7 +422,7 @@ export function HeroCarousel({
                 }}
                 onMouseEnter={() => setIsAutoPlay(false)}
                 onMouseLeave={() => setIsAutoPlay(true)}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-sm bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/20 hover:bg-primary text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/nav:-translate-x-0.5" />
@@ -435,7 +435,7 @@ export function HeroCarousel({
                 }}
                 onMouseEnter={() => setIsAutoPlay(false)}
                 onMouseLeave={() => setIsAutoPlay(true)}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-sm bg-white/20 hover:bg-[#115eff] text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/20 hover:bg-primary text-white flex items-center justify-center transition-all duration-200 cursor-pointer border border-white/35 backdrop-blur-md shadow-lg hover:border-white/60 hover:scale-105 active:scale-95 group/nav"
                 aria-label="Next slide"
               >
                 <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/nav:translate-x-0.5" />
