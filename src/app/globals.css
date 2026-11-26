@@ -289,7 +289,14 @@ body {
   }
 }
 
-/* Button shiny shimmer effect on hover */
+/* Button shiny shimmer effect on hover (strictly contained inside button box) */
+@layer base {
+  [data-slot="button"] {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
 @keyframes btn-shimmer {
   0% {
     transform: translateX(-100%) skewX(-15deg);
@@ -319,9 +326,11 @@ body {
   animation: btn-shimmer 0.6s ease-in-out;
 }
 
-/* Exclude shimmer from ghost and link variants */
+/* Exclude shimmer from ghost, link, and disabled buttons (and ute which renders its own internal sweep) */
 [data-slot="button"][data-variant="ghost"]::after,
-[data-slot="button"][data-variant="link"]::after {
+[data-slot="button"][data-variant="link"]::after,
+[data-slot="button"][data-variant="ute"]::after,
+[data-slot="button"]:disabled::after {
   display: none;
 }
 
